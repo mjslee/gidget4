@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<head>
+	<script src="./gidget-engine.js"></script>
+	<script src="./gidget-game.js"></script>
+	<style>
+		#board {
+			position: relative;
+		}
+
+		.player { background-color: white; } 
+		.goop { background-color: lime; }
+
+		.object {
+			transition: all 0.5s;
+			position: absolute;
+			width: 5rem;
+			height: 5rem;
+			border: 1px solid black;
+			border-radius: 5rem;
+		}
+
+		.tile {
+			width: 5rem;
+			height: 5rem;
+			background-color: green;
+			border: 1px solid black;
+			display: inline-block;
+		}
+
+		.column:active {
+			border: 1px solid gold;
+		}
+
+		input[type=text] {
+			width: 3rem;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="board"></div>
+
+	<br/>
+	<div id="controls">
+		X: <input type="text" id="x" value="3" />
+		Y: <input type="text" id="y" value="2" />
+		<button id="move">Move</button>
+		<br/>
+		<br/>
+		Name: <input type="text" id="name" value="Goop" />
+		<button id="grab">Grab</button>
+		<button id="drop">Drop</button>
+	</div>
+
+	<script>
+		// Game
+		// Access objects through `game.engine.objects` array
+		const game = GidgetGame.initialize(document.querySelector("#board"));
+
+		const player = game.engine.createObject({
+			name: "Player",
+			class: "player"
+		});
+		
+		const goop = game.engine.createObject({
+			name: "Goop",
+			class: "goop",
+			position: [3, 2]
+		});
+
+		// Controls example
+		document.querySelector("#move").onclick = function(e) {
+			let x = parseInt(document.querySelector("#x").value);
+			let y = parseInt(document.querySelector("#y").value);
+			player.move(x, y);
+		};
+
+		document.querySelector("#grab").onclick = function(e) {
+			player.grab(document.querySelector("#name").value);
+		};
+		
+		document.querySelector("#drop").onclick = function(e) {
+			player.drop(document.querySelector("#name").value);
+		};
+
+	</script>
+</body>
+</html>
