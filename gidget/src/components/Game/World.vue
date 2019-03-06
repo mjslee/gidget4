@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main id="world">
     
   </main>
 </template>
@@ -9,6 +9,9 @@
 </style>
 
 <script>
+import GidgetEngine from '../../libraries/gidget-engine';
+
+
 export default {
 
 }
