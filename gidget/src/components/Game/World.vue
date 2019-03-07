@@ -4,7 +4,7 @@
       v-for="row in worldSize" :key="row"
       :style="{ height: tileSize + 'rem' }"
       class="game-row">
-      <Tile
+      <GidgetTile
         v-for="col in worldSize" :key="col"
         :ref="'tile-'+col+'-'+row" :size="tileSize" type="grass" />
     </div>
@@ -13,23 +13,28 @@
 
 
 <script>
-import Engine from '../../libraries/gidget-engine'
-import Tile from './Tile.vue'
+import GidgetEngine from '../../libraries/gidget-engine'
+import GidgetTile from './Tile.vue'
 
 
 export default {
   components: {
-    Tile
+    GidgetTile
   },
 
   created() {
     // Create copy of engine
-    this.engine = Object.assign({}, Engine)
+    this.engine = Object.assign({}, GidgetEngine)
     window.engine = this.engine  // Access in console for debugging purposes
+
+    // Hook up to engine
+    this.engine.objectCreated = this.onObjectCreate;
   },
 
   methods: {
+    onObjectCreate() {
 
+    },
   },
 
   data() {
