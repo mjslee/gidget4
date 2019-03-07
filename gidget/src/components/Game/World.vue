@@ -15,11 +15,13 @@
 <script>
 import GidgetEngine from '../../libraries/gidget-engine'
 import GidgetTile from './Tile.vue'
+import GidgetObject from './Object.vue'
 
 
 export default {
   components: {
-    GidgetTile
+    GidgetTile,
+    GidgetObject
   },
 
   created() {
@@ -29,12 +31,32 @@ export default {
 
     // Hook up to engine
     this.engine.objectCreated = this.onObjectCreate;
+    this.engine.objectMoved = this.onObjectMove;
+    this.engine.objectGrabbed = this.onObjectGrab;
+    this.engine.objectDropped = this.onObjectDrop;
+    this.engine.objectDeleted = this.onObjectDelete;
   },
 
   methods: {
-    onObjectCreate() {
+    onObjectCreate(obj) {
 
     },
+
+    onObjectMove(obj) {
+
+    },
+
+    onObjectGrab(obj) {
+
+    },
+
+    onObjectDrop(obj) {
+
+    },
+
+    onObjectDelete(obj) {
+
+    }
   },
 
   data() {
