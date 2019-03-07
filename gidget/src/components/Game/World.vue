@@ -1,8 +1,12 @@
 <template>
   <main id="world" ref="world">
-    <div v-for="row in worldSize" :key="row"
-      :style="{ height: tileSize + 'rem' }" class="game-row">
-      <Tile v-for="col in worldSize" :key="col" :size="tileSize" />
+    <div
+      v-for="row in worldSize" :key="row"
+      :style="{ height: tileSize + 'rem' }"
+      class="game-row">
+      <Tile
+        v-for="col in worldSize" :key="col"
+        :ref="'tile-'+col+'-'+row" :size="tileSize" type="grass" />
     </div>
   </main>
 </template>
@@ -30,8 +34,8 @@ export default {
 
   data() {
     return {
-      worldSize: 4,
-      tileSize: 3
+      worldSize: 3,
+      tileSize: 5
     }
   },
 }

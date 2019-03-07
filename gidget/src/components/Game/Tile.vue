@@ -1,5 +1,7 @@
 <template>
-  <div :style="{ height: size + 'rem', width: size + 'rem' }"></div>
+  <div 
+    :style="{ height: size + 'rem', width: size + 'rem' }"
+    :class="type"></div>
 </template>
 
 
@@ -14,6 +16,6 @@ div {
 
 <script>
 export default {
-  props: ['size']
+  props: ['size', 'type']
 }
 </script>
