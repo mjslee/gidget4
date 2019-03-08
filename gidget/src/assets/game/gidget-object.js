@@ -1,3 +1,6 @@
+import Objects from './objects/_import'
+
+
 export default {
 	// Parents
 	engine: undefined,
@@ -5,6 +8,7 @@ export default {
 
 	// Object Data
 	id: -1,
+	type: undefined,
 	name: undefined,
 	image: undefined,
 
@@ -26,6 +30,9 @@ export default {
 		// Call created callback
 		if (this.engine && typeof this.engine.objectCreated === 'function')
 			this.engine.objectCreated(this);
+
+		// Merge user-defined object with generic object
+		Object.assign(this, Objects.Gidget);
 	},
 
 
