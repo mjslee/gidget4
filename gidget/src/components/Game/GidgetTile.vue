@@ -16,6 +16,11 @@ div {
 
 <script>
 export default {
-  props: ['size', 'type']
+  props: {
+    size: Number,
+    type: String,
+    x: Number,
+    y: Number
+  }
 }
 </script>

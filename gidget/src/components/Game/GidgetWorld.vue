@@ -1,19 +1,17 @@
-
 <template>
   <main id="world" ref="world">
-    <GidgetObject
-      v-for="obj in objects" :key="'obj-' + obj.id"
-      :ref="'obj-' + obj.id" />
-
     <div
-      v-for="row in worldSize" :key="'row-' +row"
+      v-for="y in worldSize" :key="'y-' +y"
       :style="{ height: tileSize + 'rem' }"
       class="game-row">
       <GidgetTile
-        v-for="col in worldSize" :key="'col-' + col"
-        :ref="'tile-' + (col - 1) + '-' + (row - 1)"
-        :size="tileSize" type="grass" />
+        v-for="x in worldSize" :key="'x-' + x" ref="tiles"
+        :size="tileSize" type="grass"
+        :x="x-1" :y="y-1" />
     </div>
+    <GidgetObject
+      v-for="obj in objects" :key="'obj-' + obj.id" ref="objects"
+      :object="obj" :objects="$refs['objects']" :tiles="$refs['tiles']" />
   </main>
 </template>
 
@@ -41,11 +39,8 @@ export default {
 
   created() {
     // Create copy of engine
-    this.engine = Object.assign({}, GidgetEngine)
-    window.engine = this.engine  // Access in console for debugging purposes
-
-    // Set as reference to engine's objects
-    this.objects = this.engine.objects;
+    this.engine = Object.assign({}, GidgetEngine);
+    window.engine = this.engine;
 
     // Engine callbacks
     this.engine.objectCreated = this.objectCreated;
@@ -53,37 +48,19 @@ export default {
     this.engine.objectDropped = this.objectDropped;
     this.engine.objectDeleted = this.objectDeleted;
     this.engine.objectMoved = this.objectMoved;
+
+    this.objects = this.engine.objects;
   },
 
 
   mounted() {
-    this.engine.createObject({});
+    this.engine.createObject({
+      position: [0, 0]
+    });
   },
 
 
   methods: {
-    getTileElement(x, y) {
-      // Reference name of tile
-      let tilePos = 'tile-' + x + '-' + y;
-
-      // Get Tile component
-      let tile = this.$refs[tilePos];
-      if (tile === undefined) {
-        console.log(`Unknown tile: ${tilePos}`);
-        return undefined;
-      }
-
-      // Get Tile element
-      let el = tile[0]['$el'];
-      if (el === undefined) {
-        console.log(`Unknown element: ${tilePos}`);
-        return undefined;
-      }
-
-      // Return found element
-      return el;
-    },
-
     objectCreated(obj) {
 
     },
@@ -104,7 +81,6 @@ export default {
 
     }
   },
-
 
   data() {
     return {
