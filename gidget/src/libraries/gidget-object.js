@@ -33,8 +33,10 @@ export default {
 	 * Move object in world.
 	 */
 	move(x, y) {
-		if (x !== undefined)
-			this.position = [x, y];
+		if (x !== undefined) {
+			this.position[0] = x;
+			this.position[1] = y;
+		}
 
 		// Call move callback
 		if (this.engine && typeof this.engine.objectMoved === 'function')
