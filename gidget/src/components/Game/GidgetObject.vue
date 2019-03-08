@@ -22,9 +22,15 @@ export default {
   },
 
   created() {
+    // Create proxy for object's position to update element's position when
+    // the position in the engine changes
     this.object.position = new Proxy(
       this.object.position, { set: this.setPositionCallback }
     );
+
+    // Set initial object position
+    this.left = this.getTileOffsetX(this.object.position[0]);
+    this.top = this.getTileOffsetY(this.object.position[0]);
   },
 
 
