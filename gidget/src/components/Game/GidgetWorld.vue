@@ -1,3 +1,4 @@
+
 <template>
   <main id="world" ref="world">
     <GidgetObject
@@ -55,7 +56,33 @@ export default {
   },
 
 
+  mounted() {
+    this.engine.createObject({});
+  },
+
+
   methods: {
+    getTileElement(x, y) {
+      // Reference name of tile
+      let tilePos = 'tile-' + x + '-' + y;
+
+      // Get Tile component
+      let tile = this.$refs[tilePos];
+      if (tile === undefined) {
+        console.log(`Unknown tile: ${tilePos}`);
+        return undefined;
+      }
+
+      // Get Tile element
+      let el = tile[0]['$el'];
+      if (el === undefined) {
+        console.log(`Unknown element: ${tilePos}`);
+        return undefined;
+      }
+
+      // Return found element
+      return el;
+    },
 
     objectCreated(obj) {
 
