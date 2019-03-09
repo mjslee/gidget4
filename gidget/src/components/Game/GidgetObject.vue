@@ -1,10 +1,13 @@
 <template>
-  <div :style="{ left: left + 'px', top: top + 'px' }">X</div>
+  <img
+    :src="image"
+    :style="{ left: left + 'px', top: top + 'px',
+      height: size + 'rem', width: size + 'rem' }" />
 </template>
 
 
 <style scoped>
-div {
+img {
   position: absolute;
 }
 </style>
@@ -12,14 +15,16 @@ div {
 
 <script>
 export default {
-  props: ["object", "tiles", "objects"],
+  props: ["object", "tiles", "objects", "size"],
 
   data() {
     return {
       left: 0,
-      top: 0
+      top: 0,
+      image: this.object.image
     }
   },
+
 
   created() {
     // Create proxy for object's position to update element's position when
