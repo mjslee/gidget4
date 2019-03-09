@@ -35,6 +35,7 @@ export default {
   props: {
     size: Number,
     tiles: Array[Object],
+    objects: Array[Object],
   },
 
   components: {
@@ -52,23 +53,34 @@ export default {
 
   mounted() {
     this.setTiles();
+    this.createObjects();
   },
 
 
   methods: {
     /*
-     * Loop through tiles and set tile types.
+     * Loop through pre-defined tiles and set tile types.
      */
     setTiles() {
       for (var i = 0, len = this.tiles.length; i < len; i++) {
         // Find tile at X and Y coords
-        let tile = this.$refs['tiles'].find(
-          tile => tile.x === this.tiles[i].x && tile.y === this.tiles[i].y
-        );
+        let tile = this.$refs['tiles'].find(tile => {
+          return tile.x === this.tiles[i].position[0] &&
+            tile.y === this.tiles[i].position[1]
+        });
 
         // Set tile type
         if (tile !== undefined)
           tile.type = this.tiles[i].type
+      }
+    },
+
+    /*
+     * Loop through pre-defined objects and create them.
+     */
+    createObjects() {
+      for (var i = 0, len = this.objects.length; i < len; i++) {
+        this.engine.createObject(this.objects[i]);
       }
     },
   },
