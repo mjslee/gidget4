@@ -1,5 +1,5 @@
 export default {
-  image: 'gidget.png',
+  image: '/sprites/gidget.png',
 
   methods: {
 
