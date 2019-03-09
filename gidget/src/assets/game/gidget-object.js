@@ -31,8 +31,12 @@ export default {
 		if (this.engine && typeof this.engine.objectCreated === 'function')
 			this.engine.objectCreated(this);
 
+		// Give a name if not set
+		if (this.name === undefined)
+			this.name = this.type
+
 		// Merge user-defined object with generic object
-		Object.assign(this, Objects.Gidget);
+		Object.assign(this, Objects[this.type]);
 	},
 
 
