@@ -1,17 +1,18 @@
 <template>
   <main id="world" ref="world">
     <div
-      v-for="y in worldSize" :key="'y-' +y"
+      v-for="y in size" :key="'y-' +y"
       :style="{ height: tileSize + 'rem' }"
       class="game-row">
       <GidgetTile
-        v-for="x in worldSize" :key="'x-' + x" ref="tiles"
-        :size="tileSize" type="grass"
+        v-for="x in size" :key="'x-' + x" ref="tiles"
+        :size="tileSize"
         :x="x-1" :y="y-1" />
     </div>
     <GidgetObject
-      v-for="obj in objects" :key="'obj-' + obj.id" ref="objects"
-      :object="obj" :objects="$refs['objects']" :tiles="$refs['tiles']" />
+      v-for="obj in engineObjects" :key="'obj-' + obj.id" ref="objects"
+      :object="obj" :objects="$refs['objects']"
+      :tiles="$refs['tiles']" :size="tileSize" />
   </main>
 </template>
 
@@ -19,18 +20,23 @@
 <style scoped>
 #world {
   position: relative;
+  display: inline-block;
 }
 </style>
 
 
 
 <script>
-import GidgetEngine from '../../libraries/gidget-engine'
+import GidgetEngine from '../../assets/game/gidget-engine'
 import GidgetTile from './GidgetTile'
 import GidgetObject from './GidgetObject'
 
 
 export default {
+  props: {
+    size: Number
+  },
+
   components: {
     GidgetTile,
     GidgetObject
@@ -43,50 +49,34 @@ export default {
     window.engine = this.engine;
 
     // Engine callbacks
-    this.engine.objectCreated = this.objectCreated;
+    /*this.engine.objectCreated = this.objectCreated;
     this.engine.objectGrabbed = this.objectGrabbed;
     this.engine.objectDropped = this.objectDropped;
     this.engine.objectDeleted = this.objectDeleted;
-    this.engine.objectMoved = this.objectMoved;
+    this.engine.objectMoved = this.objectMoved;*/
 
-    this.objects = this.engine.objects;
+    this.engineObjects = this.engine.objects;
   },
 
 
   mounted() {
     this.engine.createObject({
+      type: "gidget",
       position: [0, 0]
     });
   },
 
 
   methods: {
-    objectCreated(obj) {
-
-    },
-
-    objectMoved(obj) {
-
-    },
-
-    objectGrabbed(obj) {
-
-    },
-
-    objectDropped(obj) {
-
-    },
-
-    objectDeleted(obj) {
+    setTileSprite(x, y) {
 
     }
   },
 
   data() {
     return {
-      worldSize: 3,
       tileSize: 5,
-      objects: []
+      engineObjects: []
     }
   },
 }
