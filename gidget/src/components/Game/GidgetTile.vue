@@ -5,7 +5,8 @@
 
 <style scoped>
 div {
-  border: 1px solid white;
+  margin: 0.1rem;
+  border-radius: 0.25rem;
   display: inline-block;
   background-size: contain;
 }

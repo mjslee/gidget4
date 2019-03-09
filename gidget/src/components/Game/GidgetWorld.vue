@@ -1,9 +1,6 @@
 <template>
   <main id="world" ref="world">
-    <div
-      v-for="y in size" :key="'y-' +y"
-      :style="{ height: tileSize + 'rem' }"
-      class="game-row">
+    <div v-for="y in size" :key="'y-' +y" class="game-row">
       <GidgetTile
         v-for="x in size" :key="'x-' + x" ref="tiles"
         :size="tileSize" :x="x-1" :y="y-1" />
@@ -20,6 +17,10 @@
 #world {
   position: relative;
   display: inline-block;
+}
+
+.game-row {
+  line-height: 0
 }
 </style>
 
