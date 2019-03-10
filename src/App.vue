@@ -49,7 +49,7 @@
     data () {
       return {
         appTitle: 'Gidget',
-        sidebar: true,
+        sidebar: false,
         menuItems: [
           { title: 'Home', path: '/home', icon: 'home' },
           { title: 'Sign Up', path:'/signup', icon: 'face' },
