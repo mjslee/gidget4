@@ -1,14 +1,13 @@
 <template>
   <main id="world" ref="world">
     <div v-for="y in size" :key="'y-' +y" class="game-row">
-      <GidgetTile
-        v-for="x in size" :key="'x-' + x" ref="tiles"
+      <GidgetTile v-for="x in size" :key="'x-' + x" ref="tiles"
         :size="tileSize" :x="x-1" :y="y-1" />
     </div>
-    <GidgetObject
+    <GidgetObject @click.native="activeID = obj.id"
       v-for="obj in engineObjects" :key="'obj-' + obj.id" ref="objects"
-      :object="obj" :objects="$refs['objects']"
-      :tiles="$refs['tiles']" :size="tileSize" />
+      :class="activeID === obj.id ? 'active' : ''" :src="obj.image"
+      :object="obj" :tiles="$refs['tiles']" :size="tileSize" />
   </main>
 </template>
 
@@ -37,6 +36,14 @@ export default {
     size: Number,
     tiles: Array[Object],
     objects: Array[Object],
+  },
+
+  data() {
+    return {
+      tileSize: 5,
+      engineObjects: [],
+      activeID: undefined
+    }
   },
 
   components: {
@@ -84,13 +91,6 @@ export default {
         this.engine.createObject(this.objects[i]);
       }
     },
-  },
-
-  data() {
-    return {
-      tileSize: 5,
-      engineObjects: []
-    }
   },
 }
 </script>
