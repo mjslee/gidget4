@@ -94,6 +94,30 @@ export default {
 	},
 
 
+	walk(x, y, intervalMilliseconds) {
+		const that = this;
+		const path = this.path(x, y);
+
+		// Nowhere to move!
+		if (path.length < 1)
+			return false;
+
+		// Move immediately to circumvent setInterval's initial delay
+		that.move(path[0][0], path[0][1]);
+
+		// If we only needed to move once, then finish
+		if (path.length === 1)
+			return true;
+
+		// Move one tile every given milliseconds
+		let i = 1, interval = setInterval(() => {
+			that.move(path[i][0], path[i][1]);
+			if (++i >= path.length)
+				clearInterval(interval);
+		}, intervalMilliseconds);
+	},
+
+
 	/*
 	 * Grab object on world.
 	 */
