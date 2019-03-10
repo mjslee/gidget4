@@ -56,6 +56,45 @@ export default {
 
 
 	/*
+	 * Get point path array between two points.
+	 */
+	path(x, y) {
+		// Virtual positions
+		let nextX = this.position[0];
+		let nextY = this.position[1];
+
+		// Get differences of current position and desired position
+		let diffX = x - nextX;
+		let diffY = y - nextY;
+
+		const result = [];
+
+		// Get differences to zero to be at desired position
+		while (diffX != 0 || diffY != 0) {
+			if (diffX > 0) {
+				diffX--;
+				result.push([++nextX, nextY]);
+			}
+			else if (diffX < 0) {
+				diffX++;
+				result.push([--nextX, nextY]);
+			}
+
+			if (diffY > 0) {
+				diffY--;
+				result.push([nextX, ++nextY]);
+			}
+			else if (diffY < 0) {
+				diffY++;
+				result.push([nextX, --nextY]);
+			}
+		}
+
+		return result;
+	},
+
+
+	/*
 	 * Grab object on world.
 	 */
 	grab(name) {
