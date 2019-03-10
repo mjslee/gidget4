@@ -9,13 +9,18 @@
 <style scoped>
 img {
   position: absolute;
+  transition: all 200ms;
+}
+
+.active {
+  box-shadow: 0 0 1rem 0.5rem gold inset, 0 0 3rem goldenrod;
 }
 </style>
 
 
 <script>
 export default {
-  props: ["object", "tiles", "objects", "size"],
+  props: ["object", "tiles", "size"],
 
   data() {
     return {
