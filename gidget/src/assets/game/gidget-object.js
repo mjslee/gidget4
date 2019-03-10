@@ -12,6 +12,8 @@ export default {
 	name: undefined,
 	image: undefined,
 
+	blocking: true,
+
 	// World Data
 	energy: 100,
 	grabbed: [],
@@ -44,7 +46,13 @@ export default {
 	 * Move object in world.
 	 */
 	move(x, y) {
+		// Get next tile and check for blocking object
+		if (this.engine.objects.find((obj) =>
+			obj.position[0] === x && obj.position[1] === x && obj.blocking))
+			return false;
+
 		let success = true;
+
 		// Individually set these so references won't be destroyed
 			this.position[0] = x;
 			this.position[1] = y;
