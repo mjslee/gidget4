@@ -11,13 +11,8 @@ div {
   background-size: contain;
 }
 
-.grass {
-  background-image: url("/sprites/grass.png");
-}
-
-.dirt {
-  background-image: url("/sprites/dirt.png");
-}
+.grass { background-image: url("/sprites/grass.png") }
+.dirt { background-image: url("/sprites/dirt.png") }
 </style>
 
 
