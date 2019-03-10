@@ -44,14 +44,27 @@ export default {
 	 * Move object in world.
 	 */
 	move(x, y) {
-		if (x !== undefined) {
+		let success = true;
+		// Individually set these so references won't be destroyed
 			this.position[0] = x;
 			this.position[1] = y;
-		}
+
+		// Detect object collisions
+		this.engine.objects.filter((obj) =>
+			obj.position[0] === this.position[0] &&
+			obj.position[1] === this.position[1] &&
+			obj.id !== this.id
+		).forEach((obj) => {
+			if (obj.methods && typeof obj.methods.collision === 'function')
+				// Return false when the collision method returns false
+				success = obj.methods.collision(this) !== false;
+		});
 
 		// Call move callback
 		if (this.engine && typeof this.engine.objectMoved === 'function')
 			this.engine.objectMoved(this);
+
+		return success;
 	},
 
 
