@@ -12,7 +12,7 @@ export default {
 	name: undefined,
 	image: undefined,
 
-	blocking: true,
+	blocking: false,
 
 	// World Data
 	energy: 100,
@@ -65,7 +65,7 @@ export default {
 		).forEach((obj) => {
 			if (obj.methods && typeof obj.methods.collision === 'function')
 				// Return false when the collision method returns false
-				success = obj.methods.collision(this) !== false;
+				success = obj.methods.collision.call(obj, this) !== false;
 		});
 
 		// Call move callback
