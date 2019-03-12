@@ -12,9 +12,9 @@ export default {
     nextID: -1,
 
     // Callbacks
-    onObjectAdded(obj) { console.log("An object was added!") },
-    onObjectMoved(obj) { console.log("An object was moved!") },
-    onObjectRemoved(obj) { console.log("An object was removed!") },
+    onObjectAdded(obj) { console.log(obj, "An object was added!") },
+    onObjectMoved(obj) { console.log(obj, "An object was moved!") },
+    onObjectRemoved(obj) { console.log(obj, "An object was removed!") },
 
 
     /**
@@ -80,7 +80,7 @@ export default {
     createObject(kwargs) {
         // Copy object into another variable
         let obj = Object.assign({}, GidgetObject);
-        obj.engine = this;
+        obj.world = this;
 
         // Merge the types overrides (like attributes in Gidget.js)
         // and merge kwargs into the new object
@@ -115,7 +115,7 @@ export default {
     removeObject(obj) {
         let index = this.objects.findIndex((findObj) => findObj.id === obj.id);
 
-        // Remove from engine's objects
+        // Remove from world's objects
         this.objects.splice(index, 1);
 
         // Call callback

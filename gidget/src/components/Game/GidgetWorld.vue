@@ -5,7 +5,7 @@
         :size="tileSize" :x="x-1" :y="y-1" />
     </div>
     <GidgetObject @click.native="activeID = obj.id"
-      v-for="obj in engineObjects" :key="'obj-' + obj.id" ref="objects"
+      v-for="obj in worldObjects" :key="'obj-' + obj.id" ref="objects"
       :class="activeID === obj.id ? 'active' : ''" :src="obj.image"
       :object="obj" :tiles="$refs['tiles']" :size="tileSize" />
   </main>
@@ -26,7 +26,7 @@
 
 
 <script>
-import GidgetEngine from '../../assets/game/gidget-engine'
+import GidgetWorld from '../../assets/game/gidget-world'
 import GidgetTile from './GidgetTile'
 import GidgetObject from './GidgetObject'
 
@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       tileSize: 5,
-      engineObjects: [],
+      worldObjects: [],
       activeID: undefined
     }
   },
@@ -53,9 +53,11 @@ export default {
 
 
   created() {
-    // Create copy of engine
-    this.engine = Object.assign({}, GidgetEngine);
-    this.engineObjects = this.engine.objects;
+    // Create copy of world
+    this.world = Object.assign({}, GidgetWorld);
+    this.worldObjects = this.world.objects;
+
+    window.world = this.world;
   },
 
 
@@ -88,7 +90,7 @@ export default {
      */
     createObjects() {
       for (var i = 0, len = this.objects.length; i < len; i++) {
-        this.engine.createObject(this.objects[i]);
+        this.world.createObject(this.objects[i]);
       }
     },
   },

@@ -9,18 +9,19 @@
 <style scoped>
 img {
   position: absolute;
+  cursor: pointer;
   transition: all 200ms;
 }
 
 .active {
-  box-shadow: 0 0 1rem 0.5rem gold inset, 0 0 3rem goldenrod;
+  box-shadow: 0 0 3rem 1rem gold inset, 0 0 2rem goldenrod;
 }
 </style>
 
 
 <script>
 export default {
-  props: ["object", "tiles", "size"],
+  props: ["object", "tiles", "objects", "size", "className"],
 
   data() {
     return {
@@ -33,14 +34,19 @@ export default {
 
   created() {
     // Create proxy for object's position to update element's position when
-    // the position in the engine changes
+    // the position in the world changes
     this.object.position = new Proxy(
       this.object.position, { set: this.setPositionCallback }
     );
 
     // Set initial object position
     this.left = this.getTileOffsetX(this.object.position[0]);
-    this.top = this.getTileOffsetY(this.object.position[0]);
+    this.top = this.getTileOffsetY(this.object.position[1]);
+  },
+
+
+  mounted() {
+    this.object.vueComponent = this;
   },
 
 
