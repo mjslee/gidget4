@@ -17,6 +17,16 @@ export default {
     onObjectRemoved(obj) { console.log(obj, "An object was removed!") },
 
 
+
+    /**
+     * Determine if position is valid based on world's size.
+     * @param {function} conditions
+     */
+    isPositionValid(x, y) {
+        return x > 0 && x < this.size && y > 0 && y < this.size
+    },
+
+
     /**
      * Find object based on specified conditions.
      * @param {function} conditions
