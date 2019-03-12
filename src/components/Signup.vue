@@ -16,7 +16,7 @@
                                 required></v-text-field>
                         </v-flex>
                         <v-flex>
-                            <v-text-field>
+                            <v-text-field
                                 name="password"
                                 label="Password"
                                 id="password"
@@ -29,8 +29,7 @@
                                     label="Confirm Password"
                                     id="confirmPassword"
                                     type="password"
-                                    required
-                            ></v-text-field>
+                                    required></v-text-field>
                         </v-flex>
                         <v-flex class="text-md-center" mt-5>
                             <v-btn color="primary" type="submit">Sign Up</v-btn>
