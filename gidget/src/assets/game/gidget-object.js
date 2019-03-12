@@ -20,7 +20,7 @@ export default {
 
 	/**
 	 * Create object in world.
-	 *
+	 * @param {number} id Unique identification number.
 	 */
 	create(id) {
 		// Give object a name if not already set
@@ -59,8 +59,10 @@ export default {
 	},
 
 
-	/*
+	/**
 	 * Get point path array between two points.
+	 * @param {number} x
+	 * @param {number} y
 	 */
 	path(x, y) {
 		// Virtual positions
@@ -98,6 +100,11 @@ export default {
 	},
 
 
+	/**
+	 * Walk object to a position.
+	 * @param {number} x
+	 * @param {number} y
+	 */
 	walk(x, y, intervalMilliseconds) {
 		const path = this.path(x, y);
 
@@ -121,14 +128,15 @@ export default {
 	},
 
 
-	/*
-	 * Grab object on world.
+	/**
+	 * Grab object into this object's grabbed array.
+	 * @param {name} Object name to grab.
 	 */
 	grab(name) {
-		let obj = this.world.objects.find((findObj) => 
-			findObj.position[0] === this.position[0] &&
-			findObj.position[1] === this.position[1] &&
-			findObj.name === name);
+		let obj = this.world.objects.find((obj) => 
+			obj.name === name &&
+			obj.position[0] === this.position[0] &&
+			obj.position[1] === this.position[1]);
 
 		// Remove object from world
 		obj.remove();
@@ -138,13 +146,13 @@ export default {
 	},
 
 
-	/*
-	 * Drop object from player's grabbed objects.
+	/**
+	 * Drop object from this object's grabbed array.
+	 * @param {name} Object name to drop.
 	 */
 	drop(name) {
 		// Find index of item
-		let index = this.grabbed.findIndex((findObj) =>
-			findObj.name === name);
+		let index = this.grabbed.findIndex((obj) => obj.name === name);
 
 		// Save object before deleting it
 		let obj = this.grabbed[index];
@@ -158,8 +166,8 @@ export default {
 	},
 
 
-	/*
-	 * Remove object from world.
+	/**
+	 * Remove this object from the world.
 	 */
 	remove() {
 		this.world.removeObject(this);
