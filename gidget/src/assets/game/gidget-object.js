@@ -1,9 +1,6 @@
-import Objects from './objects/_import'
-
-
 export default {
 	// Parents
-	engine: undefined,
+	world: undefined,
 	grabber: undefined,
 
 	// Object Data
@@ -21,24 +18,16 @@ export default {
 	layer: 0,
 
 
-	/*
-	 * Create object in world
+	/**
+	 * Create object in world.
+	 *
 	 */
-	create() {
-		// Only set ID if it's a new object and not a grabbed/dropped one
-		if (this.id === -1)
-			this.id = ++this.engine.recentID;
+	create(id) {
+		// Give object a name if not already set
+		if (this.name === undefined && this.type !== undefined)
+			this.name = this.type;
 
-		// Call created callback
-		if (this.engine && typeof this.engine.objectCreated === 'function')
-			this.engine.objectCreated(this);
-
-		// Give a name if not set
-		if (this.name === undefined)
-			this.name = this.type
-
-		// Merge user-defined object with generic object
-		Object.assign(this, Objects[this.type]);
+		this.id = id;
 	},
 
 
@@ -47,32 +36,20 @@ export default {
 	 */
 	move(x, y) {
 		// Get next tile and check for blocking object
-		if (this.engine.objects.find((obj) =>
-			obj.position[0] === x && obj.position[1] === x && obj.blocking))
+		if (this.world.getBlockingObjectAt(x, y))
 			return false;
 
-		let success = true;
-
 		// Individually set these so references won't be destroyed
-			this.position[0] = x;
-			this.position[1] = y;
+		this.position[0] = x;
+		this.position[1] = y;
 
 		// Detect object collisions
-		this.engine.objects.filter((obj) =>
-			obj.position[0] === this.position[0] &&
-			obj.position[1] === this.position[1] &&
-			obj.id !== this.id
-		).forEach((obj) => {
-			if (obj.methods && typeof obj.methods.collision === 'function')
-				// Return false when the collision method returns false
-				success = obj.methods.collision.call(obj, this) !== false;
-		});
+		this.world.detectCollision(this);
 
-		// Call move callback
-		if (this.engine && typeof this.engine.objectMoved === 'function')
-			this.engine.objectMoved(this);
+		// Call without 'x' and 'y' arguments so only the callback is ran
+		this.world.moveObject(this);
 
-		return success;
+		return true;
 	},
 
 
@@ -116,7 +93,6 @@ export default {
 
 
 	walk(x, y, intervalMilliseconds) {
-		const that = this;
 		const path = this.path(x, y);
 
 		// Nowhere to move!
@@ -124,7 +100,8 @@ export default {
 			return false;
 
 		// Move immediately to circumvent setInterval's initial delay
-		that.move(path[0][0], path[0][1]);
+		if (!this.move(...path[0]))
+			return false;
 
 		// If we only needed to move once, then finish
 		if (path.length === 1)
@@ -132,8 +109,7 @@ export default {
 
 		// Move one tile every given milliseconds
 		let i = 1, interval = setInterval(() => {
-			that.move(path[i][0], path[i][1]);
-			if (++i >= path.length)
+			if (!this.move(...path[i]) || ++i >= path.length)
 				clearInterval(interval);
 		}, intervalMilliseconds);
 	},
@@ -143,13 +119,13 @@ export default {
 	 * Grab object on world.
 	 */
 	grab(name) {
-		let obj = this.engine.objects.find((findObj) => 
+		let obj = this.world.objects.find((findObj) => 
 			findObj.position[0] === this.position[0] &&
 			findObj.position[1] === this.position[1] &&
 			findObj.name === name);
 
-		// Delete object from world
-		obj.delete();
+		// Remove object from world
+		obj.remove();
 		
 		// Add object to grabbed array
 		this.grabbed.push(obj);
@@ -168,31 +144,18 @@ export default {
 		let obj = this.grabbed[index];
 		obj.position = this.position;
 
-		// Delete from `grabbed` array
+		// Remove from `grabbed` array
 		this.grabbed.splice(index, 1);
 
-		// Add to world objects array
-		this.engine.objects.push(obj);
-
-		// Call drop callback
-		if (this.engine && typeof this.engine.objectDropped === 'function')
-			this.engine.objectDropped(obj);
+		// Add object back to world
+		this.world.addObject(obj);
 	},
 
 
 	/*
-	 * Delete object from world.
+	 * Remove object from world.
 	 */
-	delete() {
-		// Find index of item
-		let index = this.engine.objects.findIndex((findObj) =>
-			findObj.id === this.id);
-
-		// Delete from engine's objects
-		this.engine.objects.splice(index, 1);
-
-		// Call delete callback
-		if (this.engine && typeof this.engine.objectDeleted === 'function')
-			this.engine.objectDeleted(this);
+	remove() {
+		this.world.removeObject(this);
 	}
 };
