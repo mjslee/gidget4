@@ -17,7 +17,6 @@ export default {
     onObjectRemoved(obj) { console.log(obj, "An object was removed!") },
 
 
-
     /**
      * Determine if position is valid based on world's size.
      * @param {function} conditions
@@ -94,8 +93,8 @@ export default {
 
         // Merge the types overrides (like attributes in Gidget.js)
         // and merge kwargs into the new object
-		Object.assign(obj, GidgetObjects[kwargs.type]);
-		Object.assign(obj, kwargs);
+        Object.assign(obj, GidgetObjects[kwargs.type]);
+        Object.assign(obj, kwargs);
 
         // Create the object and add it to the world
         obj.create(++this.nextID);
@@ -113,8 +112,8 @@ export default {
         this.objects.push(obj);
 
         // Call callback
-		if (typeof this.onObjectAdded === 'function')
-			this.onObjectAdded(this);
+        if (typeof this.onObjectAdded === 'function')
+            this.onObjectAdded(this);
     },
 
 
@@ -129,8 +128,8 @@ export default {
         this.objects.splice(index, 1);
 
         // Call callback
-		if (typeof this.onObjectRemoved === 'function')
-			this.onObjectRemoved(this);
+        if (typeof this.onObjectRemoved === 'function')
+            this.onObjectRemoved(this);
     },
 
 
@@ -145,7 +144,8 @@ export default {
         }
 
         // Call callback
-		if (typeof this.onObjectMoved === 'function')
-			this.onObjectMoved(this);
+        if (typeof this.onObjectMoved === 'function')
+            this.onObjectMoved(this);
     }
-};
+
+}
