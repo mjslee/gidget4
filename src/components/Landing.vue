@@ -10,7 +10,7 @@
                     with basic Laravel Authentication
                 </blockquote>
             </v-flex>
-            <v-flex md12 sm6 offset-sm3 class="text-md-center" mt5>
+            <v-flex xs12 sm6 md3 offset-sm3 class="text-md-center" mt5>
                 <v-btn color="primary" to="/signup">Sign-Up</v-btn>
                 <v-btn to="/signin">Sign In</v-btn>
             </v-flex>
