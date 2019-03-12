@@ -31,10 +31,16 @@ export default {
 	},
 
 
-	/*
-	 * Move object in world.
+	/**
+	 * Move object to position in world.
+	 * @param {number} x
+	 * @param {number} y
 	 */
 	move(x, y) {
+		// Validate new position
+		if (!this.world.isPositionValid(x, y))
+			return false;
+
 		// Get next tile and check for blocking object
 		if (this.world.getBlockingObjectAt(x, y))
 			return false;
