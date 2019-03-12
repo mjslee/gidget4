@@ -2,18 +2,22 @@
   <img
     :src="image"
     :style="{ left: left + 'px', top: top + 'px',
-      height: size + 'rem', width: size + 'rem' }" />
+      height: size + 'rem', width: size + 'rem',
+      'z-index': object.layer || 0 }" />
 </template>
 
 
 <style scoped>
 img {
+  z-index: 2;
   position: absolute;
   cursor: pointer;
   transition: all 200ms;
 }
 
 .active {
+  z-index: 1000 !important;
+  pointer-events: none;
   box-shadow: 0 0 3rem 1rem gold inset, 0 0 2rem goldenrod;
 }
 </style>
