@@ -1,24 +1,53 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <!-- <GidgetWorld --> 
+    <!--   :size="world.size" -->
+    <!--   :tiles="world.tiles" -->
+    <!--   :objects="world.objects" /> -->
+    <GidgetEditor 
+      :size="world.size"
+      :tiles="world.tiles"
+      :objects="world.objects" />
   </div>
 </template>
 
+
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import GidgetWorld from './components/Game/GidgetWorld.vue'
+import GidgetEditor from './components/Game/GidgetEditor.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    GidgetWorld,
+    GidgetEditor
+  },
+
+  data() {
+    return {
+      world: {
+        size: 4,
+        tiles: [
+          { type: 'dirt', position: [1, 0] },
+        ],
+        objects: [
+          { type: 'Gidget', position: [1, 1] },
+          { type: 'Puppy', position: [2, 3] },
+
+          //{ type: 'Wall', position: [1, 0] },
+        ]
+      }
+    }
   }
 }
 </script>
 
+
 <style>
 #app {
+  display:inline-block;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  margin: 0 auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

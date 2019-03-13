@@ -4,9 +4,9 @@
       <GidgetTile v-for="x in size" :key="'x-' + x" ref="tiles"
         :size="tileSize" :x="x-1" :y="y-1" :class="getTileType(x-1, y-1)" />
     </div>
-    <GidgetObject @click.native="activeID = obj.id"
+    <GidgetObject @click.native="activeObjectID = obj.id"
       v-for="obj in worldObjects" :key="'obj-' + obj.id" ref="objects"
-      :class="activeID === obj.id ? 'active' : ''" :src="obj.image"
+      :class="activeObjectID === obj.id ? 'active' : ''" :src="obj.image"
       :object="obj" :tiles="$refs['tiles']" :size="tileSize" />
   </main>
 </template>
@@ -51,7 +51,7 @@ export default {
     return {
       tileSize: 5,
       worldObjects: [],
-      activeID: undefined
+      activeObjectID: undefined
     }
   },
 
@@ -78,6 +78,10 @@ export default {
      */
     size(newValue, oldValue) {
       this.world.size = newValue;
+    },
+
+    activeObjectID(newValue, oldValue) {
+      this.$emit("update:activeObjectID", newValue);
     }
   },
 
