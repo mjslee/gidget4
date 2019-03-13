@@ -96,6 +96,15 @@ export default {
 
       return true;
     },
+  },
+
+  watch: { 
+    size: function(newVal, oldVal) {
+      setTimeout(() => {
+        this.left = this.getTileOffsetX(this.object.position[0]);
+        this.top = this.getTileOffsetY(this.object.position[1]);
+      }, 5);
+    }
   }
 }
 </script>
