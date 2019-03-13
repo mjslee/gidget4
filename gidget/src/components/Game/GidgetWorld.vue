@@ -2,7 +2,7 @@
   <main id="world" ref="world">
     <div v-for="y in size" :key="'y-' +y" class="game-row">
       <GidgetTile v-for="x in size" :key="'x-' + x" ref="tiles"
-        :size="tileSize" :x="x-1" :y="y-1" />
+        :size="tileSize" :x="x-1" :y="y-1" :class="getTileType(x-1, y-1)" />
     </div>
     <GidgetObject @click.native="activeID = obj.id"
       v-for="obj in worldObjects" :key="'obj-' + obj.id" ref="objects"
@@ -16,10 +16,13 @@
 #world {
   position: relative;
   display: inline-block;
+  overflow: visible;
 }
 
 .game-row {
-  line-height: 0
+  line-height: 0;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>
 
@@ -32,11 +35,18 @@ import GidgetObject from './GidgetObject'
 
 
 export default {
+  components: {
+    GidgetTile,
+    GidgetObject
+  },
+
+
   props: {
     size: Number,
     tiles: Array[Object],
     objects: Array[Object],
   },
+
 
   data() {
     return {
@@ -44,11 +54,6 @@ export default {
       worldObjects: [],
       activeID: undefined
     }
-  },
-
-  components: {
-    GidgetTile,
-    GidgetObject
   },
 
 
@@ -62,31 +67,31 @@ export default {
 
 
   mounted() {
-    this.setTiles();
     this.createObjects();
   },
 
 
   methods: {
-    /*
-     * Loop through pre-defined tiles and set tile types.
+    /**
+     * Get tile type at position.
+     * @param {number} x
+     * @param {number} y
      */
-    setTiles() {
-      for (var i = 0, len = this.tiles.length; i < len; i++) {
-        // Find tile at X and Y coords
-        let tile = this.$refs['tiles'].find(tile => {
-          return tile.x === this.tiles[i].position[0] &&
-            tile.y === this.tiles[i].position[1]
-        });
+    getTileType(x, y) {
+      const tile = this.tiles.find((tile) =>
+        x === tile.position[0] && y === tile.position[1]
+      );
 
-        // Set tile type
-        if (tile !== undefined)
-          tile.type = this.tiles[i].type
-      }
+      if (tile)
+        return tile.type;
+
+      // Default to grass
+      return "grass";
     },
 
-    /*
-     * Loop through pre-defined objects and create them.
+
+    /**
+     * Create objects in world.
      */
     createObjects() {
       for (var i = 0, len = this.objects.length; i < len; i++) {
