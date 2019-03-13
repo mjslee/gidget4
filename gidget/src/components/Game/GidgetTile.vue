@@ -1,14 +1,14 @@
 <template>
-  <div :style="{ height: size + 'rem', width: size + 'rem' }" :class="type"></div>
+  <div :style="{ height: size + 'rem', width: size + 'rem' }"></div>
 </template>
 
 
 <style scoped>
 div {
-  margin: 0.1rem;
-  border-radius: 0.25rem;
   display: inline-block;
+  margin: 0.1rem;
   background-size: contain;
+  border-radius: 0.25rem;
 }
 
 .grass { background-image: url("/sprites/grass.png") }
@@ -23,11 +23,5 @@ export default {
     x: Number,
     y: Number
   },
-
-  data() {
-    return {
-      type: "grass"
-    }
-  }
 }
 </script>
