@@ -27,7 +27,6 @@
 </style>
 
 
-
 <script>
 import GidgetWorld from '../../assets/game/gidget-world'
 import GidgetTile from './GidgetTile'
@@ -68,6 +67,18 @@ export default {
 
   mounted() {
     this.createObjects();
+  },
+
+
+  watch: {
+    /**
+     * Watch 'size' prop to resize the world size
+     * @param {number} newValue
+     * @param {number} oldValue
+     */
+    size(newValue, oldValue) {
+      this.world.size = newValue;
+    }
   },
 
 
