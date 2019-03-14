@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <input type="range" min="4" max="10" ref="t" @change="changeFoo">
+      <input type="range" min=4 max=10 :value="world.size" @change="changeWorldSize">
     </div>
     <GidgetWorld 
       ref="world"
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import GidgetWorld from './GidgetWorld.vue'
+import GidgetWorld from './World.vue'
 
 export default {
   components: {
@@ -38,8 +38,8 @@ export default {
   },
 
   methods: {
-    changeFoo() {
-      this.world.size = parseInt(this.$refs['t'].value);
+    changeWorldSize(event) {
+      this.world.size = parseInt(event.target.value);
     }
   }
 }

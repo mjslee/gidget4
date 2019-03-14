@@ -29,8 +29,8 @@
 
 <script>
 import GidgetWorld from '../../assets/game/gidget-world'
-import GidgetTile from './GidgetTile'
-import GidgetObject from './GidgetObject'
+import GidgetTile from './Tile'
+import GidgetObject from './Object'
 
 
 export default {
