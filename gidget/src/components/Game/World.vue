@@ -1,13 +1,23 @@
 <template>
   <main id="world" ref="world">
-    <div v-for="y in size" :key="'y-' +y" class="game-row">
-      <GidgetTile v-for="x in size" :key="'x-' + x" ref="tiles"
-        :size="tileSize" :x="x-1" :y="y-1" :class="getTileType(x-1, y-1)" />
+    <div class="game-row" v-for="y in size" :key="'y-' +y">
+      <GidgetTile
+        ref="tiles"
+        v-for="x in size" :key="'x-' + x"
+        :class="getTileType(x-1, y-1)"
+        :size="tileSize"
+        :x="x-1"
+        :y="y-1" />
     </div>
-    <GidgetObject @click.native="activeObjectID = obj.id"
-      v-for="obj in worldObjects" :key="'obj-' + obj.id" ref="objects"
-      :class="activeObjectID === obj.id ? 'active' : ''" :src="obj.image"
-      :object="obj" :tiles="$refs['tiles']" :size="tileSize" />
+    <GidgetObject
+      ref="objects"
+      v-for="obj in worldObjects" :key="'obj-' + obj.id"
+      @click.native="activeObject = obj"
+      :src="obj.image"
+      :class="activeObject.id === obj.id ? 'active' : ''"
+      :object="obj"
+      :tiles="$refs['tiles']"
+      :size="tileSize" />
   </main>
 </template>
 
@@ -51,7 +61,7 @@ export default {
     return {
       tileSize: 5,
       worldObjects: [],
-      activeObjectID: undefined
+      activeObject: {}
     }
   },
 
@@ -80,8 +90,8 @@ export default {
       this.world.size = newValue;
     },
 
-    activeObjectID(newValue, oldValue) {
-      this.$emit("update:activeObjectID", newValue);
+    activeObject(newValue, oldValue) {
+      this.$emit("update:activeObject", newValue);
     }
   },
 
