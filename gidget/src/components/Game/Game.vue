@@ -7,6 +7,7 @@
       :objects="world.objects"
       @update:selectedObject="updateSelectedObject" />
 
+    <br/>
     <GidgetInspector
       :object="playerObject" />
 

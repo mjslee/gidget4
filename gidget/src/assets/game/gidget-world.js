@@ -8,6 +8,7 @@ export default {
   size: 4,
 
   // Object Data
+  player: undefined,
   objects: [],
   nextID: -1,
 
@@ -101,6 +102,15 @@ export default {
     this.addObject(obj);
 
     return obj;
+  },
+
+
+  /**
+   *
+   */
+  createPlayer(kwargs) {
+    console.log("Net");
+    this.player = this.createObject(kwargs);
   },
 
 
