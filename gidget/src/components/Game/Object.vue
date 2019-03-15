@@ -1,6 +1,6 @@
 <template>
   <img
-    :src="image"
+    :src="object.image"
     :style="{
         left: left + 'px',
         top: top + 'px',
@@ -29,85 +29,66 @@ img {
 
 <script>
 export default {
-  props: ["object", "tiles", "objects", "size", "className"],
+  props: ["object", "tiles", "size"],
+
 
   data() {
     return {
-      left: 0,
-      top: 0,
-      image: this.object.image
+      left: 0, top: 0
     }
   },
 
 
   created() {
-    // Create proxy for object's position to update element's position when
-    // the position in the world changes
-    this.object.position = new Proxy(
-      this.object.position, { set: this.setPositionCallback }
-    );
-
-    // Set initial object position
-    this.left = this.getTileOffsetX(this.object.position[0]);
-    this.top = this.getTileOffsetY(this.object.position[1]);
-  },
-
-
-  mounted() {
+    this.setPosition(this.object.position.x, this.object.position.y);
     this.object.vueComponent = this;
   },
 
 
   methods: {
-    /*
+    /**
      * Find Tile object
+     * @param {function} callback
      */
     getTile(callback) {
-      let tile = this.tiles.find(callback);
-      if (typeof tile !== undefined && typeof tile.$el !== undefined)
-        return tile;
-      return undefined;
+      const tile = this.tiles.find(callback);
+      return typeof tile !== undefined && typeof tile.$el !== undefined ?
+        tile : undefined;
     },
 
-    /*
-     * Get X/Left offset of a Tile's DOM element.
+    /**
+     * Get visual offset of a Tile's DOM element.
+     * @param {number} x
+     * @param {number} y
      */
-    getTileOffsetX(x) {
-      let tile = this.getTile(obj => obj.x == x);
-      return tile ? tile.$el.offsetLeft : -1;
+    getTileOffset(x, y) {
+      const tile = this.getTile(obj => obj.x === x && obj.y === y);
+      return tile ?
+        { x: tile.$el.offsetLeft, y: tile.$el.offsetTop } : undefined;
     },
 
-    /*
-     * Get Y/Top offset of a Tile's DOM element.
-     */
-    getTileOffsetY(y) {
-      let tile = this.getTile(obj => obj.y == y);
-      return tile ? tile.$el.offsetTop : -1;
-    },
-
-    /*
+    /**
      * Set GidgetObject's visual position inside page.
+     * @param {number} x
+     * @param {number} y
      */
-    setPositionCallback(obj, prop, value) {
-      obj[prop] = value;
+    setPosition(x, y) {
+      const offset = this.getTileOffset(x, y);
+      if (offset === undefined)
+        return false;
 
-      // Since position[0] and position[1] are X and Y respectively...
-      // `prop` will either be 0 for X or 1 for Y
-      switch(parseInt(prop)) {
-        case 0: this.left = this.getTileOffsetX(value); break;  // X
-        case 1: this.top = this.getTileOffsetY(value); break;   // Y
-      }
-
-      return true;
-    },
+      this.left = offset.x;
+      this.top = offset.y;
+    }
   },
 
+
   watch: { 
-    size: function(newVal, oldVal) {
-      setTimeout(() => {
-        this.left = this.getTileOffsetX(this.object.position[0]);
-        this.top = this.getTileOffsetY(this.object.position[1]);
-      }, 5);
+    "object.position": {
+      handler(newVal, oldVal) {
+        this.setPosition(newVal.x, newVal.y)
+      },
+      deep: true
     }
   }
 }

@@ -105,7 +105,7 @@ export default {
      */
     getTileType(x, y) {
       const tile = this.tiles.find((tile) =>
-        x === tile.position[0] && y === tile.position[1]
+        x === tile.position.x && y === tile.position.y
       );
 
       if (tile)

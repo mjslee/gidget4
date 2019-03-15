@@ -14,7 +14,7 @@ export default {
   // World Data
   energy: 100,
   grabbed: [],
-  position: [0, 0],
+  position: { x: 0, y: 0 },
   layer: 0,
 
 
@@ -46,8 +46,8 @@ export default {
       return false;
 
     // Individually set these so references won't be destroyed
-    this.position[0] = x;
-    this.position[1] = y;
+    this.position.x = x;
+    this.position.y = y;
 
     // Detect object collisions
     this.world.detectCollision(this);
@@ -66,8 +66,8 @@ export default {
    */
   path(x, y) {
     // Virtual positions
-    let nextX = this.position[0];
-    let nextY = this.position[1];
+    let nextX = this.position.x;
+    let nextY = this.position.y;
 
     // Get differences of current position and desired position
     let diffX = x - nextX;
@@ -135,8 +135,8 @@ export default {
   grab(name) {
     let obj = this.world.objects.find((obj) => 
       obj.name === name &&
-      obj.position[0] === this.position[0] &&
-      obj.position[1] === this.position[1]);
+      obj.position.x === this.position.x &&
+      obj.position.y === this.position.y);
 
     // Remove object from world
     obj.remove();
