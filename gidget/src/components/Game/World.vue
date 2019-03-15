@@ -3,6 +3,7 @@
     <div class="game-row" v-for="y in size" :key="'y-' +y">
       <GidgetTile
         ref="tiles"
+        @click.native="selectedObject = undefined"
         v-for="x in size" :key="'x-' + x"
         :class="getTileType(x-1, y-1)"
         :size="tileSize"
@@ -12,9 +13,9 @@
     <GidgetObject
       ref="objects"
       v-for="obj in worldObjects" :key="'obj-' + obj.id"
-      @click.native="activeObject = obj"
+      @click.native="selectedObject = obj"
       :src="obj.image"
-      :class="activeObject.id === obj.id ? 'active' : ''"
+      :class="selectedObject && selectedObject.id === obj.id ? 'selected' : ''"
       :object="obj"
       :tiles="$refs['tiles']"
       :size="tileSize" />
@@ -61,7 +62,7 @@ export default {
     return {
       tileSize: 5,
       worldObjects: [],
-      activeObject: {}
+      selectedObject: undefined
     }
   },
 
@@ -90,8 +91,8 @@ export default {
       this.world.size = newValue;
     },
 
-    activeObject(newValue, oldValue) {
-      this.$emit("update:activeObject", newValue);
+    selectedObject(newValue, oldValue) {
+      this.$emit("update:selectedObject", newValue);
     }
   },
 
@@ -120,7 +121,10 @@ export default {
      */
     createObjects() {
       for (var i = 0, len = this.objects.length; i < len; i++) {
-        this.world.createObject(this.objects[i]);
+        if (this.objects[i].isPlayer)
+          this.world.createPlayer(this.objects[i]);
+        else
+          this.world.createObject(this.objects[i]);
       }
     },
   },

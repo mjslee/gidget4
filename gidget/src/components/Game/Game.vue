@@ -1,19 +1,17 @@
 <template>
   <div id="app">
     <GidgetWorld 
+      ref="world"
       :size="world.size"
       :tiles="world.tiles"
       :objects="world.objects"
-      @update:activeObject="updateActiveObject"
-      />
+      @update:selectedObject="updateSelectedObject" />
 
     <GidgetInspector
-      :object="playerObject"
-      />
+      :object="playerObject" />
 
     <GidgetInspector
-      :object="activeObject"
-      />
+      :object="selectedObject" />
   </div>
 </template>
 
@@ -29,26 +27,38 @@ export default {
     GidgetInspector
   },
 
+
   props: {
     size: Number,
     tiles: Array[Object],
     objects: Array[Object],
   },
 
+
   methods: {
-    updateActiveObject(payload) {
-      this.activeObject = payload;
+    updatePlayerObject(payload) {
+      this.playerObject = payload;
+    },
+
+    updateSelectedObject(payload) {
+      this.selectedObject = payload;
     }
   },
 
+
+  mounted() {
+    this.playerObject = this.$refs['world'].world.player;
+  },
+
+
   data() {
     return {
-      playerObject: { name: "Player" },
-      activeObject: { name: "Active" },
+      playerObject: undefined,
+      selectedObject: undefined,
       world: {
         size: this.size,
         tiles: this.tiles,
-        objects: this.objects,
+        objects: this.objects
       }
     }
   }
