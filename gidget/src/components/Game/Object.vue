@@ -1,9 +1,13 @@
 <template>
   <img
     :src="image"
-    :style="{ left: left + 'px', top: top + 'px',
-      height: size + 'rem', width: size + 'rem',
-      'z-index': object.layer || 0 }" />
+    :style="{
+        left: left + 'px',
+        top: top + 'px',
+        height: size + 'rem',
+        width: size + 'rem',
+        'z-index': object.layer || 0
+      }" />
 </template>
 
 
@@ -15,7 +19,7 @@ img {
   transition: all 200ms;
 }
 
-.active {
+.selected {
   z-index: 1000 !important;
   pointer-events: none;
   box-shadow: 0 0 3rem 1rem gold inset, 0 0 2rem goldenrod;
