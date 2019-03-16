@@ -16,13 +16,6 @@ const routerOptions = [
     { path: '*', redirect: '/'}
 ]
 
-const routes = routerOptions.map(route => {
-    return {
-        ...route,
-        component: () => import(`@/components/${route.component}.vue`)
-    }
-})
-
 new Vue ({
     el: '#app',
     router: routerOptions,
