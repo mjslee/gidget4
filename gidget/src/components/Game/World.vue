@@ -140,11 +140,8 @@ export default {
         x === tile.position.x && y === tile.position.y
       );
 
-      if (tile)
-        return tile.type;
-
-      // Default to grass
-      return "grass";
+      // Return tile type or default to grass
+      return tile ? tile.type : "grass";
     },
 
 
