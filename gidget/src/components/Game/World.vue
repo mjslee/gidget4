@@ -10,6 +10,12 @@
       :tiles="$refs['tiles']"
       :size="tileSize" />
 
+    <div class="game-row x-axis">
+      <label
+        v-for="i in size" :key="'i-'+i"
+        :style="axisLabelWidth" v-text="i-1" />
+    </div>
+
     <div class="game-row" v-for="y in size" :key="'y-' +y">
       <label v-text="y-1"></label>
       <GidgetTile
@@ -36,6 +42,10 @@
 .game-row {
   display: flex;
   align-items: center;
+}
+
+.x-axis {
+  margin-left: 1rem;
 }
 
 label {
@@ -70,6 +80,7 @@ export default {
   data() {
     return {
       tileSize: 5,
+      tileMargin: .1,
       worldObjects: [],
       selectedObject: undefined
     }
@@ -102,6 +113,18 @@ export default {
 
     selectedObject(newValue, oldValue) {
       this.$emit("update:selectedObject", newValue);
+    }
+  },
+
+
+  computed: {
+    /**
+     * Calculate X axis label width.
+     */
+    axisLabelWidth() {
+      return {
+        width: this.tileSize + (this.tileMargin * 2) + 'rem'
+      }
     }
   },
 
