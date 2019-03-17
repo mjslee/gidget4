@@ -1,24 +1,28 @@
 <template>
   <main id="world" ref="world">
-    <div class="game-row" v-for="y in size" :key="'y-' +y">
-      <GidgetTile
-        ref="tiles"
-        @click.native="selectedObject = undefined"
-        v-for="x in size" :key="'x-' + x"
-        :class="getTileType(x-1, y-1)"
-        :size="tileSize"
-        :x="x-1"
-        :y="y-1" />
-    </div>
+
     <GidgetObject
       ref="objects"
       v-for="obj in worldObjects" :key="'obj-' + obj.id"
       @click.native="selectedObject = obj"
-      :src="obj.image"
       :class="selectedObject && selectedObject.id === obj.id ? 'selected' : ''"
       :object="obj"
       :tiles="$refs['tiles']"
       :size="tileSize" />
+
+    <div class="game-row" v-for="y in size" :key="'y-' +y">
+      <label v-text="y-1"></label>
+      <GidgetTile
+        ref="tiles"
+        v-for="x in size" :key="'x-' + x"
+        @click.native="selectedObject = undefined"
+        :class="getTileType(x-1, y-1)"
+        :style="{ margin: tileMargin + 'rem' }"
+        :size="tileSize"
+        :x="x-1"
+        :y="y-1" />
+    </div>
+
   </main>
 </template>
 
@@ -26,14 +30,19 @@
 <style scoped>
 #world {
   position: relative;
-  display: inline-block;
   overflow: visible;
 }
 
 .game-row {
-  line-height: 0;
-  overflow: hidden;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+label {
+  text-align: center;
+  font-size: 0.8rem;
+  width: 1rem;
+  color: #666;
 }
 </style>
 
