@@ -6,7 +6,6 @@
 <style scoped>
 div {
   display: inline-block;
-  margin: 0.1rem;
   background-size: contain;
   border-radius: 0.25rem;
 }

@@ -2,6 +2,7 @@ import GidgetObject from './gidget-object'
 import GidgetObjects from './objects/_import'
 
 
+
 export default {
 
   // World Data
@@ -23,7 +24,7 @@ export default {
    * @param {function} conditions
    */
   isPositionValid(x, y) {
-    return x > 0 && x < this.size && y > 0 && y < this.size
+    return x >= 0 && x < this.size && y >= 0 && y < this.size
   },
 
 
@@ -106,10 +107,10 @@ export default {
 
 
   /**
-   *
+   * Create player object in world.
+   * @param {object} kwargs Attributes to assign to object on creation.
    */
   createPlayer(kwargs) {
-    console.log("Net");
     this.player = this.createObject(kwargs);
   },
 
