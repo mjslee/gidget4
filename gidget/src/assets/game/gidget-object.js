@@ -105,7 +105,7 @@ export default {
    * @param {number} x
    * @param {number} y
    */
-  walk(x, y, intervalMilliseconds) {
+  walk(x, y, intervalMilliseconds=150) {
     const path = this.path(x, y);
 
     // Nowhere to move!
