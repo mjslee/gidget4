@@ -143,14 +143,15 @@ export default {
 
     // Add object to grabbed array
     this.grabbed.push(obj);
+    obj.grabber = this;
   },
 
 
   /**
    * Drop object from this object's grabbed array.
-   * @param {name} Object name to drop.
+   * @param {string/Object} Object name to drop.
    */
-  drop(name) {
+  drop(name_or_obj) {
     // Find index of item
     let index = this.grabbed.findIndex((obj) => obj.name === name);
 
@@ -163,6 +164,14 @@ export default {
 
     // Add object back to world
     this.world.addObject(obj);
+  },
+
+
+  /*
+   * Drop 
+   */
+  dropSelf() {
+
   },
 
 
