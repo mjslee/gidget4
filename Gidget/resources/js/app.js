@@ -1,23 +1,86 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
 import App from './App.vue';
 import Home from './components/Home.vue';
-import Landing from './components/Landing.vue';
+import Dashboard from './components/Dashboard.vue';
 import Signin from './components/Signin.vue';
 import Signup from './components/Signup.vue';
 
 Vue.use(VueRouter);
 
-const routerOptions = [
-    { path: '/', component: 'Landing'},
-    { path: '/signin', component: 'Signin'},
-    { path: '/signup', component: 'Signup'},
-    { path: '/home', component: 'Home'},
-    { path: '*', redirect: '/'}
-]
+Vue.use(VueAxios, axios);
 
-new Vue ({
-    el: '#app',
-    router: routerOptions,
-    render: app => app(App)
+axios.defaults.baseURL = 'http://localhost:8000/api';
+
+const router = new VueRouter({
+
+    routes: [{
+
+        path: '/',
+
+        name: 'home',
+
+        component: Home
+
+    },{
+
+        path: '/signup',
+
+        name: 'signup',
+
+        component: Signup,
+
+        meta: {
+
+            auth: false
+        }
+
+    },{
+
+        path: '/signin',
+
+        name: 'signin',
+
+        component: Signin,
+
+        meta: {
+
+            auth: false
+
+        }
+
+    },{
+
+        path: '/dashboard',
+
+        name: 'dashboard',
+
+        component: Dashboard,
+
+        meta: {
+
+            auth: true
+
+        }
+
+    }]
+
 });
+
+Vue.router = router
+
+Vue.use(require('@websanova/vue-auth'), {
+
+    auth: require('@websanova/vue-auth/drivers/auth-bearer.js'),
+
+    http: require('@websanova/vue-auth/drivers/http/axios.1.x.js''),
+
+    router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
+
+});
+
+App.router = Vue.router
+
+new Vue(App).$mount('#app');

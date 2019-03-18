@@ -48,6 +48,7 @@
   export default {
     data () {
       return {
+        appTitle: 'Gidget',
         sidebar: false,
         menuItems: [
           { title: 'Home', path: '/home', icon: 'home' },
@@ -56,10 +57,6 @@
         ]
       }
     },
-    computed: {
-      appTitle () {
-        return this.$store.state.appTitle
-      }
-    }
+    computed: {}
   }
 </script>
