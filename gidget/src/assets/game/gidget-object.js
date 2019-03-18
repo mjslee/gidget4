@@ -41,11 +41,7 @@ export default {
     if (!this.world.isPositionValid(x, y))
       return false;
 
-    // Get next tile and check for blocking object
-    if (this.world.getBlockingObjectAt(x, y))
-      return false;
-
-    // Individually set these so references won't be destroyed
+    // Individually set these as to not use references
     this.position.x = x;
     this.position.y = y;
 
@@ -130,48 +126,52 @@ export default {
 
   /**
    * Grab object into this object's grabbed array.
-   * @param {name} Object name to grab.
+   * @param {number/string} ID or name of object to grab.
    */
-  grab(name) {
-    let obj = this.world.objects.find((obj) => 
-      obj.name === name &&
+  grab(id_or_name) {
+    // Get object
+    const field = typeof id_or_name === 'number' ? 'id' : 'name'
+    const obj = this.world.getObject(obj => 
+      obj[field] === id_or_name &&
       obj.position.x === this.position.x &&
-      obj.position.y === this.position.y);
+      obj.position.y === this.position.y)
+
+    // Make sure object exists
+    if (obj === undefined)
+      return false;
 
     // Remove object from world
     obj.remove();
 
     // Add object to grabbed array
     this.grabbed.push(obj);
-    obj.grabber = this;
   },
 
 
   /**
    * Drop object from this object's grabbed array.
-   * @param {string/Object} Object name to drop.
+   * @param {number/string} ID or name of object to drop.
    */
-  drop(name_or_obj) {
-    // Find index of item
-    let index = this.grabbed.findIndex((obj) => obj.name === name);
+  drop(id_or_name) {
+    // Find index of object
+    const field = typeof id_or_name === 'number' ? 'id' : 'name'
+    const index = this.grabbed.findIndex(obj => obj[field] === id_or_name)
+
+    // Make sure object exists
+    if (index < 0)
+      return false;
 
     // Save object before deleting it
-    let obj = this.grabbed[index];
-    obj.position = this.position;
+    const obj = this.grabbed[index];
+    obj.position.x = this.position.x;
+    obj.position.y = this.position.y;
 
     // Remove from `grabbed` array
     this.grabbed.splice(index, 1);
 
     // Add object back to world
     this.world.addObject(obj);
-  },
-
-
-  /*
-   * Drop 
-   */
-  dropSelf() {
-
+    return true;
   },
 
 
