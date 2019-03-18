@@ -14,17 +14,23 @@ export default {
   nextID: -1,
 
   // Callbacks
-  onObjectAdded(obj) { console.log(obj, "An object was added!") },
-  onObjectMoved(obj) { console.log(obj, "An object was moved!") },
-  onObjectRemoved(obj) { console.log(obj, "An object was removed!") },
+  onObjectAdded(obj) { console.log(obj, 'An object was added!') },
+  onObjectMoved(obj) { console.log(obj, 'An object was moved!') },
+  onObjectRemoved(obj) { console.log(obj, 'An object was removed!') },
 
 
   /**
-   * Determine if position is valid based on world's size.
+   * Determine if position is valid.
+   * + Check that tile position exists.
+   * + Check for blocking objects.
    * @param {function} conditions
    */
   isPositionValid(x, y) {
-    return x >= 0 && x < this.size && y >= 0 && y < this.size
+    return (x >= 0 && x <= this.size && y >= 0 && y <= this.size) &&
+      !this.getObject((obj) => 
+        obj.blocking &&
+        obj.position.x === x &&
+        obj.position.y === y)
   },
 
 
@@ -44,21 +50,8 @@ export default {
    */
   getObjectAt(x, y) {
     return this.getObject((obj) => 
-      obj.position[0] === x &&
-      obj.position[1] === y);
-  },
-
-
-  /**
-   * Find object based on its position and whether its a blocking object.
-   * @param {number} x
-   * @param {number} y
-   */
-  getBlockingObjectAt(x, y) {
-    return this.getObject((obj) => 
-      obj.position[0] === x &&
-      obj.position[1] === y &&
-      obj.blocking);
+      obj.position.x === x &&
+      obj.position.y === y);
   },
 
 
@@ -70,8 +63,8 @@ export default {
   detectCollision(obj) {
     this.objects.filter((obj2) =>
       obj.id !== obj2.id &&
-      obj.position[0] === obj2.position[0] &&
-      obj.position[1] === obj2.position[1]
+      obj.position.x === obj2.position.x &&
+      obj.position.y === obj2.position.y
     ).forEach((obj2) => {
       // 
       if (typeof obj.onCollision === 'function')
@@ -141,6 +134,8 @@ export default {
     // Call callback
     if (typeof this.onObjectRemoved === 'function')
       this.onObjectRemoved(this);
+
+    delete this;
   },
 
 
