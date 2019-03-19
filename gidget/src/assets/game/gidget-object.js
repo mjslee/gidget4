@@ -136,6 +136,7 @@ export default {
     // Get object
     const field = typeof id_or_name === 'number' ? 'id' : 'name';
     const obj = this.world.getObject(obj => 
+      obj.grabbable !== false &&
       obj[field] === id_or_name &&
       obj.position.x === this.position.x &&
       obj.position.y === this.position.y);
