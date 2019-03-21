@@ -68,8 +68,9 @@ export default {
    * Promise: Walk object to a position.
    * @param {number} x
    * @param {number} y
+   * @param {number} seconds Amount of seconds the walk should last for.
    */
-  walk(x, y, intervalMilliseconds=150) {
+  walk(x, y, milliseconds=2000) {
     return new Promise((resolve, reject) => {
       // Get path from current position to specified position
       const path = this.world.getPath(this.position.x, this.position.y, x, y);
@@ -86,6 +87,9 @@ export default {
       if (path.length === 1)
         return resolve(0);
 
+      // Calculate duration of each step
+      const stepMilliseconds = milliseconds / (path.length - 1);
+
       // Move one tile every given milliseconds
       let i = 1, interval = setInterval(() => {
         if (!this.move(...path[i])) {
@@ -99,7 +103,7 @@ export default {
           clearInterval(interval);
           return resolve(0);
         }
-      }, intervalMilliseconds);
+      }, stepMilliseconds);
     });
   },
 
