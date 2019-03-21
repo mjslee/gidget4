@@ -76,8 +76,10 @@ export default {
     obj.world = this;
 
     // Merge the types overrides (like attributes in Gidget.js)
-    // and merge kwargs into the new object
-    Object.assign(obj, GidgetObjects[kwargs.type]);
+    if (typeof kwargs === 'object' && kwargs['type'])
+      Object.assign(obj, GidgetObjects[kwargs.type]);
+
+    // Merge kwargs into the new object
     Object.assign(obj, kwargs);
 
     // Create the object and add it to the world
