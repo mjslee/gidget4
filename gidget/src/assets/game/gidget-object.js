@@ -9,14 +9,16 @@ export default {
   name: undefined,
   image: undefined,
 
-  blocking: false,
-
   // World Data
   energy: 100,
   grabbed: [],
   position: { x: 0, y: 0 },
   layer: 0,
   scale: 1,
+
+  // Boundaries
+  blocking: false,
+  scaleBoundaries: false,
 
 
   /**

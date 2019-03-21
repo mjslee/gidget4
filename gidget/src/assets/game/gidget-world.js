@@ -28,9 +28,8 @@ export default {
   isPositionValid(x, y) {
     return (x >= 0 && x <= this.size && y >= 0 && y <= this.size) &&
       !this.getObject((obj) => 
-        obj.blocking &&
-        obj.position.x === x &&
-        obj.position.y === y)
+        obj.blocking && this.insideObjectBoundaries(obj, x, y)
+      )
   },
 
 
@@ -52,27 +51,6 @@ export default {
     return this.getObject((obj) => 
       obj.position.x === x &&
       obj.position.y === y);
-  },
-
-
-  /**
-   * Detect an object collision based on position. Run 'onCollision' for each
-   * collided object.
-   * @param {object} obj Object to detect collisions for.
-   */
-  detectCollision(obj) {
-    this.objects.filter((obj2) =>
-      obj.id !== obj2.id &&
-      obj.position.x === obj2.position.x &&
-      obj.position.y === obj2.position.y
-    ).forEach((obj2) => {
-      // 
-      if (typeof obj.onCollision === 'function')
-        obj.onCollision.call(obj, obj2) !== false;
-
-      if (typeof obj2.onCollision === 'function')
-        obj2.onCollision.call(obj2, obj) !== false;
-    });
   },
 
 
@@ -157,6 +135,60 @@ export default {
 
 
   /**
+   * Detect an object collision based on position. Run 'onCollision' for each
+   * collided object.
+   * @param {object} obj Object to detect collisions for.
+   */
+  detectCollision(obj) {
+    this.objects.filter((obj2) =>
+      obj.id !== obj2.id &&
+      this.insideObjectBoundaries(obj, obj2.position.x, obj2.position.y)
+    ).forEach((obj2) => {
+      // 
+      if (typeof obj.onCollision === 'function')
+        obj.onCollision.call(obj, obj2) !== false;
+
+      if (typeof obj2.onCollision === 'function')
+        obj2.onCollision.call(obj2, obj) !== false;
+    });
+  },
+
+
+  /**
+   * Get an object's boundaries.
+   * (There's probably a more efficient way to do this)
+   * @param {object} obj Object to get boundaries for.
+   */
+  getObjectBoundaries(obj) {
+    const fromX = Math.floor(obj.position.x - ((obj.scale / 2) - 1));
+    return {
+      fromX: fromX,
+      fromY: obj.position.y - Math.floor(obj.scale - 1),
+      toX: obj.position.x + (obj.position.x - fromX),
+      toY: obj.position.y
+    }
+  },
+
+
+  /**
+   * Determine if x and y are inside an object's boundaries.
+   */
+  insideObjectBoundaries(obj, x, y) {
+    // Do not scale boundaries up with object's 'scale' property
+    if (!obj.scaleBoundaries)
+      return obj.position.x === x && obj.position.y === y;
+
+    // Scale boundaries up with object scale
+    // Less efficient than above, so use this only with scaleBoundaries
+    const bounds = this.getObjectBoundaries(obj);
+    return (
+      x >= bounds.fromX && x <= bounds.toX &&
+      y >= bounds.fromY && y <= bounds.toY
+    );
+  },
+
+
+  /**
    * Get point path array between two points.
    * @param {number} fromX
    * @param {number} fromY
@@ -191,7 +223,6 @@ export default {
       }
     }
 
-    console.log(result);
     return result;
   }
 
