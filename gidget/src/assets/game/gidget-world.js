@@ -83,6 +83,7 @@ export default {
    */
   createPlayer(kwargs) {
     this.player = this.createObject(kwargs);
+    return this.player;
   },
 
 
@@ -96,6 +97,8 @@ export default {
     // Call callback
     if (typeof this.onObjectAdded === 'function')
       this.onObjectAdded(this);
+
+    return true;
   },
 
 
@@ -124,13 +127,15 @@ export default {
    * @params {object} obj Object that was moved.
    */
   moveObject(obj, x, y) {
-    if (x !== undefined || y !== undefined) {
-      obj.move(x, y);
-    }
+    let result = true;
+    if (x !== undefined || y !== undefined)
+      result = obj.move(x, y);
 
     // Call callback
     if (typeof this.onObjectMoved === 'function')
       this.onObjectMoved(this);
+
+    return result;
   },
 
 
@@ -144,10 +149,11 @@ export default {
       obj.id !== obj2.id &&
       this.insideObjectBoundaries(obj, obj2.position.x, obj2.position.y)
     ).forEach((obj2) => {
-      // 
+      // Collision callback to first object
       if (typeof obj.onCollision === 'function')
         obj.onCollision.call(obj, obj2) !== false;
 
+      // Collision callback to second object
       if (typeof obj2.onCollision === 'function')
         obj2.onCollision.call(obj2, obj) !== false;
     });
