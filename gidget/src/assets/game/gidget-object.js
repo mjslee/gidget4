@@ -61,53 +61,13 @@ export default {
 
 
   /**
-   * Get point path array between two points.
-   * @param {number} x
-   * @param {number} y
-   */
-  path(x, y) {
-    // Virtual positions
-    let nextX = this.position.x;
-    let nextY = this.position.y;
-
-    // Get differences of current position and desired position
-    let diffX = x - nextX;
-    let diffY = y - nextY;
-
-    const result = [];
-
-    // Get differences to zero to be at desired position
-    while (diffX != 0 || diffY != 0) {
-      if (diffX > 0) {
-        diffX--;
-        result.push([++nextX, nextY]);
-      }
-      else if (diffX < 0) {
-        diffX++;
-        result.push([--nextX, nextY]);
-      }
-
-      if (diffY > 0) {
-        diffY--;
-        result.push([nextX, ++nextY]);
-      }
-      else if (diffY < 0) {
-        diffY++;
-        result.push([nextX, --nextY]);
-      }
-    }
-
-    return result;
-  },
-
-
-  /**
    * Walk object to a position.
    * @param {number} x
    * @param {number} y
    */
   walk(x, y, intervalMilliseconds=500) {
-    const path = this.path(x, y);
+    // Get path from current position to specified position
+    const path = this.world.getPath(this.position.x, this.position.y, x, y);
 
     // Nowhere to move!
     if (path.length < 1)

@@ -136,6 +136,7 @@ export default {
       this.onObjectRemoved(this);
 
     delete this;
+    return true;
   },
 
 
@@ -152,6 +153,46 @@ export default {
     // Call callback
     if (typeof this.onObjectMoved === 'function')
       this.onObjectMoved(this);
+  },
+
+
+  /**
+   * Get point path array between two points.
+   * @param {number} fromX
+   * @param {number} fromY
+   * @param {number} toX
+   * @param {number} toY
+   */
+  getPath(fromX, fromY, toX, toY) {
+    // Get differences of current position and desired position
+    let diffX = toX - fromX;
+    let diffY = toY - fromY;
+
+    const result = [];
+
+    // Get differences to zero to be at desired position
+    while (diffX != 0 || diffY != 0) {
+      if (diffX > 0) {
+        diffX--;
+        result.push([++fromX, fromY]);
+      }
+      else if (diffX < 0) {
+        diffX++;
+        result.push([--fromX, fromY]);
+      }
+
+      if (diffY > 0) {
+        diffY--;
+        result.push([fromX, ++fromY]);
+      }
+      else if (diffY < 0) {
+        diffY++;
+        result.push([fromX, --fromY]);
+      }
+    }
+
+    console.log(result);
+    return result;
   }
 
 }
