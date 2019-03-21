@@ -110,3 +110,13 @@ test('does not get an object at x:2,y:0', () => {
 
   expect(obj).toBeUndefined();
 });
+
+
+test('removes an object', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject();
+
+  expect(world.objects.length).toBe(1);
+  world.removeObject(obj.id);
+  expect(world.objects.length).toBe(0);
+});
