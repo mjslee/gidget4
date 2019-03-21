@@ -4,14 +4,19 @@
     :style="{
         left: left + 'px',
         top: top + 'px',
-        height: size + 'rem',
-        width: size + 'rem',
+        height: getSize,
+        width: getSize,
         'z-index': object.layer || 0
       }" />
 </template>
 
 
 <style scoped>
+@keyframes spin {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(360deg); }
+}
+
 img {
   z-index: 2;
   position: absolute;
@@ -24,6 +29,13 @@ img {
   pointer-events: none;
   box-shadow: 0 0 3rem 1rem gold inset, 0 0 2rem goldenrod;
 }
+
+.spinning {
+  transition: all 5s;
+  animation-name: spin;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
 </style>
 
 
@@ -34,14 +46,26 @@ export default {
 
   data() {
     return {
-      left: 0, top: 0
+      left: 0,
+      top: 0,
+      scale: this.object.scale
     }
   },
 
 
   created() {
-    this.setPosition(this.object.position.x, this.object.position.y);
+    this.setPosition(...this.getPosition());
     this.object.vueComponent = this;
+  },
+
+
+  computed: {
+    /**
+     * Calculate size of object.
+     */
+    getSize() {
+      return this.size * this.scale + 'rem';
+    }
   },
 
 
@@ -52,8 +76,9 @@ export default {
      */
     getTile(callback) {
       const tile = this.tiles.find(callback);
-      return typeof tile !== undefined && typeof tile.$el !== undefined ?
-        tile : undefined;
+      if (typeof tile === undefined)
+        return undefined;
+      return typeof tile.$el !== undefined ? tile : undefined;
     },
 
     /**
@@ -63,8 +88,12 @@ export default {
      */
     getTileOffset(x, y) {
       const tile = this.getTile(obj => obj.x === x && obj.y === y);
-      return tile ?
-        { x: tile.$el.offsetLeft, y: tile.$el.offsetTop } : undefined;
+      return tile === undefined ? undefined : { 
+        x: tile.$el.offsetLeft,
+        y: tile.$el.offsetTop,
+        height: tile.$el.offsetHeight,
+        width: tile.$el.offsetWidth
+      };
     },
 
     /**
@@ -77,18 +106,46 @@ export default {
       if (offset === undefined)
         return false;
 
-      this.left = offset.x;
-      this.top = offset.y;
+      this.left = offset.x - (this.scale - 1) * offset.width / 2;
+      this.top = offset.y - (this.scale - 1) * offset.height;
+    },
+
+    /**
+     * Get position in array format.
+     */
+    getPosition() {
+      return [this.object.position.x, this.object.position.y];
     }
   },
 
 
   watch: { 
-    "object.position": {
+    'object.position': {
+      /**
+       * Watch object's position to visually move in world.
+       */
       handler(newVal, oldVal) {
-        this.setPosition(newVal.x, newVal.y)
+        this.setPosition(newVal.x, newVal.y);
       },
       deep: true
+    },
+
+    'object.scale': {
+      /**
+       * Watch object's scale to visually move in world.
+       */
+      handler(newVal, oldVal) {
+        this.scale = newVal;
+      }
+    },
+
+    scale: {
+      /**
+       * Watch object's scale to visually move in world.
+       */
+      handler(newVal, oldVal) {
+        this.setPosition(...this.getPosition());
+      }
     }
   }
 }

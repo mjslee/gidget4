@@ -16,6 +16,7 @@ export default {
   grabbed: [],
   position: { x: 0, y: 0 },
   layer: 0,
+  scale: 1,
 
 
   /**
