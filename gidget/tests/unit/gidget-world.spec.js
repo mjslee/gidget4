@@ -14,3 +14,28 @@ test('creates a world instance with kwargs', () => {
 
   expect(world.size).toBe(10);
 });
+
+test('creates an object', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject();
+
+  expect(obj).toBeDefined();
+});
+
+
+test('creates an object with kwargs', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({ name: 'Custom Name' });
+
+  expect(obj).toBeDefined();
+  expect(obj.name).toBe('Custom Name');
+});
+
+
+test('creates an object with type', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({ name: 'Custom Name' });
+
+  expect(obj).toBeDefined();
+  expect(obj.name).toBe('Custom Name');
+});
