@@ -83,3 +83,30 @@ test('gets an object', () => {
   const obj = world.getObject(obj => obj.name == objName);
   expect(obj.name).toBe(objName);
 });
+
+test('does not get a non-existant object', () => {
+  const world = GidgetWorld.create();
+  const objName = 'Test Object';
+  world.createObject({ name: 'Correct Name' });
+
+  const obj = world.getObject(obj => obj.name == objName);
+  expect(obj).toBeUndefined();
+});
+
+
+test('gets an object at x:1,y:0 and does not at x:2,y:0', () => {
+  const world = GidgetWorld.create();
+  world.createObject({ position: { x: 1, y: 0 } });
+  const obj = world.getObjectAt(1, 0);
+
+  expect(obj).toBeDefined();
+});
+
+
+test('does not get an object at x:2,y:0', () => {
+  const world = GidgetWorld.create();
+  world.createObject({ position: { x: 1, y: 0 } });
+  const obj = world.getObjectAt(2, 0);
+
+  expect(obj).toBeUndefined();
+});
