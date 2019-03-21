@@ -1,3 +1,4 @@
+
 import GidgetWorld from '../../src/assets/game/gidget-world';
 import GidgetObject from '../../src/assets/game/gidget-object';
 
@@ -63,4 +64,22 @@ test('onObjectAdded is fired when object is added', () => {
 
   expect(world.objects.length).toBe(1);
   expect(fired).toBe(true);
+});
+
+
+test('nextID is incremented', () => {
+  const world = GidgetWorld.create();
+  expect(world.nextID).toBe(-1);
+  world.createObject();
+  expect(world.nextID).toBe(0);
+});
+
+
+test('gets an object', () => {
+  const world = GidgetWorld.create();
+  const objName = 'Test Object';
+  world.createObject({ name: objName });
+
+  const obj = world.getObject(obj => obj.name == objName);
+  expect(obj.name).toBe(objName);
 });
