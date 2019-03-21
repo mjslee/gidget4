@@ -165,3 +165,36 @@ test('onObjectMoved is fired after moving an object', () => {
 
   expect(fired).toBe(true);
 });
+
+
+test('position 1,1 is valid', () => {
+  const world = GidgetWorld.create();
+  const isPositionValid = world.isPositionValid(1, 1);
+
+  expect(isPositionValid).toBe(true);
+});
+
+
+test('position 5,1 is not valid because it is out of bounds', () => {
+  const world = GidgetWorld.create();
+  const isPositionValid = world.isPositionValid(5, 1);
+
+  expect(isPositionValid).toBe(false);
+});
+
+
+test('position 1,5 is not valid because it is out of bounds', () => {
+  const world = GidgetWorld.create();
+  const isPositionValid = world.isPositionValid(1, 5);
+
+  expect(isPositionValid).toBe(false);
+});
+
+
+test('position 2,1 is not valid because of a blocking object', () => {
+  const world = GidgetWorld.create();
+  world.createObject({ blocking: true, position: { x: 2, y: 1 } })
+  const isPositionValid = world.isPositionValid(2, 1);
+
+  expect(isPositionValid).toBe(false);
+});
