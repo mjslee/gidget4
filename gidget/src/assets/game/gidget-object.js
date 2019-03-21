@@ -65,31 +65,42 @@ export default {
 
 
   /**
-   * Walk object to a position.
+   * Promise: Walk object to a position.
    * @param {number} x
    * @param {number} y
    */
   walk(x, y, intervalMilliseconds=150) {
-    // Get path from current position to specified position
-    const path = this.world.getPath(this.position.x, this.position.y, x, y);
+    return new Promise((resolve, reject) => {
+      // Get path from current position to specified position
+      const path = this.world.getPath(this.position.x, this.position.y, x, y);
 
-    // Nowhere to move!
-    if (path.length < 1)
-      return false;
+      // Nowhere to move!
+      if (path.length < 1)
+        return reject(1);
 
-    // Move immediately to circumvent setInterval's initial delay
-    if (!this.move(...path[0]))
-      return false;
+      // Move immediately to circumvent setInterval's initial delay
+      if (!this.move(...path[0]))
+        return reject(2);
 
-    // If we only needed to move once, then finish
-    if (path.length === 1)
-      return true;
+      // If we only needed to move once, then finish
+      if (path.length === 1)
+        return resolve(0);
 
-    // Move one tile every given milliseconds
-    let i = 1, interval = setInterval(() => {
-      if (!this.move(...path[i]) || ++i >= path.length)
-        clearInterval(interval);
-    }, intervalMilliseconds);
+      // Move one tile every given milliseconds
+      let i = 1, interval = setInterval(() => {
+        if (!this.move(...path[i])) {
+          // Could not move!
+          clearInterval(interval);
+          return reject(2);
+        }
+
+        if (++i >= path.length) {
+          // Reached destination
+          clearInterval(interval);
+          return resolve(0);
+        }
+      }, intervalMilliseconds);
+    });
   },
 
 
