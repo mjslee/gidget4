@@ -119,8 +119,11 @@ export default {
    * Remove object from world.
    * @params {object} obj Object to remove.
    */
-  removeObject(obj) {
-    let index = this.objects.findIndex((findObj) => findObj.id === obj.id);
+  removeObject(id) {
+    // Find objects index by its ID
+    let index = this.objects.findIndex((obj) => obj.id === id);
+    if (index < 0)
+      return false;
 
     // Remove from world's objects
     this.objects.splice(index, 1);
