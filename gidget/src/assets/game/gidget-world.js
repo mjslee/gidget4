@@ -20,6 +20,17 @@ export default {
 
 
   /**
+   * Clone a new GidgetWorld instance
+   * @param {dictionary} kwargs Default properties.
+   */
+  create(kwargs) {
+    const obj = Object.assign({}, this);
+    Object.assign(obj, kwargs);
+    return obj;
+  },
+
+
+  /**
    * Determine if position is valid.
    * + Check that tile position exists.
    * + Check for blocking objects.
