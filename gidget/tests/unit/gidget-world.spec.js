@@ -16,6 +16,7 @@ test('creates a world instance with kwargs', () => {
   expect(world.size).toBe(10);
 });
 
+
 test('creates an object', () => {
   const world = GidgetWorld.create();
   const obj = world.createObject();
@@ -117,7 +118,7 @@ test('removes an object', () => {
   const obj = world.createObject();
 
   expect(world.objects.length).toBe(1);
-  world.removeObject(obj.id);
+  expect(world.removeObject(obj.id)).toBe(true);
   expect(world.objects.length).toBe(0);
 });
 
@@ -139,5 +140,28 @@ test('onObjectRemoved is fired on object removal', () => {
   const obj = world.createObject();
 
   expect(world.removeObject(obj.id)).toBe(true);
+  expect(fired).toBe(true);
+});
+
+
+test('moves an object', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject();
+
+  expect(obj.position.x).toBe(0);
+  expect(obj.position.y).toBe(0);
+  world.moveObject(obj, 1, 2)
+  expect(obj.position.x).toBe(1);
+  expect(obj.position.y).toBe(2);
+});
+
+
+test('onObjectMoved is fired after moving an object', () => {
+  const world = GidgetWorld.create();
+  let fired = false;
+  world.onObjectMoved = () => fired = true;
+  const obj = world.createObject();
+  world.moveObject(obj, 1, 2)
+
   expect(fired).toBe(true);
 });
