@@ -35,6 +35,8 @@ export default {
     // Run onCreate callback
     if (typeof this.onCreate === 'function')
       this.onCreate();
+
+    return this;
   },
 
 
@@ -67,7 +69,7 @@ export default {
    * @param {number} x
    * @param {number} y
    */
-  walk(x, y, intervalMilliseconds=500) {
+  walk(x, y, intervalMilliseconds=150) {
     // Get path from current position to specified position
     const path = this.world.getPath(this.position.x, this.position.y, x, y);
 
@@ -116,6 +118,7 @@ export default {
 
     // Set grabber
     obj.grabber = this;
+    return true;
   },
 
 
