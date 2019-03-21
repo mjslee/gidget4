@@ -1,12 +1,13 @@
 import GidgetObject from './gidget-object'
 import GidgetObjects from './objects/_import'
+import _ from 'lodash';
 
 
 
-export default {
+export default  {
 
   // World Data
-  size: 4,
+  size: 3,
 
   // Object Data
   player: undefined,
@@ -14,9 +15,9 @@ export default {
   nextID: -1,
 
   // Callbacks
-  onObjectAdded(obj) { console.log(obj, 'An object was added!') },
-  onObjectMoved(obj) { console.log(obj, 'An object was moved!') },
-  onObjectRemoved(obj) { console.log(obj, 'An object was removed!') },
+  //onObjectAdded(obj) { console.log(obj, 'An object was added!') },
+  //onObjectMoved(obj) { console.log(obj, 'An object was moved!') },
+  //onObjectRemoved(obj) { console.log(obj, 'An object was removed!') },
 
 
   /**
@@ -24,9 +25,8 @@ export default {
    * @param {dictionary} kwargs Default properties.
    */
   create(kwargs) {
-    const obj = Object.assign({}, this);
-    Object.assign(obj, kwargs);
-    return obj;
+    const obj = _.cloneDeep(this)
+    return Object.assign(obj, kwargs);
   },
 
 
@@ -72,12 +72,12 @@ export default {
    */
   createObject(kwargs) {
     // Copy object into another variable
-    let obj = Object.assign({}, GidgetObject);
+    const obj = _.cloneDeep(GidgetObject);
     obj.world = this;
 
     // Merge the types overrides (like attributes in Gidget.js)
     if (typeof kwargs === 'object' && kwargs['type'])
-      Object.assign(obj, GidgetObjects[kwargs.type]);
+      Object.assign(obj, _.cloneDeep(GidgetObjects[kwargs.type]));
 
     // Merge kwargs into the new object
     Object.assign(obj, kwargs);
