@@ -120,3 +120,24 @@ test('removes an object', () => {
   world.removeObject(obj.id);
   expect(world.objects.length).toBe(0);
 });
+
+
+test('does not remove a non-existant object', () => {
+  const world = GidgetWorld.create();
+  world.createObject();
+
+  expect(world.objects.length).toBe(1);
+  expect(world.removeObject(999)).toBe(false);
+  expect(world.objects.length).toBe(1);
+});
+
+
+test('onObjectRemoved is fired on object removal', () => {
+  const world = GidgetWorld.create();
+  let fired = false;
+  world.onObjectRemoved = () => fired = true;
+  const obj = world.createObject();
+
+  expect(world.removeObject(obj.id)).toBe(true);
+  expect(fired).toBe(true);
+});
