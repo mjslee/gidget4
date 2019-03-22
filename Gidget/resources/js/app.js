@@ -1,12 +1,20 @@
 import Vue from 'vue';
+
 import VueRouter from 'vue-router';
+
 import axios from 'axios';
+
 import VueAxios from 'vue-axios';
+
 import App from './App.vue';
-import Home from './components/Home.vue';
+
 import Dashboard from './components/Dashboard.vue';
-import Signin from './components/Signin.vue';
-import Signup from './components/Signup.vue';
+
+import Home from './components/Home.vue';
+
+import Register from './components/Register.vue';
+
+import Login from './components/Login.vue';
 
 Vue.use(VueRouter);
 
@@ -26,11 +34,11 @@ const router = new VueRouter({
 
     },{
 
-        path: '/signup',
+        path: '/register',
 
-        name: 'signup',
+        name: 'register',
 
-        component: Signup,
+        component: Register,
 
         meta: {
 
@@ -39,11 +47,11 @@ const router = new VueRouter({
 
     },{
 
-        path: '/signin',
+        path: '/login',
 
-        name: 'signin',
+        name: 'login',
 
-        component: Signin,
+        component: Login,
 
         meta: {
 
@@ -73,9 +81,9 @@ Vue.router = router
 
 Vue.use(require('@websanova/vue-auth'), {
 
-    auth: require('@websanova/vue-auth/drivers/auth-bearer.js'),
+    auth: require('@websanova/vue-auth/drivers/auth/bearer.js'),
 
-    http: require('@websanova/vue-auth/drivers/http/axios.1.x.js''),
+    http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
 
     router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
 
