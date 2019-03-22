@@ -24,3 +24,14 @@ test('object is created without name', () => {
   expect(obj.name).toBe('Type');
   expect(obj.type).toBe('Type');
 });
+
+
+test('onCreate is fired after after creation', () => {
+  let fired = false;
+  const obj = Object.assign({}, GidgetObject);
+  obj.type = 'Type';
+  obj.onCreate = () => fired = true;
+  obj.create(0);
+
+  expect(fired).toBe(true);
+});
