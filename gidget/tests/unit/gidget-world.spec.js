@@ -224,3 +224,48 @@ test('onCollision is fired by non-causing object', () => {
   world.moveObject(obj1, 1, 1);
   expect(fired).toBe(true);
 });
+
+
+test('gets an objects boundaries with 1x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 0, y: 0 },
+    scale: 1
+  });
+  const bounds = world.getObjectBoundaries(obj);
+
+  expect(bounds.fromX).toBe(0);
+  expect(bounds.fromY).toBe(0);
+  expect(bounds.toX).toBe(0);
+  expect(bounds.toY).toBe(0);
+});
+
+
+test('gets an objects boundaries with 2x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 1, y: 1 },
+    scale: 2
+  });
+  const bounds = world.getObjectBoundaries(obj);
+
+  expect(bounds.fromX).toBe(1);
+  expect(bounds.fromY).toBe(0);
+  expect(bounds.toX).toBe(1);
+  expect(bounds.toY).toBe(1);
+});
+
+
+test('gets an objects boundaries with 3x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 2, y: 2 },
+    scale: 3
+  });
+  const bounds = world.getObjectBoundaries(obj);
+
+  expect(bounds.fromX).toBe(1);
+  expect(bounds.fromY).toBe(0);
+  expect(bounds.toX).toBe(3);
+  expect(bounds.toY).toBe(2);
+});
