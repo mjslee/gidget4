@@ -1,4 +1,3 @@
-
 import GidgetWorld from '../../src/assets/game/gidget-world';
 import GidgetObject from '../../src/assets/game/gidget-object';
 
@@ -346,4 +345,24 @@ test('point is not inside an objects boundaries with 3x scale', () => {
    
   expect(world.insideObjectBoundaries(obj, -1, -1)).toBe(false);
   expect(world.insideObjectBoundaries(obj, 4, 0)).toBe(false);
+});
+
+
+test('gets a path from one point to another with lower starting point', () => {
+  const world = GidgetWorld.create();
+  const path = world.getPath(0, 0, 1, 1);
+
+  expect(path.length).toBe(2);
+  expect(path[0].join()).toBe('1,0');
+  expect(path[1].join()).toBe('1,1');
+});
+
+
+test('gets a path from one point to another with higher starting point', () => {
+  const world = GidgetWorld.create();
+  const path = world.getPath(1, 1, 0, 0);
+
+  expect(path.length).toBe(2);
+  expect(path[0].join()).toBe('0,1');
+  expect(path[1].join()).toBe('0,0');
 });
