@@ -269,3 +269,81 @@ test('gets an objects boundaries with 3x scale', () => {
   expect(bounds.toX).toBe(3);
   expect(bounds.toY).toBe(2);
 });
+
+
+test('point is inside an objects boundaries with 1x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 1, y: 1 },
+    scale: 1
+  });
+   
+  expect(world.insideObjectBoundaries(obj, 1, 1)).toBe(true);
+});
+
+ 
+test('point is not inside an objects boundaries with 1x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 1, y: 1 },
+    scale: 1
+  });
+   
+  expect(world.insideObjectBoundaries(obj, 0, 1)).toBe(false);
+  expect(world.insideObjectBoundaries(obj, 1, 0)).toBe(false);
+});
+
+
+test('point is inside an objects boundaries with 2x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 1, y: 1 },
+    scale: 2,
+    scaleBoundaries: true
+  });
+   
+  expect(world.insideObjectBoundaries(obj, 1, 1)).toBe(true);
+  expect(world.insideObjectBoundaries(obj, 1, 0)).toBe(true);
+});
+
+
+test('point is not inside an objects boundaries with 2x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 1, y: 1 },
+    scale: 2,
+    scaleBoundaries: true
+  });
+   
+  expect(world.insideObjectBoundaries(obj, 0, 0)).toBe(false);
+  expect(world.insideObjectBoundaries(obj, 0, 1)).toBe(false);
+  expect(world.insideObjectBoundaries(obj, 2, 0)).toBe(false);
+  expect(world.insideObjectBoundaries(obj, 2, 1)).toBe(false);
+});
+
+
+test('point is inside an objects boundaries with 3x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 2, y: 2 },
+    scale: 3,
+    scaleBoundaries: true
+  });
+   
+  expect(world.insideObjectBoundaries(obj, 1, 0)).toBe(true);
+  expect(world.insideObjectBoundaries(obj, 2, 1)).toBe(true);
+  expect(world.insideObjectBoundaries(obj, 3, 2)).toBe(true);
+});
+
+
+test('point is not inside an objects boundaries with 3x scale', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({
+    position: { x: 3, y: 3 },
+    scale: 3,
+    scaleBoundaries: true
+  });
+   
+  expect(world.insideObjectBoundaries(obj, -1, -1)).toBe(false);
+  expect(world.insideObjectBoundaries(obj, 4, 0)).toBe(false);
+});
