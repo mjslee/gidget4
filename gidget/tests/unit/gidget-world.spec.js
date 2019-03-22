@@ -198,3 +198,29 @@ test('position 2,1 is not valid because of a blocking object', () => {
 
   expect(isPositionValid).toBe(false);
 });
+
+
+test('onCollision is fired by causing object', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject({ position: { x: 0, y: 0 } });
+  world.createObject({ position: { x: 1, y: 1 } });
+
+  let fired = false;
+  obj.onCollision = () => fired = true;
+
+  world.moveObject(obj, 1, 1);
+  expect(fired).toBe(true);
+});
+
+
+test('onCollision is fired by non-causing object', () => {
+  const world = GidgetWorld.create();
+  const obj1 = world.createObject({ position: { x: 0, y: 0 } });
+  const obj2 = world.createObject({ position: { x: 1, y: 1 } });
+
+  let fired = false;
+  obj2.onCollision = () => fired = true;
+
+  world.moveObject(obj1, 1, 1);
+  expect(fired).toBe(true);
+});
