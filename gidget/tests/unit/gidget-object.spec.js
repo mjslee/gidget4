@@ -1,3 +1,4 @@
+import GidgetWorld from '../../src/assets/game/gidget-world';
 import GidgetObject from '../../src/assets/game/gidget-object';
 
 
@@ -34,4 +35,24 @@ test('onCreate is fired after after creation', () => {
   obj.create(0);
 
   expect(fired).toBe(true);
+});
+
+
+test('object is moved', () => {
+  const world = GidgetWorld.create();
+  const obj = world.createObject();
+
+  expect(obj.move(2, 2)).toBe(true);
+  expect(obj.position.x).toBe(2);
+  expect(obj.position.y).toBe(2);
+});
+
+
+test('object is not moved when out of bounds', () => {
+  const world = GidgetWorld.create({ size: 3 });
+  const obj = world.createObject();
+
+  expect(obj.move(10, 10)).toBe(false);
+  expect(obj.position.x).not.toBe(10);
+  expect(obj.position.y).not.toBe(10);
 });
