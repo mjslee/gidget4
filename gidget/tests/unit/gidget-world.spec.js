@@ -75,7 +75,7 @@ test('nextID is incremented', () => {
 });
 
 
-test('gets an object', () => {
+test('gets an object by condition', () => {
   const world = GidgetWorld.create();
   const objName = 'Test Object';
   world.createObject({ name: objName });
@@ -83,6 +83,17 @@ test('gets an object', () => {
   const obj = world.getObject(obj => obj.name == objName);
   expect(obj.name).toBe(objName);
 });
+
+
+test('gets an object by name', () => {
+  const world = GidgetWorld.create();
+  const objName = 'Test Object';
+  world.createObject({ name: objName });
+
+  const obj = world.getObject(objName);
+  expect(obj.name).toBe(objName);
+});
+
 
 test('does not get a non-existant object', () => {
   const world = GidgetWorld.create();

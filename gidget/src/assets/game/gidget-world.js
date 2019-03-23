@@ -46,10 +46,12 @@ export default  {
 
   /**
    * Find object based on specified conditions.
-   * @param {function} conditions
+   * @param {string/function} Name or conditions
    */
-  getObject(conditions) {
-    return this.objects.find(conditions);
+  getObject(name_or_conditions) {
+    return typeof name_or_conditions === 'string' ?
+      this.objects.find(obj => obj.name === name_or_conditions) :
+      this.objects.find(name_or_conditions);
   },
 
 
