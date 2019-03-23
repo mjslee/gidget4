@@ -176,6 +176,6 @@ export default {
    * Remove this object from the world.
    */
   remove() {
-    return this.grabber === undefined ? this.world.removeObject(this) : false;
+    return this.grabber === undefined ? this.world.removeObject(this.id) : false;
   }
 };
