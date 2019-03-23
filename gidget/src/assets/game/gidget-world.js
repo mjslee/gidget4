@@ -165,13 +165,24 @@ export default  {
       obj.id !== obj2.id &&
       this.insideObjectBoundaries(obj, obj2.position.x, obj2.position.y)
     ).forEach((obj2) => {
+      let maybePromise = undefined;
+
       // Collision callback to first object
       if (typeof obj.onCollision === 'function')
-        obj.onCollision.call(obj, obj2) !== false;
+        maybePromise = obj.onCollision.call(obj, obj2);
 
-      // Collision callback to second object
-      if (typeof obj2.onCollision === 'function')
-        obj2.onCollision.call(obj2, obj) !== false;
+      // Check if obj.onCollision returned a promise, and if so then we'll
+      // call the second objects onCollision callback after the promise
+      // is resolved (from using 'then')
+      if (maybePromise && typeof maybePromise.then === 'function')
+        maybePromise.then(() => {
+          if (typeof obj2.onCollision === 'function')
+            obj2.onCollision.call(obj2, obj);
+        });
+
+      // Return was not a promise, so not waiting required
+      else if (typeof obj2.onCollision === 'function')
+        obj2.onCollision.call(obj2, obj);
     });
   },
 
