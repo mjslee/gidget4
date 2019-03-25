@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <!-- <GidgetWorld --> 
-    <!--   :size="world.size" -->
-    <!--   :tiles="world.tiles" -->
-    <!--   :objects="world.objects" /> -->
-    <GidgetEditor 
+    <GidgetGame
       :size="world.size"
       :tiles="world.tiles"
       :objects="world.objects" />
@@ -13,14 +9,13 @@
 
 
 <script>
-import GidgetWorld from './components/Game/GidgetWorld.vue'
-import GidgetEditor from './components/Game/GidgetEditor.vue'
+import GidgetGame from './components/Game/Game'
+
 
 export default {
   name: 'app',
   components: {
-    GidgetWorld,
-    GidgetEditor
+    GidgetGame
   },
 
   data() {
@@ -28,30 +23,14 @@ export default {
       world: {
         size: 4,
         tiles: [
-          { type: 'dirt', position: [1, 0] },
+          { type: 'dirt', position: { x: 1, y: 2 }},
         ],
         objects: [
-          { type: 'Gidget', position: [1, 1] },
-          { type: 'Puppy', position: [2, 3] },
-
-          //{ type: 'Wall', position: [1, 0] },
+          { type: 'Gidget', position: { x: 1, y: 1 }, isPlayer: true },
+          { type: 'Puppy', position: {x: 2, y: 3} },
         ]
       }
     }
   }
 }
 </script>
-
-
-<style>
-#app {
-  display:inline-block;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  margin: 0 auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
