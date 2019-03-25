@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+	<textarea name="code" id="" cols="80" rows="40">
+[1,2,3].forEach((i) => {
+  console.log(i);  // Main function yields cannot run in here
+});
+	</textarea>
+	<br/>
+	<button style="width:10rem;height:5rem">Run</button>
+	<script src="lang.js"></script>
+	<script>
+		const $textArea = document.querySelector("textarea");
+		evaluateCode($textArea.value);
+	</script>
+</body>
+</html>
