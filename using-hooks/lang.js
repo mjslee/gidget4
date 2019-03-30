@@ -29,15 +29,23 @@ const JSWalker = {
 		//const originalInput = input;
 		const ast = this.toTree(input);
 		
-		const actions = [];
+		let actions = [];
 		this.traverseBodies([ast], node => {
-			bodies.push(node);
+			actions.push({ type: node.type, position: node.range[0], start: true });
+			actions.push({ type: node.type, position: node.range[1], end: true });
 		});
+		actions = actions.sort((a, b) => b.position - a.position);
+		console.log(actions);
+
+		let b = "X";
+		actions.forEach((action) => {
+			input = input.substr(0, action.position) + b + input.substr(action.position);
+		});
+
+		console.log(input);
 
 		// window.input=input;
 		// console.log(input);
-
-		// input = input.substr(0, node.range[0]) + b + input.substr(node.range[0]);
 
 		/*let result = '';
 		for (let i = 0, len = lines.length; i < len; i++)
