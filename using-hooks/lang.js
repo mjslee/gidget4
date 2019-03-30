@@ -1,40 +1,62 @@
-const CodeWalker = {
-
-	lineOrder: [],
+const JSWalker = {
 	steps: [],
 
-	startLine(number) {
-		//this.lineOrder.push(number);
+	traverseBodies(nodes, callback) {
+		let that = this;
+		nodes.forEach((node) => {
+			if (typeof callback === 'function')
+				callback.call(this, node);
+
+			if (typeof node.body === 'undefined')
+				return;
+
+			else if (typeof node.body.forEach === 'function')
+				that.traverseBodies(node.body, callback);
+
+			else if (typeof node.body.body.forEach === 'function')
+				that.traverseBodies(node.body.body, callback);
+		});
 	},
 
 
-	endLine(number) {
-		this.lineOrder.push(number);
+	toTree(input) {
+		return esprima.parseScript(input, { range: true });
 	},
 
 
-	inject(number, input) {
-		const call = '.call(__,' + number + ')'
-		return '__startLine' + call + ';' + input + ';__endLine' + call + '\n';
-	},
 
+	run(input) {
+		//const originalInput = input;
+		const ast = this.toTree(input);
+		
+		const actions = [];
+		this.traverseBodies([ast], node => {
+			bodies.push(node);
+		});
 
-	evaluate(input) {
-		const lines = input.split('\n');
+		// window.input=input;
+		// console.log(input);
 
-		let result = '';
+		// input = input.substr(0, node.range[0]) + b + input.substr(node.range[0]);
+
+		/*let result = '';
 		for (let i = 0, len = lines.length; i < len; i++)
 			result += this.inject(i, lines[i]);
 
 		this.inputCode = input;
 		console.log(result);
-		
+
 		(() => {
-			const __ = this;
+			const window = undefined;
+			const document = undefined;
+
+			const __this = this;
 			const __startLine = this.startLine;
 			const __endLine = this.endLine;
+
 			eval(result);
 		}).call();
+		*/
 	}
 
 };
