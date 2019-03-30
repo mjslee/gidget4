@@ -1,21 +1,24 @@
 const JSWalker = {
 	steps: [],
 
-	traverseBodies(nodes, callback) {
-		let that = this;
-		nodes.forEach((node) => {
+	traverse(node, callback, parentNode=undefined) {
+		if (node === undefined || node === null)
+			return;
+
+		const traverse = node => {
 			if (typeof callback === 'function')
-				callback.call(this, node);
+				callback.call(this, node, parentNode);
 
-			if (typeof node.body === 'undefined')
-				return;
+			this.traverse(node.body, callback, node);
+			this.traverse(node.consequent, callback, node);
+			this.traverse(node.alternate, callback, node);
+		};
 
-			else if (typeof node.body.forEach === 'function')
-				that.traverseBodies(node.body, callback);
-
-			else if (typeof node.body.body.forEach === 'function')
-				that.traverseBodies(node.body.body, callback);
-		});
+		if (!Array.isArray(node))
+			traverse(node);
+		else
+			for (let i = 0, len = node.length; i < len; i++)
+				traverse(node[i]);
 	},
 
 
@@ -28,21 +31,22 @@ const JSWalker = {
 	run(input) {
 		//const originalInput = input;
 		const ast = this.toTree(input);
+
+		const insertAt = (text, input, position) =>
+			text.substr(0, position + input.length) + input + input.substr(position);
 		
-		let actions = [];
-		this.traverseBodies([ast], node => {
-			actions.push({ type: node.type, position: node.range[0], start: true });
-			actions.push({ type: node.type, position: node.range[1], end: true });
-		});
-		actions = actions.sort((a, b) => b.position - a.position);
-		console.log(actions);
-
-		let b = "X";
-		actions.forEach((action) => {
-			input = input.substr(0, action.position) + b + input.substr(action.position);
+		let textModifications = [];
+		this.traverse([ast], (node, nodeParent) => {
+			console.log(node.type, nodeParent ? nodeParent.type : '');
+			// textModifications.push({ type: node.type, position: node.range[0], start: true });
+			// textModifications.push({ type: node.type, position: node.range[1], end: true });
 		});
 
-		console.log(input);
+		textModifications.sort((a, b) => b.position - a.position).forEach((action) => {
+			input = input.substr(0, action.position) + "{" + action.type + "}" + input.substr(action.position);
+		});
+
+		// console.log(input);
 
 		// window.input=input;
 		// console.log(input);
