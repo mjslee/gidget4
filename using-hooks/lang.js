@@ -26,22 +26,10 @@ const JSWalker = {
   },
 
 
-  toTree(input) {
-    return esprima.parseScript(input, { range: true, loc: true });
-  },
-
-
   getIdentifiers(input) {
     //get line number from thing
-    const result = [];
-    esprima.tokenize(input, { loc: true })
+    return esprima.tokenize(input, { loc: true, range: true })
       .filter(token => token.type === 'Identifier')
-      .forEach(identifier =>
-        !result.includes(identifier.value) && result.push({
-          text: identifier.value, line: identifier.loc
-        })
-      );
-    return result;
   },
 
 
@@ -49,30 +37,15 @@ const JSWalker = {
     let result = [];
 
     // Get all identifiers and create argument list for __endLine
-    let p = '';  // Variable Key-Value Pairs
-
-    const identifiers = [];
-    const identifierLines = {};
-    this.getIdentifiers(input).forEach(id => {
-      if (identifiers.includes(id.text))
-        return;
-
-      // Add line number
-      let ln = id.line.end.line;
-      if (typeof identifierLines[ln] === 'undefined')
-        identifierLines[ln] = [ ...identifiers, id.text ];
-      else
-        identifierLines[ln].push(id.text);
-
-      // > id.range[0]
-
-      // identifiers.filter(obj => id.range[0] > obj.range[0])
-
-      identifiers.push(id.text);
-      p += '\'' + id.text + '\':' + id.text + ',';
+    // const identifierNames = [];
+    const identifiers = this.getIdentifiers(input);
+    identifiers.forEach(id => {
+      let value = '\'' + id.value + '\'';
+      // if (!identifierNames.includes(value)) 
+      //   identifierNames.push(value);
     });
 
-    console.log(identifierLines);
+    //result.push(['__allVars(' + identifierNames.join(',') + ');', 0]);
 
     this.traverse([tree], (node, nodeParent) => {
       // Ignore these
@@ -83,20 +56,20 @@ const JSWalker = {
 
       // Add text around the inside of blocks
       if (node.type === 'BlockStatement') {
-        result.push([`__enterScope(${ln});`, node.range[0] + 1]);
-        result.push([`__exitScope(${ln});`, node.range[1] - 1]);
+        // result.push([`__enterScope(${ln});`, node.range[0] + 1]);
+        // result.push([`__exitScope(${ln});`, node.range[1] - 1]);
       }
 
       // Add text around expressions
       else {
-        let vars = '';
-        if (typeof identifierLines[ln] !== 'undefined') {
-          identifierLines[ln].forEach(id => {
-            vars += '\'' + id + '\':' + id + ',';
-          });
-        }
-        result.push([`__startLine(${ln});`, node.range[0]]);
-        result.push([`__endLine(${ln}, {${vars}});`, node.range[1]]);
+        let pairs = '';
+        identifiers.forEach(id => {
+          if (id.range[0] < node.range[1])
+            pairs += `'${id.value}':typeof ${id.value}!=='undefined'?${id.value}:0,`;
+        });
+
+        //result.push([`__startLine(${ln});`, node.range[0]]);
+        result.push([`__expr__(${ln}, {${pairs}});`, node.range[1]]);
       }
 
       // Add blocks around statements
@@ -115,13 +88,14 @@ const JSWalker = {
     result.sort((a, b) => b[1] - a[1]).forEach((mod) => {
       input = input.substring(0, mod[1]) + mod[0] + input.substring(mod[1]);
     });
+    
 
     return input;
   },
 
 
   run(input) {
-    let tree = this.toTree(input);
+    let tree = esprima.parseScript(input, { range: true, loc: true });
     let debugInput = this.inject(tree, input);
 
     (() => {
@@ -136,13 +110,23 @@ const JSWalker = {
         //console.log('Spied on: ', line);
         return undefined;
       };
-      const __endLine = (line, ...vars) => {
-        console.log('Line ended: ', line);
+      const __expr__ = (ln, ...vars) => {
+        console.log('Line: ', ln, vars);
+        console.log(this);
       };
       const __enterScope = (line) => {}
-      const __exitScope = (line) => {}
+      const __exitScope = (line, ...args) => {
+        console.log(args);
+      }
+      const __allVars = (...args) => {
+        for (let i = 0, len = args.length; i < len; i++) {
+          //console.log(args[i]);
+          //console.log(this[args[i]]);
+        }
+      };
 
       console.log(debugInput);
+      //eval("__allVars('console','log');console.log('Wow');__endLine(1, {'console':typeof console?console:0,'log':typeof log});__endLine(1, {'console':typeof console?console:0,'log':typeof log});");
       eval(debugInput);
     }).call();
   }
