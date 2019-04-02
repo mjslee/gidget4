@@ -1,6 +1,8 @@
 const JSWalker = {
-  steps: [],
   __blockStatements: ['WhileStatement', 'IfStatement', 'ForStatement'],
+
+  steps: [],
+
 
   traverse(node, callback, parentNode=undefined) {
     if (node === undefined || node === null)
@@ -30,42 +32,71 @@ const JSWalker = {
 
 
   getIdentifiers(input) {
+    //get line number from thing
     const result = [];
-    esprima.tokenize(input)
+    esprima.tokenize(input, { loc: true })
       .filter(token => token.type === 'Identifier')
       .forEach(identifier =>
-        !result.includes(identifier.value) && result.push(identifier.value));
+        !result.includes(identifier.value) && result.push({
+          text: identifier.value, line: identifier.loc
+        })
+      );
     return result;
   },
 
 
-  run(input) {
-    const ast = this.toTree(input);
+  inject(tree, input) {
+    let result = [];
 
-    let identifiers = this.getIdentifiers(input);
-    let v = '';  // Variables
-    identifiers.forEach(identifier => {
-      v += ',' + identifier;
+    // Get all identifiers and create argument list for __endLine
+    let p = '';  // Variable Key-Value Pairs
+
+    const identifiers = [];
+    const identifierLines = {};
+    this.getIdentifiers(input).forEach(id => {
+      if (identifiers.includes(id.text))
+        return;
+
+      // Add line number
+      let ln = id.line.end.line;
+      if (typeof identifierLines[ln] === 'undefined')
+        identifierLines[ln] = [ ...identifiers, id.text ];
+      else
+        identifierLines[ln].push(id.text);
+
+      // > id.range[0]
+
+      // identifiers.filter(obj => id.range[0] > obj.range[0])
+
+      identifiers.push(id.text);
+      p += '\'' + id.text + '\':' + id.text + ',';
     });
 
-    let textModifications = [];
-    this.traverse([ast], (node, nodeParent) => {
+    console.log(identifierLines);
+
+    this.traverse([tree], (node, nodeParent) => {
       // Ignore these
       if (node.type === 'SwitchCase' || node.type === 'BreakStatement')
         return;
 
-      let n = node.loc.start.line;  // Line number
+      let ln = node.loc.start.line;  // Line number
 
       // Add text around the inside of blocks
       if (node.type === 'BlockStatement') {
-        textModifications.push([`__enterScope(${n});`, node.range[0] + 1]);
-        textModifications.push([`__exitScope(${n});`, node.range[1] - 1]);
+        result.push([`__enterScope(${ln});`, node.range[0] + 1]);
+        result.push([`__exitScope(${ln});`, node.range[1] - 1]);
       }
 
       // Add text around expressions
       else {
-        textModifications.push([`__startLine(${n});`, node.range[0]]);
-        textModifications.push([`__endLine(${n+v});`, node.range[1]]);
+        let vars = '';
+        if (typeof identifierLines[ln] !== 'undefined') {
+          identifierLines[ln].forEach(id => {
+            vars += '\'' + id + '\':' + id + ',';
+          });
+        }
+        result.push([`__startLine(${ln});`, node.range[0]]);
+        result.push([`__endLine(${ln}, {${vars}});`, node.range[1]]);
       }
 
       // Add blocks around statements
@@ -74,41 +105,46 @@ const JSWalker = {
         node.type !== 'BlockStatement'
       ) {
         // Add opening paren
-        textModifications.push(['{', node.range[0]]);
+        result.push(['{', node.range[0]]);
 
         // Add closing paren
-        textModifications.push(['}', node.range[1]]);
+        result.push(['}', node.range[1]]);
       }
     });
 
-    textModifications.sort((a, b) => b[1] - a[1]).forEach((mod) => {
+    result.sort((a, b) => b[1] - a[1]).forEach((mod) => {
       input = input.substring(0, mod[1]) + mod[0] + input.substring(mod[1]);
     });
 
-    console.log('');
-    console.log(input);
+    return input;
+  },
 
-    // window.input=input;
-    // console.log(input);
 
-    /*let result = '';
-    for (let i = 0, len = lines.length; i < len; i++)
-      result += this.inject(i, lines[i]);
-
-    this.inputCode = input;
-    console.log(result);
+  run(input) {
+    let tree = this.toTree(input);
+    let debugInput = this.inject(tree, input);
 
     (() => {
       const window = undefined;
       const document = undefined;
 
       const __this = this;
-      const __startLine = this.startLine;
-      const __endLine = this.endLine;
+      const __startLine = (line) => {
+        console.log('Line started: ', line);
+      };
+      const __spy = (line) => {
+        //console.log('Spied on: ', line);
+        return undefined;
+      };
+      const __endLine = (line, ...vars) => {
+        console.log('Line ended: ', line);
+      };
+      const __enterScope = (line) => {}
+      const __exitScope = (line) => {}
 
-      eval(result);
+      console.log(debugInput);
+      eval(debugInput);
     }).call();
-    */
   }
 
 };
