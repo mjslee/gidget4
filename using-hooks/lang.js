@@ -25,33 +25,47 @@ const JSWalker = {
 
 
   toTree(input) {
-    return esprima.parseScript(input, { range: true });
+    return esprima.parseScript(input, { range: true, loc: true });
   },
 
 
+  getIdentifiers(input) {
+    const result = [];
+    esprima.tokenize(input)
+      .filter(token => token.type === 'Identifier')
+      .forEach(identifier =>
+        !result.includes(identifier.value) && result.push(identifier.value));
+    return result;
+  },
+
 
   run(input) {
-    //const originalInput = input;
     const ast = this.toTree(input);
+
+    let identifiers = this.getIdentifiers(input);
+    let v = '';  // Variables
+    identifiers.forEach(identifier => {
+      v += ',' + identifier;
+    });
 
     let textModifications = [];
     this.traverse([ast], (node, nodeParent) => {
-      console.log(node, nodeParent);
-
       // Ignore these
       if (node.type === 'SwitchCase' || node.type === 'BreakStatement')
         return;
 
+      let n = node.loc.start.line;  // Line number
+
       // Add text around the inside of blocks
       if (node.type === 'BlockStatement') {
-        textModifications.push(['X', node.range[0] + 1]);
-        textModifications.push(['Y', node.range[1] - 1]);
+        textModifications.push([`__enterScope(${n});`, node.range[0] + 1]);
+        textModifications.push([`__exitScope(${n});`, node.range[1] - 1]);
       }
 
       // Add text around expressions
       else {
-        textModifications.push(['A', node.range[0]]);
-        textModifications.push(['B', node.range[1]]);
+        textModifications.push([`__startLine(${n});`, node.range[0]]);
+        textModifications.push([`__endLine(${n+v});`, node.range[1]]);
       }
 
       // Add blocks around statements
