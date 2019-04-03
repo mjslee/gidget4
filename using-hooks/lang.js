@@ -1,7 +1,13 @@
 const JSWalker = {
+
+  __steps: [],
+  __index: 0,
+
   __blockStatements: ['WhileStatement', 'IfStatement', 'ForStatement'],
 
-  steps: [],
+  step() {
+    return this.__steps[this.__index++];
+  },
 
 
   traverse(node, callback, parentNode=undefined) {
@@ -27,7 +33,6 @@ const JSWalker = {
 
 
   getIdentifiers(input) {
-    //get line number from thing
     return esprima.tokenize(input, { loc: true, range: true })
       .filter(token => token.type === 'Identifier')
   },
@@ -36,18 +41,8 @@ const JSWalker = {
   inject(tree, input) {
     let result = [];
 
-    // Get all identifiers and create argument list for __endLine
-    // const identifierNames = [];
     const identifiers = this.getIdentifiers(input);
-    identifiers.forEach(id => {
-      let value = '\'' + id.value + '\'';
-      // if (!identifierNames.includes(value)) 
-      //   identifierNames.push(value);
-    });
-
-    //result.push(['__allVars(' + identifierNames.join(',') + ');', 0]);
-
-    this.traverse([tree], (node, nodeParent) => {
+    this.traverse([tree], (node, parentNode) => {
       // Ignore these
       if (node.type === 'SwitchCase' || node.type === 'BreakStatement')
         return;
@@ -55,30 +50,30 @@ const JSWalker = {
       let ln = node.loc.start.line;  // Line number
 
       // Add text around the inside of blocks
-      if (node.type === 'BlockStatement') {
-        // result.push([`__enterScope(${ln});`, node.range[0] + 1]);
-        // result.push([`__exitScope(${ln});`, node.range[1] - 1]);
-      }
+      if (node.type === 'BlockStatement')
+        result.push([`__scope__(${parentNode.loc.start.line});`, node.range[0] + 1]);
 
       // Add text around expressions
       else {
         let pairs = '';
         identifiers.forEach(id => {
+          let value = id.value;
           if (id.range[0] < node.range[1])
-            pairs += `'${id.value}':typeof ${id.value}!=='undefined'?${id.value}:0,`;
+            pairs += `'${value}':typeof ${value}!=='undefined'?${value}:undefined,`;
         });
 
-        //result.push([`__startLine(${ln});`, node.range[0]]);
-        result.push([`__expr__(${ln}, {${pairs}});`, node.range[1]]);
+        result.push([
+          `__expr__(${ln}, ${node.range.join()}, {${pairs}});`, node.range[1]
+        ]);
       }
 
       // Add blocks around statements
       if (
-        nodeParent && this.__blockStatements.includes(nodeParent.type) &&
+        parentNode && this.__blockStatements.includes(parentNode.type) &&
         node.type !== 'BlockStatement'
       ) {
         // Add opening paren
-        result.push(['{', node.range[0]]);
+        result.push([`{__scope__(${parentNode.loc.start.line});`, node.range[0]]);
 
         // Add closing paren
         result.push(['}', node.range[1]]);
@@ -102,33 +97,17 @@ const JSWalker = {
       const window = undefined;
       const document = undefined;
 
-      const __this = this;
-      const __startLine = (line) => {
-        console.log('Line started: ', line);
-      };
-      const __spy = (line) => {
-        //console.log('Spied on: ', line);
-        return undefined;
-      };
-      const __expr__ = (ln, ...vars) => {
-        console.log('Line: ', ln, vars);
-        console.log(this);
-      };
-      const __enterScope = (line) => {}
-      const __exitScope = (line, ...args) => {
-        console.log(args);
-      }
-      const __allVars = (...args) => {
-        for (let i = 0, len = args.length; i < len; i++) {
-          //console.log(args[i]);
-          //console.log(this[args[i]]);
-        }
+      const __scope__ = ln => this.__steps.push({ lineNumber: ln });
+      const __expr__ = (ln, from, to, vars) => {
+        this.__steps.push({
+          lineNumber: ln,
+          range: [from, to],
+          variables: vars
+        });
       };
 
-      console.log(debugInput);
-      //eval("__allVars('console','log');console.log('Wow');__endLine(1, {'console':typeof console?console:0,'log':typeof log});__endLine(1, {'console':typeof console?console:0,'log':typeof log});");
       eval(debugInput);
-    }).call();
+    }).apply({});
   }
 
 };

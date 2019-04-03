@@ -8,44 +8,73 @@
   </head>
   <body>
     <div style="display:inline-block">
-      <textarea id="output" cols=4 rows=10></textarea>
+      <textarea id="line" cols=4 rows=10></textarea>
     </div>
     <div style="display:inline-block">
       <h1>Input</h1>
       <textarea id="input" cols=80 rows=10>
-for (let i = 0; i < 5; i++)
-  console.log('Test');
+let a, b, d;
+a = 1;
+b = 2;
+let c = 3;
+d = 4;
 
-for (let i = 0; i < 5; i++) {
-  console.log('Test');
-}
-
-while (true)
-  console.log("wow");
-
-while (true) {
-  console.log("wow");
-}
-
-switch (0) {
-  case 1:
-    console.log("wwos");
-    break;
-
-  default:
-    console.log('eee');
-    console.log('eee');
+for (let i = 0; i < 4; i++) {
+  console.log(i);
 }</textarea>
+    </div>
+
+    <div style="display:inline-block">
+      <dl id="variables">
+      </dl>
+    </div>
+
+
+    <div>
+      <button id="run">Run</button>
+      <button id="step">Step</button>
+      <button id="stop">Stop</button>
     </div>
 
     <script>
       let $line = document.querySelector("#line");
       let $input = document.querySelector("#input");
+      let $variables = document.querySelector("#variables");
     </script>
     <script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
     <script src="./lang.js"></script>
     <script>
-      JSWalker.run($input.value);
+      let step = JSWalker.step();
+
+      const setLine = ln => {
+        $line.value = '';
+        for (let i = 0; i < ln -1; i++)
+          $line.value += '\n';
+        $line.value += '->';
+      };
+
+      document.querySelector('#run').onclick = function() {
+        JSWalker.run($input.value);
+      };
+
+      document.querySelector('#step').onclick = function() {
+        const step = JSWalker.step();
+        setLine(step.lineNumber);
+
+        if (typeof step.range !== 'undefined') {
+          $input.focus();
+          $input.setSelectionRange(...step.range);
+          console.log(step);
+        }
+
+        if (typeof step.variables !== 'undefined') {
+          $variables.innerHTML = '';
+          for (let variable in step.variables) {
+            $variables.innerHTML += '<dt>' + variable + '</dt>';
+            $variables.innerHTML += '<dd>' + step.variables[variable] + '</dd>';
+          }
+        }    
+      };
     </script>
   </body>
 </html>
