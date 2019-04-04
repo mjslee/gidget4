@@ -118,8 +118,59 @@ const Stepper = {
   steps: [],
   index: 0,
 
+  /*
+   *
+   */
   step() {
     return this.steps[this.index++];
+  },
+
+  /*
+   *
+   */
+  clean() {
+    this.steps = [];
+    this.index = 0;
+    this.debugInput = undefined;
+  },
+
+
+  /*
+   *
+   */
+  __step__(ln, range, data) {
+    console.log(ln, range, data);
+  },
+
+
+  /*
+   *
+   */
+  __scope__(ln, range) {
+    console.log(ln, range);
+  },
+
+   
+  /*
+   *
+   */
+  run(input) {
+    this.clean();
+
+    this.debugInput = Injector(input);
+
+    const __scope__ = this.__scope__;
+    const __step__ = this.__step__;
+
+
+    const fakeSandbox = () => {
+      const window = undefined;
+      const document = undefined;
+
+      eval(this.debugInput);
+    };
+
+    fakeSandbox.call();
   }
 };
 
@@ -135,13 +186,14 @@ const Injector = (input) => {
 
   //
   const parseOptions = { loc: true, range: true };
-  const tree = esprima.parseScript(input, parseOptions);
-  const tokens = esprima.tokenize(input, parseOptions);
+  this.tree = esprima.parseScript(input, parseOptions);
+  this.tokens = esprima.tokenize(input, parseOptions);
 
+   
   /*
    *
    */
-  const traverse = (node, callback, parentNode=undefined) => {
+  this.traverse = (node, callback, parentNode=undefined) => {
     // Ignore node when non-existant
     if (node === undefined || node === null)
       return;
@@ -154,10 +206,10 @@ const Injector = (input) => {
 
       // Traverse any node property (body, consequent, ...) that may contain
       // statements/expressions or declarations.
-      traverse(node.body, callback, node);
-      traverse(node.consequent, callback, node);
-      traverse(node.alternate, callback, node);
-      traverse(node.cases, callback, node);
+      this.traverse(node.body, callback, node);
+      this.traverse(node.consequent, callback, node);
+      this.traverse(node.alternate, callback, node);
+      this.traverse(node.cases, callback, node);
     };
 
     // Array of nodes passed in, go through each of those nodes and
@@ -175,33 +227,37 @@ const Injector = (input) => {
   /*
    *
    */
-  const getIdentifiers = node => {
+  this.getIdentifiers = (node) => {
     let result = '';
-    const identifiers = tokens.filter(token => token.type === 'Identifier');
+    const identifiers = this.tokens.filter(t => t.type === 'Identifier');
     const names = [];
-    for (let i = 0, len = identifiers.length; i < len; i++) {
+
+    identifiers.forEach(id => {
       // The node's range-end must be *after* the iterated identifier's
       // range-start
-      if (identifiers[i].range[0] < node.range[1])
-        continue;
+      if (id.range[0] > node.range[1])
+        return;
 
-      const name = identifiers[i].value;
+      // Ignore duplicate identifier names
+      const name = id.value;
       if (names.includes(name))
-        continue;
+        return;
+      else
+        names.push(name);
 
-      names.push(name);
+      // Append identifier get key-pair 
       result += `'${name}':typeof ${name}!=='undefined'?${name}:undefined,`;
-    }
+    });
     return '{' + result + '}';
   };
 
 
   /*
-   *
+   * Get list of modifications to make to input string.
    */
-  const getModifications = () => {
+  this.getModifications = () => {
     const result = [];
-    traverse([tree], (node, parentNode) => {
+    this.traverse([this.tree], (node, parentNode) => {
       // No modifications needed for these types of nodes
       if (ignoreNodes.includes(node.type))
         return;
@@ -222,9 +278,9 @@ const Injector = (input) => {
 
       // Add step to any other node
       else {
-        const pairs = getIdentifiers(node);
-        const range = node.range.join();
-        result.push([ `__step__(${ln},${range},${pairs});`, node.range[1]]);
+        const pairs = this.getIdentifiers(node);
+        const range = '[' + node.range.join() + ']';
+        result.push([`__step__(${ln},${range},${pairs});`, node.range[1]]);
       }
     });
     return result;
@@ -234,9 +290,20 @@ const Injector = (input) => {
   /*
    *
    */
-  const main = () => {
-    console.log(getModifications());
+  this.main = () => {
+    // Sort 
+    const sortedMods = this.getModifications().sort((a, b) => b[1] - a[1]);
+
+    sortedMods.forEach(mod => {
+      // Insert (string)mod[0] at index of (int)mod[1]
+      input = input.substring(0, mod[1]) + mod[0] + input.substring(mod[1]);
+    });
+
+    return input;
   };
 
-  return main();
+
+  return this.main();
 };
+
+
