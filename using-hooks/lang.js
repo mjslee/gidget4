@@ -175,16 +175,20 @@ const Injector = (input) => {
   /*
    *
    */
-  const getIdentifiers = (node) => {
+  const getIdentifiers = node => {
     let result = '';
     const identifiers = tokens.filter(token => token.type === 'Identifier');
     const names = [];
     for (let i = 0, len = identifiers.length; i < len; i++) {
+      // The node's range-end must be *after* the iterated identifier's
+      // range-start
       if (identifiers[i].range[0] < node.range[1])
         continue;
+
       const name = identifiers[i].value;
       if (names.includes(name))
         continue;
+
       names.push(name);
       result += `'${name}':typeof ${name}!=='undefined'?${name}:undefined,`;
     }
@@ -206,17 +210,17 @@ const Injector = (input) => {
       let ln = node.loc.start.line;
       let parentLn = parentNode ? parentNode.loc.start.line : '';
 
-      // Add scope traps to blocks
+      // Add scope step to BlockStatements
       if (node.type === 'BlockStatement')
         result.push([`__scope__(${parentLn});`, node.range[0] + 1]);
 
-      // Add scope and scope trap to node that could have a block statement
+      // Add scope to node that /could/ have a block statement
       else if (parentNode && blockNodes.includes(parentNode.type)) {
         result.push([`{__scope__(${parentLn});`, node.range[0]]);
         result.push(['}', node.range[1]]);
       }
 
-      // Add step trap to any other node
+      // Add step to any other node
       else {
         const pairs = getIdentifiers(node);
         const range = node.range.join();
@@ -227,6 +231,9 @@ const Injector = (input) => {
   };
 
 
+  /*
+   *
+   */
   const main = () => {
     console.log(getModifications());
   };
