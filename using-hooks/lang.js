@@ -111,3 +111,125 @@ const JSWalker = {
   }
 
 };
+
+
+
+const Stepper = {
+  steps: [],
+  index: 0,
+
+  step() {
+    return this.steps[this.index++];
+  }
+};
+
+
+
+/*
+ *
+ */
+const Injector = (input) => {
+  //
+  const blockNodes = ['WhileStatement', 'IfStatement', 'ForStatement'];
+  const ignoreNodes = ['SwitchCase', 'BreakStatement'];
+
+  //
+  const parseOptions = { loc: true, range: true };
+  const tree = esprima.parseScript(input, parseOptions);
+  const tokens = esprima.tokenize(input, parseOptions);
+
+  /*
+   *
+   */
+  const traverse = (node, callback, parentNode=undefined) => {
+    // Ignore node when non-existant
+    if (node === undefined || node === null)
+      return;
+
+    // Traverse down the bodies of all nodes
+    const deepTraverse = node => {
+      // Call the callback to notify that a node has been found
+      if (typeof callback === 'function')
+        callback.call(this, node, parentNode);
+
+      // Traverse any node property (body, consequent, ...) that may contain
+      // statements/expressions or declarations.
+      traverse(node.body, callback, node);
+      traverse(node.consequent, callback, node);
+      traverse(node.alternate, callback, node);
+      traverse(node.cases, callback, node);
+    };
+
+    // Array of nodes passed in, go through each of those nodes and
+    // traverse them too
+    if (Array.isArray(node))
+      for (let i = 0, len = node.length; i < len; i++)
+        deepTraverse(node[i]);
+
+    // Deep traverse into node
+    else
+      deepTraverse(node);
+  };
+
+
+  /*
+   *
+   */
+  const getIdentifiers = (node) => {
+    let result = '';
+    const identifiers = tokens.filter(token => token.type === 'Identifier');
+    const names = [];
+    for (let i = 0, len = identifiers.length; i < len; i++) {
+      if (identifiers[i].range[0] < node.range[1])
+        continue;
+      const name = identifiers[i].value;
+      if (names.includes(name))
+        continue;
+      names.push(name);
+      result += `'${name}':typeof ${name}!=='undefined'?${name}:undefined,`;
+    }
+    return '{' + result + '}';
+  };
+
+
+  /*
+   *
+   */
+  const getModifications = () => {
+    const result = [];
+    traverse([tree], (node, parentNode) => {
+      // No modifications needed for these types of nodes
+      if (ignoreNodes.includes(node.type))
+        return;
+
+      // Line numbers
+      let ln = node.loc.start.line;
+      let parentLn = parentNode ? parentNode.loc.start.line : '';
+
+      // Add scope traps to blocks
+      if (node.type === 'BlockStatement')
+        result.push([`__scope__(${parentLn});`, node.range[0] + 1]);
+
+      // Add scope and scope trap to node that could have a block statement
+      else if (parentNode && blockNodes.includes(parentNode.type)) {
+        result.push([`{__scope__(${parentLn});`, node.range[0]]);
+        result.push(['}', node.range[1]]);
+      }
+
+      // Add step trap to any other node
+      else {
+        const pairs = getIdentifiers(node);
+        const range = node.range.join();
+        result.push([ `__step__(${ln},${range},${pairs});`, node.range[1]]);
+      }
+    });
+    return result;
+  };
+
+
+  const main = () => {
+    console.log(getModifications());
+  };
+
+  return main();
+};
