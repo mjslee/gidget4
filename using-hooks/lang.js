@@ -1,9 +1,13 @@
+/*
+ * Pre-ran step-by-step lookback.
+ */
 const Stepper = {
   steps: [],
   index: 0,
 
   /*
-   *
+   * Step after running.
+   * @return {dict} Step information.
    */
   step() {
     if (this.index >= this.steps.length)
@@ -18,7 +22,7 @@ const Stepper = {
   },
 
   /*
-   *
+   * Reset properties.
    */
   clean() {
     this.steps = [];
@@ -28,7 +32,9 @@ const Stepper = {
 
 
   /*
-   *
+   * Spy on object calls.
+   * @param {object} Object to spy on.
+   * @return {proxy} Proxy instance.
    */
   spy(obj) {
     return new Proxy(obj, {
@@ -42,37 +48,52 @@ const Stepper = {
 
 
   /*
-   *
+   * Add step when entering/leaving scope from evaluated script.
+   * @param {number} ln - Line number.
+   * @param {array} range - Array in the form of [fromNumber, toNumber]
+   * @param {string} scope - Type of entered scope
+   * @param {boolean} inside - Is inside scope. 'false' when leaving scope.
    */
-  __step__(ln, range, data) {
-    this.steps.push({ ln, range, data, command: this.tempCommand });
-    this.tempCommand = undefined;
+  __scope__(ln, range, scope, inside) {
+    this.steps.push({ ln, range, scope: { type: scope, inside }});
   },
 
 
   /*
-   *
+   * Add step from evaluated script.
+   * @param {number} ln - Line number.
+   * @param {array} range - Array in the form of [fromNumber, toNumber]
    */
-  __scope__(ln, range) {
+  __step__(ln, range) {
     this.steps.push({ ln, range });
+  },
+
+
+  /*
+   * Collect data from evaluated script.
+   * @param {dictionary} Data to save.
+   */
+  __collect__(data) {
+    this.steps[this.steps.length-1].data = data;
   },
 
    
   /*
-   *
+   * Evaluate input.
+   * @param {string} ECMAScript code input.
    */
   run(input) {
     this.clean();
 
-    this.debugInput = Injector(input);
+    this.debugInput = Injector.run(input);
 
     const fakeSandbox = () => {
       const window = undefined;
       const document = undefined;
-      const print = this.spy(console);
 
       const __scope__ = (...args) => this.__scope__(...args);
       const __step__ = (...args) => this.__step__(...args);
+      const __collect__ = (...args) => this.__collect__(...args);
 
       eval(this.debugInput);
     };
@@ -84,57 +105,65 @@ const Stepper = {
 
 
 /*
- *
+ * Inject callbacks into user code.
  */
 const Injector = (input) => {
-  //
+  // Node types
   const blockNodes = ['WhileStatement', 'IfStatement', 'ForStatement'];
   const ignoreNodes = ['SwitchCase', 'BreakStatement'];
 
-  //
+  // Parse input into AST and tokens
   const parseOptions = { loc: true, range: true };
   this.tree = esprima.parseScript(input, parseOptions);
   this.tokens = esprima.tokenize(input, parseOptions);
 
-   
+
   /*
-   *
+   * Traverse through AST.
+   * @param {object} node - Tree node to traverse.
+   * @param {function(node, prevNode)} callback - Callback to access bodies.
    */
-  this.traverse = (node, callback, parentNode=undefined) => {
-    // Ignore node when non-existant
-    if (node === undefined || node === null)
+  this.traverse = (node, callback) => {
+    // Ignore non-object nodes
+    if (node === null || typeof node !== 'object')
       return;
 
-    // Traverse down the bodies of all nodes
-    const deepTraverse = node => {
-      // Call the callback to notify that a node has been found
-      if (typeof callback === 'function')
-        callback.call(this, node, parentNode);
+    const traverse = this.traverse;
 
-      // Traverse any node property (body, consequent, ...) that may contain
-      // statements/expressions or declarations.
-      this.traverse(node.body, callback, node);
-      this.traverse(node.consequent, callback, node);
-      this.traverse(node.alternate, callback, node);
-      this.traverse(node.cases, callback, node);
-    };
-
-    // Array of nodes passed in, go through each of those nodes and
-    // traverse them too
+    // Traverse down all nodes in node array
     if (Array.isArray(node))
-      for (let i = 0, len = node.length; i < len; i++)
-        deepTraverse(node[i]);
+      return node.forEach(subnode => {
+        traverse(subnode, callback);
+      });
 
-    // Deep traverse into node
+    // Traverse down all property-keys of a node; non-object nodes will be
+    // passed but quickly ignored in the next recurse
+    Object.keys(node).forEach(key => {
+      traverse(node[key], callback);
+    });
+
+    // Check for body and a valid callback
+    if (typeof node.body === 'undefined' || typeof callback !== 'function')
+      return;
+
+    // Call the callback for each body in the body array
+    if (Array.isArray(node.body))
+      node.body.forEach(body => {
+        callback(body, node);
+      });
+
+    // Call the callback
     else
-      deepTraverse(node);
+      callback(node.body, node);
   };
 
 
   /*
-   *
+   * Get all identifiers declared after an index.
+   * @param {number} index - Index number to search after.
+   * @return {string} String-dictionary.
    */
-  this.getIdentifiers = (node) => {
+  this.getIdentifiersAfter = index => {
     let result = '';
     const identifiers = this.tokens.filter(t => t.type === 'Identifier');
     const names = [];
@@ -142,7 +171,7 @@ const Injector = (input) => {
     identifiers.forEach(id => {
       // The node's range-end must be *after* the iterated identifier's
       // range-start
-      if (id.range[0] > node.range[1])
+      if (id.range[0] > index)
         return;
 
       // Ignore duplicate identifier names
@@ -161,35 +190,43 @@ const Injector = (input) => {
 
   /*
    * Get list of modifications to make to input string.
+   * @return {array} Array of [['modification text', index]...]
    */
   this.getModifications = () => {
     const result = [];
-    this.traverse([this.tree], (node, parentNode) => {
+    this.traverse([this.tree], (node, prevNode) => {
       // No modifications needed for these types of nodes
       if (ignoreNodes.includes(node.type))
         return;
 
-      // Line numbers
-      let ln = node.loc.start.line;
-      let parentLn = parentNode ? parentNode.loc.start.line : '';
+      // Create scope function to generate a __scope__() call
+      let scope;
+      if (typeof prevNode !== 'undefined') {
+        const ln = prevNode.loc.start.line;
+        const range = prevNode.range.join();
+        const type = prevNode.type;
+        scope = inside => `;__scope__(${ln},[${range}],'${type}',${inside});`;
+      }
 
       // Add scope step to BlockStatements
       if (node.type === 'BlockStatement') {
-        const range = '[' + parentNode.range.join() + ']';
-        result.push([`__scope__(${parentLn},${range});`, node.range[0] + 1]);
+        result.push([ scope(true), node.range[0] + 1 ]);
+        result.push([ scope(false), node.range[1] ]);
       }
 
       // Add scope to node that /could/ have a block statement
-      else if (parentNode && blockNodes.includes(parentNode.type)) {
-        result.push([`{__scope__(${parentLn});`, node.range[0]]);
-        result.push(['}', node.range[1]]);
+      else if (prevNode && blockNodes.includes(prevNode.type)) {
+        result.push([ '{' + scope(true), node.range[0] ]);
+        result.push([ scope(false) + '}', node.range[1] ]);
       }
 
       // Add step to any other node
       else {
-        const pairs = this.getIdentifiers(node);
+        const ln = node.loc.start.line;
+        const pairs = this.getIdentifiersAfter(node.range[1]);
         const range = '[' + node.range.join() + ']';
-        result.push([`__step__(${ln},${range},${pairs});`, node.range[1]]);
+        result.push([`;__step__(${ln},${range});`, node.range[0]]);
+        result.push([`;__collect__(${pairs});`, node.range[1]]);
       }
     });
     return result;
@@ -197,9 +234,10 @@ const Injector = (input) => {
 
 
   /*
-   *
+   * Run text modifications on an input.
+   * @return {string} Modified input.
    */
-  this.main = () => {
+  this.run = () => {
     // Sort 
     const sortedMods = this.getModifications().sort((a, b) => b[1] - a[1]);
 
@@ -212,5 +250,5 @@ const Injector = (input) => {
   };
 
 
-  return this.main();
+  return this;
 };
