@@ -37,6 +37,7 @@ const Stepper = {
    * @return {proxy} Proxy instance.
    */
   spy(obj) {
+    //console.log(this.steps);
     return new Proxy(obj, {
       get: (target, prop) => {
         return (...args) => {
@@ -74,7 +75,13 @@ const Stepper = {
    * @param {dictionary} Data to save.
    */
   __collect__(data) {
-    this.steps[this.steps.length-1].data = data;
+    const step = this.steps[this.steps.length-1]
+    step.data = data;
+
+    if (typeof this.tempCommand === 'object') {
+      step.command = this.tempCommand;
+      this.tempCommand = undefined;
+    }
   },
 
    
@@ -84,17 +91,22 @@ const Stepper = {
    */
   run(input) {
     this.clean();
+    this.debugInput = Injector(input).run();
 
-    this.debugInput = Injector.run(input);
+    const _console = console;
 
     const fakeSandbox = () => {
+      // Overwrite in this scope
       const window = undefined;
       const document = undefined;
+      const console = this.spy(_console);
 
+      // Step functions
       const __scope__ = (...args) => this.__scope__(...args);
       const __step__ = (...args) => this.__step__(...args);
       const __collect__ = (...args) => this.__collect__(...args);
 
+      // Evaluate modified user input
       eval(this.debugInput);
     };
 
