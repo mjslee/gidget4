@@ -20,7 +20,7 @@ let c = 3;
 d = 4;
 
 for (let i = 0; i < 4; i++) {
-  console.log(i);
+  Console.log(i);
 }</textarea>
     </div>
 
@@ -36,15 +36,14 @@ for (let i = 0; i < 4; i++) {
       <button id="stop">Stop</button>
     </div>
 
+    <script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
+    <script src="./lang.js"></script>
     <script>
       let $line = document.querySelector("#line");
       let $input = document.querySelector("#input");
       let $variables = document.querySelector("#variables");
-    </script>
-    <script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
-    <script src="./lang.js"></script>
-    <script>
-      let step = JSWalker.step();
+
+      let stepper = Object.create(Stepper);
 
       const setLine = ln => {
         $line.value = '';
@@ -54,12 +53,18 @@ for (let i = 0; i < 4; i++) {
       };
 
       document.querySelector('#run').onclick = function() {
-        JSWalker.run($input.value);
+        stepper.run($input.value, {
+          Console: console
+        });
+      };
+
+      document.querySelector('#stop').onclick = function() {
+        stepper.clean();
       };
 
       document.querySelector('#step').onclick = function() {
-        const step = JSWalker.step();
-        setLine(step.lineNumber);
+        const step = stepper.step();
+        setLine(step.ln);
 
         if (typeof step.range !== 'undefined') {
           $input.focus();
@@ -67,13 +72,13 @@ for (let i = 0; i < 4; i++) {
           console.log(step);
         }
 
-        if (typeof step.variables !== 'undefined') {
+        if (typeof step.data !== 'undefined') {
           $variables.innerHTML = '';
-          for (let variable in step.variables) {
+          for (let variable in step.data) {
             $variables.innerHTML += '<dt>' + variable + '</dt>';
-            $variables.innerHTML += '<dd>' + step.variables[variable] + '</dd>';
+            $variables.innerHTML += '<dd>' + step.data[variable] + '</dd>';
           }
-        }    
+        }
       };
     </script>
   </body>

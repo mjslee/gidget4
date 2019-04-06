@@ -37,7 +37,6 @@ const Stepper = {
    * @return {proxy} Proxy instance.
    */
   spy(obj) {
-    //console.log(this.steps);
     return new Proxy(obj, {
       get: (target, prop) => {
         return (...args) => {
@@ -89,25 +88,30 @@ const Stepper = {
    * Evaluate input.
    * @param {string} ECMAScript code input.
    */
-  run(input) {
+  run(input, imports) {
     this.clean();
     this.debugInput = Injector(input).run();
 
-    const _console = console;
-
     const fakeSandbox = () => {
-      // Overwrite in this scope
-      const window = undefined;
-      const document = undefined;
-      const console = this.spy(_console);
-
       // Step functions
       const __scope__ = (...args) => this.__scope__(...args);
       const __step__ = (...args) => this.__step__(...args);
       const __collect__ = (...args) => this.__collect__(...args);
+      const __imports__ = imports;
+
+      // Override in this scope
+      const window = undefined;
+      const document = undefined;
+      imports = undefined;
+
+      // Imports
+      let importText = '';
+      Object.keys(__imports__).forEach(key => {
+        importText += `const ${key}=this.spy(__imports__['${key}']);`;
+      });
 
       // Evaluate modified user input
-      eval(this.debugInput);
+      eval(importText + this.debugInput);
     };
 
     fakeSandbox.call({});
