@@ -1,4 +1,4 @@
-# gidget
+# Gidget
 
 > Help Gidget!
 
