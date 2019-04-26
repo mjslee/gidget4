@@ -63,11 +63,6 @@ export default {
 
       // World
       world: undefined,
-      setupData: {
-        size: this.size,
-        tiles: this.tiles,
-        objects: this.objects
-      },
 
       // World objects
       playerObject: undefined,
