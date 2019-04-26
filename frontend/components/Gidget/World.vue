@@ -111,7 +111,6 @@ export default {
       popupPosition: { top: 0, left: 0, display: 'none' },
       hoveredTile: { x: 0, y: 0 },
 
-      tileSize: 5,
       tileMargin: .1,
       selectedObject: undefined,
 
@@ -138,8 +137,12 @@ export default {
      * Watch 'size' prop to resize the world size
      * @param {number} newValue
      */
-    size(newValue) {
-      this.world.size = newValue;
+    'world.size': {
+      handler(newVal) {
+        this.$nextTick(() => {
+          this.updateObjectPositions();
+        });
+      }
     },
 
     /**
@@ -154,12 +157,10 @@ export default {
 
   computed: {
     /**
-     * Calculate X axis label width.
+     * Tile size.
      */
-    axisLabelWidth() {
-      return {
-        width: this.tileSize + (this.tileMargin * 2) + 'rem'
-      }
+    tileSize() {
+      return 24 / this.world.size;
     },
 
     /**
@@ -169,7 +170,16 @@ export default {
       return {
         margin: this.tileMargin + 'rem'
       }
-    }
+    },
+
+    /**
+     * Calculate X axis label width.
+     */
+    axisLabelWidth() {
+      return {
+        width: this.tileSize + (this.tileMargin * 2) + 'rem'
+      }
+    },
     
   },
 

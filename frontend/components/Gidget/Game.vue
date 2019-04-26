@@ -76,7 +76,6 @@ export default {
     this.game = Game.create({ size: this.size });
     this.game.onError = this.handleError;
     this.game.onStep = this.handleStep;
-    this.game.world.size = 4;
 
     // Create game objects
     if (!window.objectsCreated)
