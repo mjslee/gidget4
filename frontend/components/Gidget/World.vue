@@ -232,8 +232,9 @@ export default {
      * @param {object} event
      */
     movePopupPosition(event) {
-      this.popupPosition.left = (event.pageX + 15) + 'px';
-      this.popupPosition.top = (event.pageY + 15) + 'px';
+      const rect = event.currentTarget.getBoundingClientRect();
+      this.popupPosition.left = (event.clientX - rect.left + 20) + 'px';
+      this.popupPosition.top = (event.clientY - rect.top + rect.height - 50) + 'px';
     },
 
     /*
