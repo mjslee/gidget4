@@ -1,3 +1,3 @@
 export default {
-  image: '/sprites/puppy.png',
+  image: 'puppy.png',
 }

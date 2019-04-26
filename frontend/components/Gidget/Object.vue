@@ -1,7 +1,7 @@
 <template>
   <div>
     <span :style="labelStyle" v-text="this.object.name"></span>
-    <img :src="object.image" :style="objectStyle" />
+    <img :src="objectImage" :style="objectStyle" />
   </div>
 </template>
 
@@ -89,6 +89,13 @@ export default {
         'width': this.getSize,
         'z-index': this.object.layer || 0
       }
+    },
+
+    /**
+     *
+     */
+    objectImage() {
+      return '/gidget/sprites/' + this.object.image
     }
   },
 

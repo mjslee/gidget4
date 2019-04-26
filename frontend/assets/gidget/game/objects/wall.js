@@ -1,4 +1,4 @@
 export default {
-  image: '/sprites/wall.png',
+  image: 'wall.png',
   blocking: true
 }

@@ -10,8 +10,8 @@ div {
   border-radius: 0.25rem;
 }
 
-.grass { background-image: url("/sprites/grass.png") }
-.dirt { background-image: url("/sprites/dirt.png") }
+.grass { background-image: url("/gidget/sprites/grass.png") }
+.dirt { background-image: url("/gidget/sprites/dirt.png") }
 </style>
 
 

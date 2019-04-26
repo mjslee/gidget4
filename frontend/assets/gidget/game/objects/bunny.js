@@ -1,3 +1,3 @@
 export default {
-  image: '/sprites/bunny.png'
+  image: 'bunny.png'
 }
