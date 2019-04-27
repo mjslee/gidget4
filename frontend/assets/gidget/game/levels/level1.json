@@ -1,0 +1,28 @@
+{
+  "code": "// Level 1",
+  "size": 4,
+    "tiles": [
+      { "type": "dirt", "position": { "x": 1, "y": 2 }}
+    ],
+    "objects": [
+      { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
+      { "type": "Puppy", "position": { "x": 2, "y": 3 } }
+    ],
+    "goals": [
+      {
+        "assert": "equal",
+        "arguments": ["Gidget.position", "Puppy.position"]
+      },
+      {
+        "assert": "equal",
+        "arguments": ["x", 5]
+      },
+      {
+        "assert": "equal",
+        "arguments": ["y", "cool"]
+      }
+    ],
+    "imports": {
+
+    }
+}
