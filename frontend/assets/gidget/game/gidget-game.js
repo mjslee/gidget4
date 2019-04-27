@@ -1,6 +1,8 @@
+import _ from 'lodash';
 import GidgetWorld from '@/assets/gidget/game/gidget-world';
 import Stepper from '@/assets/gidget/lang/js-stepper';
 import Explainer from '@/assets/gidget/lang/js-explainer';
+
 
 
 export default {
@@ -17,7 +19,7 @@ export default {
    * @param {Object} kwargs - Keyword-arguments to merge into new instance.
    */
   create(kwargs) {
-    const game = Object.create(this);
+    const game = _.cloneDeep(this);
     game.stepper = Stepper.create();
     game.world = GidgetWorld.create(kwargs);
     return game;
@@ -65,8 +67,9 @@ export default {
    * to its initial state.
    */
   reset() {
-    this.world.restoreState(this.states[0]);
     this.stepper = Object.create(Stepper);
+    if (this.states.length > 0)
+      this.world.restoreState(this.states[0]);
   },
 
 

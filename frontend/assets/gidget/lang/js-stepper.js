@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import Injector from './js-injector';
+
 
 /*
  * Pre-ran step-by-step lookback.
@@ -17,7 +19,7 @@ export default {
    * @return {object} Stepper instance.
    */
   create() {
-    return Object.create(this);
+    return _.cloneDeep(this);
   },
    
 

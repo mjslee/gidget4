@@ -1,6 +1,9 @@
 <template>
   <div id="app">
+    <button @click="loadLvl">load lvl 1</button>
+    <button @click="loadLvl2">load lvl 2</button>
     <GidgetGame
+      :key="updateKey"
       :code="game.code"
       :size="game.size"
       :tiles="game.tiles"
@@ -13,6 +16,8 @@
 
 <script>
 import GidgetGame from '@/components/Gidget/Game'
+import lvl1 from '@/assets/gidget/game/levels/level1.json'
+import lvl2 from '@/assets/gidget/game/levels/level2.json'
 
 
 export default {
@@ -21,56 +26,22 @@ export default {
     GidgetGame
   },
 
+
   data() {
     return {
-      game: {
-        code: `Gidget.left();
-Gidget.up();
-let goLeft = false;
+      updateKey: 1,
+      game: {}
+    }
+  },
 
-for (let i = 0; i <= 3; i++) {
-  for (let j = 0; j <= 2; j++) {
-    goLeft ? Gidget.left() : Gidget.right();
-  }
-  
-  if (i == 3) {
-    // Example comment
-    break;
-    /* Switch sides or something */
-  }
-  
-  Gidget.down();
-  goLeft = !goLeft;
-}
-
-Gidget.right();
-Gidget.right();`,
-        size: 4,
-        tiles: [
-          { type: 'dirt', position: { x: 1, y: 2 }},
-        ],
-        objects: [
-          { type: 'Gidget', mixins: ['Player'], position: { x: 1, y: 1 } },
-          { type: 'Puppy', position: { x: 2, y: 3 } },
-        ],
-        goals: [
-          {
-            assert: 'equal',
-            arguments: ['Gidget.position', 'Puppy.position']
-          },
-          {
-            assert: 'equal',
-            arguments: ['x', 5]
-          },
-          {
-            assert: 'equal',
-            arguments: ['y', 'cool']
-          },
-        ],
-        imports: {
-
-        }
-      }
+  methods: {
+    loadLvl() {
+      this.game = Object.create(lvl1);
+      this.updateKey += 1;
+    },
+    loadLvl2() {
+      this.game = Object.create(lvl2);
+      this.updateKey += 1;
     }
   }
 }

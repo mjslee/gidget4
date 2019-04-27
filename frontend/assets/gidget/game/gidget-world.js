@@ -26,7 +26,7 @@ export default {
    * @param {dictionary} kwargs Default properties.
    */
   create(kwargs) {
-    const world = Object.assign({}, this);
+    const world = _.cloneDeep(this);
     Object.assign(world, kwargs);
     return world;
   },

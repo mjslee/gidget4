@@ -27,6 +27,15 @@ export default {
     value: String
   },
 
+  watch: {
+    /**
+     * Update code on value change.
+     */
+    value(newVal) {
+      this.code = newVal;
+    }
+  },
+
   data() {
     return {
       // Button disabled states
