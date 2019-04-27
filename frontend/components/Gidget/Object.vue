@@ -1,7 +1,7 @@
 <template>
   <div>
-    <span :style="labelStyle" v-text="this.object.name"></span>
-    <img :src="objectImage" :style="objectStyle" />
+    <span ref="label" :style="labelStyle" v-text="this.object.name"></span>
+    <img ref="object" :src="objectImage" :style="objectStyle" />
   </div>
 </template>
 
@@ -17,6 +17,7 @@ span {
   background: rgba(0, 0, 0, 0.25);
   padding: 0.2rem;
   text-shadow: 1px 1px 1px #000;
+  pointer-events: none;
 }
 
 img, span {
@@ -25,8 +26,12 @@ img, span {
   transition: all 200ms;
 }
 
+.selected > span {
+  z-index: 101 !important;
+}
+
 .selected > img {
-  z-index: 1000 !important;
+  z-index: 100 !important;
   pointer-events: none;
   box-shadow: 0 0 3rem 1rem gold inset, 0 0 2rem goldenrod;
 }
@@ -63,12 +68,12 @@ export default {
     /**
      * Calculate size of object.
      */
-    getSize() {
-      return this.size * this.scale + 'rem';
+    tileSize() {
+      return this.size * this.scale;
     },
 
     /**
-     *
+     * Create label style object.
      */
     labelStyle() {
       return {
@@ -79,24 +84,38 @@ export default {
     },
 
     /**
-     *
+     * Get width of label.
+     */
+    labelWidth() {
+      return this.$refs.label.getBoundingClientRect().width;
+    },
+
+    /**
+     * Get width of object.
+     */
+    objectWidth() {
+      return this.$refs.object.getBoundingClientRect().width;
+    },
+
+    /**
+     * Create object style object.
      */
     objectStyle() {
       return {
         'left': this.objectLeft + 'px',
         'top': this.objectTop + 'px',
-        'height': this.getSize,
-        'width': this.getSize,
+        'height': this.tileSize + 'rem',
+        'width': this.tileSize + 'rem',
         'z-index': this.object.layer || 0
       }
     },
 
     /**
-     *
+     * Get image of object with prefix.
      */
     objectImage() {
       return '/gidget/sprites/' + this.object.image
-    }
+    },
   },
 
 
@@ -110,8 +129,8 @@ export default {
       this.objectLeft = rect.x - (this.scale - 1) * rect.width / 2;
       this.objectTop = rect.y - (this.scale - 1) * rect.height;
 
-      this.labelLeft = rect.x - (this.scale - 1) * rect.width / 2;
-      this.labelTop = rect.y - (this.scale - 1) * rect.height;
+      this.labelLeft = this.objectLeft + ((this.objectWidth - this.labelWidth) / 2);
+      this.labelTop = this.objectTop - 25;
     },
 
 
