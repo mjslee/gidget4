@@ -47,12 +47,22 @@ export default {
 
 
   props: {
-    code: String,
-    size: Number,
-    tiles: Array[Object],
-    objects: Array[Object],
-    goals: Array[Object],
-    imports: Object,
+    code: { type: String, default: '' },
+    size: { type: Number, default: 3 },
+    tiles: { type: Array, default: () => [] },
+    objects: { type: Array, default: () => [] },
+    goals: { type: Array, default: () => [] },
+    imports: { type: Object, default: () => {} },
+  },
+
+
+  watch: {
+    /**
+     * Update game world size on prop update.
+     */
+    size(newVal) {
+      this.game.world.size = newVal;
+    }
   },
 
 
@@ -62,6 +72,7 @@ export default {
       data: {},
 
       // World
+      game: Game.create({ size: this.size }),
       world: undefined,
 
       // World objects
@@ -73,14 +84,11 @@ export default {
 
   created() {
     // Set up game
-    this.game = Game.create({ size: this.size });
     this.game.onError = this.handleError;
     this.game.onStep = this.handleStep;
 
     // Create game objects
-    if (!window.objectsCreated)
-      this.game.createObjects(this.objects);
-    window.objectsCreated = true;
+    this.game.createObjects(this.objects);
 
     // Watch world object
     this.world = this.game.world;
