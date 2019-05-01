@@ -10,7 +10,7 @@ export default {
       );
 
       if (!move)
-        throw new Error("Can't reach!");
+        this.object.say({ text: "I can't reach!" });
 
       return move;
     },
@@ -19,7 +19,7 @@ export default {
      * Move object one space to the left.
      */
     left() {
-      this.object.say("I'm moving left!");
+      this.object.say({ text: "I'm moving left!" });
       return this._move(-1, 0);
     },
 

@@ -86,7 +86,7 @@ export default {
   created() {
     // Set up game
     this.game.onError = this.handleError;
-    this.game.world.onObjectSay = this.handleMessage;
+    this.game.world.onObjectSay = this.handleMessages;
 
     // Create game objects
     this.game.createObjects(this.objects);
@@ -116,8 +116,8 @@ export default {
     /**
      * Handle object talking.
      */
-    handleMessage(message) {
-      console.log('waaaaat');
+    handleMessages(messages) {
+      this.gidgetDialogue.setMessages(messages);
     },
 
 
