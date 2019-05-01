@@ -19,6 +19,7 @@ export default {
      * Move object one space to the left.
      */
     left() {
+      this.object.say("I'm moving left!");
       return this._move(-1, 0);
     },
 

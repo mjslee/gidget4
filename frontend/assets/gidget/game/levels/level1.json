@@ -1,28 +1,24 @@
 {
-  "code": "// Level 1",
-  "size": 4,
-    "tiles": [
-      { "type": "dirt", "position": { "x": 1, "y": 2 }}
-    ],
-    "objects": [
-      { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
-      { "type": "Puppy", "position": { "x": 2, "y": 3 } }
-    ],
-    "goals": [
-      {
-        "assert": "equal",
-        "arguments": ["Gidget.position", "Puppy.position"]
-      },
-      {
-        "assert": "equal",
-        "arguments": ["x", 5]
-      },
-      {
-        "assert": "equal",
-        "arguments": ["y", "cool"]
-      }
-    ],
-    "imports": {
-
+  "code": "right()",
+  "size": 3,
+  "tiles": [],
+  "objects": [
+    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
+    { "type": "Puppy", "position": { "x": 0, "y": 1 } }
+  ],
+  "goals": [
+    {
+      "assert": "equal",
+      "arguments": ["Gidget.position", "Puppy.position"]
     }
+  ],
+  "dialogue": {
+    "intro": [
+      "Okay, let's get started! For each level, I'll provide you with some starting code in the top-left panel, but since I'm damaged, I'll need you to help me sort out my mistakes.",
+      "Feel free to modify, delete, or reuse any of the code I give you! There should be clues inside to teach you how to use my commands effectively!",
+      "Make sure you always read the goals of the level on the bottom-left panel first, and then try running the code at least once using the buttons below the goals to see how the starting code works.",
+      "It looks like the goal of this level is to move myself to the /Puppy/! Use the buttons on the bottom-left to see what my code does, and click on the top-left white panel to start editing!"
+    ],
+    "outro": ["Success! I accomplished all of my goals! Thank you, I never could've done it without you!"]
+  } 
 }

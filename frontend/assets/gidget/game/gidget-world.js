@@ -382,6 +382,19 @@ export default {
     }
 
     return result;
+  },
+
+
+  /**
+   *
+   *
+   *
+   */
+  sayMessage(object, message, type) {
+    console.log(this, message, type);
+    // Object Say Callback
+    if (typeof this.onObjectSay === 'function')
+      this.onObjectSay(object, message, type);
   }
 
 }

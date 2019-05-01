@@ -19,7 +19,7 @@
 
     <GidgetInspector :object="selectedObject" />
 
-    <GidgetDialogue ref="dialogue" />
+    <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
 
     <GidgetGoals ref="goals" :world="world" :goals="goals" />
   </div>
@@ -52,6 +52,7 @@ export default {
     tiles: { type: Array, default: () => [] },
     objects: { type: Array, default: () => [] },
     goals: { type: Array, default: () => [] },
+    dialogue: { type: Object, default: () => {} },
     imports: { type: Object, default: () => {} },
   },
 
@@ -85,7 +86,7 @@ export default {
   created() {
     // Set up game
     this.game.onError = this.handleError;
-    this.game.onStep = this.handleStep;
+    this.game.world.onObjectSay = this.handleMessage;
 
     // Create game objects
     this.game.createObjects(this.objects);
@@ -109,6 +110,14 @@ export default {
      */
     updateSelectedObject(payload) {
       this.selectedObject = payload;
+    },
+
+
+    /**
+     * Handle object talking.
+     */
+    handleMessage(message) {
+      console.log('waaaaat');
     },
 
 
@@ -150,6 +159,15 @@ export default {
 
 
     /**
+     * Explain next step.
+     */
+    async explainStep() {
+      if (this.evaluateScript())
+        await this.game.explain();
+    },
+
+
+    /**
      * Run next step.
      */
     async nextStep() {
@@ -184,15 +202,6 @@ export default {
       if (this.evaluateScript())
         await this.game.run();
     },
-
-
-    /**
-     * Run all steps.
-     */
-    async explainStep() {
-      if (this.evaluateScript())
-        await this.game.explain();
-    }
   }
 }
 </script>

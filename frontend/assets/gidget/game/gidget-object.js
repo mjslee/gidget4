@@ -177,5 +177,14 @@ export default {
    */
   remove() {
     return this.grabber === undefined ? this.world.removeObject(this.id) : false;
+  },
+
+
+  /**
+   *
+   */
+  say(message, type) {
+    console.log(this, message, type);
+    this.world.sayMessage(this, message, type);
   }
 };
