@@ -386,15 +386,13 @@ export default {
 
 
   /**
-   *
-   *
-   *
+   * Run onObjectSay() callback to pass to a UI.
+   * @param {number} object - Object to send to callback.
+   * @param {number} messages - Object array of messages.
    */
-  sayMessage(object, message, type) {
-    console.log(this, message, type);
-    // Object Say Callback
+  sayMessages(messages) {
     if (typeof this.onObjectSay === 'function')
-      this.onObjectSay(object, message, type);
+      this.onObjectSay(messages);
   }
 
 }

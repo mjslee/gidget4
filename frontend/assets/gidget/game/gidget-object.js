@@ -181,10 +181,20 @@ export default {
 
 
   /**
-   *
+   * Say message as an object.
    */
-  say(message, type) {
-    console.log(this, message, type);
-    this.world.sayMessage(this, message, type);
+  say(messages) {
+    // Allow for single message object or array of message objects
+    if (!Array.isArray(messages))
+      messages = [ messages ];
+
+    // Add 'object' key to messages if not already set
+    messages.forEach(message => {
+      if (typeof message.object === 'undefined')
+        message.object = this;
+    });
+
+    // Say the message
+    this.world.sayMessages(messages);
   }
 };
