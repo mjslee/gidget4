@@ -101,6 +101,8 @@ export default {
     this.gidgetCode = this.$refs.code;
     this.gidgetDialogue = this.$refs.dialogue;
     this.gidgetGoals = this.$refs.goals;
+
+    //this.gidgetDialogue.setMessages(this.dialogue);
   },
 
 
@@ -117,7 +119,7 @@ export default {
      * Handle object talking.
      */
     handleMessages(messages) {
-      this.gidgetDialogue.setMessages(messages);
+      this.gidgetDialogue.messages = messages;
     },
 
 

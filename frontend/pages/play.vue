@@ -9,6 +9,7 @@
       :tiles="game.tiles"
       :objects="game.objects"
       :goals="game.goals"
+      :dialogue="game.dialogue"
       :imports="game.imports" />
   </div>
 </template>
