@@ -1,16 +1,8 @@
 <template>
   <div>
     {{ text }}
-    <button
-      ref="previousButton"
-      @click="previousMessage"
-      :style="buttonStyle"
-    >Prev</button>
-    <button
-      ref="nextButton"
-      @click="nextMessage"
-      :style="buttonStyle"
-    >Next</button>
+    <button ref="previousButton" @click="previousMessage">Prev</button>
+    <button ref="nextButton" @click="nextMessage">Next</button>
   </div>
 </template>
 
@@ -25,14 +17,14 @@ export default {
   data() {
     return {
       messages: [],
-      index: -1,
+      index: 0,
       text: ''
     };
   },
 
 
   mounted() {
-    // Set introduction messages
+    // Set level introduction messages
     if (
       typeof this.dialogue !== 'undefined' &&
       Array.isArray(this.dialogue.introduction)
@@ -49,32 +41,31 @@ export default {
      */
     messages() {
       this.index = 0;
+
+      // Sometiems index is already 0 so no change is made, meaning we have
+      // to manually update the display text
+      this.setMessage(this.messages[0]);
+      this.setButtonStatus();
     },
 
     /**
      * Change display text on index change.
      */
     index(newVal) {
-      this.text = this.messages[newVal];
-    }
-  },
-
-
-  computed: {
-    /**
-     * Style object of next and previous buttons.
-     */
-    buttonStyle() {
-      if (typeof this.messages === 'undefined')
-        return { display: 'none' };
-
-      const display = this.messages.length > 0 ? 'inline-block' : 'none';
-      return { display };
+      this.setMessage(this.messages[newVal]);
+      this.setButtonStatus();
     }
   },
 
 
   methods: {
+    /**
+     * Set dialogue box content and style.
+     */
+    setMessage(message) {
+      this.text = message.text;
+    },
+
     /**
      * Set next and previous button statuses.
      */
@@ -85,7 +76,7 @@ export default {
       if (this.index <= 0)
         this.$refs.previousButton.disabled = true;
 
-      else if (this.index >= this.messages.length - 1)
+      if (this.index >= this.messages.length - 1)
         this.$refs.nextButton.disabled = true;
     },
 
@@ -95,9 +86,6 @@ export default {
     nextMessage() {
       if (this.index < this.messages.length - 1)
         this.index += 1;
-        //this.text = this.messages[++this.index];
-
-      this.setButtonStatus();
     },
 
     /**
@@ -106,9 +94,6 @@ export default {
     previousMessage() {
       if (this.index > 0)
         this.index -= 1;
-        //this.text = this.messages[--this.index];
-
-      this.setButtonStatus();
     },
   },
 }

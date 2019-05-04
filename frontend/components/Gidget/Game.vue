@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <GidgetCode 
+    <GidgetCode
       ref="code"
       :value="code"
       @click:explain="explainStep"
@@ -9,7 +9,7 @@
       @click:stop="stopScript"
     />
 
-    <GidgetWorld 
+    <GidgetWorld
       ref="world" :world="world" :tiles="tiles"
       @update:selectedObject="updateSelectedObject"
     />
@@ -184,7 +184,7 @@ export default {
       // Perform a step
       this.gidgetCode.isBusy = true;
       const step = await this.game.step();
-      
+
       // Enable button if the step has a next step
       if (step)
         this.gidgetCode.isBusy = false;

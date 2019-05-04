@@ -11,37 +11,47 @@ export default {
 
       if (!move)
         this.object.say({ text: "I can't reach!" });
+    },
 
-      return move;
+    /**
+     * Say directional move.
+     * "I'm moving left!" || "I'm moving 2 spaces left!"
+     */
+    _moveSay(direction, amount) {
+      const spaces = amount == 1 ? '' : `${amount} spaces ` ;
+      this.object.say({ text: `I'm moving ${spaces}${direction}!` });
     },
 
     /**
      * Move object one space to the left.
      */
-    left() {
-      this.object.say({ text: "I'm moving left!" });
-      return this._move(-1, 0);
+    left(amount=1) {
+      this._moveSay('left', amount);
+      this._move(amount * -1, 0);
     },
 
     /**
      * Move object one space to the left.
      */
-    right() {
-      return this._move(1, 0);
+    right(amount=1) {
+      this._moveSay('right', amount);
+      this._move(amount, 0);
     },
 
     /**
      * Move object one space upwards.
      */
-    up() {
-      return this._move(0, -1);
+    up(amount=1) {
+      this._moveSay('up', amount);
+      this._move(0, amount * -1);
     },
 
     /**
      * Move object one space upwards.
      */
-    down() {
-      return this._move(0, 1);
+    down(amount=1) {
+      this._moveSay('down', amount);
+      this._move(0, amount);
     }
   }
 }

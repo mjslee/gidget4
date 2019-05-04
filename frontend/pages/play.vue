@@ -35,6 +35,10 @@ export default {
     }
   },
 
+  mounted() {
+    this.loadLvl();
+  },
+
   methods: {
     loadLvl() {
       this.game = Object.create(lvl1);
