@@ -5,12 +5,15 @@
       <GidgetCode
         ref="code"
         :value="code"
+      />
+      <GidgetGoals ref="goals" :world="world" :goals="goals" />
+      <GidgetButtons
+        ref="buttons"
         @click:explain="explainStep"
         @click:step="nextStep"
         @click:run="runSteps"
         @click:stop="stopScript"
       />
-      <GidgetGoals ref="goals" :world="world" :goals="goals" />
     </div>
 
     <!-- World and Dialogue -->
@@ -19,14 +22,12 @@
         ref="world" :world="world" :tiles="tiles"
         @update:selectedObject="updateSelectedObject"
       />
-
       <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
     </div>
 
     <!-- Inspector -->
     <div class="column">
       <GidgetInspector :object="playerObject" />
-
       <GidgetInspector :object="selectedObject" />
     </div>
   </div>
@@ -39,6 +40,7 @@ import GidgetInspector from './Inspector';
 import GidgetCode from './Code';
 import GidgetDialogue from './Dialogue';
 import GidgetGoals from './Goals';
+import GidgetButtons from './Buttons';
 
 import Game from '@/assets/gidget/game/gidget-game';
 
@@ -50,6 +52,7 @@ export default {
     GidgetInspector,
     GidgetDialogue,
     GidgetGoals,
+    GidgetButtons,
   },
 
 
@@ -108,6 +111,7 @@ export default {
     this.gidgetCode = this.$refs.code;
     this.gidgetDialogue = this.$refs.dialogue;
     this.gidgetGoals = this.$refs.goals;
+    this.gidgetButtons = this.$refs.buttons;
 
     //this.gidgetDialogue.setMessages(this.dialogue);
   },
@@ -136,6 +140,7 @@ export default {
     handleError(ln, message) {
       this.gidgetCode.reset();
       this.gidgetCode.setErrorLine(ln - 1);
+      this.gidgetButtons.reset();
       this.gidgetDialogue.text = message;
     },
 
@@ -164,6 +169,7 @@ export default {
     stopScript() {
       this.game.reset();
       this.gidgetCode.reset();
+      this.gidgetButtons.reset();
     },
 
 
@@ -180,21 +186,21 @@ export default {
      * Run next step.
      */
     async nextStep() {
-      if (!this.gidgetCode.isRunning) {
+      if (!this.gidgetButtons.isRunning) {
         // Reset and if evaluation fails then return
         this.game.reset();
         if (!this.evaluateScript())
           return;
-        this.gidgetCode.isRunning = true;
+        this.gidgetButtons.isRunning = true;
       }
 
       // Perform a step
-      this.gidgetCode.isBusy = true;
+      this.gidgetButtons.isBusy = true;
       const step = await this.game.step();
 
       // Enable button if the step has a next step
       if (step)
-        this.gidgetCode.isBusy = false;
+        this.gidgetButtons.isBusy = false;
     },
 
 
@@ -203,8 +209,8 @@ export default {
      */
     async runSteps() {
       // Set running
-      this.gidgetCode.isRunning = true;
-      this.gidgetCode.isBusy = true;
+      this.gidgetButtons.isRunning = true;
+      this.gidgetButtons.isBusy = true;
 
       // Reset and run if evaluated
       this.game.reset();

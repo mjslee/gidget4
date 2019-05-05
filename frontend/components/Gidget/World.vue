@@ -6,7 +6,7 @@
       v-text="`[${hoveredTile.x}, ${hoveredTile.y}]`"
     />
 
-    <main ref="world" id="world" 
+    <main ref="world" id="world"
       @mouseenter="popupPosition.display = 'block'"
       @mouseleave="popupPosition.display = 'none'"
       @mousemove="movePopupPosition"
@@ -180,7 +180,6 @@ export default {
         width: this.tileSize + (this.tileMargin * 2) + 'rem'
       }
     },
-    
   },
 
 
@@ -207,7 +206,7 @@ export default {
      */
     getTileRect(x, y) {
       const tile = this.$refs.tiles.find(tile => tile.x === x && tile.y === y);
-      return !tile ? undefined : { 
+      return !tile ? undefined : {
         x: tile.$el.offsetLeft, y: tile.$el.offsetTop,
         height: tile.$el.offsetHeight, width: tile.$el.offsetWidth
       };
