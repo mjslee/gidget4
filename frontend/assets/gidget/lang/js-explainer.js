@@ -3,7 +3,7 @@ export default {
 
   },
 
-  explainNode(node) {
+  explainStatement(node) {
     // https://esprima.readthedocs.io/en/latest/syntax-tree-format.html
     const result = [];
 
@@ -73,6 +73,75 @@ export default {
   },
 
   explainExpression(expression) {
+    switch (true) {
+      case 'ThisExpression':
+        break;
 
+      case 'Identifier':
+        break;
+
+      case 'Literal':
+        break;
+
+      case 'ArrayExpression':
+        break;
+
+      case 'ObjectExpression':
+        break;
+
+      case 'FunctionExpression':
+        break;
+
+      case 'ArrowFunctionExpression':
+        break;
+
+      case 'ClassExpression':
+        break;
+
+      case 'TaggedTemplateExpression':
+        break;
+
+      case 'MemberExpression':
+        break;
+
+      case 'Super':
+        break;
+
+      case 'MetaProperty':
+        break;
+
+      case 'NewExpression':
+        break;
+
+      case 'CallExpression':
+        break;
+
+      case 'UpdateExpression':
+        break;
+
+      case 'AwaitExpression':
+        break;
+
+      case 'UnaryExpression':
+        break;
+
+      case 'BinaryExpression':
+        break;
+
+      case 'LogicalExpression':
+        break;
+
+      case 'ConditionalExpression':
+        break;
+
+      case 'YieldExpression':
+        break;
+
+      case 'AssignmentExpression':
+        break;
+
+      case 'SequenceExpression':
+        break;
+    }
   }
 }

@@ -15,7 +15,9 @@
 
 <script>
 import { codemirror } from 'vue-codemirror'
+import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/monokai.css'
 
 
 export default {
@@ -46,7 +48,6 @@ export default {
       code: this.value,
       codemirrorOptions: {
         tabSize: 2,
-        mode: 'text/javascript',
         lineNumbers: true,
         line: true,
 

@@ -30,7 +30,7 @@ export default {
 
   data() {
     return {
-      updateKey: 1,
+      updateKey: 0,
       game: {}
     }
   },

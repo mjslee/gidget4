@@ -1,27 +1,34 @@
 <template>
-  <div id="app">
-    <GidgetCode
-      ref="code"
-      :value="code"
-      @click:explain="explainStep"
-      @click:step="nextStep"
-      @click:run="runSteps"
-      @click:stop="stopScript"
-    />
+  <div id="app" class="columns">
+    <!-- Code and Goals -->
+    <div class="column">
+      <GidgetCode
+        ref="code"
+        :value="code"
+        @click:explain="explainStep"
+        @click:step="nextStep"
+        @click:run="runSteps"
+        @click:stop="stopScript"
+      />
+      <GidgetGoals ref="goals" :world="world" :goals="goals" />
+    </div>
 
-    <GidgetWorld
-      ref="world" :world="world" :tiles="tiles"
-      @update:selectedObject="updateSelectedObject"
-    />
+    <!-- World and Dialogue -->
+    <div class="column">
+      <GidgetWorld
+        ref="world" :world="world" :tiles="tiles"
+        @update:selectedObject="updateSelectedObject"
+      />
 
-    <br/>
-    <GidgetInspector :object="playerObject" />
+      <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
+    </div>
 
-    <GidgetInspector :object="selectedObject" />
+    <!-- Inspector -->
+    <div class="column">
+      <GidgetInspector :object="playerObject" />
 
-    <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
-
-    <GidgetGoals ref="goals" :world="world" :goals="goals" />
+      <GidgetInspector :object="selectedObject" />
+    </div>
   </div>
 </template>
 
@@ -129,7 +136,6 @@ export default {
     handleError(ln, message) {
       this.gidgetCode.reset();
       this.gidgetCode.setErrorLine(ln - 1);
-      console.log(ln, message);
       this.gidgetDialogue.text = message;
     },
 
