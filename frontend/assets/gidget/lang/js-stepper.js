@@ -212,7 +212,7 @@ export default {
 
       // Get line number from stacktrace
       if (typeof ln === 'undefined') {
-        const match = e.stack.match(/:\d+:\d+/);  // Match ':1:5', line is '1'
+        const match = e.stack.match(/:\d+:\d+\W$/m); // Match ':1:5', line is '1'
         if (match.length > 0)
           ln = parseInt(match[0].split(':')[1]);
       }

@@ -83,6 +83,7 @@ export default {
 
     // Parsing error, call error callback
     if (result.hasError) {
+      console.log(result.error);
       if (typeof this.onError === 'function')
         this.onError(result.error.ln, result.error.message);
       return false;

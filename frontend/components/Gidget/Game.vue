@@ -129,6 +129,7 @@ export default {
     handleError(ln, message) {
       this.gidgetCode.reset();
       this.gidgetCode.setErrorLine(ln - 1);
+      console.log(ln, message);
       this.gidgetDialogue.text = message;
     },
 
