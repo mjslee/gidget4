@@ -37,6 +37,8 @@
 
 .keyword { color: #770088 }
 .operator { color: #221199 }
+.literal { color: #116644 }
+.string { color: #aa1111 }
 </style>
 
 
@@ -44,6 +46,10 @@
 import Goal from '@/assets/gidget/game/gidget-goal'
 
 export default {
+  components: {
+  
+  },
+
   props: {
     goals: Array[Object],
     world: Object
@@ -67,17 +73,31 @@ export default {
 
   methods: {
     /**
-     *
+     * Returns HTML of arguments wrapped in span elements.
      */
     formatArgument(arg) {
-      const args = arg.split('.');
-      if (args.length > 1) {
-        let result = `<span class="object">${args[0]}</span>.`;
-        result += `<span class="prop">${args[1]}</span>`;
-        return result;
+      const span = (c, v) => `<span class="${c}">${v}</span>`;
+      const type = typeof arg;
+
+      if (type === 'string') {
+        // Is argument of form: 'Object.property'?
+        if (arg.includes('.')) {
+          const args = arg.split('.');
+          if (args.length > 1)
+            return span('object', args[0]) + '.' + span('property', args[1]);
+        }
+
+        // Argument starts with single or double quote -> string literal
+        if (arg[0] === '\'' || arg[0] === '"')
+          return span('string', arg);
       }
-      else
-        return `<span class="variable">${arg}</span>`;
+
+      // Argument is a number literal
+      if (type === 'number')
+        return span('literal', arg);
+
+      // Any other type of argument
+      return span('variable', arg);
     },
 
     /**
