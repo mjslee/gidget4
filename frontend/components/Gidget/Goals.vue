@@ -2,10 +2,27 @@
   <div>
     <div class="goals" v-for="goal in gameGoals" :key="goal.id">
       <div v-if="goal.assert === 'equal'">
+        <b-icon
+          icon="checkbox-blank-circle-outline"
+          size="is-small"
+          v-if="typeof goal.completed === 'undefined'"
+        />
+        <b-icon
+          icon="check-circle"
+          type="is-success"
+          size="is-small"
+          v-else-if="goal.completed"
+        />
+        <b-icon
+          icon="close-circle"
+          type="is-danger"
+          size="is-small"
+          v-else
+        />
         <span class="keyword">assert</span>
         <span class="argument" v-html="formatArgument(goal.arguments[0])" />
         <span class="operator">===</span>
-        <span class="argument" v-html="formatArgument(goal.arguments[0])" />
+        <span class="argument" v-html="formatArgument(goal.arguments[1])" />
       </div>
     </div>
     <button @click="validateGoals">Validate</button>
