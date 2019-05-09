@@ -25,11 +25,10 @@
       </div>
     </nav>
 
-    <section class="main-content columns">
+    <section class="main-content">
 
-      <aside class="column is-2 section">
-        <p class="menu-label is-hidden-touch">General</p>
-        <ul class="menu-list">
+      <div class="tabs is-centered">
+        <ul>
           <li
             v-for="(item, key) of items"
             :key="key"
@@ -42,9 +41,9 @@
             </nuxt-link>
           </li>
         </ul>
-      </aside>
+      </div>
 
-      <div class="container column is-10">
+      <div class="container column is-12">
         <nuxt />
       </div>
 
