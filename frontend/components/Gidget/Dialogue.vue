@@ -1,10 +1,34 @@
 <template>
   <div>
-    {{ text }}
-    <button ref="previousButton" @click="previousMessage">Prev</button>
-    <button ref="nextButton" @click="nextMessage">Next</button>
+    <p>
+      {{ text }}
+    </p>
+    <div class="buttons has-addons">
+      <b-button
+        icon-left="chevron-left"
+        :disabled='previousButtonDisabled'
+        @click="previousMessage"
+      >
+        Prev
+      </b-button>
+      <b-button
+        icon-right="chevron-right"
+        :disabled='nextButtonDisabled'
+        @click="nextMessage"
+      >
+        Next
+      </b-button>
+    </div>
   </div>
 </template>
+
+
+<style scoped>
+.buttons {
+  margin-top: 1rem;
+  justify-content: center;
+}
+</style>
 
 
 <script>
@@ -16,6 +40,8 @@ export default {
 
   data() {
     return {
+      nextButtonDisabled: false,
+      previousButtonDisabled: true,
       messages: [],
       index: 0,
       text: ''
@@ -70,14 +96,14 @@ export default {
      * Set next and previous button statuses.
      */
     setButtonStatus() {
-      this.$refs.nextButton.disabled = false;
-      this.$refs.previousButton.disabled = false;
+      this.nextButtonDisabled = false;
+      this.previousButtonDisabled = false;
 
       if (this.index <= 0)
-        this.$refs.previousButton.disabled = true;
+        this.previousButtonDisabled = true;
 
       if (this.index >= this.messages.length - 1)
-        this.$refs.nextButton.disabled = true;
+        this.nextButtonDisabled = true;
     },
 
     /**
