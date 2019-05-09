@@ -1,28 +1,40 @@
 <template>
   <div id="app" class="columns">
     <!-- Code and Goals -->
-    <div class="column">
-      <GidgetCode
-        ref="code"
-        :value="code"
-      />
-      <GidgetGoals ref="goals" :world="world" :goals="goals" />
-      <GidgetButtons
-        ref="buttons"
-        @click:explain="explainStep"
-        @click:step="nextStep"
-        @click:run="runSteps"
-        @click:stop="stopScript"
-      />
+    <div class="column is-one-third">
+      <div class="card">
+        <GidgetCode
+          ref="code"
+          :value="code"
+        />
+        <div class="card-footer"></div>
+        <div class="card-content">
+          <GidgetGoals ref="goals" :world="world" :goals="goals" />
+          <GidgetButtons
+            ref="buttons"
+            @click:explain="explainStep"
+            @click:step="nextStep"
+            @click:run="runSteps"
+            @click:stop="stopScript"
+          />
+        </div>
+      </div>
     </div>
 
     <!-- World and Dialogue -->
     <div class="column">
-      <GidgetWorld
-        ref="world" :world="world" :tiles="tiles"
-        @update:selectedObject="updateSelectedObject"
-      />
-      <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
+      <div class="world">
+        <GidgetWorld
+          ref="world" :world="world" :tiles="tiles"
+          @update:selectedObject="updateSelectedObject"
+        />
+      </div>
+
+      <div class="card">
+        <div class="card-content">
+          <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
+        </div>
+      </div>
     </div>
 
     <!-- Inspector -->
@@ -32,6 +44,14 @@
     </div>
   </div>
 </template>
+
+
+<style scoped>
+.world {
+  margin-left: -1rem;
+  margin-top: -1.25rem;
+}
+</style>
 
 
 <script>
@@ -152,6 +172,7 @@ export default {
       this.gidgetCode.setActiveLine(step.ln - 1);
       this.gidgetCode.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
       this.gidgetGoals.setData(step.data);
+      console.log(step.data);
     },
 
 
