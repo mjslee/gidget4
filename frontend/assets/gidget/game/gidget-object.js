@@ -41,6 +41,25 @@ export default {
 
 
   /**
+   * Say message as an object.
+   */
+  say(messages) {
+    // Allow for single message object or array of message objects
+    if (!Array.isArray(messages))
+      messages = [ messages ];
+
+    // Add 'object' key to messages if not already set
+    messages.forEach(message => {
+      if (typeof message.object === 'undefined')
+        message.object = this;
+    });
+
+    // Say the message
+    this.world.sayMessages(messages);
+  },
+
+
+  /**
    * Move object to position in world.
    * @param {number} x
    * @param {number} y
@@ -178,23 +197,4 @@ export default {
   remove() {
     return this.grabber === undefined ? this.world.removeObject(this.id) : false;
   },
-
-
-  /**
-   * Say message as an object.
-   */
-  say(messages) {
-    // Allow for single message object or array of message objects
-    if (!Array.isArray(messages))
-      messages = [ messages ];
-
-    // Add 'object' key to messages if not already set
-    messages.forEach(message => {
-      if (typeof message.object === 'undefined')
-        message.object = this;
-    });
-
-    // Say the message
-    this.world.sayMessages(messages);
-  }
 };
