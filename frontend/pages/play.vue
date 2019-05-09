@@ -1,7 +1,9 @@
 <template>
   <div id="app">
-    <button @click="loadLvl">load lvl 1</button>
-    <button @click="loadLvl2">load lvl 2</button>
+    <div style="margin-bottom:2rem">
+      <button @click="loadLvl">load lvl 1</button>
+      <button @click="loadLvl2">load lvl 2</button>
+    </div>
     <GidgetGame
       :key="updateKey"
       :code="game.code"

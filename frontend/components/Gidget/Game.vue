@@ -30,10 +30,8 @@
         />
       </div>
 
-      <div class="card">
-        <div class="card-content">
-          <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
-        </div>
+      <div class="box">
+        <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
       </div>
     </div>
 
@@ -50,6 +48,7 @@
 .world {
   margin-left: -1rem;
   margin-top: -1.25rem;
+  padding-bottom: 1rem;
 }
 </style>
 

@@ -160,7 +160,7 @@ export default {
      * Tile size.
      */
     tileSize() {
-      return 24 / this.world.size;
+      return 26 / this.world.size;
     },
 
     /**
