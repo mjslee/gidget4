@@ -26,6 +26,14 @@ div {
 export default {
   props: {
     object: Object
+  },
+
+  mounted() {
+    this.$nextTick(() => {
+    if (typeof this.object !== 'undefined')
+      window.obj1 = this.object;
+    
+    })
   }
 }
 </script>

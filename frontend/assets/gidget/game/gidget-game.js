@@ -67,7 +67,10 @@ export default {
    * to its initial state.
    */
   reset() {
-    this.stepper = Object.create(Stepper);
+    // Reset stepper
+    this.stepper = _.cloneDeep(Stepper);
+
+    // Restore initial state
     if (this.states.length > 0)
       this.world.restoreState(this.states[0]);
   },

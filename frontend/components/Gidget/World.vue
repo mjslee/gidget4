@@ -14,11 +14,11 @@
       <!-- Gidget Game Objects -->
       <GidgetObject
         ref="objects"
-        v-for="obj in world.objects" :key="'obj-' + obj.id"
-        @click.native="selectedObject = obj"
+        v-for="object in world.objects" :key="'obj-' + object.id"
+        @click.native="selectedObject = object"
         @update:position="updateObjectPosition"
-        :class="selectedObject && selectedObject.id === obj.id ? 'selected' : ''"
-        :object="obj"
+        :class="selectedObject && selectedObject.id === object.id ? 'selected' : ''"
+        :object="object"
         :size="tileSize"
       />
 
@@ -138,7 +138,7 @@ export default {
      * @param {number} newValue
      */
     'world.size': {
-      handler(newVal) {
+      handler() {
         this.$nextTick(() => {
           this.updateObjectPositions();
         });

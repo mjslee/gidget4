@@ -11,6 +11,8 @@ export default {
 
       if (!move)
         this.object.say({ text: "I can't reach!" });
+      else
+        this.object.energy -= 20;
     },
 
     /**
@@ -20,6 +22,10 @@ export default {
     _moveSay(direction, amount) {
       const spaces = amount == 1 ? '' : `${amount} spaces ` ;
       this.object.say({ text: `I'm moving ${spaces}${direction}!` });
+    },
+
+    changeName(name) {
+      this.object.name = name;
     },
 
     /**
@@ -52,6 +58,13 @@ export default {
     down(amount=1) {
       this._moveSay('down', amount);
       this._move(0, amount);
+    },
+
+    /**
+     * 
+     */
+    grab(value) {
+      this.object.grab(value);
     }
   }
 }

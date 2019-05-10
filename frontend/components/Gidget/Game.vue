@@ -133,6 +133,7 @@ export default {
 
     // Set the player object for inspector
     this.playerObject = this.world.getObject('Gidget');
+    window.obj2 = this.playerObject;
   },
 
 
@@ -194,6 +195,16 @@ export default {
 
 
     /**
+     * Stop stepper from executing and reset world.
+     */
+    resetGame() {
+      this.game.reset();
+      this.playerObject = this.game.world.getObject('Gidget')
+      this.world = this.game.world;
+    },
+
+
+    /**
      * Explain next step.
      */
     async explainStep() {
@@ -208,7 +219,7 @@ export default {
     async nextStep() {
       if (!this.gidgetButtons.isRunning) {
         // Reset and if evaluation fails then return
-        this.game.reset();
+        this.resetGame();
         if (!this.evaluateScript())
           return;
         this.gidgetButtons.isRunning = true;
@@ -233,7 +244,7 @@ export default {
       this.gidgetButtons.isBusy = true;
 
       // Reset and run if evaluated
-      this.game.reset();
+      this.resetGame();
       if (this.evaluateScript())
         await this.game.run();
     },

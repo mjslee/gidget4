@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span ref="label" :style="labelStyle" v-text="this.object.name"></span>
+    <span ref="label" :style="labelStyle" v-text="object.name"></span>
     <img ref="object" :src="objectImage" :style="objectStyle" />
   </div>
 </template>
@@ -143,7 +143,7 @@ export default {
   },
 
 
-  watch: { 
+  watch: {
     'object.position': {
       /**
        * Watch object's position to visually move in world.
