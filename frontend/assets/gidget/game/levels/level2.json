@@ -19,7 +19,7 @@
       },
       {
         "assert": "equal",
-        "arguments": ["y", "cool"]
+        "arguments": ["y", "'cool'"]
       }
     ],
     "imports": {

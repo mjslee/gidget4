@@ -126,13 +126,13 @@ export default {
 
 
   mounted() {
-    this.playerObject = this.world.player;
     this.gidgetCode = this.$refs.code;
     this.gidgetDialogue = this.$refs.dialogue;
     this.gidgetGoals = this.$refs.goals;
     this.gidgetButtons = this.$refs.buttons;
 
-    //this.gidgetDialogue.setMessages(this.dialogue);
+    // Set the player object for inspector
+    this.playerObject = this.world.getObject('Gidget');
   },
 
 

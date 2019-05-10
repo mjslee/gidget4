@@ -47,7 +47,7 @@ import Goal from '@/assets/gidget/game/gidget-goal'
 
 export default {
   components: {
-  
+
   },
 
   props: {
