@@ -9,13 +9,13 @@
         />
         <div class="card-footer"></div>
         <div class="card-content">
-          <GidgetGoals ref="goals" :world="world" :goals="goals" />
+          <GidgetGoals ref="goals" :world="game.world" :goals="goals" />
           <GidgetButtons
             ref="buttons"
             @click:explain="explainStep"
             @click:step="nextStep"
             @click:run="runSteps"
-            @click:stop="stopScript"
+            @click:stop="stopScript(true)"
           />
         </div>
       </div>
@@ -25,17 +25,17 @@
     <div class="column">
       <div class="world">
         <GidgetWorld
-          ref="world" :world="world" :tiles="tiles"
+          ref="world" :world="game.world" :tiles="tiles"
           @update:selectedObject="updateSelectedObject"
         />
       </div>
 
       <div class="box">
-        <GidgetDialogue ref="dialogue" :dialogue="dialogue" />
+        <GidgetDialogue ref="dialogue" :messages="game.world.messages" />
       </div>
     </div>
 
-    <!-- Inspector -->
+    <!-- Inspectors -->
     <div class="column">
       <GidgetInspector :object="playerObject" />
       <GidgetInspector :object="selectedObject" />
@@ -81,17 +81,19 @@ export default {
     tiles: { type: Array, default: () => [] },
     objects: { type: Array, default: () => [] },
     goals: { type: Array, default: () => [] },
-    dialogue: { type: Object, default: () => {} },
+    dialogue: { type: Array, default: () => [] },
     imports: { type: Object, default: () => {} },
   },
 
 
   watch: {
     /**
-     * Update game world size on prop update.
+     * Update game world size on 'size' prop update.
+     *
+     * @param {number} value -- New world size.
      */
-    size(newVal) {
-      this.game.world.size = newVal;
+    size(value) {
+      this.game.world.size = value;
     }
   },
 
@@ -103,7 +105,6 @@ export default {
 
       // World
       game: Game.create({ size: this.size }),
-      world: undefined,
 
       // World objects
       playerObject: undefined,
@@ -113,31 +114,26 @@ export default {
 
 
   created() {
-    // Set up game
     this.game.onError = this.handleError;
-    this.game.world.onObjectSay = this.handleMessages;
-
-    // Create game objects
     this.game.createObjects(this.objects);
-
-    // Watch world object
-    this.world = this.game.world;
   },
 
 
   mounted() {
-    this.gidgetCode = this.$refs.code;
-    this.gidgetDialogue = this.$refs.dialogue;
-    this.gidgetGoals = this.$refs.goals;
-    this.gidgetButtons = this.$refs.buttons;
-
-    // Set the player object for inspector
-    this.playerObject = this.world.getObject('Gidget');
-    window.obj2 = this.playerObject;
+    this.assignReferences();
   },
 
 
   methods: {
+    /**
+     * Assign variables that contain references game objects.
+     */
+    assignReferences() {
+      this.playerObject = this.game.world.getObject('Gidget')
+      this.game.world.messages = this.dialogue
+    },
+
+
     /**
      * Update selected object property.
      */
@@ -147,60 +143,29 @@ export default {
 
 
     /**
-     * Handle object talking.
-     */
-    handleMessages(messages) {
-      this.gidgetDialogue.messages = messages;
-    },
-
-
-    /**
-     * Handle game error.
-     */
-    handleError(ln, message) {
-      this.gidgetCode.reset();
-      this.gidgetCode.setErrorLine(ln - 1);
-      this.gidgetButtons.reset();
-      this.gidgetDialogue.text = message;
-    },
-
-
-    /**
-     * Set line markers on step.
-     */
-    handleStep(step) {
-      this.gidgetCode.setActiveLine(step.ln - 1);
-      this.gidgetCode.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
-      this.gidgetGoals.setData(step.data);
-      console.log(step.data);
-    },
-
-
-    /**
      * Run script until it hits a breakpoint or ends.
      */
     evaluateScript() {
-      return this.game.evaluate(this.gidgetCode.code, this.imports);
+      return this.game.evaluate(this.$refs.code.code, this.imports);
     },
 
 
     /**
      * Stop stepper from executing and reset world.
      */
-    stopScript() {
+    stopScript(sayMessage=false) {
+      // Breaks object references
       this.game.reset();
-      this.gidgetCode.reset();
-      this.gidgetButtons.reset();
-    },
 
-
-    /**
-     * Stop stepper from executing and reset world.
-     */
-    resetGame() {
-      this.game.reset();
+      // Set the player object for inspector
       this.playerObject = this.game.world.getObject('Gidget')
-      this.world = this.game.world;
+
+      // Reset Vue components
+      this.$refs.code.reset();
+      this.$refs.buttons.reset();
+
+      if (sayMessage)
+        this.$refs.dialogue.text = "Ok, I'm stopping!"
     },
 
 
@@ -217,21 +182,21 @@ export default {
      * Run next step.
      */
     async nextStep() {
-      if (!this.gidgetButtons.isRunning) {
+      if (!this.$refs.buttons.isRunning) {
         // Reset and if evaluation fails then return
-        this.resetGame();
+        this.stopScript();
         if (!this.evaluateScript())
           return;
-        this.gidgetButtons.isRunning = true;
+        this.$refs.buttons.isRunning = true;
       }
 
       // Perform a step
-      this.gidgetButtons.isBusy = true;
+      this.$refs.buttons.isBusy = true;
       const step = await this.game.step();
 
       // Enable button if the step has a next step
       if (step)
-        this.gidgetButtons.isBusy = false;
+        this.$refs.buttons.isBusy = false;
     },
 
 
@@ -240,13 +205,34 @@ export default {
      */
     async runSteps() {
       // Set running
-      this.gidgetButtons.isRunning = true;
-      this.gidgetButtons.isBusy = true;
+      this.$refs.buttons.isRunning = true;
+      this.$refs.buttons.isBusy = true;
 
       // Reset and run if evaluated
-      this.resetGame();
+      this.stopScript();
       if (this.evaluateScript())
         await this.game.run();
+    },
+
+
+    /**
+     * Handle game error.
+     */
+    handleError(ln, message) {
+      this.$refs.code.reset();
+      this.$refs.code.setErrorLine(ln - 1);
+      this.$refs.buttons.reset();
+      this.$refs.dialogue.text = message;
+    },
+
+
+    /**
+     * Set line markers on step.
+     */
+    handleStep(step) {
+      this.$refs.code.setActiveLine(step.ln - 1);
+      this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
+      this.$refs.goals.setData(step.data);
     },
   }
 }

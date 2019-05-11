@@ -34,7 +34,10 @@
 <script>
 export default {
   props: {
-    dialogue: { type: Object, default: () => {} }
+    messages: {
+      type: Array,
+      default: () => []
+    }
   },
 
 
@@ -42,7 +45,6 @@ export default {
     return {
       nextButtonDisabled: false,
       previousButtonDisabled: true,
-      messages: [],
       index: 0,
       text: ''
     };
@@ -51,11 +53,7 @@ export default {
 
   mounted() {
     // Set level introduction messages
-    if (
-      typeof this.dialogue !== 'undefined' &&
-      Array.isArray(this.dialogue.introduction)
-    ) {
-      this.messages = this.dialogue.introduction;
+    if (this.messages.length > 0) {
       this.nextMessage();
     }
   },
@@ -68,9 +66,10 @@ export default {
     messages() {
       this.index = 0;
 
-      // Sometiems index is already 0 so no change is made, meaning we have
+      // Sometimes index is already 0 so no change is made, meaning we have
       // to manually update the display text
-      this.setMessage(this.messages[0]);
+      if (this.messages.length > 0)
+        this.setMessage(this.messages[0]);
       this.setButtonStatus();
     },
 

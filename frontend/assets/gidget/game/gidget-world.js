@@ -6,19 +6,16 @@ import GidgetMixins from './mixins'
 
 
 export default {
-
-  // World Data
-  size: 3,
-
-  // Object Data
-  player: undefined,
-  objects: [],
   nextID: -1,
+  size: 3,
+  objects: [],
+  messages: [],
 
   // Callbacks
-  //onObjectAdded(obj) { console.log(obj, 'An object was added!') },
-  //onObjectMoved(obj) { console.log(obj, 'An object was moved!') },
-  //onObjectRemoved(obj) { console.log(obj, 'An object was removed!') },
+  //onObjectAdded(obj) { console.log(obj, 'An object was added!') }
+  //onObjectMoved(obj) { console.log(obj, 'An object was moved!') }
+  //onObjectRemoved(obj) { console.log(obj, 'An object was removed!') }
+  //onObjectSay(messages) { console.log(messages, 'An object said something!') }
 
 
   /**
@@ -391,6 +388,12 @@ export default {
    * @param {number} messages - Object array of messages.
    */
   sayMessages(messages) {
+    // Set world messages, empty and replace data to avoid destroying references
+    while (this.messages.length)
+      this.messages.pop();
+    messages.forEach(message => this.messages.push(message))
+
+    // Call onObjectSay callback
     if (typeof this.onObjectSay === 'function')
       this.onObjectSay(messages);
   }
