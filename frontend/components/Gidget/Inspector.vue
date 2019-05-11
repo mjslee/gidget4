@@ -1,25 +1,34 @@
 <template>
   <div v-if="object">
-    <table>
-      <tr><th>ID:</th><td v-text="object.id"></td></tr>
-      <tr><th>Name:</th><td v-text="object.name"></td></tr>
-      <tr><th>Type:</th><td v-text="object.type"></td></tr>
-      <tr><th>Energy:</th><td v-text="object.energy"></td></tr>
-      <tr><th>Layer:</th><td v-text="object.layer"></td></tr>
-      <tr><th>Blocking:</th><td v-text="object.blocking"></td></tr>
-      <tr><th>Position:</th><td v-text="object.position"></td></tr>
+    <table class="table">
+      <tr v-for="prop in props" :key="prop.key">
+        <th>{{ prop.name }}:</th>
+
+        <!-- Position -->
+        <td v-if="prop.type === 'position'">
+          &#91;
+          <span :data-var-name="getVarName(prop.key, 'x')">
+            {{ object[prop.key].x }}
+          </span>,
+          <span :data-var-name="getVarName(prop.key, 'y')">
+            {{ object[prop.key].y }}
+          </span>
+          &#93;
+        </td>
+
+        <!-- Boolean -->
+        <td v-else-if="prop.type === 'boolean'">
+          <span :data-var-name="getVarName(prop.key)">
+            {{ object[prop.key] }}
+          </span>
+        </td>
+
+        <!-- Anything Else -->
+        <td v-else>{{ object[prop.key] }}</td>
+      </tr>
     </table>
   </div>
 </template>
-
-
-<style scoped>
-div {
-  border: 1px solid black;
-  margin: 1px;
-  display: inline-block;
-}
-</style>
 
 
 <script>
@@ -28,12 +37,23 @@ export default {
     object: Object
   },
 
-  mounted() {
-    this.$nextTick(() => {
-    if (typeof this.object !== 'undefined')
-      window.obj1 = this.object;
-    
-    })
+  computed: {
+    props() {
+      return [
+        { name: 'ID', type: 'number', key: 'id', },
+        { name: 'Name', type: 'string', key: 'name', },
+        { name: 'Energy', type: 'number', key: 'energy', },
+        { name: 'Layer', type: 'number', key: 'layer', },
+        { name: 'Blocking', type: 'boolean', key: 'blocking', },
+        { name: 'Position', type: 'position', key: 'position', },
+      ]
+    }
+  },
+
+  methods: {
+    getVarName(objectName, prop) {
+      return this.object.name + '.' + objectName + (prop ? '.' + prop : '');
+    }
   }
 }
 </script>
