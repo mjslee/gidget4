@@ -32,7 +32,7 @@
   </span>
 
   <span v-else-if="type === 'object'" :data-type="type">
-    object
+    Object &lt;{{ Object.keys(value).length }} keys&gt;
   </span>
 
   <span v-else :data-type="type">
