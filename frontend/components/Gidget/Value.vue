@@ -20,20 +20,23 @@
 
   <span v-else-if="type === 'array'" :data-type="type">
    &#91;
-    <GidgetValue v-for="(nestedValue, index) in value" :key="`a-${index}`" />
+   <span v-for="(nestedValue, index) in value" :key="`prop-${index}`">
+     <GidgetValue :value="nestedValue" />
+     <span v-if="index + 1 < value.length">, </span>
+   </span>
    &#93;
   </span>
 
   <span v-else-if="type === 'gameobject'" :data-type="type">
-    {{ value }}a
+    <img class="image is-24x24 is-inline-block" :src="image" />
   </span>
 
   <span v-else-if="type === 'object'" :data-type="type">
-    {{ value }}
+    object
   </span>
 
   <span v-else :data-type="type">
-    {{ value }} - {{ type }}
+    unknown {{ type }}
   </span>
 
 </template>
@@ -45,6 +48,9 @@
 
 
 <script>
+import { SPRITE_PATH } from '@/constants/paths'
+
+
 export default {
   name: 'GidgetValue',
 
@@ -68,6 +74,11 @@ export default {
       }
 
       return result
+    },
+
+
+    image() {
+      return SPRITE_PATH + this.value.image;
     }
   },
 
