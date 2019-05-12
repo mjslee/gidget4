@@ -3,28 +3,7 @@
     <table class="table">
       <tr v-for="prop in props" :key="prop.key">
         <th>{{ prop.name }}:</th>
-
-        <!-- Position -->
-        <td v-if="prop.type === 'position'">
-          &#91;
-          <span :data-var-name="getVarName(prop.key, 'x')">
-            {{ object[prop.key].x }}
-          </span>,
-          <span :data-var-name="getVarName(prop.key, 'y')">
-            {{ object[prop.key].y }}
-          </span>
-          &#93;
-        </td>
-
-        <!-- Boolean -->
-        <td v-else-if="prop.type === 'boolean'">
-          <span :data-var-name="getVarName(prop.key)">
-            {{ object[prop.key] }}
-          </span>
-        </td>
-
-        <!-- Anything Else -->
-        <td v-else>{{ object[prop.key] }}</td>
+        <td><Value :value="prop.value" /></td>
       </tr>
     </table>
   </div>
@@ -32,26 +11,54 @@
 
 
 <script>
+import Value from './Value'
+
+
 export default {
+  components: {
+    Value
+  },
+
   props: {
     object: Object
   },
 
   computed: {
     props() {
+      const p = this.createProp
       return [
-        { name: 'ID', type: 'number', key: 'id', },
-        { name: 'Name', type: 'string', key: 'name', },
-        { name: 'Energy', type: 'number', key: 'energy', },
-        { name: 'Layer', type: 'number', key: 'layer', },
-        { name: 'Blocking', type: 'boolean', key: 'blocking', },
-        { name: 'Position', type: 'position', key: 'position', },
+        p('ID', 'id'),
+        p('Name', 'name'),
+        p('Energy', 'energy'),
+        p('Layer', 'layer'),
+        p('Blocking', 'blocking'),
+        p('Position', 'position'),
+        p('Grabbed', 'grabbed'),
       ]
     }
   },
 
   methods: {
-    getVarName(objectName, prop) {
+    /**
+     *
+     */
+    createProp(name, key) {
+      return { name, key, value: this.object[key] }
+    },
+
+
+    /**
+     *
+     */
+    getType() {
+    
+    },
+
+
+    /**
+     *
+     */
+    getName(objectName, prop) {
       return this.object.name + '.' + objectName + (prop ? '.' + prop : '');
     }
   }

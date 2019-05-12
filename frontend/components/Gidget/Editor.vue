@@ -15,6 +15,7 @@
 <script>
 import GidgetWorld from './World'
 
+
 export default {
   components: {
     GidgetWorld
