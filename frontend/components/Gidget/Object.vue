@@ -39,6 +39,9 @@ img, span {
 
 
 <script>
+import { SPRITE_PATH } from '@/constants/paths'
+
+
 export default {
   props: {
     object: Object,
@@ -114,7 +117,7 @@ export default {
      * Get image of object with prefix.
      */
     objectImage() {
-      return '/gidget/sprites/' + this.object.image
+      return SPRITE_PATH + this.object.image
     },
   },
 
