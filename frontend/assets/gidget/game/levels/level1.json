@@ -1,9 +1,10 @@
 {
-  "code": "Gidget.left()",
+  "code": "Gidget.left()test",
   "size": 3,
   "tiles": [],
   "objects": [
     { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
+    { "type": "Puppy", "position": { "x": 0, "y": 1 } },
     { "type": "Puppy", "position": { "x": 0, "y": 1 } }
   ],
   "goals": [

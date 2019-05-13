@@ -1,3 +1,6 @@
+import { CANNOT_MOVE } from '@/constants/messages'
+
+
 export default {
   exposed: {
 
@@ -10,7 +13,7 @@ export default {
       );
 
       if (!move)
-        this.object.say({ text: "I can't reach!" });
+        this.object.say({ text: CANNOT_MOVE });
       else
         this.object.energy -= 20;
     },
@@ -61,7 +64,7 @@ export default {
     },
 
     /**
-     * 
+     *
      */
     grab(value) {
       this.object.grab(value);

@@ -1,5 +1,5 @@
 {
-  "code": "Gidget.left();\nGidget.up();\nlet goLeft = false;\n\nfor (let i = 0; i <= 3; i++) {\nfor (let j = 0; j <= 2; j++) {\ngoLeft ? Gidget.left() : Gidget.right();\n}\n\nif (i == 3) {\n// Example comment\nbreak;\n/* Switch sides or something */\n}\n\nGidget.down();\ngoLeft = !goLeft;\n}\n\nGidget.right();\nGidget.right();",
+  "code": "let x = 5;\nGidget.left();\nGidget.up();\nlet goLeft = false;\n\nfor (let i = 0; i <= 3; i++) {\n  for (let j = 0; j <= 2; j++) {\n    goLeft ? Gidget.left() : Gidget.right();\n  }\n\n  if (i == 3) {\n    // Example comment\n    break;\n    /* Switch sides or something */\n  }\n\n  Gidget.down();\n  goLeft = !goLeft;\n}\n\nGidget.right();\nGidget.right();\n",
   "size": 4,
     "tiles": [
       { "type": "dirt", "position": { "x": 1, "y": 2 }}
@@ -21,8 +21,5 @@
         "assert": "equal",
         "arguments": ["y", "'cool'"]
       }
-    ],
-    "imports": {
-
-    }
+    ]
 }
