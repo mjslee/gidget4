@@ -38,13 +38,7 @@
   <span v-else :data-type="type">
     unknown {{ type }}
   </span>
-
 </template>
-
-
-<style>
-
-</style>
 
 
 <script>
@@ -60,16 +54,23 @@ export default {
 
 
   computed: {
+    /**
+     * Type of value.
+     *
+     * @return string
+     */
     type() {
       if (Array.isArray(this.value))
         return 'array';
 
       const result = typeof this.value
       if (result === 'object') {
-        if (this.isTypePosition(this.value))
+        // Is object type position?
+        if (this.isPosition(this.value))
           return 'position'
 
-        if (this.isTypeGameObject(this.value))
+        // Is object type a GameObject
+        if (this.isGameObject(this.value))
           return 'gameobject'
       }
 
@@ -77,6 +78,11 @@ export default {
     },
 
 
+    /**
+     * Get path of GameObject's sprite.
+     *
+     * @return string
+     */
     image() {
       return SPRITE_PATH + this.value.image;
     }
@@ -85,17 +91,23 @@ export default {
 
   methods: {
     /**
+     * Determine if value is of type 'Position'
      *
+     * @param value
+     * @return boolean
      */
-    isTypePosition(value) {
+    isPosition(value) {
       return typeof value.x !== 'undefined' && typeof value.y !== 'undefined'
     },
 
 
     /**
+     * Determine if object is of type 'GameObject'
      *
+     * @param value
+     * @return boolean
      */
-    isTypeGameObject(value) {
+    isGameObject(value) {
       return typeof value.name !== 'undefined'
     }
   }
