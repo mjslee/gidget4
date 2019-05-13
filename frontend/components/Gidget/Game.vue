@@ -230,7 +230,7 @@ export default {
      * Handle game evaluation finishing.
      */
     handleFinish() {
-
+      this.$refs.buttons.canReset = true;
     },
 
 

@@ -1,46 +1,23 @@
 <template>
   <div class="buttons has-addons">
-    <!-- <button -->
-    <!--   ref="explain" -->
-    <!--   class="button" -->
-    <!--   :disabled='isBusy' -->
-    <!--   @click="$emit('click:explain')" -->
-    <!-- > -->
-    <!--   Explain Step -->
-    <!-- </button> -->
 
-    <button
+    <b-button
       ref="step"
       class="button"
       :disabled='isBusy'
       @click="$emit('click:step')"
     >
       Next Step
-    </button>
+    </b-button>
 
-    <!-- <button -->
-    <!--   ref="run" -->
-    <!--   class="button" -->
-    <!--   :disabled="isRunning" -->
-    <!--   @click="$emit('click:run')" -->
-    <!-- > -->
-    <!--   Run -->
-    <!-- </button> -->
-
-    <!-- <button -->
-    <!--   ref="stop" -->
-    <!--   class="button" -->
-    <!--   @click="$emit('click:stop')" -->
-    <!-- > -->
-    <!--   Stop -->
-    <!-- </button> -->
-
-    <button
+    <b-button
       ref="toggle"
-      v-text="toggleText"
+      :icon-left="toggleIcon"
       :class="toggleClass"
       @click="toggle"
-    />
+    >
+      {{ toggleText }}
+    </b-button>
 
   </div>
 </template>
@@ -50,7 +27,7 @@
 export default {
   data() {
     return {
-      // Button disabled states
+      canReset: false,
       isRunning: false,
       isBusy: false,
     }
@@ -58,26 +35,75 @@ export default {
 
 
   computed: {
+    /**
+     * Class for toggle button.
+     *
+     * @return string
+     */
     toggleClass() {
-      return 'button ' + (this.isRunning ? 'is-danger' : 'is-success')
+      let result = 'button '
+      if (this.canReset)
+        result += 'is-warning'
+
+      else if (this.isRunning)
+        result += 'is-danger'
+
+      else
+        result += 'is-success'
+
+      return result;
     },
 
 
+    /**
+     * Text for toggle button.
+     *
+     * @return string
+     */
     toggleText() {
-      return this.isRunning ? 'Stop' : 'Run'
+      if (this.canReset)
+        return 'Reset'
+
+      else if (this.isRunning)
+        return 'Stop'
+
+      else
+        return 'Run'
+    },
+
+
+    /**
+     * MDI icon string for toggle button.
+     *
+     * @return string
+     */
+    toggleIcon() {
+      if (this.canReset)
+        return 'restart'
+
+      else if (this.isRunning)
+        return 'stop'
+
+      else
+        return 'play'
     }
   },
 
 
   methods: {
     /**
-     *
+     * Reset buttons to their initial state.
      */
     reset() {
+      this.canReset = false;
       this.isRunning = false;
       this.isBusy = false;
     },
 
+
+    /**
+     * Emit signal to stop or run game evaluation.
+     */
     toggle() {
       // Not running? Run it
       if (!this.isRunning)
