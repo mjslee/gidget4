@@ -213,12 +213,14 @@ export default {
      * Run all steps.
      */
     async runSteps() {
+      // Reset game
+      this.stopScript();
+
       // Set running
       this.$refs.buttons.isRunning = true;
       this.$refs.buttons.isBusy = true;
 
-      // Reset and run if evaluated
-      this.stopScript();
+      // Evaulate game script and run
       if (this.evaluateScript())
         await this.game.run();
     },
