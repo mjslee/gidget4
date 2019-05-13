@@ -44,6 +44,13 @@
 </template>
 
 
+<style>
+.is-boolean { color: #221199 !important }
+.is-integer { color: #116644 !important }
+.is-string { color: #aa1111 !important }
+</style>
+
+
 <style scoped>
 .world {
   margin-left: -1rem;
