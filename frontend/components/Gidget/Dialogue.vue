@@ -2,6 +2,9 @@
   <div>
     <p>
       {{ text }}
+      <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
+        {{ repeats }}
+      </span>
     </p>
     <div class="buttons has-addons">
       <b-button
@@ -43,10 +46,13 @@ export default {
 
   data() {
     return {
-      nextButtonDisabled: false,
-      previousButtonDisabled: true,
+      text_: '',
+
+      repeats: 0,
       index: 0,
-      text: ''
+
+      nextButtonDisabled: false,
+      previousButtonDisabled: true
     };
   },
 
@@ -55,6 +61,34 @@ export default {
     // Set level introduction messages
     if (this.messages.length > 0) {
       this.nextMessage();
+    }
+  },
+
+
+  computed: {
+    text: {
+      /**
+       * Get text value.
+       *
+       * @return {string}
+       */
+      get() {
+        return this.text_
+      },
+
+      /**
+       * Set text value. Increment or reset text repeat count.
+       *
+       * @param {string} newVal
+       */
+      set(newValue) {
+        if (this.text === newValue)
+          this.repeats += 1;
+        else
+          this.repeats = 0;
+
+        this.text_ = newValue
+      }
     }
   },
 
@@ -75,6 +109,8 @@ export default {
 
     /**
      * Change display text on index change.
+     *
+     * @param {string} newVal
      */
     index(newVal) {
       this.setMessage(this.messages[newVal]);
@@ -86,9 +122,15 @@ export default {
   methods: {
     /**
      * Set dialogue box content and style.
+     *
+     * @param {object} message
      */
     setMessage(message) {
-      this.text = message.text;
+      if (typeof message === 'undefined')
+        return;
+
+      if (typeof message.text === 'string')
+        this.text = message.text;
     },
 
     /**
