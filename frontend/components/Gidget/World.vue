@@ -56,7 +56,6 @@
 <style scoped>
 #world {
   display: inline-block;
-  position: relative;
   overflow: visible;
 }
 
@@ -113,16 +112,7 @@ export default {
 
       tileMargin: .1,
       selectedObject: undefined,
-
-      // Set in mounted() as 'world.objects' so that Vue watches it for updates
-      // and that the game world is visually updated as well
-      worldObjects: {}
     }
-  },
-
-
-  created() {
-    this.worldObjects = this.world.objects;
   },
 
 
@@ -241,9 +231,8 @@ export default {
      * @param {object} event
      */
     movePopupPosition(event) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      this.popupPosition.left = (event.clientX - rect.left + 20) + 'px';
-      this.popupPosition.top = (event.clientY - rect.top + rect.height - 50) + 'px';
+      this.popupPosition.left = (event.pageX - 100) + 'px';
+      this.popupPosition.top = (event.pageY - 100) + 'px';
     },
 
     /*
