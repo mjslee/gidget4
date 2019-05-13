@@ -149,7 +149,7 @@ export default {
       step = await this.step();
 
       // Wait for 'wait' milliseconds
-      if (wait > 0) 
+      if (wait > 0)
         await new Promise(resolve => setTimeout(resolve, wait));
     }
     while(step);

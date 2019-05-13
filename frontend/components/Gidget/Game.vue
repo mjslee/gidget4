@@ -122,6 +122,7 @@ export default {
 
   created() {
     this.game.onError = this.handleError;
+    this.game.onStep = this.handleStep;
     this.game.createObjects(this.objects);
   },
 
@@ -199,10 +200,10 @@ export default {
 
       // Perform a step
       this.$refs.buttons.isBusy = true;
-      const step = await this.game.step();
+      const hasNextStep = await this.game.step();
 
       // Enable button if the step has a next step
-      if (step)
+      if (hasNextStep)
         this.$refs.buttons.isBusy = false;
     },
 

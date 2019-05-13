@@ -64,7 +64,7 @@ export default {
         step.error = {
           name: 'TypeError',
           message: `${cmd.prop} is not a function`,
-          lineNumber: step.ln
+          ln: step.ln
         };
         return step;
       }
@@ -172,7 +172,7 @@ export default {
         hasError: true,
         error: {
           name: 'ParseError',
-          lineNumber: e.lineNumber,
+          ln: e.lineNumber,
           message: e.description
         }
       };

@@ -56,7 +56,7 @@
 <style scoped>
 #world {
   display: inline-block;
-  overflow: visible;
+  overflow: none;
 }
 
 .game-row {

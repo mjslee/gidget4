@@ -4,10 +4,11 @@ export default {
   // Node types
   blockNodes: ['WhileStatement', 'IfStatement', 'ForStatement'],
   ignoreNodes: ['SwitchCase', 'BreakStatement'],
-  parseOptions: { loc: true, range: true },
+  parseOptions: { loc: true, range: true, tolerant: true },
 
   /*
    * Traverse through AST.
+   *
    * @param {object} node - Tree node to traverse.
    * @param {function(node, prevNode)} callback - Callback to access bodies.
    */
@@ -48,6 +49,7 @@ export default {
 
   /*
    * Get all identifiers declared after an index.
+   *
    * @param {number} index - Index number to search after.
    * @return {string} String-dictionary.
    */
@@ -69,7 +71,7 @@ export default {
       else
         names.push(name);
 
-      // Append identifier get key-pair 
+      // Append identifier get key-pair
       result += `'${name}':typeof ${name}!=='undefined'?${name}:undefined,`;
     });
     return '{' + result + '}';
@@ -78,6 +80,7 @@ export default {
 
   /*
    * Get list of modifications to make to input string.
+   *
    * @return {array} Array of [['modification text', index]...]
    */
   getModifications() {
@@ -127,6 +130,7 @@ export default {
 
   /*
    * Run text modifications on an input.
+   *
    * @return {string} Modified input.
    */
   run(input) {
