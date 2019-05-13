@@ -134,6 +134,10 @@ export default {
       return false;
     }
 
+    // Call finish callback
+    if (!step.hasNext && typeof this.onFinish === 'function')
+      this.onFinish();
+
     return step.hasNext;
   },
 

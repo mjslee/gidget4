@@ -123,6 +123,7 @@ export default {
   created() {
     this.game.onError = this.handleError;
     this.game.onStep = this.handleStep;
+    this.game.onFinish = this.handleFinish;
     this.game.createObjects(this.objects);
   },
 
@@ -220,6 +221,14 @@ export default {
       this.stopScript();
       if (this.evaluateScript())
         await this.game.run();
+    },
+
+
+    /**
+     * Handle game evaluation finishing.
+     */
+    handleFinish() {
+
     },
 
 
