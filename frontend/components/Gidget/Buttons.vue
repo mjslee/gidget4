@@ -1,11 +1,24 @@
 <template>
   <div class="buttons has-addons">
 
+    <p>
+      {{ stepCount }}
+    </p>
+
     <b-button
-      ref="step"
+      ref="previousStep"
+      class="button"
+      :disabled='false'
+      @click="$emit('click:previousStep')"
+    >
+      Prev Step
+    </b-button>
+
+    <b-button
+      ref="nextStep"
       class="button"
       :disabled='isBusy'
-      @click="$emit('click:step')"
+      @click="$emit('click:nextStep')"
     >
       Next Step
     </b-button>
@@ -27,6 +40,8 @@
 export default {
   data() {
     return {
+      stepCount: 0,
+      stepIndex: 0,
       canReset: false,
       isRunning: false,
       isBusy: false,

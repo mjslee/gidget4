@@ -13,7 +13,8 @@
           <GidgetButtons
             ref="buttons"
             @click:explain="explainStep"
-            @click:step="nextStep"
+            @click:previousStep="previousStep"
+            @click:nextStep="nextStep"
             @click:run="runSteps"
             @click:stop="stopScript(true)"
           />
@@ -125,6 +126,7 @@ export default {
     this.game.onStep = this.handleStep;
     this.game.onFinish = this.handleFinish;
     this.game.createObjects(this.objects);
+    window.game = this.game;
   },
 
 
@@ -155,7 +157,10 @@ export default {
      * Run script until it hits a breakpoint or ends.
      */
     evaluateScript() {
-      return this.game.evaluate(this.$refs.code.code, this.imports);
+      const evaluated = this.game.evaluate(this.$refs.code.code, this.imports);
+      if (evaluated)
+        console.log(this.game.stepper.steps.length);
+      return evaluated;
     },
 
 
@@ -188,6 +193,16 @@ export default {
 
 
     /**
+     * Restore previous step.
+     */
+    async previousStep() {
+      this.$refs.buttons.isBusy = true;
+      const hasNextStep = await this.game.prev();
+      this.$refs.buttons.isBusy = false;
+    },
+
+
+    /**
      * Run next step.
      */
     async nextStep() {
@@ -201,7 +216,7 @@ export default {
 
       // Perform a step
       this.$refs.buttons.isBusy = true;
-      const hasNextStep = await this.game.step();
+      const hasNextStep = await this.game.next();
 
       // Enable button if the step has a next step
       if (hasNextStep)

@@ -21,10 +21,11 @@ export default {
   create() {
     return _.cloneDeep(this);
   },
-   
+
 
   /*
-   * Step after running.
+   * Get next step.
+   *
    * @param {numnber} Offset index.
    * @return {dict} Step object.
    */
@@ -42,6 +43,7 @@ export default {
     return step;
   },
 
+
   /*
    * Step after running.
    * @return {dict} Step object.
@@ -52,6 +54,7 @@ export default {
       return undefined;
 
     this.index += 1;
+    step.id = this.index;
 
     const cmd = step.cmd;
     if (typeof cmd !== 'object')
@@ -81,6 +84,7 @@ export default {
 
     return step;
   },
+
 
   /*
    * Reset properties.
@@ -155,7 +159,7 @@ export default {
     }
   },
 
-   
+
   /*
    * Evaluate input.
    * @param {string} ECMAScript code input.

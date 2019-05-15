@@ -3,7 +3,7 @@
     <p>
       {{ text }}
       <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
-        {{ repeats }}
+        {{ repeats + 1 }}
       </span>
     </p>
     <div class="buttons has-addons">

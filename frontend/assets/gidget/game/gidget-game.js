@@ -9,14 +9,14 @@ export default {
   world: undefined,
   stepper: undefined,
   states: [],
-
-  explainStepIndex: 0,
-  explainSteps: [],
+  stateIndex: 0,
 
 
   /**
    * Create GidgetGame instance.
-   * @param {Object} kwargs - Keyword-arguments to merge into new instance.
+   * @param {object} kwargs - Keyword-arguments to merge into new instance.
+   *
+   * @return {object} - Game object.
    */
   create(kwargs) {
     const game = _.cloneDeep(this);
@@ -27,26 +27,68 @@ export default {
 
 
   /**
-   * Save game world state.
+   * Save state of world and stepper.
+   *
+   * @return {void}
    */
-  save() {
-    this.states.push(this.world.getState());
+  getState() {
+    const startDate = new Date();
+
+    const state = _.cloneDeep({
+      objects: this.world.objects,
+      messages: this.world.messages
+    });
+
+    this.states.push(state)
+    console.log(`Game saved in ${new Date().getTime()-startDate.getTime()}ms`);
+    return state;
+  },
+
+
+  /**
+   * Restore state of world and stepper.
+   *
+   * @return {boolean}
+   */
+  restoreState(state) {
+    this.world.objects = state.objects;
+    this.world.messages = state.messages;
+
+    const fixWorld = node => {
+      // Traverse into array
+      if (Array.isArray(node))
+        node.forEach(subNode => fixWorld(subNode));
+
+      // Restore world property and traverse into grabbed property
+      else if (typeof node === 'object') {
+        node.world = this.world;
+        if (typeof node.grabbed !== 'undefined')
+          fixWorld(node.grabbed);
+      }
+    };
+
+    // Fix world properties inside objects
+    fixWorld(this.world.objects);
+    return true;
   },
 
 
   /**
    * Create game world objects and save the game state.
+   *
    * @param {Array[Object]} objects - Objects to create.
+   * @return {void}
    */
   createObjects(objects) {
     objects.forEach(object => this.world.createObject(object));
-    this.save();
   },
 
 
   /**
    * Add grouped game objects to the imports as their name.
+   *
    * @param {Array[Object]} imports - Imports to be merged in on.
+   * @return {object}
    */
   importsWithObjects(imports) {
     const result = Object.assign({}, imports);
@@ -65,21 +107,28 @@ export default {
   /**
    * Reset game world by creating new stepper instance and restoring the game
    * to its initial state.
+   *
+   * @return void
    */
   reset() {
     // Reset stepper
-    this.stepper = _.cloneDeep(Stepper);
+    this.stepper = Stepper.create();
 
     // Restore initial state
     if (this.states.length > 0)
-      this.world.restoreState(this.states[0]);
+      this.restoreState(this.states[0]);
+
+    // Reset states
+    this.states = [];
   },
 
 
   /**
    * Run script until it hits a breakpoint or ends.
+   *
    * @param {String} code - JavaScript code to evaluate.
    * @param {Array[Object]} imports - Game external imports.
+   * @return {boolean}
    */
   evaluate(code, imports) {
     const result = this.stepper.run(code, this.importsWithObjects(imports));
@@ -100,13 +149,42 @@ export default {
 
 
   /**
-   * Run next step in stepper.
+   * Restore previous state.
+   *
+   * @return {boolean}
    */
-  async step() {
+  async prev() {
+    if (this.stepper.index < 1)
+      return false;
+
+    const step = this.stepper.steps[--this.stepper.index];
+
+    if (typeof step.state == 'object')
+      this.restoreState(step.state);
+
+    if (typeof this.onStep === 'function')
+      this.onStep(step);
+
+    return true;
+  },
+
+
+  /**
+   * Run next step in stepper.
+   *
+   * @return {boolean}
+   */
+  async next() {
     // Get step
     let step = this.stepper.next();
     if (!step)
       return;
+
+    // Re-use state if it exists
+    if (typeof step.state === 'object') {
+      this.stepper.index++;
+      return this.restoreState(step.state);
+    }
 
     // Get next step
     if (step.hasNext)
@@ -134,6 +212,8 @@ export default {
       return false;
     }
 
+    step.state = this.getState();
+
     // Call finish callback
     if (!step.hasNext && typeof this.onFinish === 'function')
       this.onFinish();
@@ -146,11 +226,11 @@ export default {
    * Run all stepper steps.
    * @param {Number} wait - Milliseconds to wait between step.
    */
-  async run(wait=50) {
+  async run(wait=100) {
     let step;
     do {
       // Run the next step
-      step = await this.step();
+      step = await this.next();
 
       // Wait for 'wait' milliseconds
       if (wait > 0)

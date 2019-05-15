@@ -29,71 +29,6 @@ export default {
   },
 
 
-  getState() {
-    // Recursively traverse through object arrays and into the object
-    // grabbed property, remove circular properties
-    const cleanObjects = nodes => {
-      nodes.forEach(node => {
-        // Prevent circular JSON structures
-        node.world = undefined;
-        node.grabber = undefined;
-
-        // Traverse into grabbed property
-        if (typeof node.grabbed === 'object')
-          cleanObjects(node.grabbed);
-      });
-    };
-
-    // Clone this and clean its objects
-    const clone = _.cloneDeep(this);
-    cleanObjects(clone.objects);
-
-    return clone;
-  },
-
-
-  /**
-   * Restore state.
-   * @param {object} State to restore.
-   */
-  restoreState(state) {
-    // Deep clone state so it can be used again, since it will be
-    // passed in as a reference
-    const stateClone = _.cloneDeep(state);
-
-    // Restore objects by setting props that could not be transfered
-    // because their values were objects
-    const restoreObjects = nodes => {
-      nodes.forEach(node => {
-        // Set world
-        node.world = stateClone;
-
-        // Add methods to restored objects
-        for (const prop in GidgetObject)
-          if (typeof GidgetObject[prop] === 'function')
-            node[prop] = GidgetObject[prop];
-
-        // Handle grabber and grabbed properties
-        if (typeof node.grabbed === 'object') {
-          // Restore grabbed property of grabbed object
-          node.grabbed.forEach(grabbedNode => {
-            grabbedNode.grabber = node;
-          });
-
-          // Traverse into grabbed property
-          restoreObjects(node.grabbed);
-        }
-      });
-    };
-
-    // Restore all objects to previous state
-    restoreObjects(stateClone.objects);
-
-    // Replace this properties with the clone properties
-    Object.assign(this, stateClone);
-  },
-
-
   /**
    * Determine if position is valid.
    * + Check that tile position exists.
@@ -102,7 +37,7 @@ export default {
    */
   isPositionValid(x, y) {
     return (x >= 0 && x <= this.size - 1 && y >= 0 && y <= this.size - 1) &&
-      !this.getObject((obj) => 
+      !this.getObject((obj) =>
         obj.blocking && this.insideObjectBoundaries(obj, x, y)
       )
   },
@@ -149,7 +84,7 @@ export default {
    * @param {number} y
    */
   getObjectAt(x, y) {
-    return this.getObject((obj) => 
+    return this.getObject((obj) =>
       obj.position.x === x &&
       obj.position.y === y);
   },
