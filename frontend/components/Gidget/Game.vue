@@ -159,7 +159,7 @@ export default {
     evaluateScript() {
       const evaluated = this.game.evaluate(this.$refs.code.code, this.imports);
       if (evaluated)
-        console.log(this.game.stepper.steps.length);
+        this.$refs.buttons.stepCount = this.game.stepper.steps.length;
       return evaluated;
     },
 
@@ -197,6 +197,7 @@ export default {
      */
     async previousStep() {
       this.$refs.buttons.isBusy = true;
+      this.$refs.buttons.stepIter -= 1;
       const hasNextStep = await this.game.prev();
       this.$refs.buttons.isBusy = false;
     },
@@ -216,6 +217,7 @@ export default {
 
       // Perform a step
       this.$refs.buttons.isBusy = true;
+      this.$refs.buttons.stepIter += 1;
       const hasNextStep = await this.game.next();
 
       // Enable button if the step has a next step
@@ -235,9 +237,12 @@ export default {
       this.$refs.buttons.isRunning = true;
       this.$refs.buttons.isBusy = true;
 
+
       // Evaulate game script and run
-      if (this.evaluateScript())
-        await this.game.run();
+      if (this.evaluateScript()) {
+        const incrementStepIter = () => this.$refs.buttons.stepIter += 1;
+        await this.game.run(100, incrementStepIter);
+      }
     },
 
 

@@ -2,13 +2,13 @@
   <div class="buttons has-addons">
 
     <p>
-      {{ stepCount }}
+      {{ stepIter }}/{{ stepCount }}
     </p>
 
     <b-button
       ref="previousStep"
       class="button"
-      :disabled='false'
+      :disabled='isBusy || stepIter == 0'
       @click="$emit('click:previousStep')"
     >
       Prev Step
@@ -41,15 +41,25 @@ export default {
   data() {
     return {
       stepCount: 0,
-      stepIndex: 0,
+      stepIter: 0,
       canReset: false,
       isRunning: false,
-      isBusy: false,
+      isBusy: false
     }
   },
 
 
   computed: {
+    /**
+     *
+     */
+    previousStepDisabled() {
+      if (this.stepIter < 1)
+        return true;
+
+      return this.isRunning && !this.canReset;
+    },
+
     /**
      * Class for toggle button.
      *
@@ -113,6 +123,9 @@ export default {
       this.canReset = false;
       this.isRunning = false;
       this.isBusy = false;
+
+      this.stepIter = 0;
+      this.stepCount = 0;
     },
 
 

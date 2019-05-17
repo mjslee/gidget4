@@ -154,7 +154,7 @@ export default {
    * @return {boolean}
    */
   async prev() {
-    if (this.stepper.index < 1)
+    if (this.stepper.steps.length > 0 && this.stepper.index < 1)
       return false;
 
     const step = this.stepper.steps[--this.stepper.index];
@@ -226,7 +226,7 @@ export default {
    * Run all stepper steps.
    * @param {Number} wait - Milliseconds to wait between step.
    */
-  async run(wait=100) {
+  async run(wait, callback) {
     let step;
     do {
       // Run the next step
@@ -235,6 +235,9 @@ export default {
       // Wait for 'wait' milliseconds
       if (wait > 0)
         await new Promise(resolve => setTimeout(resolve, wait));
+
+      if(typeof callback === 'function')
+        callback();
     }
     while(step);
   },
