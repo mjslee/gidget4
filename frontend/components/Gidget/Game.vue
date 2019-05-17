@@ -10,7 +10,7 @@
         <div class="card-footer"></div>
         <div class="card-content">
           <GidgetGoals ref="goals" :world="game.world" :goals="goals" />
-          <GidgetButtons
+          <GidgetControls
             ref="buttons"
             @click:explain="explainStep"
             @click:previousStep="previousStep"
@@ -67,7 +67,7 @@ import GidgetInspector from './Inspector';
 import GidgetCode from './Code';
 import GidgetDialogue from './Dialogue';
 import GidgetGoals from './Goals';
-import GidgetButtons from './Buttons';
+import GidgetControls from './Controls';
 
 import Game from '@/assets/gidget/game/gidget-game';
 
@@ -79,7 +79,7 @@ export default {
     GidgetInspector,
     GidgetDialogue,
     GidgetGoals,
-    GidgetButtons,
+    GidgetControls,
   },
 
 
