@@ -10,6 +10,7 @@ export default {
   stepper: undefined,
   states: [],
   stateIndex: 0,
+  isRunning: false,
 
 
   /**
@@ -154,7 +155,7 @@ export default {
    * @return {boolean}
    */
   async prev() {
-    if (this.stepper.steps.length > 0 && this.stepper.index < 1)
+    if (this.stepper.index < 1 || this.stepper.steps.length < 1)
       return false;
 
     const step = this.stepper.steps[--this.stepper.index];

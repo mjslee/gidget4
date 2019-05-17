@@ -237,12 +237,13 @@ export default {
       this.$refs.buttons.isRunning = true;
       this.$refs.buttons.isBusy = true;
 
-
       // Evaulate game script and run
       if (this.evaluateScript()) {
         const incrementStepIter = () => this.$refs.buttons.stepIter += 1;
         await this.game.run(100, incrementStepIter);
       }
+
+      this.$refs.buttons.isBusy = false;
     },
 
 
