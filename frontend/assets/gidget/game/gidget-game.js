@@ -176,18 +176,6 @@ export default {
 
 
   /**
-   * Restore previous state.
-   *
-   * @return {boolean}
-   */
-  async prev() {
-    return (this.stepper.index > 0 && this.stepper.steps.length > 0) ?
-      this.goto(--this.stepper.index) :
-      false;
-  },
-
-
-  /**
    * Run next step in stepper.
    *
    * @return {boolean}
@@ -198,17 +186,11 @@ export default {
     if (!step)
       return;
 
+    // Set stepper index to the next step's index
     this.stepper.index = step.index;
 
-    // Re-use state if it exists
-    if (typeof step.state === 'object') {
-      this.restoreStep(step);
-      console.log('has step');
-      this.stepper.index += 1;
-      return step.hasNext;
-    }
-
-    // Get next step
+    // Get next step so we can set the nextStep property
+    // nextStep property is used to show next line in code editor
     if (step.hasNext)
       step.nextStep = this.stepper.next(1);
 
