@@ -9,8 +9,6 @@ export default {
   world: undefined,
   stepper: undefined,
   states: [],
-  stateIndex: 0,
-  isRunning: false,
 
 
   /**
@@ -237,7 +235,7 @@ export default {
       if (wait > 0)
         await new Promise(resolve => setTimeout(resolve, wait));
 
-      if(typeof callback === 'function')
+      if(step && typeof callback === 'function')
         callback();
     }
     while(step);

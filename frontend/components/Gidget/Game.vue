@@ -239,8 +239,11 @@ export default {
 
       // Evaulate game script and run
       if (this.evaluateScript()) {
-        const incrementStepIter = () => this.$refs.buttons.stepIter += 1;
-        await this.game.run(100, incrementStepIter);
+        const incrementStepIter = () => {
+          if (this.$refs.buttons.isRunning === true)
+            this.$refs.buttons.stepIter += 1
+        };
+        await this.game.run(50, incrementStepIter);
       }
 
       this.$refs.buttons.isBusy = false;

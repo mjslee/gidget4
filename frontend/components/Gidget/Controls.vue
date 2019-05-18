@@ -17,7 +17,7 @@
     <b-button
       ref="nextStep"
       class="button"
-      :disabled='isBusy || stepIter >= stepCount'
+      :disabled='isBusy || stepIter > stepCount'
       @click="$emit('click:nextStep')"
     >
       Next Step
