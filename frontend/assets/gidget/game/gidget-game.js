@@ -30,15 +30,12 @@ export default {
    * @return {void}
    */
   getState() {
-    const startDate = new Date();
-
     const state = _.cloneDeep({
       objects: this.world.objects,
       messages: this.world.messages
     });
 
     this.states.push(state)
-    //console.log(`Game saved in ${new Date().getTime()-startDate.getTime()}ms`);
     return state;
   },
 
@@ -195,7 +192,7 @@ export default {
    *
    * @return {boolean}
    */
-  async next() {
+  async next(callCallbacks=true) {
     // Get step
     let step = this.stepper.next();
     if (!step)
@@ -216,7 +213,7 @@ export default {
       step.nextStep = this.stepper.next(1);
 
     // Call step callback
-    if (typeof this.onStep === 'function')
+    if (callCallbacks && typeof this.onStep === 'function')
       this.onStep(step);
 
     // Try running the step
@@ -232,7 +229,7 @@ export default {
     // Catch user/parse error
     catch (e) {
       // Call error callback
-      if (typeof this.onError === 'function')
+      if (callCallbacks && typeof this.onError === 'function')
         this.onError(step.ln, e.message);
       return false;
     }
@@ -240,7 +237,7 @@ export default {
     step.state = this.getState();
 
     // Call finish callback
-    if (!step.hasNext && typeof this.onFinish === 'function')
+    if (callCallbacks && !step.hasNext && typeof this.onFinish === 'function')
       this.onFinish();
 
     return step.hasNext;
@@ -253,10 +250,12 @@ export default {
    * @param {Number} wait - Milliseconds to wait between step.
    */
   async run(wait=0) {
+    const callCallbacks = wait > 0;
+
     let step;
     do {
       // Run the next step
-      step = await this.next();
+      step = await this.next(callCallbacks);
 
       // Wait for 'wait' milliseconds
       if (wait > 0)
