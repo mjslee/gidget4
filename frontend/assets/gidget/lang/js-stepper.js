@@ -35,7 +35,7 @@ export default {
     if (index >= this.steps.length)
       return undefined;
 
-    // Get step and if it has another step next
+    // Get step and set props
     const step = this.steps[index];
     step.hasNext = this.steps.length - 1 > index;
     step.hasError = false;
@@ -46,6 +46,7 @@ export default {
 
   /*
    * Step after running.
+   *
    * @return {dict} Step object.
    */
   async step() {
@@ -54,7 +55,6 @@ export default {
       return undefined;
 
     this.index += 1;
-    step.id = this.index;
 
     const cmd = step.cmd;
     if (typeof cmd !== 'object')
@@ -99,6 +99,7 @@ export default {
   /*
    * Spy on object calls.
    * @param {object} Object to spy on.
+   *
    * @return {proxy} Proxy instance.
    */
   __spy__(obj) {
@@ -121,6 +122,7 @@ export default {
 
   /*
    * Add to last step when entering/leaving scope from evaluated script.
+   *
    * @param {number} ln - Line number.
    * @param {array} range - Array in the form of [fromNumber, toNumber]
    * @param {string} scope - Type of entered scope
@@ -137,11 +139,12 @@ export default {
 
   /*
    * Add step from evaluated script.
+   *
    * @param {number} ln - Line number.
    * @param {array} range - Array in the form of [fromNumber, toNumber]
    */
   __step__(ln, range) {
-    this.steps.push({ ln, range });
+    this.steps.push({ index: this.steps.length, ln, range });
   },
 
 
@@ -162,6 +165,7 @@ export default {
 
   /*
    * Evaluate input.
+   *
    * @param {string} ECMAScript code input.
    */
   run(input, imports={}) {
