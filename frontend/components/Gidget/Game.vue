@@ -11,11 +11,9 @@
         <div class="card-content">
           <GidgetGoals ref="goals" :world="game.world" :goals="goals" />
           <GidgetControls
-            ref="buttons"
-            @click:explain="explainStep"
-            @click:previousStep="previousStep"
-            @click:nextStep="nextStep"
-            @click:run="runSteps"
+            ref="controls"
+            @change:step="setStep"
+            @click:run="runScript"
             @click:stop="stopScript(true)"
           />
         </div>
@@ -156,11 +154,21 @@ export default {
     /**
      * Run script until it hits a breakpoint or ends.
      */
-    evaluateScript() {
+    async runScript(waitMilliseconds=50) {
+      // Reset game
+      this.stopScript();
+
+      // Evaluate user code
       const evaluated = this.game.evaluate(this.$refs.code.code, this.imports);
-      if (evaluated)
-        this.$refs.buttons.stepCount = this.game.stepper.steps.length;
-      return evaluated;
+      if (!evaluated)
+        return false;
+
+      // Set controls data
+      this.$refs.controls.isRunning = true;
+      this.$refs.controls.isBusy = true;
+      this.$refs.controls.stepCount = this.game.stepper.steps.length - 1;
+
+      return await this.game.run(waitMilliseconds);
     },
 
 
@@ -176,7 +184,7 @@ export default {
 
       // Reset Vue components
       this.$refs.code.reset();
-      this.$refs.buttons.reset();
+      this.$refs.controls.reset();
 
       if (sayMessage)
         this.$refs.dialogue.text = "Ok, I'm stopping!"
@@ -184,69 +192,15 @@ export default {
 
 
     /**
-     * Explain next step.
-     */
-    async explainStep() {
-      if (this.evaluateScript())
-        await this.game.explain();
-    },
-
-
-    /**
      * Restore previous step.
      */
-    async previousStep() {
-      this.$refs.buttons.isBusy = true;
-      this.$refs.buttons.stepIter -= 1;
-      const hasNextStep = await this.game.prev();
-      this.$refs.buttons.isBusy = false;
-    },
+    async setStep(index) {
+      if (!this.$refs.controls.isRunning)
+        await this.runScript(0);
 
-
-    /**
-     * Run next step.
-     */
-    async nextStep() {
-      if (!this.$refs.buttons.isRunning) {
-        // Reset and if evaluation fails then return
-        this.stopScript();
-        if (!this.evaluateScript())
-          return;
-        this.$refs.buttons.isRunning = true;
-      }
-
-      // Perform a step
-      this.$refs.buttons.isBusy = true;
-      this.$refs.buttons.stepIter += 1;
-      const hasNextStep = await this.game.next();
-
-      // Enable button if the step has a next step
-      if (hasNextStep)
-        this.$refs.buttons.isBusy = false;
-    },
-
-
-    /**
-     * Run all steps.
-     */
-    async runSteps() {
-      // Reset game
-      this.stopScript();
-
-      // Set running
-      this.$refs.buttons.isRunning = true;
-      this.$refs.buttons.isBusy = true;
-
-      // Evaulate game script and run
-      if (this.evaluateScript()) {
-        const incrementStepIter = () => {
-          if (this.$refs.buttons.isRunning === true)
-            this.$refs.buttons.stepIter += 1
-        };
-        await this.game.run(50, incrementStepIter);
-      }
-
-      this.$refs.buttons.isBusy = false;
+      this.$refs.controls.isBusy = true;
+      await this.game.goto(index);
+      this.$refs.controls.isBusy = false;
     },
 
 
@@ -254,7 +208,8 @@ export default {
      * Handle game evaluation finishing.
      */
     handleFinish() {
-      this.$refs.buttons.canReset = true;
+      this.$refs.controls.canReset = true;
+      this.$refs.controls.isBusy = false;
     },
 
 
@@ -264,7 +219,7 @@ export default {
     handleError(ln, message) {
       this.$refs.code.reset();
       this.$refs.code.setErrorLine(ln - 1);
-      this.$refs.buttons.reset();
+      this.$refs.controls.reset();
       this.$refs.dialogue.text = message;
     },
 
@@ -273,6 +228,7 @@ export default {
      * Set line markers on step.
      */
     handleStep(step) {
+      this.$refs.controls.stepIndex = step.index;
       this.$refs.code.setActiveLine(step.ln - 1);
       this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
       this.$refs.goals.setData(step.data);

@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import GidgetWorld from '@/assets/gidget/game/gidget-world';
 import Stepper from '@/assets/gidget/lang/js-stepper';
-import Explainer from '@/assets/gidget/lang/js-explainer';
 
 
 
@@ -39,7 +38,7 @@ export default {
     });
 
     this.states.push(state)
-    console.log(`Game saved in ${new Date().getTime()-startDate.getTime()}ms`);
+    //console.log(`Game saved in ${new Date().getTime()-startDate.getTime()}ms`);
     return state;
   },
 
@@ -69,6 +68,19 @@ export default {
     // Fix world properties inside objects
     fixWorld(this.world.objects);
     return true;
+  },
+
+
+  /**
+   *
+   */
+  restoreStep(step) {
+    if (typeof step.state !== 'object')
+      return;
+
+    this.restoreState(step.state);
+    if (typeof this.onStep === 'function')
+      this.onStep(step);
   },
 
 
@@ -134,16 +146,35 @@ export default {
 
     // Parsing error, call error callback
     if (result.hasError) {
-      console.log(result.error);
       if (typeof this.onError === 'function')
         this.onError(result.error.ln, result.error.message);
-      return false;
     }
 
-    // Successful evaluation
-    else {
-      return true;
-    }
+    return !result.hasError;
+  },
+
+
+  /**
+   * Go to previous state by index.
+   *
+   * @return {boolean}
+   */
+  async goto(index) {
+    // Get step and verify its defined
+    let step = this.stepper.steps[index];
+    if (!step)
+      return false;
+
+    // Check for state prop and restore it
+    if (typeof step.state === 'object')
+      this.restoreStep(step);
+
+    // No state prop? We'll have to navigate to it
+    else
+      for (let i = index - this.stepper.index; i >= 0; i--)
+        step = await this.next();
+
+    return true;
   },
 
 
@@ -153,18 +184,9 @@ export default {
    * @return {boolean}
    */
   async prev() {
-    if (this.stepper.index < 1 || this.stepper.steps.length < 1)
-      return false;
-
-    const step = this.stepper.steps[--this.stepper.index];
-
-    if (typeof step.state == 'object')
-      this.restoreState(step.state);
-
-    if (typeof this.onStep === 'function')
-      this.onStep(step);
-
-    return true;
+    return (this.stepper.index > 0 && this.stepper.steps.length > 0) ?
+      this.goto(--this.stepper.index) :
+      false;
   },
 
 
@@ -179,10 +201,14 @@ export default {
     if (!step)
       return;
 
+    this.stepper.index = step.index;
+
     // Re-use state if it exists
     if (typeof step.state === 'object') {
-      this.stepper.index++;
-      return this.restoreState(step.state);
+      this.restoreStep(step);
+      console.log('has step');
+      this.stepper.index += 1;
+      return step.hasNext;
     }
 
     // Get next step
@@ -223,9 +249,10 @@ export default {
 
   /**
    * Run all stepper steps.
+   *
    * @param {Number} wait - Milliseconds to wait between step.
    */
-  async run(wait, callback) {
+  async run(wait=0) {
     let step;
     do {
       // Run the next step
@@ -234,24 +261,7 @@ export default {
       // Wait for 'wait' milliseconds
       if (wait > 0)
         await new Promise(resolve => setTimeout(resolve, wait));
-
-      if(step && typeof callback === 'function')
-        callback();
     }
     while(step);
-  },
-
-
-  async explain() {
-    let step;
-    do {
-      step = this.stepper.next();
-      this.stepper.index++;
-      const node = this.stepper.injector.flatTree.find(node => {
-        return step.range[0] === node.range[0] && step.range[1] === node.range[1];
-      });
-      Explainer.explainNode(node);
-    }
-    while(step.hasNext);
   }
 }

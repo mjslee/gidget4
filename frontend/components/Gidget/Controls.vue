@@ -1,37 +1,47 @@
 <template>
   <div class="buttons has-addons">
 
+    <input
+      type="range"
+      min="0"
+      :max="stepCount"
+      v-model.number="stepIndex"
+      v-on:change="$emit('change:step', stepIndex)"
+    />
+
     <p>
-      {{ stepIter }}/{{ stepCount }}
+      {{ stepIndex }}/{{ stepCount }}
     </p>
 
-    <b-button
-      ref="previousStep"
-      class="button"
-      :disabled='isBusy || stepIter <= 0'
-      @click="$emit('click:previousStep')"
-    >
-      Prev Step
-    </b-button>
+    <div class="buttons has-addons">
+      <b-button
+        ref="previousStep"
+        class="button"
+        :disabled='isBusy || stepIndex <= 0'
+        @click="$emit('change:step', --stepIndex)"
+      >
+        Prev Step
+      </b-button>
 
-    <b-button
-      ref="nextStep"
-      class="button"
-      :disabled='isBusy || stepIter > stepCount'
-      @click="$emit('click:nextStep')"
-    >
-      Next Step
-    </b-button>
+      <b-button
+        ref="nextStep"
+        class="button"
+        :disabled='isBusy || stepIndex > stepCount'
+        @click="$emit('change:step', ++stepIndex)"
+      >
+        Next Step
+      </b-button>
 
-    <b-button
-      ref="toggle"
-      :icon-left="toggleIcon"
-      :class="toggleClass"
-      @click="toggle"
-    >
-      {{ toggleText }}
-    </b-button>
+      <b-button
+        ref="toggle"
+        :icon-left="toggleIcon"
+        :class="toggleClass"
+        @click="toggle"
+      >
+        {{ toggleText }}
+      </b-button>
 
+    </div>
   </div>
 </template>
 
@@ -41,7 +51,7 @@ export default {
   data() {
     return {
       stepCount: 0,
-      stepIter: 0,
+      stepIndex: 0,
       canReset: false,
       isRunning: false,
       isBusy: false
@@ -50,16 +60,6 @@ export default {
 
 
   computed: {
-    /**
-     *
-     */
-    previousStepDisabled() {
-      if (this.stepIter < 1)
-        return true;
-
-      return this.isRunning && !this.canReset;
-    },
-
     /**
      * Class for toggle button.
      *
@@ -124,7 +124,7 @@ export default {
       this.isRunning = false;
       this.isBusy = false;
 
-      this.stepIter = 0;
+      this.stepIndex = 0;
       this.stepCount = 0;
     },
 
