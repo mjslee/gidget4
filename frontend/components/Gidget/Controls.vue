@@ -26,7 +26,7 @@
       <b-button
         ref="nextStep"
         class="button"
-        :disabled='isBusy || (stepCount > 0 && stepIndex >= stepCount)'
+        :disabled='isBusy || canReset'
         @click="$emit('change:step', ++stepIndex)"
       >
         Next Step
@@ -52,7 +52,6 @@ export default {
     return {
       stepCount: 0,
       stepIndex: 0,
-      canReset: false,
       isRunning: false,
       isBusy: false
     }
@@ -61,9 +60,18 @@ export default {
 
   computed: {
     /**
+     * Controls can be reset.
+     *
+     * @return {boolean}
+     */
+    canReset() {
+      return this.stepCount > 0 && this.stepIndex >= this.stepCount;
+    },
+
+    /**
      * Class for toggle button.
      *
-     * @return string
+     * @return {string}
      */
     toggleClass() {
       let result = 'button '
@@ -83,7 +91,7 @@ export default {
     /**
      * Text for toggle button.
      *
-     * @return string
+     * @return {string}
      */
     toggleText() {
       if (this.canReset)
@@ -118,9 +126,10 @@ export default {
   methods: {
     /**
      * Reset buttons to their initial state.
+     *
+     * @return {void}
      */
     reset() {
-      this.canReset = false;
       this.isRunning = false;
       this.isBusy = false;
 
@@ -131,6 +140,8 @@ export default {
 
     /**
      * Emit signal to stop or run game evaluation.
+     *
+     * @return {void}
      */
     toggle() {
       // Not running? Run it
