@@ -136,6 +136,8 @@ export default {
   methods: {
     /**
      * Assign variables that contain references to game objects.
+     *
+     * @return {void}
      */
     assignReferences() {
       this.game.world.messages = this.dialogue
@@ -149,6 +151,9 @@ export default {
 
     /**
      * Update selected object property.
+     *
+     * @param {object} payload
+     * @return {void}
      */
     updateSelectedObject(payload) {
       this.selectedObject = payload;
@@ -157,6 +162,9 @@ export default {
 
     /**
      * Run script until it hits a breakpoint or ends.
+     *
+     * @param {number} sayMessage
+     * @return {void}
      */
     async runScript(waitMilliseconds=50) {
       // Reset game
@@ -177,7 +185,10 @@ export default {
 
 
     /**
-     * Stop stepper from executing and reset world.
+     * Stop stepper.
+     *
+     * @param {number} sayMessage
+     * @return {void}
      */
     stopScript(sayMessage=false) {
       // Breaks object references
@@ -201,6 +212,9 @@ export default {
 
     /**
      * Restore previous step.
+     *
+     * @param {number} index -- Step index to restore.
+     * @return {void}
      */
     async setStep(index) {
       if (!this.$refs.controls.isRunning)
@@ -217,6 +231,8 @@ export default {
 
     /**
      * Handle game evaluation finishing.
+     *
+     * @return {void}
      */
     handleFinish() {
       this.$refs.controls.isBusy = false;
@@ -225,6 +241,8 @@ export default {
 
     /**
      * Handle game error.
+     *
+     * @return {void}
      */
     handleError(ln, message) {
       this.$refs.code.reset();
@@ -236,6 +254,8 @@ export default {
 
     /**
      * Set line markers on step.
+     *
+     * @return {void}
      */
     handleStep(step) {
       this.$refs.controls.stepIndex = step.index;
