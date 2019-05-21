@@ -25,7 +25,8 @@
       <div class="world">
         <GidgetWorld
           ref="world" :world="game.world" :tiles="tiles"
-          @update:selectedObject="selectedObject === arguments[0]"
+          @change:object="selectedObject = arguments[0]"
+          @change:tile="selectedTile = arguments[0]"
         />
       </div>
 
@@ -37,7 +38,7 @@
     <!-- Inspectors -->
     <div class="column">
       <GidgetInspector :object="playerObject" />
-      <GidgetInspector :object="selectedObject" />
+      <GidgetInspector :object="selectedObject || selectedTile" />
     </div>
   </div>
 </template>
@@ -115,6 +116,7 @@ export default {
       // World objects
       playerObject: undefined,
       selectedObject: undefined,
+      selectedTile: undefined,
     }
   },
 
