@@ -25,7 +25,7 @@
       <div class="world">
         <GidgetWorld
           ref="world" :world="game.world" :tiles="tiles"
-          @update:selectedObject="updateSelectedObject"
+          @update:selectedObject="selectedObject === arguments[0]"
         />
       </div>
 
@@ -146,17 +146,6 @@ export default {
       this.playerObject = this.game.world.getObject('Gidget')
       if (this.selectedObject)
         this.selectedObject = this.game.world.getObject(this.selectedObject.id);
-    },
-
-
-    /**
-     * Update selected object property.
-     *
-     * @param {object} payload
-     * @return {void}
-     */
-    updateSelectedObject(payload) {
-      this.selectedObject = payload;
     },
 
 
