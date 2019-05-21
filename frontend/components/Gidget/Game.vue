@@ -135,11 +135,15 @@ export default {
 
   methods: {
     /**
-     * Assign variables that contain references game objects.
+     * Assign variables that contain references to game objects.
      */
     assignReferences() {
-      this.playerObject = this.game.world.getObject('Gidget')
       this.game.world.messages = this.dialogue
+
+      // Re-assign objects used by inspector
+      this.playerObject = this.game.world.getObject('Gidget')
+      if (this.selectedObject)
+        this.selectedObject = this.game.world.getObject(this.selectedObject.id);
     },
 
 
@@ -186,8 +190,12 @@ export default {
       this.$refs.code.reset();
       this.$refs.controls.reset();
 
+      // Re-assign references
+      this.assignReferences();
+
       if (sayMessage)
         this.$refs.dialogue.text = "Ok, I'm stopping!"
+
     },
 
 
@@ -201,6 +209,9 @@ export default {
       this.$refs.controls.isBusy = true;
       await this.game.goto(index);
       this.$refs.controls.isBusy = false;
+
+      // Re-assign references
+      this.assignReferences();
     },
 
 
@@ -208,7 +219,6 @@ export default {
      * Handle game evaluation finishing.
      */
     handleFinish() {
-      this.$refs.controls.canReset = true;
       this.$refs.controls.isBusy = false;
     },
 
