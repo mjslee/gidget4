@@ -122,8 +122,8 @@ export default {
 
 
   created() {
-    this.game.onError = this.handleError;
     this.game.onStep = this.handleStep;
+    this.game.onError = this.handleError;
     this.game.onFinish = this.handleFinish;
     this.game.createObjects(this.objects);
     window.game = this.game;
@@ -197,7 +197,6 @@ export default {
 
       if (sayMessage)
         this.$refs.dialogue.text = "Ok, I'm stopping!"
-
     },
 
 
@@ -217,6 +216,9 @@ export default {
 
       // Re-assign references
       this.assignReferences();
+
+      // Validate
+      this.$refs.goals.validateGoals();
     },
 
 

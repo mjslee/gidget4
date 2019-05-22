@@ -1,32 +1,33 @@
 <template>
   <div>
     <div class="goals" v-for="goal in gameGoals" :key="goal.id">
-      <div v-if="goal.assert === 'equal'">
-        <b-icon
-          icon="checkbox-blank-circle-outline"
-          size="is-small"
-          v-if="typeof goal.completed === 'undefined'"
-        />
-        <b-icon
-          icon="check-circle"
-          type="is-success"
-          size="is-small"
-          v-else-if="goal.completed"
-        />
-        <b-icon
-          icon="close-circle"
-          type="is-danger"
-          size="is-small"
-          v-else
-        />
+      <b-icon
+        icon="checkbox-blank-circle-outline"
+        size="is-small"
+        v-if="typeof goal.completed === 'undefined'"
+      />
+      <b-icon
+        icon="check-circle"
+        type="is-success"
+        size="is-small"
+        v-else-if="goal.completed"
+      />
+      <b-icon
+        icon="close-circle"
+        type="is-danger"
+        size="is-small"
+        v-else
+      />
+
+      <span v-if="goal.assert === 'equal'">
         <span class="keyword">assert</span>
-        <span class="argument" v-html="formatArgument(goal.arguments[0])" />
+        <GidgetValue :value="goal.arguments[0]" :longhand="true" />
         <span class="operator">===</span>
-        <span class="argument" v-html="formatArgument(goal.arguments[1])" />
-      </div>
+        <GidgetValue :value="goal.arguments[1]" :longhand="true" />
+      </span>
     </div>
     <button @click="validateGoals">Validate</button>
-  </diV>
+  </div>
 </template>
 
 
@@ -34,20 +35,16 @@
 .goals {
   font-family: monospace;
 }
-
-.keyword { color: #770088 }
-.operator { color: #221199 }
-.literal { color: #116644 }
-.string { color: #aa1111 }
 </style>
 
 
 <script>
 import Goal from '@/assets/gidget/game/gidget-goal'
+import GidgetValue from './Value'
 
 export default {
   components: {
-
+    GidgetValue
   },
 
   props: {

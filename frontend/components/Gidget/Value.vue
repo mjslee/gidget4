@@ -1,5 +1,14 @@
 <template>
-  <span :data-type="type" v-if="type === 'number'" class="is-integer">
+  <span :data-type="type" v-if="type === 'property'">
+    <span class="is-object">{{ value.object }}</span>.<!--
+ --><span class="is-property">{{ value.property }}</span>
+  </span>
+
+  <span :data-type="type" v-else-if="type === 'variable'" class="is-variable">
+    {{ value.variable }}
+  </span>
+
+  <span :data-type="type" v-else-if="type === 'number'" class="is-integer">
     {{ value }}
   </span>
 
@@ -13,8 +22,8 @@
 
   <span :data-type="type" v-else-if="type === 'position'">
    &#91;
-   <GidgetValue :value="value.x"/>,
-   <GidgetValue :value="value.y"/>
+   <GidgetValue :value="value.x" />,
+   <GidgetValue :value="value.y" />
    &#93;
   </span>
 
@@ -50,6 +59,7 @@ export default {
 
   props: {
     value: Array | Object | String | Boolean | Number,
+    longhand: Boolean
   },
 
 
@@ -57,24 +67,38 @@ export default {
     /**
      * Type of value.
      *
-     * @return string
+     * @return {String}
      */
     type() {
+      // Longhand values can be a variable or property
+      if (this.longhand) {
+        if (this.isVariable(this.value))
+          return 'variable';
+
+        if (this.isProperty(this.value))
+          return 'property';
+      }
+
+      // Display as array
       if (Array.isArray(this.value))
         return 'array';
 
-      const result = typeof this.value
+      const result = typeof this.value;
       if (result === 'object') {
+        // Is object a property?
+        if (this.isProperty(this.value))
+          return 'property';
+
         // Is object type position?
         if (this.isPosition(this.value))
-          return 'position'
+          return 'position';
 
         // Is object type a GameObject
         if (this.isGameObject(this.value))
-          return 'gameobject'
+          return 'gameobject';
       }
 
-      return result
+      return result;
     },
 
 
@@ -91,24 +115,46 @@ export default {
 
   methods: {
     /**
-     * Determine if value is of type 'Position'
+     * Determine if value is of type 'position'
      *
-     * @param value
-     * @return boolean
+     * @param {object} value
+     * @return {boolean}
      */
     isPosition(value) {
-      return typeof value.x !== 'undefined' && typeof value.y !== 'undefined'
+      return typeof value.x !== 'undefined' && typeof value.y !== 'undefined';
     },
 
 
     /**
-     * Determine if object is of type 'GameObject'
+     * Determine if object is of type 'gameobject'
      *
-     * @param value
-     * @return boolean
+     * @param {object} value
+     * @return {boolean}
      */
     isGameObject(value) {
-      return typeof value.name !== 'undefined'
+      return typeof value.name !== 'undefined';
+    },
+
+
+    /**
+     * Determine if longhand value is a object/property.
+     *
+     * @param {object} value
+     * @return {boolean}
+     */
+    isProperty(value) {
+      return typeof value.property !== 'undefined';
+    },
+
+
+    /**
+     * Determine if longhand value is a variable.
+     *
+     * @param {object} value
+     * @return {boolean}
+     */
+    isVariable(value) {
+      return typeof value.variable !== 'undefined';
     }
   }
 }

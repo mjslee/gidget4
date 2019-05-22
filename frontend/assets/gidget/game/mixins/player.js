@@ -68,6 +68,13 @@ export default {
      */
     grab(value) {
       this.object.grab(value);
+    },
+
+    /**
+     *
+     */
+    drop(value) {
+      this.object.drop(value);
     }
   }
 }

@@ -140,7 +140,7 @@ export default {
      * @param {number} newValue
      */
     selectedObject(newValue) {
-      this.$emit("update:selectedObject", newValue);
+      this.$emit("change:object", newValue);
     }
   },
 
