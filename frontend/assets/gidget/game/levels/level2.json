@@ -9,24 +9,8 @@
     { "type": "Puppy", "mixins": ["Player"], "position": { "x": 2, "y": 3 } }
   ],
   "goals": [
-    {
-      "assert": "equal",
-      "arguments": [
-        { "object": "Gidget", "property": "position" },
-        { "object": "Puppy", "property": "position" }
-      ]
-    },
-    {
-      "assert": "equal",
-      "arguments": [
-        { "variable": "x" }, 5
-      ]
-    },
-    {
-      "assert": "equal",
-      "arguments": [
-        { "variable": "y" }, "cool"
-      ]
-    }
+    { "assert": "equal", "arguments": [ "Gidget.position", "Puppy.position" ] },
+    { "assert": "equal", "arguments": [ "x", 5 ] },
+    { "assert": "equal", "arguments": [ "y", "'cool'" ] }
   ]
 }

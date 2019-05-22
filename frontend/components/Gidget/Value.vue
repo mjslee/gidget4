@@ -1,37 +1,39 @@
 <template>
   <span :data-type="type" v-if="type === 'property'">
-    <span class="is-object">{{ value.object }}</span>.<!--
- --><span class="is-property">{{ value.property }}</span>
+    <span v-for="(value, index) in internalValue" :key="index">
+      <span class="is-object" v-if="index === 0">{{ value }}</span>
+      <span class="is-property" v-else>.{{ value }}</span>
+    </span>
   </span>
 
   <span :data-type="type" v-else-if="type === 'variable'" class="is-variable">
-    {{ value.variable }}
+    {{ internalValue }}
   </span>
 
   <span :data-type="type" v-else-if="type === 'number'" class="is-integer">
-    {{ value }}
+    {{ internalValue }}
   </span>
 
   <span :data-type="type" v-else-if="type === 'boolean'" class="is-boolean">
-    {{ value }}
+    {{ internalValue }}
   </span>
 
   <span :data-type="type" v-else-if="type === 'string'" class="is-string">
-    '{{ value }}'
+    '{{ internalValue }}'
   </span>
 
   <span :data-type="type" v-else-if="type === 'position'">
    &#91;
-   <GidgetValue :value="value.x" />,
-   <GidgetValue :value="value.y" />
+   <GidgetValue :value="internalValue.x" />,
+   <GidgetValue :value="internalValue.y" />
    &#93;
   </span>
 
   <span :data-type="type" v-else-if="type === 'array'">
    &#91;
-   <span v-for="(nestedValue, index) in value" :key="`prop-${index}`">
+   <span v-for="(nestedValue, index) in internalValue" :key="`prop-${index}`">
      <GidgetValue :value="nestedValue" />
-     <span v-if="index + 1 < value.length">, </span>
+     <span v-if="index + 1 < internalValue.length">, </span>
    </span>
    &#93;
   </span>
@@ -41,7 +43,7 @@
   </span>
 
   <span :data-type="type" v-else-if="type === 'object'">
-    Object &lt;{{ Object.keys(value).length }} keys&gt;
+    Object &lt;{{ Object.keys(internalValue).length }} keys&gt;
   </span>
 
   <span :data-type="type" v-else>
@@ -59,7 +61,24 @@ export default {
 
   props: {
     value: Array | Object | String | Boolean | Number,
-    longhand: Boolean
+    isCode: Boolean
+  },
+
+
+  data() {
+    return {
+      internalValue: this.value
+    };
+  },
+
+
+  mounted() {
+    // Passed in value should be considered code
+    if (this.isCode && typeof this.internalValue === 'string') {
+      this.internalValue = this.isString() ?
+        this.internalValue.substring(1, this.internalValue.length - 1) :
+        this.internalValue.split('.');
+    }
   },
 
 
@@ -70,35 +89,24 @@ export default {
      * @return {String}
      */
     type() {
-      // Longhand values can be a variable or property
-      if (this.longhand) {
-        if (this.isVariable(this.value))
-          return 'variable';
-
-        if (this.isProperty(this.value))
-          return 'property';
-      }
-
       // Display as array
-      if (Array.isArray(this.value))
-        return 'array';
+      if (Array.isArray(this.internalValue))
+        return this.isCode ? 'property' : 'array';
 
-      const result = typeof this.value;
-      if (result === 'object') {
-        // Is object a property?
-        if (this.isProperty(this.value))
-          return 'property';
+      // Get type of internalValue
+      const result = typeof this.internalValue;
 
-        // Is object type position?
-        if (this.isPosition(this.value))
-          return 'position';
+      // Value is of primitive type
+      if (result !== 'object')
+        return result;
 
-        // Is object type a GameObject
-        if (this.isGameObject(this.value))
-          return 'gameobject';
-      }
+      // Is value type position?
+      if (this.isPosition())
+        return 'position';
 
-      return result;
+      // Is value type a GameObject
+      if (this.isGameObject())
+        return 'gameobject';
     },
 
 
@@ -108,7 +116,7 @@ export default {
      * @return string
      */
     image() {
-      return SPRITE_PATH + this.value.image;
+      return SPRITE_PATH + this.internalValue.image;
     }
   },
 
@@ -117,45 +125,43 @@ export default {
     /**
      * Determine if value is of type 'position'
      *
-     * @param {object} value
      * @return {boolean}
      */
-    isPosition(value) {
-      return typeof value.x !== 'undefined' && typeof value.y !== 'undefined';
+    isPosition() {
+      return typeof this.internalValue.x !== 'undefined' &&
+             typeof this.internalValue.y !== 'undefined';
     },
 
 
     /**
      * Determine if object is of type 'gameobject'
      *
-     * @param {object} value
      * @return {boolean}
      */
-    isGameObject(value) {
-      return typeof value.name !== 'undefined';
+    isGameObject() {
+      return typeof this.internalValue.name !== 'undefined';
     },
 
 
     /**
      * Determine if longhand value is a object/property.
      *
-     * @param {object} value
      * @return {boolean}
      */
-    isProperty(value) {
-      return typeof value.property !== 'undefined';
+    isProperty() {
+      return typeof this.internalValue.property !== 'undefined';
     },
 
 
     /**
-     * Determine if longhand value is a variable.
+     * Determine if 'code' is a string based on its surrounding apostrophes.
      *
-     * @param {object} value
      * @return {boolean}
      */
-    isVariable(value) {
-      return typeof value.variable !== 'undefined';
-    }
+    isString() {
+      return this.internalValue[0] === '\'' &&
+             this.internalValue[this.internalValue.length - 1] === '\'';
+    },
   }
 }
 </script>

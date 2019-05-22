@@ -21,9 +21,9 @@
 
       <span v-if="goal.assert === 'equal'">
         <span class="keyword">assert</span>
-        <GidgetValue :value="goal.arguments[0]" :longhand="true" />
+        <GidgetValue :value="goal.arguments[0]" :is-code="true" />
         <span class="operator">===</span>
-        <GidgetValue :value="goal.arguments[1]" :longhand="true" />
+        <GidgetValue :value="goal.arguments[1]" :is-code="true" />
       </span>
     </div>
     <button @click="validateGoals">Validate</button>
