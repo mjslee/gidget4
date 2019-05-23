@@ -1,20 +1,20 @@
 <template>
   <div>
-    <div class="goals" v-for="goal in gameGoals" :key="goal.id">
+    <div class="goals" v-for="goal in internalGoals" :key="goal.id">
       <b-icon
-        icon="checkbox-blank-circle-outline"
+        icon="close-circle"
+        type="is-danger"
         size="is-small"
-        v-if="typeof goal.completed === 'undefined'"
+        v-if="showFailures && goal.completed === false"
       />
       <b-icon
         icon="check-circle"
         type="is-success"
         size="is-small"
-        v-else-if="goal.completed"
+        v-else-if="goal.completed === true"
       />
       <b-icon
-        icon="close-circle"
-        type="is-danger"
+        icon="checkbox-blank-circle-outline"
         size="is-small"
         v-else
       />
@@ -57,7 +57,8 @@ export default {
   data() {
     return {
       data: undefined,
-      gameGoals: this.goals,
+      showFailures: false,
+      internalGoals: this.goals,
     };
   },
 
@@ -65,7 +66,7 @@ export default {
   created() {
     // Assign IDs to goals
     let i = 0;
-    this.gameGoals.forEach(goal => {
+    this.internalGoals.forEach(goal => {
       this.$set(goal, 'id', i++);
     });
   },
@@ -84,7 +85,7 @@ export default {
      */
     validateGoals() {
       const goalValidator = Goal.create(this.world, this.data);
-      this.gameGoals.forEach(goal => {
+      this.internalGoals.forEach(goal => {
         this.$set(goal, 'completed', goalValidator.validate(goal));
       });
     }
