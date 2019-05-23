@@ -6,7 +6,7 @@
       min="0"
       :max="stepCount"
       v-model.number="stepIndex"
-      v-on:change="$emit('change:step', stepIndex)"
+      v-on:change="$emit('change:step', stepIndex, stepCuont)"
     />
 
     <p>
@@ -18,7 +18,7 @@
         ref="previousStep"
         class="button"
         :disabled='isBusy || stepIndex <= 0'
-        @click="$emit('change:step', --stepIndex)"
+        @click="$emit('change:step', --stepIndex, stepCount)"
       >
         Prev Step
       </b-button>
@@ -27,7 +27,7 @@
         ref="nextStep"
         class="button"
         :disabled='isBusy || canReset'
-        @click="$emit('change:step', ++stepIndex)"
+        @click="$emit('change:step', ++stepIndex, stepCount)"
       >
         Next Step
       </b-button>

@@ -124,7 +124,6 @@ export default {
   created() {
     this.game.onStep = this.handleStep;
     this.game.onError = this.handleError;
-    this.game.onFinish = this.handleFinish;
     this.game.createObjects(this.objects);
     window.game = this.game;
   },
@@ -191,6 +190,7 @@ export default {
       // Reset Vue components
       this.$refs.code.reset();
       this.$refs.controls.reset();
+      this.$refs.goals.reset();
 
       // Re-assign references
       this.assignReferences();
@@ -204,31 +204,19 @@ export default {
      * Restore previous step.
      *
      * @param {number} index -- Step index to restore.
+     * @param {number} stepCount -- Amount of steps.
      * @return {void}
      */
-    async setStep(index) {
+    async setStep(index, stepCount) {
       if (!this.$refs.controls.isRunning)
         await this.runScript(0);
 
       this.$refs.controls.isBusy = true;
-      await this.game.goto(index);
+      await this.game.restore(index);
       this.$refs.controls.isBusy = false;
 
       // Re-assign references
       this.assignReferences();
-
-      // Validate
-      this.$refs.goals.validateGoals();
-    },
-
-
-    /**
-     * Handle game evaluation finishing.
-     *
-     * @return {void}
-     */
-    handleFinish() {
-      this.$refs.controls.isBusy = false;
     },
 
 
@@ -251,10 +239,23 @@ export default {
      * @return {void}
      */
     handleStep(step) {
+      // Set controls input range value
       this.$refs.controls.stepIndex = step.index;
-      this.$refs.code.setActiveLine(step.ln - 1);
+
+      // Set code editor lines
       this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
+      this.$refs.code.setActiveLine(step.ln - 1);
+
+      // Set goals data and validate goals
       this.$refs.goals.setData(step.data);
+      this.$refs.goals.validateGoals();
+
+      // Below this if-statement is ran on the final step
+      if (step.hasNext)
+        return;
+
+      // Show red Xs on goals component
+      this.$refs.goals.showFailures = true;
     },
   }
 }

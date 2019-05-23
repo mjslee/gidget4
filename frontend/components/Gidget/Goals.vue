@@ -11,7 +11,7 @@
         icon="check-circle"
         type="is-success"
         size="is-small"
-        v-else-if="goal.completed === true"
+        v-else-if="goal.completed"
       />
       <b-icon
         icon="checkbox-blank-circle-outline"
@@ -73,6 +73,16 @@ export default {
 
 
   methods: {
+    /**
+     * Set data to use for validation.
+     */
+    reset() {
+      this.showFailures = false;
+      this.internalGoals.forEach(goal => {
+        this.$set(goal, 'completed', undefined);
+      });
+    },
+
     /**
      * Set data to use for validation.
      */
