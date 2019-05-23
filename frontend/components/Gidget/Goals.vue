@@ -74,7 +74,7 @@ export default {
 
   methods: {
     /**
-     * Set data to use for validation.
+     * Reset goal completed status.
      */
     reset() {
       this.showFailures = false;
@@ -89,6 +89,7 @@ export default {
     setData(data) {
       this.data = data;
     },
+
 
     /**
      * Validate all given goals.

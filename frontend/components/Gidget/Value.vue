@@ -1,8 +1,8 @@
 <template>
   <span :data-type="type" v-if="type === 'property'">
     <span v-for="(value, index) in internalValue" :key="index">
-      <span class="is-object" v-if="index === 0">{{ value }}</span>
-      <span class="is-property" v-else>.{{ value }}</span>
+      <span :class="internalValue.length > 1 ? 'is-object' : 'is-variable'" v-if="index === 0">{{ value }}</span><!--
+      --><span class="is-property" v-else>.{{ value }}</span>
     </span>
   </span>
 
