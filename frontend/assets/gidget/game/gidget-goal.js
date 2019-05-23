@@ -37,15 +37,13 @@ export default {
 
 
   getValue(symbol) {
+    const lastIndex = symbol.length - 1;
+    if (symbol[0] === '\'' && symbol[lastIndex] === '\'')
+      return symbol.substring(1, lastIndex);
+
     let a, b;
-    try {
-      a = eval(`this.objects.${symbol}`);
-    } catch (e) {}
-
-    try {
-      b = eval(`this.data.${symbol}`);
-    } catch (e) {}
-
+    try { a = eval(`this.objects.${symbol}`) } catch (e) { }
+    try { b = eval(`this.data.${symbol}`) } catch (e) { }
     return a || b || symbol;
   },
 
