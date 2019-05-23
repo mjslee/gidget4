@@ -11,9 +11,9 @@ export default {
 
 
   /**
-   * Create GidgetGame instance.
-   * @param {object} kwargs - Keyword-arguments to merge into new instance.
+   * Create instance of GidgetGame.
    *
+   * @param {object} kwargs - Keyword-arguments to merge into new instance.
    * @return {object} - Game object.
    */
   create(kwargs) {
@@ -43,6 +43,7 @@ export default {
   /**
    * Restore state of world and stepper.
    *
+   * @param {object} state
    * @return {boolean}
    */
   restoreState(state) {
@@ -69,22 +70,9 @@ export default {
 
 
   /**
-   *
-   */
-  restoreStep(step) {
-    if (typeof step.state !== 'object')
-      return;
-
-    this.restoreState(step.state);
-    if (typeof this.onStep === 'function')
-      this.onStep(step);
-  },
-
-
-  /**
    * Create game world objects and save the game state.
    *
-   * @param {Array[Object]} objects - Objects to create.
+   * @param {array[object]} objects - Objects to create.
    * @return {void}
    */
   createObjects(objects) {
@@ -152,19 +140,25 @@ export default {
 
 
   /**
-   * Go to previous state by index.
+   * Restore game progress by step index.
    *
+   * @param {number} index
    * @return {boolean}
    */
-  async goto(index) {
+  async restore(index) {
     // Get step and verify its defined
     let step = this.stepper.steps[index];
     if (!step)
       return false;
 
     // Check for state prop and restore it
-    if (typeof step.state === 'object')
-      this.restoreStep(step);
+    if (typeof step.state === 'object') {
+      this.restoreState(step.state);
+
+      // Call onStep callback
+      if (typeof this.onStep === 'function')
+        this.onStep(step);
+    }
 
     // No state prop? We'll have to navigate to it
     else
@@ -178,6 +172,7 @@ export default {
   /**
    * Run next step in stepper.
    *
+   * @param {boolean} callCallbacks
    * @return {boolean}
    */
   async next(callCallbacks=true) {
@@ -229,7 +224,8 @@ export default {
   /**
    * Run all stepper steps.
    *
-   * @param {Number} wait - Milliseconds to wait between step.
+   * @param {number} wait - Milliseconds to wait between step.
+   * @return {void}
    */
   async run(wait=0) {
     const callCallbacks = wait > 0;
