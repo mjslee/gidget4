@@ -45,6 +45,7 @@
 
 
 <style>
+.is-keyword { color: #770088 !important }
 .is-variable { color: #0000ff !important }
 .is-boolean { color: #221199 !important }
 .is-integer { color: #116644 !important }
@@ -249,7 +250,9 @@ export default {
 
       // Set goals data and validate goals
       this.$refs.goals.setData(step.data);
-      this.$refs.goals.validateGoals();
+      this.$nextTick(() => {
+        this.$refs.goals.validate();
+      })
 
       // Below this if-statement is ran on the final step
       if (step.hasNext)

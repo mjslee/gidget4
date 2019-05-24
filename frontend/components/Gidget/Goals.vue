@@ -20,13 +20,13 @@
       />
 
       <span v-if="goal.assert === 'equal'">
-        <span class="keyword">assert</span>
+        <span class="is-keyword">assert</span>
         <GidgetValue :value="goal.arguments[0]" :is-code="true" />
-        <span class="operator">===</span>
+        <span class="is-operator">===</span>
         <GidgetValue :value="goal.arguments[1]" :is-code="true" />
       </span>
     </div>
-    <button @click="validateGoals">Validate</button>
+    <button @click="validate">Validate</button>
   </div>
 </template>
 
@@ -94,7 +94,7 @@ export default {
     /**
      * Validate all given goals.
      */
-    validateGoals() {
+    validate() {
       const goalValidator = Goal.create(this.world, this.data);
       this.internalGoals.forEach(goal => {
         this.$set(goal, 'completed', goalValidator.validate(goal));
