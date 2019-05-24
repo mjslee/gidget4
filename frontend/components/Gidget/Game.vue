@@ -126,6 +126,7 @@ export default {
   created() {
     this.game.onStep = this.handleStep;
     this.game.onError = this.handleError;
+    this.game.onFinish = this.handleFinish;
     this.game.createObjects(this.objects);
     window.game = this.game;
   },
@@ -250,17 +251,19 @@ export default {
 
       // Set goals data and validate goals
       this.$refs.goals.setData(step.data);
-      this.$nextTick(() => {
-        this.$refs.goals.validate();
-      })
+      this.$nextTick(() => this.$refs.goals.validate());
+    },
 
-      // Below this if-statement is ran on the final step
-      if (step.hasNext)
-        return;
 
+    /**
+     * Handle last step of stepper.
+     *
+     * @return {void}
+     */
+    handleFinish() {
       // Show red Xs on goals component
       this.$refs.goals.showFailures = true;
-    },
+    }
   }
 }
 </script>
