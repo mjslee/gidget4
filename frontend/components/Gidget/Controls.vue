@@ -6,7 +6,7 @@
       min="0"
       :max="stepCount"
       v-model.number="stepIndex"
-      v-on:change="$emit('change:step', stepIndex, stepCuont)"
+      v-on:change="$emit('change:step', stepIndex, stepCount)"
     />
 
     <p>

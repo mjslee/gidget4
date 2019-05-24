@@ -82,6 +82,18 @@ export default {
   },
 
 
+  watch: {
+    /**
+     * Update internal value when prop gets updated.
+     *
+     * @return {String}
+     */
+    value(newValue) {
+      this.internalValue = newValue;
+    }
+  },
+
+
   computed: {
     /**
      * Type of value.

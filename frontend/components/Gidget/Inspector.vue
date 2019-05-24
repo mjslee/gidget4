@@ -8,7 +8,7 @@
       <tbody>
         <tr v-for="prop in props" :key="prop.key">
           <th>{{ prop.name }}</th>
-          <td><Value :value="prop.value" /></td>
+          <td><GidgetValue :value="prop.value" /></td>
         </tr>
       </tbody>
     </table>
@@ -35,12 +35,12 @@ th {
 
 <script>
 import { SPRITE_PATH } from '@/constants/paths'
-import Value from './Value'
+import GidgetValue from './Value'
 
 
 export default {
   components: {
-    Value
+    GidgetValue
   },
 
   props: {
