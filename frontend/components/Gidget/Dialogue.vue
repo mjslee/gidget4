@@ -59,9 +59,8 @@ export default {
 
   mounted() {
     // Set level introduction messages
-    if (this.messages.length > 0) {
+    if (this.messages.length > 0)
       this.nextMessage();
-    }
   },
 
 

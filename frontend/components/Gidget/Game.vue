@@ -263,6 +263,31 @@ export default {
     handleFinish() {
       // Show red Xs on goals component
       this.$refs.goals.showFailures = true;
+      this.$nextTick(() => {
+        this.$refs.goals.completed() ?
+          this.handleSuccess() :
+          this.handleFailure();
+      });
+    },
+
+
+    /**
+     * Handle completion of goals.
+     *
+     * @return {void}
+     */
+    handleSuccess() {
+
+    },
+
+
+    /**
+     * Handle non-completion of goals.
+     *
+     * @return {void}
+     */
+    handleFailure() {
+
     }
   }
 }

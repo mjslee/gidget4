@@ -75,6 +75,8 @@ export default {
   methods: {
     /**
      * Reset goal completed status.
+     *
+     * @return {void}
      */
     reset() {
       this.showFailures = false;
@@ -83,8 +85,12 @@ export default {
       });
     },
 
+
     /**
      * Set data to use for validation.
+     *
+     * @param {object} data
+     * @return {void}
      */
     setData(data) {
       this.data = data;
@@ -93,12 +99,24 @@ export default {
 
     /**
      * Validate all given goals.
+     *
+     * @return {void}
      */
     validate() {
-      const goalValidator = Goal.create(this.world, this.data);
+      const validator = Goal.create(this.world, this.data);
       this.internalGoals.forEach(goal => {
-        this.$set(goal, 'completed', goalValidator.validate(goal));
+        this.$set(goal, 'completed', validator.validate(goal));
       });
+    },
+
+
+    /**
+     * Test if all goals are completed.
+     *
+     * @return {boolean}
+     */
+    completed() {
+      return this.internalGoals.every(goal => goal.completed === true );
     }
   }
 }
