@@ -158,6 +158,10 @@ export default {
       // Call onStep callback
       if (typeof this.onStep === 'function')
         this.onStep(step);
+
+      // Call finish callback
+      if (!step.hasNext && typeof this.onFinish === 'function')
+        this.onFinish();
     }
 
     // No state prop? We'll have to navigate to it
@@ -189,10 +193,6 @@ export default {
     if (step.hasNext)
       step.nextStep = this.stepper.next(1);
 
-    // Call step callback
-    if (callCallbacks && typeof this.onStep === 'function')
-      this.onStep(step);
-
     // Try running the step
     try {
       // Wait for next step to complete
@@ -201,6 +201,8 @@ export default {
       // Throw parse error
       if (step.hasError)
         throw new Error(step.error.message);
+
+      step.state = this.getState();
     }
 
     // Catch user/parse error
@@ -211,11 +213,15 @@ export default {
       return false;
     }
 
-    step.state = this.getState();
+    finally {
+      // Call step callback
+      if (callCallbacks && typeof this.onStep === 'function')
+        this.onStep(step);
 
-    // Call finish callback
-    if (callCallbacks && !step.hasNext && typeof this.onFinish === 'function')
-      this.onFinish();
+      // Call finish callback if there is no next step
+      if (callCallbacks && !step.hasNext && typeof this.onFinish === 'function')
+        this.onFinish(step);
+    }
 
     return step.hasNext;
   },
