@@ -13,59 +13,21 @@ export default {
   /**
    * Create instance of GidgetGame.
    *
-   * @param {object} kwargs - Keyword-arguments to merge into new instance.
+   * @param {array[object]} objects - Objects to insert on creation.
+   * @param {object} attrs - Keyword-arguments to merge into new instance.
    * @return {object} - Game object.
    */
-  create(kwargs) {
+  create(objects, attrs) {
     const game = _.cloneDeep(this);
     game.stepper = Stepper.create();
-    game.world = GidgetWorld.create(kwargs);
+    game.world = GidgetWorld.create(attrs);
+
+    // Insert objects on creation
+    game.createObjects(objects);
+
+    // Save initial state for restoration upon reset
+    game.initialState = game.save();
     return game;
-  },
-
-
-  /**
-   * Save state of world and stepper.
-   *
-   * @return {void}
-   */
-  getState() {
-    const state = _.cloneDeep({
-      objects: this.world.objects,
-      messages: this.world.messages
-    });
-
-    this.states.push(state)
-    return state;
-  },
-
-
-  /**
-   * Restore state of world and stepper.
-   *
-   * @param {object} state
-   * @return {boolean}
-   */
-  restoreState(state) {
-    this.world.objects = state.objects;
-    this.world.messages = state.messages;
-
-    const fixWorld = node => {
-      // Traverse into array
-      if (Array.isArray(node))
-        node.forEach(subNode => fixWorld(subNode));
-
-      // Restore world property and traverse into grabbed property
-      else if (typeof node === 'object') {
-        node.world = this.world;
-        if (typeof node.grabbed !== 'undefined')
-          fixWorld(node.grabbed);
-      }
-    };
-
-    // Fix world properties inside objects
-    fixWorld(this.world.objects);
-    return true;
   },
 
 
@@ -101,10 +63,92 @@ export default {
 
 
   /**
+   * Save state of world and stepper.
+   *
+   * @return {void}
+   */
+  save() {
+    const state = {
+      objects: this.world.objects,
+      messages: this.world.messages
+    };
+
+    this.states.push(_.cloneDeep(state));
+    return state;
+  },
+
+
+  /**
+   * Restore a game state.
+   *
+   * @param {object} state
+   * @return {boolean}
+   */
+  _restore(state) {
+    // Clone state because the references inside of object
+    state = _.cloneDeep(state);
+
+    this.world.objects = state.objects;
+    this.world.messages = state.messages;
+
+    const fixWorld = node => {
+      // Traverse into array
+      if (Array.isArray(node))
+        node.forEach(subNode => fixWorld(subNode));
+
+      // Restore world property and traverse into grabbed property
+      else if (typeof node === 'object') {
+        node.world = this.world;
+        if (typeof node.grabbed !== 'undefined')
+          fixWorld(node.grabbed);
+      }
+    };
+
+    // Fix world properties inside objects
+    fixWorld(this.world.objects);
+    return true;
+  },
+
+
+  /**
+   * Restore game progress by step index.
+   *
+   * @param {number} index
+   * @return {boolean}
+   */
+  async restore(index_or_state) {
+    // Get step and verify its defined
+    let step = this.stepper.steps[index_or_state];
+    if (!step)
+      return false;
+
+    // Check for state prop and restore it
+    if (typeof step.state === 'object') {
+      this._restore(step.state);
+
+      // Call onStep callback
+      if (typeof this.onStep === 'function')
+        this.onStep(step);
+
+      // Call finish callback
+      if (!step.hasNext && typeof this.onFinish === 'function')
+        this.onFinish();
+    }
+
+    // No state prop? We'll have to navigate to it
+    else
+      for (let i = index - this.stepper.index; i >= 0; i--)
+        step = await this.next();
+
+    return true;
+  },
+
+
+  /**
    * Reset game world by creating new stepper instance and restoring the game
    * to its initial state.
    *
-   * @return void
+   * @return {void}
    */
   reset() {
     // Reset stepper
@@ -112,7 +156,7 @@ export default {
 
     // Restore initial state
     if (this.states.length > 0)
-      this.restoreState(this.states[0]);
+      this._restore(this.initialState);
 
     // Reset states
     this.states = [];
@@ -136,40 +180,6 @@ export default {
     }
 
     return !result.hasError;
-  },
-
-
-  /**
-   * Restore game progress by step index.
-   *
-   * @param {number} index
-   * @return {boolean}
-   */
-  async restore(index) {
-    // Get step and verify its defined
-    let step = this.stepper.steps[index];
-    if (!step)
-      return false;
-
-    // Check for state prop and restore it
-    if (typeof step.state === 'object') {
-      this.restoreState(step.state);
-
-      // Call onStep callback
-      if (typeof this.onStep === 'function')
-        this.onStep(step);
-
-      // Call finish callback
-      if (!step.hasNext && typeof this.onFinish === 'function')
-        this.onFinish();
-    }
-
-    // No state prop? We'll have to navigate to it
-    else
-      for (let i = index - this.stepper.index; i >= 0; i--)
-        step = await this.next();
-
-    return true;
   },
 
 
@@ -202,7 +212,7 @@ export default {
       if (step.hasError)
         throw new Error(step.error.message);
 
-      step.state = this.getState();
+      step.state = this.save();
     }
 
     // Catch user/parse error

@@ -26,7 +26,7 @@
       <b-button
         ref="nextStep"
         class="button"
-        :disabled='isBusy || canReset'
+        :disabled='canReset'
         @click="$emit('change:step', ++stepIndex, stepCount)"
       >
         Next Step

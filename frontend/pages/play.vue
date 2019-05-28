@@ -38,7 +38,7 @@ export default {
   },
 
   mounted() {
-    this.loadLvl2();
+    this.loadLvl();
   },
 
   methods: {

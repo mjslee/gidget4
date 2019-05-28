@@ -113,7 +113,7 @@ export default {
       data: {},
 
       // World
-      game: Game.create({ size: this.size }),
+      game: Game.create(this.objects, { size: this.size }),
 
       // World objects
       playerObject: undefined,
@@ -127,7 +127,6 @@ export default {
     this.game.onStep = this.handleStep;
     this.game.onError = this.handleError;
     this.game.onFinish = this.handleFinish;
-    this.game.createObjects(this.objects);
     window.game = this.game;
   },
 
@@ -171,7 +170,7 @@ export default {
       // Set controls data
       this.$refs.controls.isRunning = true;
       this.$refs.controls.isBusy = true;
-      this.$refs.controls.stepCount = this.game.stepper.steps.length - 1;
+      this.$refs.controls.stepCount = this.game.stepper.steps.length;
 
       return await this.game.run(waitMilliseconds);
     },

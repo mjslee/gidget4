@@ -124,6 +124,7 @@ export default {
         result.push([`;__collect__(${pairs});`, node.range[1]]);
       }
     });
+
     return result;
   },
 
@@ -149,6 +150,7 @@ export default {
     });
 
     this.flatTree.reverse();
+    //input += `;__step__(0, [0, 0]);`;
     return input;
   },
 };
