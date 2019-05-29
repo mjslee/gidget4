@@ -133,6 +133,7 @@ export default {
 
   mounted() {
     this.assignReferences();
+    this.game.world.messages = this.dialogue;
   },
 
 
@@ -143,8 +144,6 @@ export default {
      * @return {void}
      */
     assignReferences() {
-      this.game.world.messages = this.dialogue
-
       // Re-assign objects used by inspector
       this.playerObject = this.game.world.getObject('Gidget')
       if (this.selectedObject)
@@ -198,7 +197,7 @@ export default {
       this.assignReferences();
 
       if (sayMessage)
-        this.$refs.dialogue.text = "Ok, I'm stopping!"
+        this.$refs.dialogue.text = "Okay, I'm stopping!"
     },
 
 

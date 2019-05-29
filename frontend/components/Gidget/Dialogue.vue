@@ -98,11 +98,13 @@ export default {
      */
     messages() {
       this.index = 0;
+      console.log(this.messages);
 
       // Sometimes index is already 0 so no change is made, meaning we have
       // to manually update the display text
       if (this.messages.length > 0)
         this.setMessage(this.messages[0]);
+
       this.setButtonStatus();
     },
 
