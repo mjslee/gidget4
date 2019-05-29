@@ -68,12 +68,12 @@ export default {
    * @return {void}
    */
   save() {
-    const state = {
+    const state = _.cloneDeep({
       objects: this.world.objects,
       messages: this.world.messages
-    };
+    });
 
-    this.states.push(_.cloneDeep(state));
+    this.states.push(state);
     return state;
   },
 
@@ -86,26 +86,33 @@ export default {
    */
   _restore(state) {
     // Clone state because the references inside of object
-    state = _.cloneDeep(state);
+    state = _.cloneDeep(state)
 
+    // Set world objects and messages
     this.world.objects = state.objects;
     this.world.messages = state.messages;
 
-    const fixWorld = node => {
+    /**
+     * Recursively assign world properties inside objects.
+     */
+    const assignWorld = node => {
       // Traverse into array
       if (Array.isArray(node))
-        node.forEach(subNode => fixWorld(subNode));
+        node.forEach(subNode => assignWorld(subNode));
 
-      // Restore world property and traverse into grabbed property
+      // Restore world property
       else if (typeof node === 'object') {
+        // Set world property
         node.world = this.world;
+
+        // Traverse into grabbed property
         if (typeof node.grabbed !== 'undefined')
-          fixWorld(node.grabbed);
+          assignWorld(node.grabbed);
       }
     };
 
-    // Fix world properties inside objects
-    fixWorld(this.world.objects);
+    // Assign world properties inside objects
+    assignWorld(this.world.objects);
     return true;
   },
 
@@ -137,7 +144,7 @@ export default {
 
     // No state prop? We'll have to navigate to it
     else
-      for (let i = index - this.stepper.index; i >= 0; i--)
+      for (let i = index_or_state - this.stepper.index; i >= 0; i--)
         step = await this.next();
 
     return true;

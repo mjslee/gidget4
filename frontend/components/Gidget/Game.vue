@@ -170,7 +170,7 @@ export default {
       // Set controls data
       this.$refs.controls.isRunning = true;
       this.$refs.controls.isBusy = true;
-      this.$refs.controls.stepCount = this.game.stepper.steps.length;
+      this.$refs.controls.stepCount = this.game.stepper.steps.length - 1;
 
       return await this.game.run(waitMilliseconds);
     },
