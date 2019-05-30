@@ -7,6 +7,7 @@ import Stepper from '@/assets/gidget/lang/js-stepper';
 export default {
   world: undefined,
   stepper: undefined,
+  initialState: undefined,
   states: [],
 
 
@@ -124,6 +125,10 @@ export default {
    * @return {boolean}
    */
   async restore(index_or_state) {
+    // Restore initial state when index is 0
+    if (index_or_state === 0)
+      this._restore(this.initialState);
+
     // Get step and verify its defined
     let step = this.stepper.steps[index_or_state];
     if (!step)
