@@ -154,6 +154,16 @@ export default {
    */
   __collect__(data) {
     const step = this.steps[this.steps.length - 1];
+    const keys = Object.keys(data);
+
+    // Proxy objects can break things like Vue, so we'll have to recreate
+    // the object so there is no Proxy handler
+    keys.forEach(key => {
+      if (typeof data[key] === 'object')
+        data[key] = Object.assign({}, data[key]);
+    });
+
+    // Set the step data
     step.data = data;
 
     if (typeof this.tempCmd === 'object') {
