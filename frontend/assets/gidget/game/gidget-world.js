@@ -43,7 +43,10 @@ export default {
   },
 
 
-  getObjectsGrouped() {
+  /**
+   *
+   */
+  getObjects() {
     const result = {};
 
     this.objects.forEach(obj => {

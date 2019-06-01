@@ -98,7 +98,6 @@ export default {
      */
     messages() {
       this.index = 0;
-      console.log(this.messages);
 
       // Sometimes index is already 0 so no change is made, meaning we have
       // to manually update the display text
@@ -141,7 +140,7 @@ export default {
       this.nextButtonDisabled = false;
       this.previousButtonDisabled = false;
 
-      if (this.index <= 0)
+      if (this.index < 0)
         this.previousButtonDisabled = true;
 
       if (this.index >= this.messages.length - 1)

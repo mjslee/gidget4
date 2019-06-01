@@ -52,7 +52,7 @@ export default {
   importsWithObjects(imports) {
     const result = Object.assign({}, imports);
 
-    const objects = this.world.getObjectsGrouped();
+    const objects = this.world.getObjects();
     Object.keys(objects).forEach(key => {
       // Add exposed GidgetObject methods
       if (typeof objects[key].exposed === 'object')

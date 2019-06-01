@@ -244,6 +244,7 @@ export default {
       this.$refs.controls.stepIndex = step.index;
 
       // Set code editor lines
+      // THIS IS A MAJOR PERFORMANCE ISSUE, FIX THIS
       this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
       this.$refs.code.setActiveLine(step.ln - 1);
 
