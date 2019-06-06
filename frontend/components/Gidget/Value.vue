@@ -1,59 +1,77 @@
 <template>
-  <span :data-type="type" v-if="type === 'property'">
-    <span v-for="(value, index) in internalValue" :key="index">
-      <span :class="internalValue.length > 1 ? 'is-object' : 'is-variable'" v-if="index === 0">{{ value }}</span><!--
-      --><span class="is-property" v-else>.{{ value }}</span>
+  <v-popover>
+    <!-- Property -->
+    <span :data-type="type" v-if="type === 'property'">
+      <span v-for="(value, index) in internalValue" :key="index">
+        <span :class="internalValue.length > 1 ? 'is-object' : 'is-variable'" v-if="index === 0">{{ value }}</span><!--
+     --><span class="is-property" v-else>.{{ value }}</span>
+      </span>
     </span>
-  </span>
 
-  <span :data-type="type" v-else-if="type === 'variable'" class="is-variable">
-    {{ internalValue }}
-  </span>
+    <!-- Number -->
+    <span :data-type="type" v-else-if="type === 'number'" class="is-integer">
+      {{ internalValue }}
+    </span>
 
-  <span :data-type="type" v-else-if="type === 'number'" class="is-integer">
-    {{ internalValue }}
-  </span>
+    <!-- Boolean -->
+    <span :data-type="type" v-else-if="type === 'boolean'" class="is-boolean">
+      {{ internalValue }}
+    </span>
 
-  <span :data-type="type" v-else-if="type === 'boolean'" class="is-boolean">
-    {{ internalValue }}
-  </span>
+    <!-- String -->
+    <span :data-type="type" v-else-if="type === 'string'" class="is-string">
+      '{{ internalValue }}'
+    </span>
 
-  <span :data-type="type" v-else-if="type === 'string'" class="is-string">
-    '{{ internalValue }}'
-  </span>
+    <!-- Position -->
+    <span :data-type="type" v-else-if="type === 'position'">
+     &#91;
+     <GidgetValue :value="internalValue.x" />,
+     <GidgetValue :value="internalValue.y" />
+     &#93;
+    </span>
 
-  <span :data-type="type" v-else-if="type === 'position'">
-   &#91;
-   <GidgetValue :value="internalValue.x" />,
-   <GidgetValue :value="internalValue.y" />
-   &#93;
-  </span>
+    <!-- Array -->
+    <span :data-type="type" v-else-if="type === 'array'">
+     &#91;
+     <span v-for="(nestedValue, index) in internalValue" :key="`prop-${index}`">
+       <GidgetValue :value="nestedValue" />
+       <span v-if="index + 1 < internalValue.length">, </span>
+     </span>
+     &#93;
+    </span>
 
-  <span :data-type="type" v-else-if="type === 'array'">
-   &#91;
-   <span v-for="(nestedValue, index) in internalValue" :key="`prop-${index}`">
-     <GidgetValue :value="nestedValue" />
-     <span v-if="index + 1 < internalValue.length">, </span>
-   </span>
-   &#93;
-  </span>
+    <!-- Game Objec -->
+    <span :data-type="type" v-else-if="type === 'gameobject'">
+      <img class="image is-24x24 is-inline-block" :src="image" />
+    </span>
 
-  <span :data-type="type" v-else-if="type === 'gameobject'">
-    <img class="image is-24x24 is-inline-block" :src="image" />
-  </span>
+    <!-- Object -->
+    <span :data-type="type" v-else-if="type === 'object'">
+      Object &lt;{{ Object.keys(internalValue).length }} keys&gt;
+    </span>
 
-  <span :data-type="type" v-else-if="type === 'object'">
-    Object &lt;{{ Object.keys(internalValue).length }} keys&gt;
-  </span>
+    <!-- Unknown -->
+    <span :data-type="type" v-else>
+      unknown {{ type }}
+    </span>
 
-  <span :data-type="type" v-else>
-    unknown {{ type }}
-  </span>
+    <!-- Popover -->
+    <Popover :identifier="value" :value="result" :type="type" slot="popover"/>
+  </v-popover>
 </template>
+
+
+<style scoped>
+div {
+  display: inline-block;
+}
+</style>
 
 
 <script>
 import { SPRITE_PATH } from '@/constants/paths'
+import Popover from './Popover'
 
 
 export default {
@@ -62,6 +80,10 @@ export default {
   props: {
     value: Array | Object | String | Boolean | Number,
     isCode: Boolean
+  },
+
+  components: {
+    Popover
   },
 
 
@@ -129,6 +151,14 @@ export default {
      */
     image() {
       return SPRITE_PATH + this.internalValue.image;
+    },
+
+
+    /**
+     *
+     */
+    result() {
+      return this.$store.getters['code/getValue'](this.value);
     }
   },
 
