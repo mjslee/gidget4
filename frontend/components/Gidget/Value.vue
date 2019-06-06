@@ -1,7 +1,7 @@
 <template>
   <v-popover>
     <!-- Property -->
-    <span :data-type="type" v-if="type === 'property'">
+    <span :data-type="type" v-if="type === 'Property'">
       <span v-for="(value, index) in internalValue" :key="index">
         <span :class="internalValue.length > 1 ? 'is-object' : 'is-variable'" v-if="index === 0">{{ value }}</span><!--
      --><span class="is-property" v-else>.{{ value }}</span>
@@ -9,22 +9,22 @@
     </span>
 
     <!-- Number -->
-    <span :data-type="type" v-else-if="type === 'number'" class="is-integer">
+    <span :data-type="type" v-else-if="type === 'Number'" class="is-integer">
       {{ internalValue }}
     </span>
 
     <!-- Boolean -->
-    <span :data-type="type" v-else-if="type === 'boolean'" class="is-boolean">
+    <span :data-type="type" v-else-if="type === 'Boolean'" class="is-boolean">
       {{ internalValue }}
     </span>
 
     <!-- String -->
-    <span :data-type="type" v-else-if="type === 'string'" class="is-string">
+    <span :data-type="type" v-else-if="type === 'String'" class="is-string">
       '{{ internalValue }}'
     </span>
 
     <!-- Position -->
-    <span :data-type="type" v-else-if="type === 'position'">
+    <span :data-type="type" v-else-if="type === 'Position'">
      &#91;
      <GidgetValue :value="internalValue.x" />,
      <GidgetValue :value="internalValue.y" />
@@ -32,7 +32,7 @@
     </span>
 
     <!-- Array -->
-    <span :data-type="type" v-else-if="type === 'array'">
+    <span :data-type="type" v-else-if="type === 'Array'">
      &#91;
      <span v-for="(nestedValue, index) in internalValue" :key="`prop-${index}`">
        <GidgetValue :value="nestedValue" />
@@ -42,12 +42,12 @@
     </span>
 
     <!-- Game Objec -->
-    <span :data-type="type" v-else-if="type === 'gameobject'">
+    <span :data-type="type" v-else-if="type === 'GameObject'">
       <img class="image is-24x24 is-inline-block" :src="image" />
     </span>
 
     <!-- Object -->
-    <span :data-type="type" v-else-if="type === 'object'">
+    <span :data-type="type" v-else-if="type === 'Object'">
       Object &lt;{{ Object.keys(internalValue).length }} keys&gt;
     </span>
 
@@ -125,22 +125,23 @@ export default {
     type() {
       // Display as array
       if (Array.isArray(this.internalValue))
-        return this.isCode ? 'property' : 'array';
+        return this.isCode ? 'Property' : 'Array';
 
       // Get type of internalValue
-      const result = typeof this.internalValue;
+      let type = typeof this.internalValue;
+      type = type.charAt(0).toUpperCase() + type.slice(1);  // Title-ize
 
       // Value is of primitive type
-      if (result !== 'object')
-        return result;
+      if (type !== 'Object')
+        return type;
 
       // Is value type position?
       if (this.isPosition())
-        return 'position';
+        return 'Position';
 
       // Is value type a GameObject
       if (this.isGameObject())
-        return 'gameobject';
+        return 'GameObject';
     },
 
 
