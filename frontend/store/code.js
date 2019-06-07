@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import _ from 'lodash'
 
 
 export const state = () => ({
@@ -46,11 +47,21 @@ export const getters = {
       if (value[0] === '\'' && value[lastIndex] === '\'')
         return value.substring(1, lastIndex);
 
-      let result;
-      try { result = eval(`state.data.${value}`) } catch (e) { }
-      try { result = eval(`state.objects.${value}`) } catch (e) { }
+      try {
+        let result = _.get(state.objects, value);
+        if (result)
+          return JSON.stringify(result);
 
-      return JSON.stringify(result || 'unknown');
+        result = _.get(state.data, value);
+        if (result)
+          return JSON.stringify(result);
+
+        throw Exception();
+      }
+      catch {
+        return 'unknown';
+      }
+
     };
   }
 };
