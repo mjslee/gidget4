@@ -3,9 +3,14 @@
     <!-- Property -->
     <span :data-type="type" v-if="type === 'Property'">
       <span v-for="(value, index) in internalValue" :key="index">
-        <span :class="internalValue.length > 1 ? 'is-object' : 'is-variable'" v-if="index === 0">{{ value }}</span><!--
+        <span class="is-object" v-if="index === 0">{{ value }}</span><!--
      --><span class="is-property" v-else>.{{ value }}</span>
       </span>
+    </span>
+
+    <!-- Variable -->
+    <span :data-type="type" v-else-if="type === 'Variable'" class="is-variable">
+      {{ internalValue }}
     </span>
 
     <!-- Number -->
@@ -57,7 +62,13 @@
     </span>
 
     <!-- Popover -->
-    <Popover :identifier="value" :value="result" :type="type" slot="popover"/>
+    <Popover
+      v-if="type != 'Array' && type != 'Position'"
+      slot="popover"
+      :identifier="internalIdentifier"
+      :value="result"
+      :type="type"
+    />
   </v-popover>
 </template>
 
@@ -78,6 +89,7 @@ export default {
   name: 'GidgetValue',
 
   props: {
+    identifier: String,
     value: Array | Object | String | Boolean | Number,
     literal: Array | Object | String | Boolean | Number
   },
@@ -89,25 +101,39 @@ export default {
 
   data() {
     return {
-      internalValue: this.literal || this.value,
+      internalIdentifier: undefined,
+      internalType: undefined,
+      internalValue: this.literal || this.value
     };
   },
 
 
   mounted() {
-    //
+    // Literal not a string? Not interested
     if (typeof this.literal !== 'string')
       return;
 
     // Remove surrounding apostrophes of string (-> 'example' <-)
     // internalValue will still be a string but without the apostrophes
-    if (this.isString())
+    if (this.isString()) {
       this.internalValue = this.literal.substring(1, this.literal.length - 1);
+      return;
+    }
+
+    this.internalIdentifier = this.literal;
 
     // Split by periods for things similar to 'Object.property.property'
     // internalValue will be an array of identifiers
-    else
+    if (this.literal.includes('.')) {
+      this.internalType = 'Property';
       this.internalValue = this.literal.split('.');
+    }
+
+    // Literal is a string
+    else {
+      this.internalType = 'Variable';
+      this.internalValue = this.literal;
+    }
   },
 
 
@@ -115,7 +141,7 @@ export default {
     /**
      * Update internal value when prop gets updated.
      *
-     * @return {String}
+     * @return {string}
      */
     value(newValue) {
       this.internalValue = newValue;
@@ -127,12 +153,16 @@ export default {
     /**
      * Type of value.
      *
-     * @return {String}
+     * @return {string}
      */
     type() {
+      //
+      if (this.internalType)
+        return this.internalType;
+
       // Display as array
       if (Array.isArray(this.internalValue))
-        return typeof this.literal !== 'undefined' ? 'Property' : 'Array';
+        return 'Array';
 
       // Get type of internalValue
       let type = typeof this.internalValue;
@@ -155,7 +185,7 @@ export default {
     /**
      * Get path of GameObject's sprite.
      *
-     * @return string
+     * @return {string}
      */
     image() {
       return SPRITE_PATH + this.internalValue.image;
@@ -163,10 +193,17 @@ export default {
 
 
     /**
+     * Get result of a value or a literal.
      *
+     * @return {string}
      */
     result() {
-      return this.$store.getters['code/getValue'](this.literal || this.value);
+      // Not a literal? Just return the value.
+      if (typeof this.value !== 'undefined')
+        return this.value;
+
+      // Get value of literal that may have been evaluated
+      return this.$store.getters['code/getValue'](this.literal);
     }
   },
 

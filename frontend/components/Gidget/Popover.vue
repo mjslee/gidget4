@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    {{ identifier }}: {{ value }}
+    {{ identifier }} ({{ type }}): {{ internalValue }}
   </div>
 </template>
 
@@ -10,6 +10,13 @@ export default {
     identifier: String,
     type: String,
     value: Array | Object | String | Boolean | Number
+  },
+
+
+  computed: {
+    internalValue() {
+      return typeof this.value !== 'object' ? this.value : '';
+    }
   }
 }
 </script>
