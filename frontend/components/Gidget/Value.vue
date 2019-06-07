@@ -41,7 +41,7 @@
      &#93;
     </span>
 
-    <!-- Game Objec -->
+    <!-- GameObject -->
     <span :data-type="type" v-else-if="type === 'GameObject'">
       <img class="image is-24x24 is-inline-block" :src="image" />
     </span>
@@ -79,7 +79,7 @@ export default {
 
   props: {
     value: Array | Object | String | Boolean | Number,
-    isCode: Boolean
+    literal: Array | Object | String | Boolean | Number
   },
 
   components: {
@@ -89,18 +89,25 @@ export default {
 
   data() {
     return {
-      internalValue: this.value
+      internalValue: this.literal || this.value,
     };
   },
 
 
   mounted() {
-    // Passed in value should be considered code
-    if (this.isCode && typeof this.internalValue === 'string') {
-      this.internalValue = this.isString() ?
-        this.internalValue.substring(1, this.internalValue.length - 1) :
-        this.internalValue.split('.');
-    }
+    //
+    if (typeof this.literal !== 'string')
+      return;
+
+    // Remove surrounding apostrophes of string (-> 'example' <-)
+    // internalValue will still be a string but without the apostrophes
+    if (this.isString())
+      this.internalValue = this.literal.substring(1, this.literal.length - 1);
+
+    // Split by periods for things similar to 'Object.property.property'
+    // internalValue will be an array of identifiers
+    else
+      this.internalValue = this.literal.split('.');
   },
 
 
@@ -125,7 +132,7 @@ export default {
     type() {
       // Display as array
       if (Array.isArray(this.internalValue))
-        return this.isCode ? 'Property' : 'Array';
+        return typeof this.literal !== 'undefined' ? 'Property' : 'Array';
 
       // Get type of internalValue
       let type = typeof this.internalValue;
@@ -159,7 +166,7 @@ export default {
      *
      */
     result() {
-      return this.$store.getters['code/getValue'](this.value);
+      return this.$store.getters['code/getValue'](this.literal || this.value);
     }
   },
 
