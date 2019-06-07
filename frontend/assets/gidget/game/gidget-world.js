@@ -20,6 +20,7 @@ export default {
 
   /**
    * Clone a new GidgetWorld instance
+   *
    * @param {dictionary} kwargs Default properties.
    */
   create(kwargs) {
@@ -31,8 +32,9 @@ export default {
 
   /**
    * Determine if position is valid.
-   * + Check that tile position exists.
-   * + Check for blocking objects.
+   * Checks tile position exists.
+   * Checks for blocking objects.
+   *
    * @param {function} conditions
    */
   isPositionValid(x, y) {
@@ -44,20 +46,28 @@ export default {
 
 
   /**
+   * Get all objects in game world.
+   * Objects with the same name will be grouped as an array.
    *
+   * @return {object}
    */
   getObjects() {
     const result = {};
 
     this.objects.forEach(obj => {
+      // Create object in results if it doesn't already exist
       if (typeof result[obj.name] === 'undefined')
         result[obj.name] = obj;
 
+      // Multiple objects of the same name already exist, add new object
+      // to the array
       else if (Array.isArray(result[obj.name])) {
         result[obj.name].push(obj);
         obj.arrayIndex = result[obj.name].length - 1;
       }
 
+      // Object of the same name already exists, turn it into an array so they
+      // can be grouped together
       else {
         let prevObj = result[obj.name];
         result[obj.name] = [prevObj, obj];
@@ -98,6 +108,7 @@ export default {
 
   /**
    * Find object based on its position.
+   *
    * @param {number} x
    * @param {number} y
    */
@@ -142,6 +153,7 @@ export default {
   /**
    * Create object in world. 'type' attribute in kwargs is required.
    * For example: kwargs={type: 'Gidget'}
+   *
    * @param {object} kwargs Attributes to assign to object on creation.
    */
   createObject(kwargs) {
@@ -177,7 +189,9 @@ export default {
 
   /**
    * Add object to world. Use 'createObject' to create a new object.
-   * @params {object} obj Object to add.
+   *
+   * @param {object} obj Object to add.
+   * @return {boolean}
    */
   addObject(obj) {
     this.objects.push(obj);
@@ -192,7 +206,9 @@ export default {
 
   /**
    * Remove object from world.
-   * @params {object} obj Object to remove.
+   *
+   * @param {object} obj Object to remove.
+   * @return {boolean}
    */
   removeObject(id) {
     // Find objects index by its ID
@@ -215,7 +231,9 @@ export default {
   /*
    * Move object to another tile's position.
    * Using 'obj.move(x, y)' is the preferred way to move objects.
-   * @params {object} obj Object that was moved.
+   *
+   * @param {object} obj Object that was moved.
+   * @return {boolean}
    */
   moveObject(obj, x, y) {
     let result = true;
@@ -233,7 +251,9 @@ export default {
   /**
    * Detect an object collision based on position. Run 'onCollision' for each
    * collided object.
+   *
    * @param {object} obj Object to detect collisions for.
+   * @return {void}
    */
   detectCollision(obj) {
     this.objects.filter((obj2) =>
@@ -265,7 +285,9 @@ export default {
   /**
    * Get an object's boundaries.
    * (There's probably a more efficient way to do this)
-   * @param {object} obj Object to get boundaries for.
+   *
+   * @param {object} obj -- Object to get boundaries for.
+   * @return {object}
    */
   getObjectBoundaries(obj) {
     const fromX = Math.floor(obj.position.x - ((obj.scale / 2) - 1));
@@ -280,6 +302,11 @@ export default {
 
   /**
    * Determine if x and y are inside an object's boundaries.
+   *
+   * @param {object} obj
+   * @param {number} x
+   * @param {number} y
+   * @return {boolean}
    */
   insideObjectBoundaries(obj, x, y) {
     // Do not scale boundaries up with object's 'scale' property
@@ -298,10 +325,12 @@ export default {
 
   /**
    * Get point path array between two points.
+   *
    * @param {number} fromX
    * @param {number} fromY
    * @param {number} toX
    * @param {number} toY
+   * @return {array}
    */
   getPath(fromX, fromY, toX, toY) {
     // Get differences of current position and desired position
@@ -337,8 +366,10 @@ export default {
 
   /**
    * Run onObjectSay() callback to pass to a UI.
-   * @param {number} object - Object to send to callback.
-   * @param {number} messages - Object array of messages.
+   *
+   * @param {number} object -- Object to send to callback.
+   * @param {number} messages -- Object array of messages.
+   * @return {void}
    */
   sayMessages(messages) {
     // Set world messages, empty and replace data to avoid destroying references
