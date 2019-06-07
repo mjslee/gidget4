@@ -69,7 +69,7 @@ export default {
     if (!this.world.isPositionValid(x, y))
       return false;
 
-    // Individually set these as to not use references
+    // Individually set these as to not change references
     this.position.x = x;
     this.position.y = y;
 
@@ -134,7 +134,7 @@ export default {
   grab(id_or_name) {
     // Get object
     const field = typeof id_or_name === 'number' ? 'id' : 'name';
-    const obj = this.world.getObject(obj => 
+    const obj = this.world.getObject(obj =>
       obj.grabbable !== false &&
       obj[field] === id_or_name &&
       obj.position.x === this.position.x &&

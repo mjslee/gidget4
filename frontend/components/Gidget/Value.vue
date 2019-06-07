@@ -156,7 +156,7 @@ export default {
      * @return {string}
      */
     type() {
-      //
+      // If we already know what the type is, use it
       if (this.internalType)
         return this.internalType;
 

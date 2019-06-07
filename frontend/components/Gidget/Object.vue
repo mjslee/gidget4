@@ -63,7 +63,7 @@ export default {
 
 
   mounted() {
-    //this.object.vueComponent = this;
+    this.updatePosition();
   },
 
 
