@@ -70,13 +70,27 @@ export default {
       // can be grouped together
       else {
         let prevObj = result[obj.name];
-        result[obj.name] = [prevObj, obj];
+        result[obj.name] = [ prevObj, obj ];
         prevObj.arrayIndex = 0;
         obj.arrayIndex = 1;
       }
-    })
+    });
 
     return result;
+  },
+
+
+  /**
+   * Get clones of all game world objects.
+   * World and object properties are omitted.
+   * Functions are also omitted.
+   *
+   * @return {object}
+   */
+  getObjectClones() {
+    return _.cloneDeep(
+      _.omit(_.omitBy(this.getObjects(), _.isFunction), ['world', 'object'])
+    );
   },
 
 
@@ -121,6 +135,7 @@ export default {
 
   /**
    * Merge two objects together while keeping the 'exposed' property intact.
+   *
    * @param {object} obj1 - Object to merge into.
    * @param {object} obj2 - Object to merge from.
    */

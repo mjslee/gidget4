@@ -127,7 +127,6 @@ export default {
     this.game.onStep = this.handleStep;
     this.game.onError = this.handleError;
     this.game.onFinish = this.handleFinish;
-    window.game = this.game;
   },
 
 
@@ -248,9 +247,15 @@ export default {
       this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
       this.$refs.code.setActiveLine(step.ln - 1);
 
+      // Store objects inside step so no further object iterations happen
+      if (typeof step.objects !== 'object')
+        step.objects = this.game.world.getObjectClones();
+
       // Set goals data and validate goals
-      this.$refs.goals.setData(step.data);
-      this.$nextTick(() => this.$refs.goals.validate());
+      this.$store.commit('code/setData', step.data);
+      this.$store.commit('code/setObjects', step.objects);
+
+      //this.$nextTick(() => this.$refs.goals.validate());
     },
 
 
@@ -261,7 +266,7 @@ export default {
      */
     handleFinish() {
       // Show red Xs on goals component
-      this.$refs.goals.showFailures = true;
+      this.$refs.goals.showResults = true;
       this.$nextTick(() => {
         this.$refs.goals.completed() ?
           this.handleSuccess() :
