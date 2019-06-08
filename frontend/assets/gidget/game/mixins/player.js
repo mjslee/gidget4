@@ -3,7 +3,6 @@ import { CANNOT_MOVE } from '@/constants/messages'
 
 export default {
   exposed: {
-
     /**
      * Move in direction.
      */
@@ -25,10 +24,6 @@ export default {
     _moveSay(direction, amount) {
       const spaces = amount == 1 ? '' : `${amount} spaces ` ;
       this.object.say({ text: `I'm moving ${spaces}${direction}!` });
-    },
-
-    changeName(name) {
-      this.object.name = name;
     },
 
     /**

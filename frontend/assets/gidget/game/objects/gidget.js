@@ -5,6 +5,6 @@ export default {
   exposed: {
     async wait(milliseconds) {
       return await new Promise(resolve => setTimeout(resolve, milliseconds));
-    }
+    },
   }
 }

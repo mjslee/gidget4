@@ -39,7 +39,6 @@
 
 
 <script>
-import Goal from '@/assets/gidget/game/gidget-goal'
 import GidgetValue from './Value'
 
 
