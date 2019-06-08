@@ -82,3 +82,10 @@ dist
 
 # Service worker
 sw.*
+
+# Vim session
+Session.vim
+
+# Tags
+.ctags.d/
+tags
