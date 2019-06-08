@@ -44,24 +44,28 @@ export const getters = {
   getValue(state) {
     return value => {
       const lastIndex = value.length - 1;
+
+      // Test if value is string by surrounding apostrophes
       if (value[0] === '\'' && value[lastIndex] === '\'')
         return value.substring(1, lastIndex);
 
       try {
+        // Attempt to get value from objects first
         let result = _.get(state.objects, value);
         if (result)
-          return JSON.stringify(result);
+          return result;
 
+        // Attempt to get value from var data
         result = _.get(state.data, value);
         if (result)
-          return JSON.stringify(result);
+          return result;
 
+        // Value is unknown
         throw Exception();
       }
       catch {
-        return 'unknown';
+        return value;
       }
-
     };
   }
 };

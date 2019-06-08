@@ -26,7 +26,7 @@
         <GidgetValue :literal="goal.arguments[1]" />
       </span>
     </div>
-    <button :click="validate">Validate</button>
+    <button @click="validate">Validate</button>
   </div>
 </template>
 
@@ -94,13 +94,9 @@ export default {
      * @return {void}
      */
     validate() {
-      /*
-      const validator = Goal.create(this.world, this.data);
       this.internalGoals.forEach(goal => {
-        this.$set(goal, 'completed', validator.validate(goal));
+        this.$set(goal, 'completed', this.assert(goal))
       });
-      */
-      //console.log(this.$store.getters["code/getValue"]());
     },
 
 
@@ -111,6 +107,38 @@ export default {
      */
     completed() {
       return this.internalGoals.every(goal => goal.completed === true);
+    },
+
+
+    /**
+     * Get value from code store as a JSON string.
+     *
+     * @param {any} value
+     * @return {string}
+     */
+    getValueJSON(value) {
+      return JSON.stringify(this.$store.getters['code/getValue'](value));
+    },
+
+
+    /**
+     * Test if all goals are completed.
+     *
+     * @param {object} assertion -- { assert: 'equal', arguments: [1, 1] }
+     * @return {boolean}
+     */
+    assert(assertion) {
+      switch (assertion.assert) {
+        // Equality assertion
+        case 'equal':
+          const a = this.getValueJSON(assertion.arguments[0]);
+          const b = this.getValueJSON(assertion.arguments[1]);
+          return a == b;
+
+        // Default assertion
+        default:
+          return false;
+      }
     }
   }
 }
