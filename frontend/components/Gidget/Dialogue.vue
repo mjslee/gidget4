@@ -1,7 +1,16 @@
 <template>
   <div>
     <p>
-      {{ text }}
+      <template v-if="!text.includes('`')">
+        {{ text }}
+      </template>
+      <span v-else v-for="(word, index) in text.split(' ')" :key="word + index"><!--
+     --><template v-if="word[0] === '`'"><!--
+       --><GidgetValue :literal="word.substring(1)" /><!--
+     --></template><!--
+     --><template v-else>{{ word }}</template>&nbsp;<!--
+   --></span>
+
       <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
         {{ repeats + 1 }}
       </span>
@@ -35,12 +44,20 @@
 
 
 <script>
+import GidgetValue from './Value'
+
+
 export default {
   props: {
     messages: {
       type: Array,
       default: () => []
     }
+  },
+
+
+  components: {
+    GidgetValue
   },
 
 
