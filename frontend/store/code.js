@@ -64,7 +64,7 @@ export const getters = {
         throw Exception();
       }
       catch {
-        return value;
+        return undefined;
       }
     };
   }

@@ -1,35 +1,38 @@
 <template>
   <v-popover>
     <!-- Property -->
-    <span :data-type="type" v-if="type === 'Property'">
-      <span v-for="(value, index) in internalValue" :key="index">
+    <span :data-type="valueType" v-if="literalType === 'Property'">
+      <span
+        v-for="(value, index) in literal.split('.')"
+        :key="index"
+        >
         <span class="is-object" v-if="index === 0">{{ value }}</span><!--
-     --><span class="is-property" v-else>.{{ value }}</span>
+        --><span class="is-property" v-else>.{{ value }}</span>
       </span>
     </span>
 
     <!-- Variable -->
-    <span :data-type="type" v-else-if="type === 'Variable'" class="is-variable">
-      {{ internalValue }}
+    <span data-type="variable" v-else-if="literalType === 'Variable'" class="is-variable">
+      {{ internalIdentifier }}
     </span>
 
     <!-- Number -->
-    <span :data-type="type" v-else-if="type === 'Number'" class="is-integer">
+    <span :data-type="valueType" v-else-if="valueType === 'Number'" class="is-integer">
       {{ internalValue }}
     </span>
 
     <!-- Boolean -->
-    <span :data-type="type" v-else-if="type === 'Boolean'" class="is-boolean">
+    <span :data-type="valueType" v-else-if="valueType === 'Boolean'" class="is-boolean">
       {{ internalValue }}
     </span>
 
     <!-- String -->
-    <span :data-type="type" v-else-if="type === 'String'" class="is-string">
+    <span :data-type="valueType" v-else-if="valueType === 'String'" class="is-string">
       '{{ internalValue }}'
     </span>
 
     <!-- Position -->
-    <span :data-type="type" v-else-if="type === 'Position'">
+    <span :data-type="valueType" v-else-if="valueType === 'Position'">
      &#91;
      <GidgetValue :value="internalValue.x" />,
      <GidgetValue :value="internalValue.y" />
@@ -37,7 +40,7 @@
     </span>
 
     <!-- Array -->
-    <span :data-type="type" v-else-if="type === 'Array'">
+    <span :data-type="valueType" v-else-if="valueType === 'Array'">
      &#91;
      <span v-for="(nestedValue, index) in internalValue" :key="`prop-${index}`">
        <GidgetValue :value="nestedValue" />
@@ -47,27 +50,26 @@
     </span>
 
     <!-- GameObject -->
-    <span :data-type="type" v-else-if="type === 'GameObject'">
+    <span :data-type="valueType" v-else-if="valueType === 'GameObject'">
       <img class="image is-24x24 is-inline-block" :src="image" />
     </span>
 
     <!-- Object -->
-    <span :data-type="type" v-else-if="type === 'Object'">
+    <span :data-type="valueType" v-else-if="valueType === 'Object'">
       Object &lt;{{ Object.keys(internalValue).length }} keys&gt;
     </span>
 
     <!-- Unknown -->
-    <span :data-type="type" v-else>
-      unknown {{ type }}
+    <span :data-type="valueType" v-else>
+      unknown {{ valueType }}
     </span>
 
     <!-- Popover -->
     <Popover
-      v-if="type != 'Array' && type != 'Position'"
       slot="popover"
       :identifier="internalIdentifier"
-      :value="result"
-      :type="type"
+      :value="internalValue"
+      :type="valueType"
     />
   </v-popover>
 </template>
@@ -101,65 +103,59 @@ export default {
 
   data() {
     return {
-      internalIdentifier: undefined,
-      internalType: undefined,
-      internalValue: this.literal || this.value
+      internalIdentifier: this.identifier,
     };
-  },
-
-
-  mounted() {
-    // Literal not a string? Not interested
-    if (typeof this.literal !== 'string')
-      return;
-
-    // Remove surrounding apostrophes of string (-> 'example' <-)
-    // internalValue will still be a string but without the apostrophes
-    if (this.isString()) {
-      this.internalValue = this.literal.substring(1, this.literal.length - 1);
-      return;
-    }
-
-    this.internalIdentifier = this.literal;
-
-    // Split by periods for things similar to 'Object.property.property'
-    // internalValue will be an array of identifiers
-    if (this.literal.includes('.')) {
-      this.internalType = 'Property';
-      this.internalValue = this.literal.split('.');
-    }
-
-    // Literal is a string
-    else {
-      this.internalType = 'Variable';
-      this.internalValue = this.literal;
-    }
-  },
-
-
-  watch: {
-    /**
-     * Update internal value when prop gets updated.
-     *
-     * @return {string}
-     */
-    value(newValue) {
-      this.internalValue = newValue;
-    }
   },
 
 
   computed: {
     /**
+     * Value of a literal if it exists, otherwise return literal name or value.
+     *
+     * @return {string}
+     */
+    internalValue() {
+      // When this.literal is a string, it can either be a: property, variable,
+      // or string; strings will be surrounded by apostrophes.
+      if (typeof this.literal === 'string') {
+        // Remove surrounding apostrophes from literal
+        if (this.isString(this.literal)) {
+          return this.literal.substring(1, this.literal.length - 1);
+        }
+
+        // Literal may have been evaluated, so try to fetch its value
+        else {
+          this.internalIdentifier = this.literal;
+          return this.$store.getters['code/getValue'](this.literal);
+        }
+      }
+
+      // Fallback
+      return this.literal || this.value;
+    },
+
+
+    /**
+     * Get type of literal.
+     *
+     * @return {string}
+     */
+    literalType() {
+      // We don't care if there is no internalIdentifier
+      if (typeof this.internalIdentifier !== 'string')
+        return;
+
+      // 'Object.property' include a period, whereas Variable will not
+      return this.internalIdentifier.includes('.') ? 'Property' : 'Variable';
+    },
+
+
+    /**
      * Type of value.
      *
      * @return {string}
      */
-    type() {
-      // If we already know what the type is, use it
-      if (this.internalType)
-        return this.internalType;
-
+    valueType() {
       // Display as array
       if (Array.isArray(this.internalValue))
         return 'Array';
@@ -191,20 +187,6 @@ export default {
       return SPRITE_PATH + this.internalValue.image;
     },
 
-
-    /**
-     * Get result of a value or a literal.
-     *
-     * @return {string}
-     */
-    result() {
-      // Not a literal? Just return the value.
-      if (typeof this.value !== 'undefined')
-        return this.value;
-
-      // Get value of literal that may have been evaluated
-      return this.$store.getters['code/getValue'](this.literal);
-    }
   },
 
 
@@ -245,9 +227,8 @@ export default {
      *
      * @return {boolean}
      */
-    isString() {
-      return this.internalValue[0] === '\'' &&
-             this.internalValue[this.internalValue.length - 1] === '\'';
+    isString(value) {
+      return typeof value !== 'undefined' && value[0] === '\'' && value[value.length - 1] === '\'';
     },
   }
 }
