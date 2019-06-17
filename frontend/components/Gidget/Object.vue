@@ -1,7 +1,7 @@
 <template>
   <div>
-    <span ref="label" :style="labelStyle" v-text="object.name"></span>
-    <img ref="object" :src="objectImage" :style="objectStyle" />
+    <span :class="transitionClass" ref="label" :style="labelStyle" v-text="object.name"></span>
+    <img :class="transitionClass" ref="object" :src="objectImage" :style="objectStyle" />
   </div>
 </template>
 
@@ -24,6 +24,10 @@ img, span {
   position: absolute;
   cursor: pointer;
   transition: all 200ms;
+}
+
+.no-transition {
+  transition: none;
 }
 
 .selected > span {
@@ -51,6 +55,7 @@ export default {
 
   data() {
     return {
+      transitionClass: 'no-transition',
       scale: this.object.scale,
 
       objectLeft: 0,
@@ -64,6 +69,7 @@ export default {
 
   mounted() {
     this.updatePosition();
+    setTimeout(() => this.transitionClass = '', 200);
   },
 
 
