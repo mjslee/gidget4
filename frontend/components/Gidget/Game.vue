@@ -133,6 +133,10 @@ export default {
   mounted() {
     this.assignReferences();
     this.game.world.messages = this.dialogue;
+
+    // Set game objects in code so components like Dialogue and Goals can
+    // access these variables before any code is ran
+    this.$store.commit('code/setObjects', this.game.world.getObjects());
   },
 
 
@@ -244,8 +248,8 @@ export default {
 
       // Set code editor lines
       // THIS IS A MAJOR PERFORMANCE ISSUE, FIX THIS
-      this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
-      this.$refs.code.setActiveLine(step.ln - 1);
+      // this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
+      // this.$refs.code.setActiveLine(step.ln - 1);
 
       // Store objects inside step so no further object iterations happen
       if (typeof step.objects !== 'object')
