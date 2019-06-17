@@ -47,6 +47,8 @@
 <style>
 .is-keyword { color: #770088 !important }
 .is-variable { color: #0000ff !important }
+.is-object { color: #e47200 !important }
+.is-object-dark { color: #000000 !important }
 .is-boolean { color: #221199 !important }
 .is-integer { color: #116644 !important }
 .is-string { color: #aa1111 !important }
@@ -136,7 +138,7 @@ export default {
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
-    this.$store.commit('code/setObjects', this.game.world.getObjects());
+    this.$store.commit('code/setObjects', this.game.world.getObjectClones());
   },
 
 

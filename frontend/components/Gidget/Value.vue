@@ -1,14 +1,19 @@
 <template>
-  <v-popover>
-    <!-- Property -->
+  <v-popover class="popover">
+    <!-- Object.Property -->
     <span :data-type="valueType" v-if="literalType === 'Property'">
       <span
         v-for="(value, index) in literal.split('.')"
         :key="index"
         >
-        <span class="is-object" v-if="index === 0">{{ value }}</span><!--
+        <span class="is-object-dark" v-if="index === 0">{{ value }}</span><!--
         --><span class="is-property" v-else>.{{ value }}</span>
       </span>
+    </span>
+
+    <!-- Object -->
+    <span data-type="object" v-else-if="literalType === 'Object'" class="is-object">
+      {{ internalIdentifier }}
     </span>
 
     <!-- Variable -->
@@ -76,8 +81,9 @@
 
 
 <style scoped>
-div {
+.popover {
   display: inline-block;
+  cursor: pointer;
 }
 </style>
 
@@ -145,8 +151,11 @@ export default {
       if (typeof this.internalIdentifier !== 'string')
         return;
 
-      // 'Object.property' include a period, whereas Variable will not
-      return this.internalIdentifier.includes('.') ? 'Property' : 'Variable';
+      if (this.internalIdentifier.includes('.'))
+        return 'Property';
+
+      var firstChar = this.internalIdentifier[0];
+      return firstChar === firstChar.toUpperCase() ? 'Object' : 'Variable';
     },
 
 
