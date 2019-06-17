@@ -71,6 +71,7 @@
 
     <!-- Popover -->
     <Popover
+      v-if="valueType !== 'Position' && valueType !== 'Array'"
       slot="popover"
       :identifier="internalIdentifier"
       :value="internalValue"
@@ -84,6 +85,10 @@
 .popover {
   display: inline-block;
   cursor: pointer;
+}
+
+span:hover {
+  text-decoration: underline;
 }
 </style>
 
