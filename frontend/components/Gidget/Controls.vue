@@ -16,20 +16,21 @@
     <div class="buttons has-addons">
       <b-button
         ref="previousStep"
+        icon="chevron-left"
         class="button"
-        :disabled='isBusy || stepIndex <= 0'
+        :disabled="isBusy || stepIndex <= 0"
         @click="$emit('change:step', --stepIndex, stepCount)"
       >
-        Prev Step
+        <b-icon icon="chevron-left"></b-icon>
       </b-button>
 
       <b-button
         ref="nextStep"
         class="button"
-        :disabled='canReset'
+        :disabled="canReset"
         @click="$emit('change:step', ++stepIndex, stepCount)"
       >
-        Next Step
+        <b-icon icon="chevron-right"></b-icon>
       </b-button>
 
       <b-button
