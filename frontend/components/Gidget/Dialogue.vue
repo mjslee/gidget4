@@ -1,16 +1,7 @@
 <template>
   <div>
     <p>
-      <template v-if="!text.includes('`')">
-        {{ text }}
-      </template>
-      <span v-else v-for="(word, index) in text.split(' ')" :key="word + index"><!--
-     --><template v-if="word[0] === '`'"><!--
-       --><GidgetValue :literal="word.substring(1)" /><!--
-     --></template><!--
-     --><template v-else>{{ word }}</template>&nbsp;<!--
-   --></span>
-
+      <GidgetText :text="text" />
       <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
         {{ repeats + 1 }}
       </span>
@@ -18,14 +9,14 @@
     <div class="buttons has-addons">
       <b-button
         icon-left="chevron-left"
-        :disabled='previousButtonDisabled'
-        @click="previousMessage"
+        :disabled="prevButtonDisabled"
+        @click="prevMessage"
       >
         Prev
       </b-button>
       <b-button
         icon-right="chevron-right"
-        :disabled='nextButtonDisabled'
+        :disabled="nextButtonDisabled"
         @click="nextMessage"
       >
         Next
@@ -45,6 +36,7 @@
 
 <script>
 import GidgetValue from './Value'
+import GidgetText from './Text'
 
 
 export default {
@@ -57,19 +49,20 @@ export default {
 
 
   components: {
-    GidgetValue
+    GidgetValue,
+    GidgetText
   },
 
 
   data() {
     return {
-      text_: '',
+      internalText: '',
 
       repeats: 0,
       index: 0,
 
       nextButtonDisabled: false,
-      previousButtonDisabled: true
+      prevButtonDisabled: true
     };
   },
 
@@ -89,7 +82,7 @@ export default {
        * @return {string}
        */
       get() {
-        return this.text_
+        return this.internalText
       },
 
       /**
@@ -103,7 +96,7 @@ export default {
         else
           this.repeats = 0;
 
-        this.text_ = newValue
+        this.internalText = newValue
       }
     }
   },
@@ -155,10 +148,10 @@ export default {
      */
     setButtonStatus() {
       this.nextButtonDisabled = false;
-      this.previousButtonDisabled = false;
+      this.prevButtonDisabled = false;
 
-      if (this.index < 0)
-        this.previousButtonDisabled = true;
+      if (this.index <= 0)
+        this.prevButtonDisabled = true;
 
       if (this.index >= this.messages.length - 1)
         this.nextButtonDisabled = true;
@@ -175,7 +168,7 @@ export default {
     /**
      * Set message to previous message.
      */
-    previousMessage() {
+    prevMessage() {
       if (this.index > 0)
         this.index -= 1;
     },
