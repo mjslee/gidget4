@@ -1,6 +1,7 @@
-import _ from 'lodash';
-import GidgetWorld from '@/assets/gidget/game/gidget-world';
-import Stepper from '@/assets/gidget/lang/js-stepper';
+import _ from 'lodash'
+import GidgetWorld from '@/assets/gidget/game/gidget-world'
+import Stepper from '@/assets/gidget/lang/js-stepper'
+import Exception from '@/assets/gidget/lang/js-exception'
 
 
 
@@ -186,9 +187,8 @@ export default {
     const result = this.stepper.run(code, this.importsWithObjects(imports));
 
     // Parsing error, call error callback
-    if (result.hasError) {
-      if (typeof this.onError === 'function')
-        this.onError(result.error.ln, result.error.message);
+    if (result.hasError && typeof this.onError === 'function') {
+      this.onError(result.error.ln, result.error.message);
     }
 
     return !result.hasError;
@@ -230,8 +230,9 @@ export default {
     // Catch user/parse error
     catch (e) {
       // Call error callback
-      if (callCallbacks && typeof this.onError === 'function')
+      if (callCallbacks && typeof this.onError === 'function') {
         this.onError(step.ln, e.message);
+      }
       return false;
     }
 
@@ -256,12 +257,10 @@ export default {
    * @return {void}
    */
   async run(wait=0) {
-    const callCallbacks = wait > 0;
-
     let step;
     do {
       // Run the next step
-      step = await this.next(callCallbacks);
+      step = await this.next(wait > 0);
 
       // Wait for 'wait' milliseconds
       if (wait > 0)

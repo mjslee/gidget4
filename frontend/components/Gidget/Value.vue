@@ -71,7 +71,7 @@
 
     <!-- Popover -->
     <Popover
-      v-if="valueType !== 'Position' && valueType !== 'Array'"
+      v-if="valueType !== 'Array'"
       slot="popover"
       :identifier="internalIdentifier"
       :value="internalValue"

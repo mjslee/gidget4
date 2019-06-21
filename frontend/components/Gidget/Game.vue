@@ -65,14 +65,17 @@
 
 
 <script>
-import GidgetWorld from './World';
-import GidgetInspector from './Inspector';
-import GidgetCode from './Code';
-import GidgetDialogue from './Dialogue';
-import GidgetGoals from './Goals';
-import GidgetControls from './Controls';
+import GidgetWorld from './World'
+import GidgetInspector from './Inspector'
+import GidgetCode from './Code'
+import GidgetDialogue from './Dialogue'
+import GidgetGoals from './Goals'
+import GidgetControls from './Controls'
 
-import Game from '@/assets/gidget/game/gidget-game';
+import Messages from '@/constants/messages'
+
+import Game from '@/assets/gidget/game/gidget-game'
+import Exception from '@/assets/gidget/lang/js-exception'
 
 
 export default {
@@ -202,7 +205,7 @@ export default {
       this.assignReferences();
 
       if (sayMessage)
-        this.$refs.dialogue.text = "Okay, I'm stopping!"
+        this.$refs.dialogue.text = Messages.Gidget.STARTING_OVER;
     },
 
 
@@ -235,7 +238,10 @@ export default {
       this.$refs.code.reset();
       this.$refs.code.setErrorLine(ln - 1);
       this.$refs.controls.reset();
-      this.$refs.dialogue.text = message;
+
+      const translation = Exception.translate(message,
+        Messages.Exceptions.Translations);
+      this.$refs.dialogue.text = translation || message;
     },
 
 
