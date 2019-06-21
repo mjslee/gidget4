@@ -3,10 +3,9 @@
 
     <input
       type="range"
-      min="0"
-      :max="stepCount"
+      min="0" :max="stepCount"
       v-model.number="stepIndex"
-      v-on:change="$emit('change:step', stepIndex, stepCount)"
+      v-on:change="$emit('change:step', stepIndex)"
     />
 
     <p>
@@ -15,11 +14,11 @@
 
     <div class="buttons has-addons">
       <b-button
-        ref="previousStep"
+        ref="prevStep"
         icon="chevron-left"
         class="button"
         :disabled="isBusy || stepIndex <= 0"
-        @click="$emit('change:step', --stepIndex, stepCount)"
+        @click="$emit('change:step', --stepIndex)"
       >
         <b-icon icon="chevron-left"></b-icon>
       </b-button>
@@ -28,7 +27,7 @@
         ref="nextStep"
         class="button"
         :disabled="canReset"
-        @click="$emit('change:step', ++stepIndex, stepCount)"
+        @click="$emit('change:step', ++stepIndex)"
       >
         <b-icon icon="chevron-right"></b-icon>
       </b-button>

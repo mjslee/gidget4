@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import GidgetWorld from '@/assets/gidget/game/gidget-world'
 import Stepper from '@/assets/gidget/lang/js-stepper'
-import Exception from '@/assets/gidget/lang/js-exception'
 
 
 
@@ -9,7 +8,6 @@ export default {
   world: undefined,
   stepper: undefined,
   initialState: undefined,
-  states: [],
 
 
   /**
@@ -28,8 +26,24 @@ export default {
     game.createObjects(objects);
 
     // Save initial state for restoration upon reset
-    game.initialState = game.save();
+    game.states = [game.getState()];
     return game;
+  },
+
+
+  /**
+   * Reset game world by creating new stepper instance and restoring the game
+   * to its initial state.
+   *
+   * @return {void}
+   */
+  reset() {
+    // Reset stepper
+    this.stepper = Stepper.create();
+    this.states = [this.states[0]];
+
+    // Restore initial state
+    this.set(-1);
   },
 
 
@@ -50,7 +64,7 @@ export default {
    * @param {Array[Object]} imports - Imports to be merged in on.
    * @return {object}
    */
-  importsWithObjects(imports) {
+  getImports(imports) {
     const result = Object.assign({}, imports);
 
     const objects = this.world.getObjects();
@@ -69,14 +83,11 @@ export default {
    *
    * @return {void}
    */
-  save() {
-    const state = _.cloneDeep({
+  getState() {
+    return _.cloneDeep({
       objects: this.world.objects,
       messages: this.world.messages
     });
-
-    this.states.push(state);
-    return state;
   },
 
 
@@ -86,7 +97,10 @@ export default {
    * @param {object} state
    * @return {boolean}
    */
-  _restore(state) {
+  restoreState(state) {
+    if (typeof state === 'undefined')
+      return false;
+
     // Clone state because the references inside of object
     state = _.cloneDeep(state)
 
@@ -120,59 +134,33 @@ export default {
 
 
   /**
-   * Restore game progress by step index.
+   * Set current step and state by index.
    *
    * @param {number} index
    * @return {boolean}
    */
-  async restore(index_or_state) {
-    // Restore initial state when index is 0
-    if (index_or_state === 0)
-      this._restore(this.initialState);
-
-    // Get step and verify its defined
-    let step = this.stepper.steps[index_or_state];
-    if (!step)
-      return false;
-
-    // Check for state prop and restore it
-    if (typeof step.state === 'object') {
-      this._restore(step.state);
-
-      // Call onStep callback
-      if (typeof this.onStep === 'function')
-        this.onStep(step);
-
-      // Call finish callback
-      if (!step.hasNext && typeof this.onFinish === 'function')
-        this.onFinish();
+  async set(index) {
+    // Restore initial game state when passed a value less than 0
+    if (index < 0) {
+      console.log(1)
+      return this.restoreState(this.states[0]);
     }
 
-    // No state prop? We'll have to navigate to it
-    else
-      for (let i = index_or_state - this.stepper.index; i >= 0; i--)
-        step = await this.next();
+    // Already have a saved state? Use it
+    if (index < this.states.length) {
+      console.log(2)
+      return this.restoreState(this.states[index]);
+    }
 
-    return true;
-  },
+    // If we have gotten this far then we need the state of a step that hasn't
+    // been collected yet
 
-
-  /**
-   * Reset game world by creating new stepper instance and restoring the game
-   * to its initial state.
-   *
-   * @return {void}
-   */
-  reset() {
-    // Reset stepper
-    this.stepper = Stepper.create();
-
-    // Restore initial state
-    if (this.states.length > 0)
-      this._restore(this.initialState);
-
-    // Reset states
-    this.states = [];
+    // Call 'next' until we reached the desired state or no further steps exist
+    while (index >= this.states.length) {
+      console.log(3)
+      if (!await this.next())
+        break;
+    }
   },
 
 
@@ -184,12 +172,11 @@ export default {
    * @return {boolean}
    */
   evaluate(code, imports) {
-    const result = this.stepper.run(code, this.importsWithObjects(imports));
+    const result = this.stepper.run(code, this.getImports(imports));
 
     // Parsing error, call error callback
-    if (result.hasError && typeof this.onError === 'function') {
+    if (result.hasError && typeof this.onError === 'function')
       this.onError(result.error.ln, result.error.message);
-    }
 
     return !result.hasError;
   },
@@ -224,15 +211,15 @@ export default {
       if (step.hasError)
         throw new Error(step.error.message);
 
-      step.state = this.save();
+      // Save state
+      this.states.push(this.getState());
     }
 
     // Catch user/parse error
     catch (e) {
       // Call error callback
-      if (callCallbacks && typeof this.onError === 'function') {
+      if (callCallbacks && typeof this.onError === 'function')
         this.onError(step.ln, e.message);
-      }
       return false;
     }
 
@@ -257,15 +244,15 @@ export default {
    * @return {void}
    */
   async run(wait=0) {
-    let step;
+    let hasNext = true;
     do {
       // Run the next step
-      step = await this.next(wait > 0);
+      hasNext = await this.next(wait > 0);
 
       // Wait for 'wait' milliseconds
       if (wait > 0)
         await new Promise(resolve => setTimeout(resolve, wait));
     }
-    while(step);
+    while(hasNext);
   }
 }

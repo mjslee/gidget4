@@ -14,7 +14,7 @@
             ref="controls"
             @change:step="setStep"
             @click:run="runScript"
-            @click:stop="stopScript(true)"
+            @click:stop="stopScript"
           />
         </div>
       </div>
@@ -142,6 +142,7 @@ export default {
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
     this.$store.commit('code/setObjects', this.game.world.getObjectClones());
+    window.set = this.setStep;
   },
 
 
@@ -160,14 +161,34 @@ export default {
 
 
     /**
-     * Run script until it hits a breakpoint or ends.
+     * Reset game script, components, and game object references.
      *
      * @param {number} sayMessage
      * @return {void}
      */
-    async runScript(waitMilliseconds=50) {
+    resetScript() {
+      // Breaks object references
+      this.game.reset();
+
+      // Reset Vue components
+      this.$refs.code.reset();
+      this.$refs.controls.reset();
+      this.$refs.goals.reset();
+
+      // Re-assign references
+      this.assignReferences();
+    },
+
+
+    /**
+     * Setup components and evaluate script.
+     *
+     * @param {number} sayMessage
+     * @return {void}
+     */
+    setupScript() {
       // Reset game
-      this.stopScript();
+      this.resetScript(false);
 
       // Evaluate user code
       const evaluated = this.game.evaluate(this.$refs.code.code, this.imports);
@@ -177,55 +198,75 @@ export default {
       // Set controls data
       this.$refs.controls.isRunning = true;
       this.$refs.controls.isBusy = true;
-      this.$refs.controls.stepCount = this.game.stepper.steps.length - 1;
-
-      return await this.game.run(waitMilliseconds);
+      this.$refs.controls.stepCount = this.game.stepper.steps.length;
+      return true;
     },
 
 
     /**
-     * Stop stepper.
+     * Run all steps.
      *
      * @param {number} sayMessage
      * @return {void}
      */
-    stopScript(sayMessage=false) {
-      // Breaks object references
-      this.game.reset();
-
-      // Set the player object for inspector
-      this.playerObject = this.game.world.getObject('Gidget')
-
-      // Reset Vue components
-      this.$refs.code.reset();
-      this.$refs.controls.reset();
-      this.$refs.goals.reset();
-
-      // Re-assign references
-      this.assignReferences();
-
-      if (sayMessage)
-        this.$refs.dialogue.text = Messages.Gidget.STARTING_OVER;
+    async runScript() {
+      if (this.setupScript())
+        await this.game.run(50);
     },
 
 
     /**
-     * Restore previous step.
+     * Stop/reset game script.
      *
-     * @param {number} index -- Step index to restore.
-     * @param {number} stepCount -- Amount of steps.
+     * @param {number} sayMessage
      * @return {void}
      */
-    async setStep(index, stepCount) {
+    async stopScript() {
+      this.resetScript();
+      this.$refs.dialogue.text = Messages.Gidget.STARTING_OVER;
+    },
+
+
+    /**
+     * Set step index.
+     *
+     * @param {number} index -- Step index to restore.
+     * @return {void}
+     */
+    async setStep(index) {
       if (!this.$refs.controls.isRunning)
-        await this.runScript(0);
+        this.setupScript(false);
 
       this.$refs.controls.isBusy = true;
-      await this.game.restore(index);
+      await this.game.set(index);
       this.$refs.controls.isBusy = false;
 
       // Re-assign references
       this.assignReferences();
+    },
+
+
+    /**
+     * Set line markers on step.
+     *
+     * @return {void}
+     */
+    handleStep(step) {
+      // Set controls input range value
+      this.$refs.controls.stepIndex = step.index + 1;
+
+      // Set code editor lines
+      // THIS IS A MAJOR PERFORMANCE ISSUE, FIX THIS
+      // this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
+      // this.$refs.code.setActiveLine(step.ln - 1);
+
+      // Store objects inside step so no further object iterations happen
+      if (typeof step.objects !== 'object')
+        step.objects = this.game.world.getObjectClones();
+
+      // Set goals data and validate goals
+      this.$store.commit('code/setData', step.data);
+      this.$store.commit('code/setObjects', step.objects);
     },
 
 
@@ -242,32 +283,6 @@ export default {
       const translation = Exception.translate(message,
         Messages.Exceptions.Translations);
       this.$refs.dialogue.text = translation || message;
-    },
-
-
-    /**
-     * Set line markers on step.
-     *
-     * @return {void}
-     */
-    handleStep(step) {
-      // Set controls input range value
-      this.$refs.controls.stepIndex = step.index;
-
-      // Set code editor lines
-      // THIS IS A MAJOR PERFORMANCE ISSUE, FIX THIS
-      // this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
-      // this.$refs.code.setActiveLine(step.ln - 1);
-
-      // Store objects inside step so no further object iterations happen
-      if (typeof step.objects !== 'object')
-        step.objects = this.game.world.getObjectClones();
-
-      // Set goals data and validate goals
-      this.$store.commit('code/setData', step.data);
-      this.$store.commit('code/setObjects', step.objects);
-
-      //this.$nextTick(() => this.$refs.goals.validate());
     },
 
 
