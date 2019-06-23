@@ -78,6 +78,7 @@ import Game from '@/assets/gidget/game/gidget-game'
 import Exception from '@/assets/gidget/lang/js-exception'
 
 
+
 export default {
   components: {
     GidgetCode,
@@ -212,6 +213,7 @@ export default {
     async runScript() {
       if (this.setupScript())
         await this.game.run(50);
+      this.$refs.controls.isBusy = false;
     },
 
 

@@ -141,23 +141,18 @@ export default {
    */
   async set(index) {
     // Restore initial game state when passed a value less than 0
-    if (index < 0) {
-      console.log(1)
+    if (index < 0)
       return this.restoreState(this.states[0]);
-    }
 
     // Already have a saved state? Use it
-    if (index < this.states.length) {
-      console.log(2)
+    if (index < this.states.length)
       return this.restoreState(this.states[index]);
-    }
 
     // If we have gotten this far then we need the state of a step that hasn't
     // been collected yet
 
     // Call 'next' until we reached the desired state or no further steps exist
     while (index >= this.states.length) {
-      console.log(3)
       if (!await this.next())
         break;
     }
@@ -220,7 +215,7 @@ export default {
       // Call error callback
       if (callCallbacks && typeof this.onError === 'function')
         this.onError(step.ln, e.message);
-      return false;
+      return;
     }
 
     finally {
@@ -233,7 +228,7 @@ export default {
         this.onFinish(step);
     }
 
-    return step.hasNext;
+    return step;
   },
 
 
@@ -244,15 +239,15 @@ export default {
    * @return {void}
    */
   async run(wait=0) {
-    let hasNext = true;
+    let step;
     do {
       // Run the next step
-      hasNext = await this.next(wait > 0);
+      step = await this.next(wait > 0);
 
       // Wait for 'wait' milliseconds
-      if (wait > 0)
+      if (step.cmd && wait > 0)
         await new Promise(resolve => setTimeout(resolve, wait));
     }
-    while(hasNext);
+    while(step && step.hasNext);
   }
 }
