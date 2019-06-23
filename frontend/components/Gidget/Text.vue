@@ -41,6 +41,7 @@ export default {
       for (var i = splits.length - 1; i >= 0; i--) {
         // Type -1 will be ignored
         const type = -1;
+        let charLen = 1;
 
         // Type 0 is a new character line \n
         if (splits[i] === '\n')
@@ -51,8 +52,10 @@ export default {
           type = 1;
 
         // Type 2 is a triple backtick; wrap with vue-highlightjs
-        else if (this.isSurrounded(splits[i], '```'))
+        else if (this.isSurrounded(splits[i], '```')) {
+          charLen = 3;
           type = 2;
+        }
 
         // Type 3 is a backtick; wrap with vue-highlightjs inline
         else if (this.isSurrounded(splits[i], '`'))
@@ -61,7 +64,7 @@ export default {
         // Replace element with object that contains two of its own elements:
         // the string element with first and last characters removed, and type
         if (type > -1)
-          splits[i] = [splits[i].slice(1, -1), type];
+          splits[i] = [splits[i].slice(charLen, charLen * -1), type];
       }
 
       return splits;
