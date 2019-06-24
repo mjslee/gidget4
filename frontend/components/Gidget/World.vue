@@ -14,7 +14,7 @@
       <!-- Gidget Game Objects -->
       <GidgetObject
         ref="objects"
-        v-for="object in world.objects" :key="'obj-' + object.id"
+        v-for="object in objects" :key="'obj-' + object.id"
         @click.native="selectedObject = object"
         @update:position="updateObjectPosition"
         :class="selectedObject && selectedObject.id === object.id ? 'selected' : ''"
@@ -25,19 +25,19 @@
       <!-- Horizontal Axis Labels (1, 2, 3, etc.) -->
       <div class="game-row x-axis">
         <label
-          v-for="i in world.size" :key="'i-'+i"
+          v-for="i in size" :key="'i-'+i"
           :style="axisLabelWidth" v-text="i-1"
         />
       </div>
 
-      <div class="game-row" v-for="y in world.size" :key="'y-' +y">
+      <div class="game-row" v-for="y in size" :key="'y-' +y">
         <!-- Vertical Axis Labels (1, 2, 3, etc.) -->
         <label v-text="y-1" />
 
         <!-- Gidget Game Tiles -->
         <GidgetTile
           ref="tiles"
-          v-for="x in world.size" :key="'x-' + x"
+          v-for="x in size" :key="'x-' + x"
           @click.native="selectedObject = undefined"
           @mouseenter.native="setPopupPosition(x-1, y-1)"
           :class="getTileType(x-1, y-1)"
@@ -100,8 +100,9 @@ export default {
 
 
   props: {
-    world: Object,
-    tiles: Array[Object]
+    objects: Array,
+    tiles: Array[Object],
+    size: Number,
   },
 
 
@@ -127,7 +128,7 @@ export default {
      * Watch 'size' prop to resize the world size
      * @param {number} newValue
      */
-    'world.size': {
+    size: {
       handler() {
         this.$nextTick(() => {
           this.updateObjectPositions();
@@ -150,7 +151,7 @@ export default {
      * Tile size.
      */
     tileSize() {
-      return 26 / this.world.size;
+      return 26 / this.size;
     },
 
     /**
