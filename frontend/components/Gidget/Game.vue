@@ -258,7 +258,7 @@ export default {
      */
     handleStep(step) {
       // Set controls input range value
-      this.$refs.controls.stepIndex = step.index + 1;
+      this.$refs.controls.stepIndex = step.index;
 
       // Set code editor lines
       // THIS IS A MAJOR PERFORMANCE ISSUE, FIX THIS

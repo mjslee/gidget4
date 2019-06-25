@@ -25,8 +25,8 @@ export default {
     // Insert objects on creation
     game.createObjects(objects);
 
-    // Save initial state for restoration upon reset
-    game.states = [game.getState()];
+    game.initialState = game.world.getState();
+
     return game;
   },
 
@@ -40,7 +40,6 @@ export default {
   reset() {
     // Reset stepper
     this.stepper = Stepper.create();
-    this.states = [this.states[0]];
 
     // Restore initial state
     this.set(-1);
@@ -79,61 +78,6 @@ export default {
 
 
   /**
-   * Save state of world and stepper.
-   *
-   * @return {void}
-   */
-  getState() {
-    return _.cloneDeep({
-      objects: this.world.objects,
-      messages: this.world.messages
-    });
-  },
-
-
-  /**
-   * Restore a game state.
-   *
-   * @param {object} state
-   * @return {boolean}
-   */
-  restoreState(state) {
-    if (typeof state === 'undefined')
-      return false;
-
-    // Clone state because the references inside of object
-    state = _.cloneDeep(state)
-
-    // Set world objects and messages
-    this.world.objects = state.objects;
-    this.world.messages = state.messages;
-
-    /**
-     * Recursively assign world properties inside objects.
-     */
-    const assignWorld = node => {
-      // Traverse into array
-      if (Array.isArray(node))
-        node.forEach(subNode => assignWorld(subNode));
-
-      // Restore world property
-      else if (typeof node === 'object') {
-        // Set world property
-        node.world = this.world;
-
-        // Traverse into grabbed property
-        if (typeof node.grabbed !== 'undefined')
-          assignWorld(node.grabbed);
-      }
-    };
-
-    // Assign world properties inside objects
-    assignWorld(this.world.objects);
-    return true;
-  },
-
-
-  /**
    * Set current step and state by index.
    *
    * @param {number} index
@@ -142,17 +86,17 @@ export default {
   async set(index) {
     // Restore initial game state when passed a value less than 0
     if (index < 0)
-      return this.restoreState(this.states[0]);
+      return this.world.restoreState(this.initialState);
 
     // Already have a saved state? Use it
-    if (index < this.states.length)
-      return this.restoreState(this.states[index]);
+    if (index < this.stepper.index)
+      return this.world.restoreState(this.stepper.steps[index].state);
 
     // If we have gotten this far then we need the state of a step that hasn't
     // been collected yet
 
     // Call 'next' until we reached the desired state or no further steps exist
-    while (index >= this.states.length) {
+    while (index >= this.stepper.index) {
       if (!await this.next())
         break;
     }
@@ -207,7 +151,7 @@ export default {
         throw new Error(step.error.message);
 
       // Save state
-      this.states.push(this.getState());
+      step.state = this.world.getState();
     }
 
     // Catch user/parse error
@@ -235,7 +179,7 @@ export default {
   /**
    * Run all stepper steps.
    *
-   * @param {number} wait - Milliseconds to wait between step.
+   * @param {number} wait - Milliseconds to wait between steps.
    * @return {void}
    */
   async run(wait=0) {
@@ -245,7 +189,7 @@ export default {
       step = await this.next(wait > 0);
 
       // Wait for 'wait' milliseconds
-      if (step.cmd && wait > 0)
+      if (step && step.cmd && wait > 0)
         await new Promise(resolve => setTimeout(resolve, wait));
     }
     while(step && step.hasNext);

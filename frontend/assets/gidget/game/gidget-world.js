@@ -31,7 +31,62 @@ export default {
   },
 
 
-  getObjectState(object) {
+  /**
+   * Get state of Gidget world.
+   *
+   * @return {string}
+   */
+  getState() {
+    // Useful properties
+    const state = {
+      nextId: this.nextId,
+      size: this.size,
+      objects: [],
+      messages: this.messages,
+    };
+
+    // Save objects
+    for (let i = 0, len = this.objects.length; i < len; i++)
+      state.objects.push(this.prepareObject(this.objects[i]));
+
+    // Clone entire state to remove all object references
+    return _.cloneDeep(state);
+  },
+
+
+  /**
+   * Restore world state.
+   * State can be retrieved from the 'getState' method.
+   *
+   * @param {object} state
+   * @return {string}
+   */
+  restoreState(state) {
+    // Restore primitives
+    let type;
+    for (let prop in state) {
+      type = typeof state[prop];
+      if (type == 'string' || type == 'number')
+        this[prop] = state[prop];
+    }
+
+    // Restore objects
+    for (let i = 0, len = state.objects.length; i < len; i++)
+      this.restoreObject(state.objects[i]);
+
+    // Restore messages
+    this.messages = state.messages;
+  },
+
+
+  /**
+   * Prepare game object for serialization by recreating it without functions
+   * and nested objects (except 'position').
+   *
+   * @param {object} object -- Game Object
+   * @return {object}
+   */
+  prepareObject(object) {
     const state = {};
 
     // Assign values with primitive type
@@ -44,78 +99,33 @@ export default {
 
     // Position should be the ONLY object to serialize and restore
     state.position = object.position;
+    state.grabbed = [];
 
-    // Return serialized object
+    // Return state
     return state;
   },
 
 
-  restoreObjectState(state) {
-    const obj = this.getObject(state);
+  /**
+   * Restore object from a state.
+   *
+   * @param {object} objectState
+   */
+  restoreObject(objectState) {
+    const obj = this.getObject(objectState);
 
     // Object doesn't exist anymore, re-create it
     if (typeof obj === 'undefined')
-      return this.createObject(state);
+      return this.createObject(objectState);
 
     // Object still exists, update properties
-    for (let prop in state)
+    for (let prop in objectState)
       if (prop !== 'position')
-        obj[prop] = state[prop];
+        obj[prop] = objectState[prop];
 
-    // Manually update position
-    obj.position.x = state.position.x;
-    obj.position.y = state.position.y;
-  },
-
-
-  getState() {
-    // Useful properties (dynamically finding these values is too slow)
-    const state = { nextId: this.nextId, size: this.size, messages: messages };
-
-    // Save objects
-    state.objects = [];
-    for (let i = 0, len = this.objects.length; i < len; i++)
-      state.objects.push(this.getObjectState(this.objects[i]));
-
-    // Clone entire state to remove all object references
-    return _.cloneDeep(state);
-  },
-
-
-  restoreState(state) {
-    // Clone state as to not update a state
-    state = _.cloneDeep(state);
-
-    // Restore primitives
-    let type;
-    for (let prop in state) {
-      type = typeof state[prop];
-      if (type == 'string' || type == 'number')
-        this[prop] = state[prop];
-    }
-
-    // Restore objects
-    for (let i = 0, len = state.objects.length; i < len; i++) {
-
-    }
-
-    // Restore messages
-    //state.messages
-  },
-
-
-  /**
-   * Determine if position is valid.
-   * Checks tile position exists.
-   * Checks for blocking objects.
-   *
-   * @param {function} conditions
-   */
-  isPositionValid(x, y) {
-    return (x >= 0 && x <= this.size - 1 && y >= 0 && y <= this.size - 1) &&
-      !this.getObject((obj) =>
-        obj.blocking && this.insideObjectBoundaries(obj, x, y)
-      )
+    // Update position
+    obj.position.x = objectState.position.x;
+    obj.position.y = objectState.position.y;
   },
 
 
@@ -453,6 +463,22 @@ export default {
   },
 
 
+
+  /**
+   * Determine if position is valid.
+   * Checks tile position exists.
+   * Checks for blocking objects.
+   *
+   * @param {function} conditions
+   */
+  isPositionValid(x, y) {
+    return (x >= 0 && x <= this.size - 1 && y >= 0 && y <= this.size - 1) &&
+      !this.getObject((obj) =>
+        obj.blocking && this.insideObjectBoundaries(obj, x, y)
+      )
+  },
+
+
   /**
    * Run onObjectSay() callback to pass to a UI.
    *
@@ -469,6 +495,5 @@ export default {
     // Call onObjectSay callback
     if (typeof this.onObjectSay === 'function')
       this.onObjectSay(messages);
-  }
-
+  },
 }

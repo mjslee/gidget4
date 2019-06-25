@@ -136,6 +136,7 @@ export default {
     const field = typeof id_or_name === 'number' ? 'id' : 'name';
     const obj = this.world.getObject(obj =>
       obj.grabbable !== false &&
+      obj.grabber === undefined &&
       obj[field] === id_or_name &&
       obj.position.x === this.position.x &&
       obj.position.y === this.position.y);
@@ -148,7 +149,7 @@ export default {
     obj.grabber = this.id;
 
     // Add object to grabbed array
-    this.grabbed.push(obj);
+    //this.grabbed.push(obj);
 
     return true;
   },
@@ -179,7 +180,7 @@ export default {
     obj.grabber = undefined;
 
     // Remove from `grabbed` array
-    this.grabbed.remove(obj);
+    //this.grabbed.remove(obj);
 
     return true;
   },
