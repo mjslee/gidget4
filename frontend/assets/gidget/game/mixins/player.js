@@ -1,4 +1,4 @@
-import { CANNOT_MOVE } from '@/constants/messages'
+import Messages from '@/constants/messages'
 
 
 export default {
@@ -12,7 +12,7 @@ export default {
       );
 
       if (!move)
-        this.object.say({ text: CANNOT_MOVE });
+        this.object.say({ text: Messages.Gidget.CANNOT_MOVE });
       else
         this.object.energy -= 20;
     },
