@@ -24,7 +24,10 @@
     <div class="column">
       <div class="world">
         <GidgetWorld
-          ref="world" :world="game.world" :tiles="tiles"
+          ref="world"
+          :objects="game.world.objects"
+          :tiles="tiles"
+          :size="game.world.size"
           @change:object="selectedObject = arguments[0]"
           @change:tile="selectedTile = arguments[0]"
         />
