@@ -144,14 +144,12 @@ export default {
     if (obj === undefined)
       return false;
 
-    // Remove object from world
-    obj.remove();
+    // Set grabber
+    obj.grabber = this.id;
 
     // Add object to grabbed array
     this.grabbed.push(obj);
 
-    // Set grabber
-    obj.grabber = this;
     return true;
   },
 
@@ -166,16 +164,14 @@ export default {
     if (this.grabber !== undefined)
       return this.grabber.drop(this.id);
 
-    // Find index of object
+    // Find object
     const field = typeof id_or_name === 'number' ? 'id' : 'name';
-    const index = this.grabbed.findIndex(obj => obj[field] === id_or_name);
+    const obj = this.world.getObject(obj => obj[field] === id_or_name);
 
-    // Make sure object exists
-    if (index < 0)
+    if (obj === undefined)
       return false;
 
     // Save object before deleting it
-    const obj = this.grabbed[index];
     obj.position.x = this.position.x;
     obj.position.y = this.position.y;
 
@@ -183,10 +179,8 @@ export default {
     obj.grabber = undefined;
 
     // Remove from `grabbed` array
-    this.grabbed.splice(index, 1);
+    this.grabbed.remove(obj);
 
-    // Add object back to world
-    this.world.addObject(obj);
     return true;
   },
 

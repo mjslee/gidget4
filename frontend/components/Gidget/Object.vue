@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="typeof object.grabber === 'undefined'">
     <span :class="transitionClass" ref="label" :style="labelStyle" v-text="object.name"></span>
     <img :class="transitionClass" ref="object" :src="objectImage" :style="objectStyle" />
   </div>

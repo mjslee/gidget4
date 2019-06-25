@@ -6,7 +6,7 @@ import GidgetMixins from './mixins'
 
 
 export default {
-  nextID: -1,
+  nextId: -1,
   size: 3,
   objects: [],
   messages: [],
@@ -26,7 +26,81 @@ export default {
   create(kwargs) {
     const world = _.cloneDeep(this);
     Object.assign(world, kwargs);
+    window.world = world
     return world;
+  },
+
+
+  getObjectState(object) {
+    const state = {};
+
+    // Assign values with primitive type
+    let type;
+    for (let prop in object) {
+      type = typeof object[prop];
+      if (type !== 'function' && type !== 'object')
+        state[prop] = object[prop];
+    }
+
+    // Position should be the ONLY object to serialize and restore
+    state.position = object.position;
+
+    // Return serialized object
+    return state;
+  },
+
+
+  restoreObjectState(state) {
+    const obj = this.getObject(state);
+
+    // Object doesn't exist anymore, re-create it
+    if (typeof obj === 'undefined')
+      return this.createObject(state);
+
+    // Object still exists, update properties
+    for (let prop in state)
+      if (prop !== 'position')
+        obj[prop] = state[prop];
+
+    // Manually update position
+    obj.position.x = state.position.x;
+    obj.position.y = state.position.y;
+  },
+
+
+  getState() {
+    // Useful properties (dynamically finding these values is too slow)
+    const state = { nextId: this.nextId, size: this.size, messages: messages };
+
+    // Save objects
+    state.objects = [];
+    for (let i = 0, len = this.objects.length; i < len; i++)
+      state.objects.push(this.getObjectState(this.objects[i]));
+
+    // Clone entire state to remove all object references
+    return _.cloneDeep(state);
+  },
+
+
+  restoreState(state) {
+    // Clone state as to not update a state
+    state = _.cloneDeep(state);
+
+    // Restore primitives
+    let type;
+    for (let prop in state) {
+      type = typeof state[prop];
+      if (type == 'string' || type == 'number')
+        this[prop] = state[prop];
+    }
+
+    // Restore objects
+    for (let i = 0, len = state.objects.length; i < len; i++) {
+
+    }
+
+    // Restore messages
+    //state.messages
   },
 
 
@@ -176,11 +250,11 @@ export default {
     obj.world = this;
 
     if (typeof kwargs === 'object') {
-      // Merge object type
+      // Merge object base type
       if (typeof kwargs.type === 'string')
         this.mergeObjects(obj, GidgetObjects[kwargs.type]);
 
-      // Merge mixins objects
+      // Merge object mixins
       if (Array.isArray(kwargs.mixins))
         kwargs.mixins.forEach(mixin => {
           this.mergeObjects(obj, GidgetMixins[mixin]);
@@ -195,7 +269,7 @@ export default {
       obj.methods.object = obj;
 
     // Create the object and add it to the world
-    obj.create(++this.nextID);
+    obj.create(++this.nextId);
     this.addObject(obj);
 
     return obj;
