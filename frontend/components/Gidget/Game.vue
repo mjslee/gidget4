@@ -142,6 +142,7 @@ export default {
   mounted() {
     // Set initial game dialogue
     this.game.world.messages = this.dialogue;
+    this.playerObject = this.game.world.getObject('Gidget');
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
@@ -216,7 +217,7 @@ export default {
      */
     async runScript() {
       if (this.setupScript())
-        await this.game.run(50);
+        await this.game.run(75);
       this.$refs.controls.isBusy = false;
     },
 
