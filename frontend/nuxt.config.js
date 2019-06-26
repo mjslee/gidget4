@@ -27,13 +27,15 @@ export default {
   ** Global CSS
   */
   css: [
+    'highlight.js/styles/default.css'
   ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-    'plugins/v-tooltip'
+    'plugins/v-tooltip',
+    'plugins/vue-highlight'
   ],
 
   /*

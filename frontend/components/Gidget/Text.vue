@@ -4,8 +4,8 @@
       <template v-if="typeof value === 'string'">{{ value }}</template>
       <br v-else-if="value[1] === 0" />
       <GidgetValue :literal="value[0]" :key="i" v-else-if="value[1] === 1" />
-      <div lang="javascript" :key="i" v-else-if="value[1] === 2">{{ value[0] }}</div>
-      <div inline lang="javascript" :key="i" v-else-if="value[1] === 3">{{ value[0] }}</div>
+      <highlight-code lang="javascript" :key="i" v-else-if="value[1] === 2">{{ value[0] }}</highlight-code>
+      <highlight-code inline lang="javascript" :key="i" v-else-if="value[1] === 3">{{ value[0] }}</highlight-code>
     </template>
   </span>
 </template>
@@ -17,7 +17,7 @@ import GidgetValue from './Value'
 
 export default {
   components: {
-    GidgetValue,
+    GidgetValue
   },
 
   props: {
