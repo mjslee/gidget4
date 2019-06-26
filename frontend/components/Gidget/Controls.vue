@@ -4,12 +4,12 @@
     <input
       type="range"
       min="0" :max="stepCount"
-      v-model.number="stepIndex"
+      v-model.number="internalIndex"
       v-on:change="$emit('change:step', stepIndex)"
     />
 
     <p>
-      {{ stepIndex }}/{{ stepCount }}
+      {{ internalIndex }}/{{ stepCount }}
     </p>
 
     <div class="buttons has-addons">
@@ -17,7 +17,7 @@
         ref="prevStep"
         icon="chevron-left"
         class="button"
-        :disabled="isBusy || stepIndex <= 0"
+        :disabled="canPrev"
         @click="$emit('change:step', --stepIndex)"
       >
         <b-icon icon="chevron-left"></b-icon>
@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       stepCount: 0,
-      stepIndex: 0,
+      stepIndex: -1,
       isRunning: false,
       isBusy: false
     }
@@ -60,13 +60,41 @@ export default {
 
   computed: {
     /**
+     * Add one to stepIndex to represent initial state and every other step.
+     * Subtract one to get correct step index.
+     *
+     * @return {number}
+     */
+    internalIndex: {
+      get() {
+        return this.stepIndex + 1
+      },
+
+      set(newValue) {
+        this.stepIndex = newValue - 1;
+      },
+    },
+
+
+    /**
+     * Determine if previous step is possible.
+     *
+     * @return {boolean}
+     */
+    canPrev() {
+      return this.isBusy || !this.isRunning || this.internalIndex <= 0;
+    },
+
+
+    /**
      * Controls can be reset.
      *
      * @return {boolean}
      */
     canReset() {
-      return this.stepCount > 0 && this.stepIndex >= this.stepCount;
+      return this.stepCount > 0 && this.internalIndex >= this.stepCount;
     },
+
 
     /**
      * Class for toggle button.
@@ -133,7 +161,7 @@ export default {
       this.isRunning = false;
       this.isBusy = false;
 
-      this.stepIndex = 0;
+      this.stepIndex = -1;
       this.stepCount = 0;
     },
 
