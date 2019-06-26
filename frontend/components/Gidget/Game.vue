@@ -140,15 +140,30 @@ export default {
 
 
   mounted() {
+    // Set initial game dialogue
     this.game.world.messages = this.dialogue;
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
-    this.$store.commit('code/setObjects', this.game.world.getObjectClones());
+    this.updateStoreData({});
   },
 
 
   methods: {
+    /**
+     * Reset game script, components, and game object references.
+     *
+     * @param {number} sayMessage
+     * @return {void}
+     */
+    updateStoreData(data, objects) {
+      if (typeof objects === 'undefined')
+        objects = this.game.getObjectsMap();
+
+      this.$store.commit('code/setData', data);
+      this.$store.commit('code/setObjects', objects);
+    },
+
 
     /**
      * Reset game script, components, and game object references.
@@ -165,8 +180,8 @@ export default {
       this.$refs.controls.reset();
       this.$refs.goals.reset();
 
-      this.$store.commit('code/setData', {});
-      this.$store.commit('code/setObjects', this.game.world.getObjectClones());
+      // Reset data
+      this.updateStoreData({})
     },
 
 
@@ -248,13 +263,8 @@ export default {
       // this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
       // this.$refs.code.setActiveLine(step.ln - 1);
 
-      // Store objects inside step so no further object iterations happen
-      if (typeof step.objects !== 'object')
-        step.objects = this.game.world.getObjectClones();
-
-      // Set goals data and validate goals
-      this.$store.commit('code/setData', step.data);
-      this.$store.commit('code/setObjects', step.objects);
+      // Set data collected from evaluation
+      this.updateStoreData(step.data, step.objectsMap);
     },
 
 

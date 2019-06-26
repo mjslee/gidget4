@@ -58,6 +58,19 @@ export default {
 
 
   /**
+   * Get map of world object clones.
+   * World props, object props, and functions are omitted.
+   *
+   * @return {object}
+   */
+  getObjectsMap() {
+    return _.cloneDeep(
+      _.omit(_.omitBy(this.world.getObjects(), _.isFunction), ['world', 'object'])
+    );
+  },
+
+
+  /**
    * Add grouped game objects to the imports as their name.
    *
    * @param {Array[Object]} imports - Imports to be merged in on.
@@ -161,6 +174,7 @@ export default {
 
       // Save state
       step.state = this.world.getState();
+      step.objectsMap = this.getObjectsMap();
     }
 
     // Catch user/parse error

@@ -165,20 +165,6 @@ export default {
 
 
   /**
-   * Get clones of all game world objects.
-   * World and object properties are omitted.
-   * Functions are also omitted.
-   *
-   * @return {object}
-   */
-  getObjectClones() {
-    return _.cloneDeep(
-      _.omit(_.omitBy(this.getObjects(), _.isFunction), ['world', 'object'])
-    );
-  },
-
-
-  /**
    * Find object based on specified conditions.
    * @param {object|number|string|function} object -- Object, object name, or
    *                                                  object id.
