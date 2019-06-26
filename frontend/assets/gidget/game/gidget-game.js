@@ -89,8 +89,17 @@ export default {
       return this.world.restoreState(this.initialState);
 
     // Already have a saved state? Use it
-    if (index < this.stepper.index)
-      return this.world.restoreState(this.stepper.steps[index].state);
+    if (index < this.stepper.index) {
+      const step = this.stepper.steps[index];
+      if (!step)
+        return;
+
+      // Call step callback
+      if (typeof this.onStep === 'function')
+        this.onStep(step);
+
+      return this.world.restoreState(step.state);
+    }
 
     // If we have gotten this far then we need the state of a step that hasn't
     // been collected yet

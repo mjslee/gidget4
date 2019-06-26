@@ -133,36 +133,22 @@ export default {
 
 
   created() {
-    this.game.onStep = this.handleStep;
-    this.game.onError = this.handleError;
-    this.game.onFinish = this.handleFinish;
+    this.game.onStep = this.onStep;
+    this.game.onError = this.onError;
+    this.game.onFinish = this.onFinish;
   },
 
 
   mounted() {
-    this.assignReferences();
     this.game.world.messages = this.dialogue;
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
     this.$store.commit('code/setObjects', this.game.world.getObjectClones());
-    window.set = this.setStep;
   },
 
 
   methods: {
-    /**
-     * Assign variables that contain references to game objects.
-     *
-     * @return {void}
-     */
-    assignReferences() {
-      // Re-assign objects used by inspector
-      this.playerObject = this.game.world.getObject('Gidget')
-      if (this.selectedObject)
-        this.selectedObject = this.game.world.getObject(this.selectedObject.id);
-    },
-
 
     /**
      * Reset game script, components, and game object references.
@@ -179,8 +165,8 @@ export default {
       this.$refs.controls.reset();
       this.$refs.goals.reset();
 
-      // Re-assign references
-      this.assignReferences();
+      this.$store.commit('code/setData', {});
+      this.$store.commit('code/setObjects', this.game.world.getObjectClones());
     },
 
 
@@ -245,9 +231,6 @@ export default {
       this.$refs.controls.isBusy = true;
       await this.game.set(index);
       this.$refs.controls.isBusy = false;
-
-      // Re-assign references
-      this.assignReferences();
     },
 
 
@@ -256,7 +239,7 @@ export default {
      *
      * @return {void}
      */
-    handleStep(step) {
+    onStep(step) {
       // Set controls input range value
       this.$refs.controls.stepIndex = step.index;
 
@@ -280,7 +263,7 @@ export default {
      *
      * @return {void}
      */
-    handleError(ln, message) {
+    onError(ln, message) {
       this.$refs.code.reset();
       this.$refs.code.setErrorLine(ln - 1);
       this.$refs.controls.reset();
@@ -296,13 +279,14 @@ export default {
      *
      * @return {void}
      */
-    handleFinish() {
+    onFinish() {
       // Show red Xs on goals component
       this.$refs.goals.showResults = true;
+      this.$refs.goals.validate();
+
+      // Call success or failure handler
       this.$nextTick(() => {
-        this.$refs.goals.completed() ?
-          this.handleSuccess() :
-          this.handleFailure();
+        this.$refs.goals.completed() ? this.onSuccess() : this.onFailure();
       });
     },
 
@@ -312,8 +296,8 @@ export default {
      *
      * @return {void}
      */
-    handleSuccess() {
-
+    onSuccess() {
+      console.log('Success')
     },
 
 
@@ -322,8 +306,8 @@ export default {
      *
      * @return {void}
      */
-    handleFailure() {
-
+    onFailure() {
+      console.log('Fail')
     }
   }
 }

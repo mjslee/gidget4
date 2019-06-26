@@ -116,7 +116,9 @@ export default {
      * @return {string}
      */
     getValueJSON(value) {
-      return JSON.stringify(this.$store.getters['code/getValue'](value));
+      return JSON.stringify(
+        this.$store.getters['code/getValue'](value) || value
+      );
     },
 
 
