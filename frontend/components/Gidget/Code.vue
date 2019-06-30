@@ -9,6 +9,13 @@
 </template>
 
 
+<style>
+.CodeMirror-errorline-background {
+  background: #ffe8e8 !important;
+}
+</style>
+
+
 <script>
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/mode/javascript/javascript.js'
@@ -21,9 +28,11 @@ export default {
     codemirror
   },
 
+
   props: {
     value: String
   },
+
 
   watch: {
     /**
@@ -34,49 +43,38 @@ export default {
     }
   },
 
+
   data() {
     return {
       // Editor
       code: this.value,
       codemirrorOptions: {
         tabSize: 2,
-        lineNumbers: true,
         line: true,
-
-        gutters: ['breakpoints', 'error', 'active', 'next']
+        lineNumbers: true,
       },
 
-      // Lines
-      activeLine: null,
-      nextLine: null,
-      errorLine: null,
-      previousLines: {}
+      // Classes for lines
+      activeLineClass: 'CodeMirror-activeline-background',
+      errorLineClass: 'CodeMirror-errorline-background',
+
+      // Line number cache
+      prevLn: -1,
+      prevErrorLn: -1
     }
   },
 
+
   mounted() {
     this.codemirror = this.$refs.code.codemirror;
-
-    // Create active line element
-    this.activeLine = document.createElement('div');
-    this.activeLine.innerHTML = '🡆';
-    this.activeLine.style.color = 'rgb(201, 230, 202)';
-
-    // Create next line element
-    this.nextLine = document.createElement('div');
-    this.nextLine.innerHTML = '🡆';
-    this.nextLine.style.color = 'red';
-
-    // Create error line element
-    this.errorLine = document.createElement('div');
-    this.errorLine.innerHTML = '🡆';
-    this.errorLine.style.color = 'black';
   },
 
 
   methods: {
     /**
      * Update component's code property.
+     *
+     * @return {void}
      */
     onInput(value) {
       this.code = value;
@@ -84,49 +82,57 @@ export default {
 
 
     /**
+     * Reset all line classes.
      *
+     * @return {void}
      */
     reset() {
-      this.setErrorLine(-1);
       this.setActiveLine(-1);
-      this.setNextLine(-1);
+      this.setErrorLine(-1);
     },
 
+
     /**
-     * Set a line's gutter to an element.
+     * Set class of a line by its number.
+     *
+     * @param {number} ln -- Line number.
+     * @param {number} prevLn -- Previous line number.
+     * @param {string} type -- Can be: 'text', 'background', or 'wrap'
+     * @param {string} className -- Name of class to add or remove.
+     * @return {void}
      */
-    setLine(ln, key, element) {
-      // Only set when line exists
+    setLineClass(ln, prevLn, type, className) {
+      // Remove previous line's indicator
+      if (prevLn > -1)
+        this.codemirror.removeLineClass(prevLn, type, className)
+
+      // Add class to indicate line
       if (ln > -1)
-        this.codemirror.setGutterMarker(ln, key, element);
-
-      // Remove previous indicator
-      if (typeof this.previousLines[key] !== 'undefined')
-        this.codemirror.setGutterMarker(this.previousLines[key], key, null);
-
-      // Save previous line so we can remove it later
-      this.previousLines[key] = ln;
+        this.codemirror.addLineClass(ln, type, className)
     },
 
+
     /**
-     * Set 'active' gutter in codemirror.
+     * Set the active line's visual indicator.
+     *
+     * @param {number} ln -- Line number.
+     * @return {void}
      */
     setActiveLine(ln) {
-      this.setLine(ln, 'active', this.activeLine);
+      this.setLineClass(ln, this.prevLn, 'background', this.activeLineClass)
+      this.prevLn = ln;
     },
 
-    /**
-     * Set 'next' gutter in codemirror.
-     */
-    setNextLine(ln) {
-      this.setLine(ln, 'next', this.nextLine);
-    },
 
     /**
-     * Set 'error' gutter in codemirror.
+     * Set line indicator for an error.
+     *
+     * @param {number} ln -- Line number.
+     * @return {void}
      */
     setErrorLine(ln) {
-      this.setLine(ln, 'error', this.errorLine);
+      this.setLineClass(ln, this.prevErrorLn, 'background', this.errorLineClass)
+      this.prevErrorLn = ln;
     },
   }
 }

@@ -260,9 +260,7 @@ export default {
       this.$refs.controls.stepIndex = step.index;
 
       // Set code editor lines
-      // THIS IS A MAJOR PERFORMANCE ISSUE, FIX THIS
-      // this.$refs.code.setNextLine(step.hasNext ? step.nextStep.ln - 1 : -1);
-      // this.$refs.code.setActiveLine(step.ln - 1);
+      this.$refs.code.setActiveLine(step.ln - 1);
 
       // Set data collected from evaluation
       this.updateStoreData(step.data, step.objectsMap);
@@ -308,7 +306,7 @@ export default {
      * @return {void}
      */
     onSuccess() {
-      console.log('Success')
+      console.log('Success');
     },
 
 
@@ -318,7 +316,7 @@ export default {
      * @return {void}
      */
     onFailure() {
-      console.log('Fail')
+      console.log('Fail');
     }
   }
 }
