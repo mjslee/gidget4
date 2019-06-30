@@ -466,6 +466,24 @@ export default {
 
 
   /**
+   * Call for each game tick.
+   * Call each object's onTick method.
+   *
+   * @param {function} conditions
+   */
+  async tick() {
+    for (var i = this.objects.length - 1; i >= 0; i--) {
+      // Verify onTick exists
+      if (typeof this.objects[i].onTick !== 'function')
+        return;
+
+      // Call onTick
+      await this.objects[i].onTick.call(this.objects[i]);
+    }
+  },
+
+
+  /**
    * Run onObjectSay() callback to pass to a UI.
    *
    * @param {number} object -- Object to send to callback.
