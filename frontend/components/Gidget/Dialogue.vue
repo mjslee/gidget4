@@ -16,7 +16,7 @@
     <div class="buttons has-addons is-centered">
       <b-button
         icon-left="chevron-left"
-        :disabled="prevButtonDisabled"
+        :disabled="prevDisabled"
         @click="prevMessage"
       >
         Prev
@@ -24,7 +24,7 @@
       <b-button
         type="is-primary"
         icon-right="chevron-right"
-        :disabled="nextButtonDisabled"
+        :disabled="nextDisabled"
         @click="nextMessage"
       >
         Next
@@ -72,10 +72,7 @@ export default {
 
       repeats: 0,
       index: 0,
-
-      nextButtonDisabled: false,
-      prevButtonDisabled: true
-    };
+    }
   },
 
 
@@ -110,11 +107,32 @@ export default {
 
         this.internalText = newValue
       }
-    }
+    },
+
+    /**
+     * Determine if next button should be disabled.
+     *
+     * @return {boolean}
+     */
+    nextDisabled() {
+      return this.index >= this.internalMessages.length - 1
+    },
+
+    /**
+     * Determine if previous button should be disabled.
+     *
+     * @return {boolean}
+     */
+    prevDisabled() {
+      return this.index <= 0
+    },
   },
 
 
   watch: {
+    /**
+     * Update internal messages.
+     */
     messages() {
       this.internalMessages = this.messages
     },
@@ -123,14 +141,12 @@ export default {
      * Reset index on messages change.
      */
     internalMessages() {
-      this.index = 0;
+      this.index = 0
 
       // Sometimes index is already 0 so no change is made, meaning we have
       // to manually update the display text
       if (this.internalMessages.length > 0)
         this.setMessage(this.internalMessages[0])
-
-      this.setButtonStatus()
     },
 
     /**
@@ -140,7 +156,6 @@ export default {
      */
     index(newVal) {
       this.setMessage(this.internalMessages[newVal])
-      this.setButtonStatus()
     }
   },
 
@@ -151,6 +166,7 @@ export default {
      */
     reset() {
       this.internalMessages = _.clone(this.initialMessages)
+      this.repeats = -1
     },
 
     /**
@@ -164,20 +180,6 @@ export default {
 
       if (typeof message.text === 'string')
         this.text = message.text
-    },
-
-    /**
-     * Set next and previous button statuses.
-     */
-    setButtonStatus() {
-      this.nextButtonDisabled = false
-      this.prevButtonDisabled = false
-
-      if (this.index <= 0)
-        this.prevButtonDisabled = true
-
-      if (this.index >= this.internalMessages.length - 1)
-        this.nextButtonDisabled = true
     },
 
     /**
@@ -197,4 +199,3 @@ export default {
     },
   },
 }
-</script>
