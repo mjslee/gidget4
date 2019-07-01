@@ -1,18 +1,15 @@
 <template>
-  <div v-if="typeof object.grabber === 'undefined'">
-    <span :class="transitionClass" ref="label" :style="labelStyle" v-text="object.name"></span>
-    <img :class="transitionClass" ref="object" :src="objectImage" :style="objectStyle" />
+  <div :class="noTransitionClass" v-if="typeof object.grabber === 'undefined'">
+    <span ref="message" :class="messageClass" :style="messageStyle" v-text="message" v-if="message"></span>
+    <label ref="label" :style="labelStyle" v-text="object.name"></label>
+    <img ref="object" :src="objectImage" :style="objectStyle" />
   </div>
 </template>
 
 
 <style scoped>
-@keyframes spin {
-  from { transform:rotate(0deg); }
-  to { transform:rotate(360deg); }
-}
 
-span {
+label {
   color: white;
   background: rgba(0, 0, 0, 0.25);
   padding: 0.2rem;
@@ -20,17 +17,25 @@ span {
   pointer-events: none;
 }
 
-img, span {
+span {
+  transition: none;
+  color: yellow;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #000;
+  opacity: 0;
+}
+
+img, label, span {
   position: absolute;
   cursor: pointer;
   transition: all 200ms;
 }
 
-.no-transition {
+.no-transition > * {
   transition: none;
 }
 
-.selected > span {
+.selected > label {
   z-index: 101 !important;
 }
 
@@ -38,6 +43,25 @@ img, span {
   z-index: 100 !important;
   pointer-events: none;
   box-shadow: 0 0 3rem 1rem gold inset, 0 0 2rem goldenrod;
+}
+
+/* Transitions */
+@keyframes spin {
+  from { transform:rotate(0deg); }
+  to { transform:rotate(360deg); }
+}
+
+@keyframes new-message {
+  0% { opacity: 1; transform: translate(0px, 60px); }
+  80% { transform: translate(0px, 40px); }
+  89% { opacity: 1; }
+  90% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(0px, 0px); }
+}
+
+.new-message-transition {
+  animation: new-message linear 3s;
+  animation-iteration-count: 1;
 }
 </style>
 
@@ -55,21 +79,28 @@ export default {
 
   data() {
     return {
-      transitionClass: 'no-transition',
+      messageClass: '',
+      noTransitionClass: 'no-transition',
+
       scale: this.object.scale,
+
+      message: '',
+      messageWidth: 0,
+      messageLeft: 0,
+      messageTop: 0,
+
+      labelLeft: 0,
+      labelTop: 0,
 
       objectLeft: 0,
       objectTop: 0,
-
-      labelLeft: 0,
-      labelTop: 0
     }
   },
 
 
   mounted() {
     this.updatePosition();
-    setTimeout(() => this.transitionClass = '', 200);
+    setTimeout(() => this.noTransitionClass = '', 200);
   },
 
 
@@ -82,6 +113,20 @@ export default {
     },
 
     /**
+     * Create message style object.
+     */
+    messageStyle() {
+      if (!this.message)
+        return;
+
+      return {
+        'left': this.messageLeft + 'px',
+        'top': this.messageTop + 'px',
+        'z-index': this.object.layer + 3 || 0
+      }
+    },
+
+    /**
      * Create label style object.
      */
     labelStyle() {
@@ -89,6 +134,19 @@ export default {
         'left': this.labelLeft + 'px',
         'top': this.labelTop + 'px',
         'z-index': this.object.layer + 2 || 0
+      }
+    },
+
+    /**
+     * Create object style object.
+     */
+    objectStyle() {
+      return {
+        'left': this.objectLeft + 'px',
+        'top': this.objectTop + 'px',
+        'height': this.tileSize + 'rem',
+        'width': this.tileSize + 'rem',
+        'z-index': this.object.layer || 0
       }
     },
 
@@ -107,20 +165,7 @@ export default {
     },
 
     /**
-     * Create object style object.
-     */
-    objectStyle() {
-      return {
-        'left': this.objectLeft + 'px',
-        'top': this.objectTop + 'px',
-        'height': this.tileSize + 'rem',
-        'width': this.tileSize + 'rem',
-        'z-index': this.object.layer || 0
-      }
-    },
-
-    /**
-     * Get image of object with prefix.
+     * Get image of object with sprite path prefix.
      */
     objectImage() {
       return SPRITE_PATH + this.object.image
@@ -131,15 +176,63 @@ export default {
   methods: {
     /**
      * Set GidgetObject's visual position inside page.
-     * @param {number} x
-     * @param {number} y
+     *
+     * @param {object} rect
      */
-    setAbsolutePosition(rect) {
+    setPosition(rect) {
       this.objectLeft = rect.x - (this.scale - 1) * rect.width / 2;
       this.objectTop = rect.y - (this.scale - 1) * rect.height;
 
+      this.calculateLabelPosition()
+      this.calculateMessagePosition()
+    },
+
+
+    /**
+     * Calculate position of object label.
+     */
+    calculateLabelPosition() {
       this.labelLeft = this.objectLeft + ((this.objectWidth - this.labelWidth) / 2);
       this.labelTop = this.objectTop - 25;
+    },
+
+
+    /**
+     * Calculate position of object message.
+     */
+    calculateMessagePosition() {
+      if (!this.$refs.message || !this.message)
+        return;
+
+      this.messageLeft = this.objectLeft + ((this.objectWidth - this.messageWidth) / 2);
+      this.messageTop = this.objectTop - 50;
+    },
+
+
+    /**
+     * Handle new message.
+     */
+    onNewMessage() {
+      // Sometimes $refs.message does not exist
+      if (!this.$refs.message || !this.message)
+        return;
+
+      // Slide up and fade transition
+      this.messageClass = 'new-message-transition';
+
+      // Calculate message width and then its position
+      this.messageWidth = this.$refs.message.getBoundingClientRect().width
+      this.calculateMessagePosition();
+
+      // Reset timeout to stop new message clearing race condition
+      if (this.messageTimeout)
+        clearTimeout(this.messageTimeout);
+
+      // Clear message after 3 seconds (same duration as animation)
+      this.messageTimeout = setTimeout(() => {
+        this.messageClass = ''
+        this.message = ''
+      }, 3000);
     },
 
 
@@ -153,6 +246,17 @@ export default {
 
 
   watch: {
+    'object.message': {
+      /**
+       * Watch object's message.
+       */
+      handler(newVal) {
+        this.message = newVal;
+        this.messageClass = '';
+        this.$nextTick(() => this.onNewMessage())
+      }
+    },
+
     'object.position': {
       /**
        * Watch object's position to visually move in world.
@@ -174,7 +278,7 @@ export default {
 
     'scale': {
       /**
-       * Watch object's scale to visually move in world.
+       * Watch object's inner scale.
        */
       handler() {
         this.updatePosition();
@@ -183,7 +287,7 @@ export default {
 
     'size': {
       /**
-       * Watch object's scale to visually move in world.
+       * Watch object's inner size.
        */
       handler() {
         this.updatePosition();
