@@ -226,26 +226,21 @@ export default {
      * Handle new message.
      */
     onNewMessage() {
-      // Sometimes $refs.message does not exist
-      if (!this.$refs.message || !this.message)
+      if (!this.message) {
+        this.messageClass = ''
         return;
+      }
+
+      // Sometimes $refs.message does not exist
+      if (!this.$refs.message)
+        return
 
       // Slide up and fade transition
-      this.messageClass = 'new-message-transition';
+      this.messageClass = 'new-message-transition'
 
       // Calculate message width and then its position
       this.messageWidth = this.$refs.message.getBoundingClientRect().width
-      this.calculateMessagePosition();
-
-      // Reset timeout to stop new message clearing race condition
-      if (this.messageTimeout)
-        clearTimeout(this.messageTimeout);
-
-      // Clear message after 3 seconds (same duration as animation)
-      this.messageTimeout = setTimeout(() => {
-        this.messageClass = ''
-        this.message = ''
-      }, 3000);
+      this.calculateMessagePosition()
     },
 
 
@@ -273,8 +268,7 @@ export default {
        * Watch object's message.
        */
       handler(newVal) {
-        this.message = newVal;
-        this.messageClass = '';
+        this.message = newVal
         this.$nextTick(() => this.onNewMessage())
       }
     },
