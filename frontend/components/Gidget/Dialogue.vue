@@ -7,18 +7,20 @@
       </span>
     </p>
     <div class="buttons has-addons">
-      <div class="button" :disabled="prevButtonDisabled" @click="prevMessage">
-        <span class="icon is-small">
-          <i class="mdi mdi-chevron-left"></i>
-        </span>&nbsp;
+      <b-button
+        icon-left="chevron-left"
+        :disabled="prevButtonDisabled"
+        @click="prevMessage"
+      >
         Prev
-      </div>
-      <div class="button" :disabled="nextButtonDisabled" @click="nextMessage">
-        Next&nbsp;
-        <span class="icon is-small">
-          <i class="mdi mdi-chevron-right"></i>
-        </span>
-      </div>
+      </b-button>
+      <b-button
+        icon-right="chevron-right"
+        :disabled="nextButtonDisabled"
+        @click="nextMessage"
+      >
+        Next
+      </b-button>
     </div>
   </div>
 </template>
