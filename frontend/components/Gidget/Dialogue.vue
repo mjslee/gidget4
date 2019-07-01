@@ -6,7 +6,7 @@
         {{ repeats + 1 }}
       </span>
     </p>
-    <div class="buttons has-addons">
+    <div class="buttons has-addons is-centered">
       <b-button
         icon-left="chevron-left"
         :disabled="prevButtonDisabled"
@@ -21,6 +21,10 @@
       >
         Next
       </b-button>
+
+      <b-button @click="$emit('click:reset')">
+        <b-icon icon="restart"></b-icon>
+      </b-button>
     </div>
   </div>
 </template>
@@ -29,12 +33,12 @@
 <style scoped>
 .buttons {
   margin-top: 1rem;
-  justify-content: center;
 }
 </style>
 
 
 <script>
+import _ from 'lodash'
 import GidgetValue from './Value'
 import GidgetText from './Text'
 

@@ -34,7 +34,11 @@
       </div>
 
       <div class="box">
-        <GidgetDialogue ref="dialogue" :messages="game.world.messages" />
+        <GidgetDialogue
+          ref="dialogue"
+          :messages="game.world.messages"
+          @click:reset="resetDialogue"
+        />
       </div>
     </div>
 
@@ -141,9 +145,11 @@ export default {
 
 
   mounted() {
-    // Set initial game dialogue
-    this.game.world.messages = this.dialogue;
+    // Get important objects
     this.playerObject = this.game.world.getObject('Gidget');
+
+    // Set initial game dialogue
+    this.resetDialogue();
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
@@ -168,9 +174,18 @@ export default {
 
 
     /**
+     * Reset game world dialogue messages.
+     *
+     * @return {void}
+     */
+    resetDialogue() {
+      this.game.world.messages = this.dialogue
+    },
+
+
+    /**
      * Reset game script, components, and game object references.
      *
-     * @param {number} sayMessage
      * @return {void}
      */
     resetScript() {
@@ -190,7 +205,6 @@ export default {
     /**
      * Setup components and evaluate script.
      *
-     * @param {number} sayMessage
      * @return {void}
      */
     setupScript() {
@@ -213,7 +227,6 @@ export default {
     /**
      * Run all steps.
      *
-     * @param {number} sayMessage
      * @return {void}
      */
     async runScript() {
@@ -226,7 +239,6 @@ export default {
     /**
      * Stop/reset game script.
      *
-     * @param {number} sayMessage
      * @return {void}
      */
     async stopScript() {
