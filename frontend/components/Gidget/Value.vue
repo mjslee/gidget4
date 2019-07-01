@@ -126,7 +126,7 @@ export default {
      * @return {string}
      */
     internalValue() {
-      // When this.literal is a string, it can either be a: property, variable,
+      // When 'literal' is a string, it can either be a: property, variable,
       // or string; strings will be surrounded by apostrophes.
       if (typeof this.literal === 'string') {
         // Remove surrounding apostrophes from literal
@@ -137,7 +137,8 @@ export default {
         // Literal may have been evaluated, so try to fetch its value
         else {
           this.internalIdentifier = this.literal;
-          return this.$store.getters['code/getValue'](this.literal);
+          return undefined;
+          //return this.$store.getters['code/getValue'](this.literal);
         }
       }
 
@@ -242,7 +243,8 @@ export default {
      * @return {boolean}
      */
     isString(value) {
-      return typeof value !== 'undefined' && value[0] === '\'' && value[value.length - 1] === '\'';
+      return typeof value !== 'undefined' && value[0] === '\'' &&
+             value[value.length - 1] === '\'';
     },
   }
 }

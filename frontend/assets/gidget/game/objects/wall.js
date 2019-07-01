@@ -1,4 +1,4 @@
 export default {
-  image: 'wall.png',
+  image: 'wall',
   blocking: true
 }

@@ -158,6 +158,9 @@ export default {
     // Set stepper index to the next step's index
     this.stepper.index = step.index;
 
+    // Call game tick
+    await this.world.tick();
+
     // Get next step so we can set the nextStep property
     // nextStep property is used to show next line in code editor
     if (step.hasNext)

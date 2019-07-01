@@ -2,11 +2,12 @@
   "code": "let x = 5;\nGidget.left();\nGidget.up();\nlet goLeft = false;\n\nfor (let i = 0; i <= 3; i++) {\n  for (let j = 0; j <= 2; j++) {\n    goLeft ? Gidget.left() : Gidget.right();\n  }\n\n  if (i == 3) {\n    // Example comment\n    break;\n    /* Switch sides or something */\n  }\n\n  Gidget.down();\n  goLeft = !goLeft;\n}\n\nGidget.right(2);\nGidget.grab('Puppy');\nGidget.left();\nGidget.drop('Puppy')",
   "size": 4,
   "tiles": [
-    { "type": "dirt", "position": { "x": 1, "y": 2 }}
+    { "type": "dirt", "position": { "x": 1, "y": 2 }},
+    { "type": "dirt", "position": { "x": 1, "y": 3 }}
   ],
   "objects": [
     { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
-    { "type": "Puppy", "mixins": ["Player"], "position": { "x": 2, "y": 3 } }
+    { "type": "Bunny", "position": { "x": 2, "y": 3 } }
   ],
   "goals": [
     { "assert": "equal", "arguments": [ "Gidget.position", "Puppy.position" ] },
@@ -14,7 +15,7 @@
     { "assert": "equal", "arguments": [ "y", "'cool'" ] }
   ],
   "dialogue": [
-    { "text": "Puppy `Puppy` Puppy" },
+    { "text": "Hello /Gidget/ `inline code`.\nEeee ```hello im my own thing```" },
     { "text": "Feel free to modify, delete, or reuse any of the code I give you! There should be clues inside to teach you how to use my commands effectively!" },
     { "text": "Make sure you always read the goals of the level on the bottom-left panel first, and then try running the code at least once using the buttons below the goals to see how the starting code works." },
     { "text": "It looks like the goal of this level is to move myself to the `Puppy`! Use the buttons on the bottom-left to see what my code does, and click on the top-left white panel to start editing!" }

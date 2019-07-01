@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div style="margin-bottom:2rem">
-      <button @click="loadLvl">load lvl 1</button>
+      <button @click="loadLvl1">load lvl 1</button>
       <button @click="loadLvl2">load lvl 2</button>
     </div>
     <GidgetGame
@@ -42,7 +42,7 @@ export default {
   },
 
   methods: {
-    loadLvl() {
+    loadLvl1() {
       this.game = Object.create(lvl1);
       this.updateKey += 1;
     },

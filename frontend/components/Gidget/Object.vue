@@ -1,7 +1,7 @@
 <template>
   <div v-if="typeof object.grabber === 'undefined'">
     <span :class="transitionClass" ref="label" :style="labelStyle" v-text="object.name"></span>
-    <img :class="transitionClass" ref="object" :src="objectImage" :style="objectStyle" />
+    <img :class="transitionClass" ref="object" :src="image" :style="objectStyle" />
   </div>
 </template>
 
@@ -122,8 +122,10 @@ export default {
     /**
      * Get image of object with prefix.
      */
-    objectImage() {
-      return SPRITE_PATH + this.object.image
+    image() {
+      return SPRITE_PATH + this.object.image +
+        (this.object.expression ?  '-' + this.object.expression : '') +
+        '.' + this.object.imageExt;
     },
   },
 

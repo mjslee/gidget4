@@ -1,5 +1,5 @@
 export default {
-  image: 'gidget.png',
+  image: 'gidget',
   layer: 5,
 
   exposed: {
