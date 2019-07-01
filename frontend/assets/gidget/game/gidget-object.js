@@ -50,6 +50,25 @@ export default {
 
 
   /**
+   * Set transition for a duration.
+   * Use 'await' to wait for transition to finish.
+   *
+   * @param {string} transition -- Transition to apply.
+   * @param {number} ms -- Duration in milliseconds.
+   */
+  async timedTransition(transition, ms) {
+    // Set custom transition
+    this.transition = transition
+
+    // Wait between transitions
+    await new Promise(resolve => setTimeout(resolve, ms));
+
+    // Reset to default
+    this.transition = ''
+  },
+
+
+  /**
    * Say message as an object.
    */
   say(messages) {
@@ -98,7 +117,7 @@ export default {
    * @param {number} y
    * @param {number} seconds Amount of seconds the walk should last for.
    */
-  walk(x, y, milliseconds=500) {
+  walk(x, y, ms=500) {
     return new Promise((resolve, reject) => {
       // Get path from current position to specified position
       const path = this.world.getPath(this.position.x, this.position.y, x, y);
@@ -116,7 +135,7 @@ export default {
         return resolve(0);
 
       // Calculate duration of each step
-      const stepMilliseconds = milliseconds / (path.length - 1);
+      const stepMilliseconds = ms / (path.length - 1);
 
       // Move one tile every given milliseconds
       let i = 1, interval = setInterval(() => {

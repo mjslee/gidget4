@@ -51,6 +51,11 @@ img, label, span {
   to { transform:rotate(360deg); }
 }
 
+.spin-transition {
+  animation: spin linear 1000ms;
+  animation-iteration-count: 1;
+}
+
 @keyframes new-message {
   0% { opacity: 1; transform: translate(0px, 60px); }
   80% { transform: translate(0px, 40px); }
@@ -252,7 +257,7 @@ export default {
        * Watch object's message.
        */
       handler(newVal) {
-        this.objectClass = newVal + '-transition';
+        this.objectClass = newVal ? newVal + '-transition' : '';
       }
     },
 
