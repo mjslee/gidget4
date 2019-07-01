@@ -24,6 +24,7 @@ export default {
 
   /**
    * Create object in world.
+   *
    * @param {number} id Unique identification number.
    */
   create(id) {
@@ -220,4 +221,4 @@ export default {
   remove() {
     return this.grabber === undefined ? this.world.removeObject(this.id) : false;
   },
-};
+}

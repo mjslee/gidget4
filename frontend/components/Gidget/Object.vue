@@ -18,7 +18,7 @@ label {
 }
 
 span {
-  transition: none;
+  transition: none !important;
   color: yellow;
   font-weight: bold;
   text-shadow: 1px 1px 2px #000;
