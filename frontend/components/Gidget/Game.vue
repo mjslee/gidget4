@@ -36,9 +36,7 @@
       <div class="box">
         <GidgetDialogue
           ref="dialogue"
-          :messages="game.world.messages"
-          @click:reset="resetDialogue"
-        />
+          :messages="game.world.messages" />
       </div>
     </div>
 
@@ -149,7 +147,8 @@ export default {
     this.playerObject = this.game.world.getObject('Gidget');
 
     // Set initial game dialogue
-    this.resetDialogue();
+    this.game.world.messages = this.dialogue
+    this.$refs.dialogue.initialMessages = _.clone(this.dialogue)
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
@@ -170,16 +169,6 @@ export default {
 
       this.$store.commit('code/setData', data);
       this.$store.commit('code/setObjects', objects);
-    },
-
-
-    /**
-     * Reset game world dialogue messages.
-     *
-     * @return {void}
-     */
-    resetDialogue() {
-      this.game.world.messages = this.dialogue
     },
 
 

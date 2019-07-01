@@ -1,5 +1,12 @@
 <template>
   <div>
+    <b-button
+      icon-right="restart"
+      class="is-pulled-right"
+      @click="reset"
+    >
+    </b-button>
+
     <p>
       <GidgetText :text="text" />
       <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
@@ -15,6 +22,7 @@
         Prev
       </b-button>
       <b-button
+        type="is-primary"
         icon-right="chevron-right"
         :disabled="nextButtonDisabled"
         @click="nextMessage"
@@ -22,9 +30,6 @@
         Next
       </b-button>
 
-      <b-button @click="$emit('click:reset')">
-        <b-icon icon="restart"></b-icon>
-      </b-button>
     </div>
   </div>
 </template>
@@ -60,6 +65,9 @@ export default {
 
   data() {
     return {
+      initialMessages: _.clone(this.messages),
+
+      internalMessages: [],
       internalText: '',
 
       repeats: 0,
@@ -73,8 +81,8 @@ export default {
 
   mounted() {
     // Set level introduction messages
-    if (this.messages.length > 0)
-      this.nextMessage();
+    if (this.internalMessages.length > 0)
+      this.nextMessage()
   },
 
 
@@ -96,9 +104,9 @@ export default {
        */
       set(newValue) {
         if (this.text === newValue)
-          this.repeats += 1;
+          this.repeats += 1
         else
-          this.repeats = 0;
+          this.repeats = 0
 
         this.internalText = newValue
       }
@@ -107,18 +115,22 @@ export default {
 
 
   watch: {
+    messages() {
+      this.internalMessages = this.messages
+    },
+
     /**
      * Reset index on messages change.
      */
-    messages() {
+    internalMessages() {
       this.index = 0;
 
       // Sometimes index is already 0 so no change is made, meaning we have
       // to manually update the display text
-      if (this.messages.length > 0)
-        this.setMessage(this.messages[0]);
+      if (this.internalMessages.length > 0)
+        this.setMessage(this.internalMessages[0])
 
-      this.setButtonStatus();
+      this.setButtonStatus()
     },
 
     /**
@@ -127,13 +139,20 @@ export default {
      * @param {string} newVal
      */
     index(newVal) {
-      this.setMessage(this.messages[newVal]);
-      this.setButtonStatus();
+      this.setMessage(this.internalMessages[newVal])
+      this.setButtonStatus()
     }
   },
 
 
   methods: {
+    /**
+     * Reset dialogue to initial messages.
+     */
+    reset() {
+      this.internalMessages = _.clone(this.initialMessages)
+    },
+
     /**
      * Set dialogue box content and style.
      *
@@ -141,32 +160,32 @@ export default {
      */
     setMessage(message) {
       if (typeof message === 'undefined')
-        return;
+        return
 
       if (typeof message.text === 'string')
-        this.text = message.text;
+        this.text = message.text
     },
 
     /**
      * Set next and previous button statuses.
      */
     setButtonStatus() {
-      this.nextButtonDisabled = false;
-      this.prevButtonDisabled = false;
+      this.nextButtonDisabled = false
+      this.prevButtonDisabled = false
 
       if (this.index <= 0)
-        this.prevButtonDisabled = true;
+        this.prevButtonDisabled = true
 
-      if (this.index >= this.messages.length - 1)
-        this.nextButtonDisabled = true;
+      if (this.index >= this.internalMessages.length - 1)
+        this.nextButtonDisabled = true
     },
 
     /**
      * Set message to next message.
      */
     nextMessage() {
-      if (this.index < this.messages.length - 1)
-        this.index += 1;
+      if (this.index < this.internalMessages.length - 1)
+        this.index += 1
     },
 
     /**
@@ -174,7 +193,7 @@ export default {
      */
     prevMessage() {
       if (this.index > 0)
-        this.index -= 1;
+        this.index -= 1
     },
   },
 }
