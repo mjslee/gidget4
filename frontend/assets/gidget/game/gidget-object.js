@@ -8,7 +8,6 @@ export default {
   type: undefined,
   name: undefined,
   image: undefined,
-  imageExt: 'png',
 
   // World Data
   energy: 100,
@@ -192,4 +191,4 @@ export default {
   remove() {
     return this.grabber === undefined ? this.world.removeObject(this.id) : false;
   },
-}
+};
