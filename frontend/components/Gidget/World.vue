@@ -212,7 +212,7 @@ export default {
       const rect = this.getTileRect(position.x, position.y);
 
       if (rect)
-        object.setAbsolutePosition(rect);
+        object.setPosition(rect);
     },
 
     /**
