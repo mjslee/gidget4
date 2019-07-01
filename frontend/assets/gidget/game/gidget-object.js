@@ -8,6 +8,8 @@ export default {
   type: undefined,
   name: undefined,
   image: undefined,
+  message: undefined,
+  transition: undefined,
 
   // World Data
   energy: 100,
@@ -36,6 +38,14 @@ export default {
       this.onCreate();
 
     return this;
+  },
+
+
+  /**
+   * Shout message as an object (usually for an overhead message).
+   */
+  shout(message) {
+    this.message = message;
   },
 
 

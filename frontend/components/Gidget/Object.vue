@@ -2,7 +2,7 @@
   <div :class="noTransitionClass" v-if="typeof object.grabber === 'undefined'">
     <span ref="message" :class="messageClass" :style="messageStyle" v-text="message" v-if="message"></span>
     <label ref="label" :style="labelStyle" v-text="object.name"></label>
-    <img ref="object" :src="objectImage" :style="objectStyle" />
+    <img ref="object" :class="objectClass" :src="objectImage" :style="objectStyle" />
   </div>
 </template>
 
@@ -80,6 +80,7 @@ export default {
   data() {
     return {
       messageClass: '',
+      objectClass: '',
       noTransitionClass: 'no-transition',
 
       scale: this.object.scale,
@@ -246,6 +247,15 @@ export default {
 
 
   watch: {
+    'object.transition': {
+      /**
+       * Watch object's message.
+       */
+      handler(newVal) {
+        this.objectClass = newVal + '-transition';
+      }
+    },
+
     'object.message': {
       /**
        * Watch object's message.
