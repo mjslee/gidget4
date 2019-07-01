@@ -110,6 +110,13 @@ export default {
   },
 
 
+  beforeDestroy() {
+    // Clean up object when Vue reload happens
+    if (this.object && this.object.onDestroy)
+      this.object.onDestroy.call(this.object);
+  },
+
+
   computed: {
     /**
      * Calculate size of object.
