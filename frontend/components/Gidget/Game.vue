@@ -79,6 +79,7 @@ import Messages from '@/constants/messages'
 
 import Game from '@/assets/gidget/game/gidget-game'
 import Exception from '@/assets/gidget/lang/js-exception'
+import { GIDGET_SUCCESS_IMAGE, GIDGET_FAILURE_IMAGE } from '@/constants/paths'
 
 
 
@@ -306,7 +307,7 @@ export default {
      * @return {void}
      */
     onSuccess() {
-      console.log('Success');
+      this.playerObject.image = GIDGET_SUCCESS_IMAGE
     },
 
 
@@ -316,7 +317,7 @@ export default {
      * @return {void}
      */
     onFailure() {
-      console.log('Fail');
+      this.playerObject.image = GIDGET_FAILURE_IMAGE
     }
   }
 }

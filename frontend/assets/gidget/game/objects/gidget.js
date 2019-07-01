@@ -3,8 +3,8 @@ export default {
   layer: 5,
 
   exposed: {
-    async wait(milliseconds) {
-      return await new Promise(resolve => setTimeout(resolve, milliseconds));
+    async wait(ms) {
+      return await new Promise(resolve => setTimeout(resolve, ms));
     },
   }
 }
