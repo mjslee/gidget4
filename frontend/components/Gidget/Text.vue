@@ -23,7 +23,7 @@ export default {
      * @return {string}
      */
     markdownHtml() {
-      return DOMPurify.sanitize(Marked(this.text))
+      return DOMPurify.sanitize(Marked(this.text.replace(/```/g, '\n```')))
     },
 
     /**
