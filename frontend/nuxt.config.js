@@ -61,7 +61,8 @@ export default {
     /*
     ** You can extend webpack config here
     */
-    extend(config, ctx) {
+    extend(config) {
+      config.resolve.alias['vue'] = 'vue/dist/vue.common'
     }
   }
 }
