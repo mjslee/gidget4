@@ -1,85 +1,49 @@
 <template>
-  <span>
-    <template v-for="(value, i) in internalText">
-      <template v-if="typeof value === 'string'">{{ value }}</template>
-      <br v-else-if="value[1] === 0" />
-      <GidgetValue :literal="value[0]" :key="i" v-else-if="value[1] === 1" />
-      <highlight-code lang="javascript" :key="i" v-else-if="value[1] === 2">{{ value[0] }}</highlight-code>
-      <highlight-code inline lang="javascript" :key="i" v-else-if="value[1] === 3">{{ value[0] }}</highlight-code>
-    </template>
-  </span>
+  <component :is="component"></component>
 </template>
 
 
 <script>
 import GidgetValue from './Value'
+import marked from 'marked'
 
 
 export default {
-  components: {
-    GidgetValue
-  },
-
   props: {
     text: String,
   },
 
   computed: {
     /**
-     * Split text into an array with strings and objects.
-     * Content wrapped in backticks (`example`) will render inline code.
-     * Content wrapped in forward slashes (/example/) will render GidgetValue
-     * components.
+     * Convert markdown to HTML using the 'marked' library.
+     * Also sanitize potentially harmful input text.
+     * - Removes script tags
+     * - Removes HTML attribute values with 'javascript:TEXT_HERE'
      *
-     * @return {array}
+     * @return {string}
      */
-    internalText() {
-      // Split text by backtick or forward slash surroundings
-      const splits = this.text.split(/(\/\w+\/|```.*?```|`.*?`|\n)/g)
+    markdownHtml() {
+      return marked(
+        this.text
+          .replace(/\<script.*?\<\/script\>/gmi, '')
+          .replace(/[\W]javascript:.*?>/gmi, '>')
+      )
+    },
 
-      // Loop over each element of the split text
-      for (var i = splits.length - 1; i >= 0; i--) {
-        // Type -1 will be ignored
-        const type = -1;
-        let charLen = 1;
-
-        // Type 0 is a new character line \n
-        if (splits[i] === '\n')
-          type = 0;
-
-        // Type 1 is a forward slash; wrap with GidgetValue
-        else if (this.isSurrounded(splits[i], '/'))
-          type = 1;
-
-        // Type 2 is a triple backtick; wrap with vue-highlightjs
-        else if (this.isSurrounded(splits[i], '```')) {
-          charLen = 3;
-          type = 2;
-        }
-
-        // Type 3 is a backtick; wrap with vue-highlightjs inline
-        else if (this.isSurrounded(splits[i], '`'))
-          type = 3;
-
-        // Replace element with object that contains two of its own elements:
-        // the string element with first and last characters removed, and type
-        if (type > -1)
-          splits[i] = [splits[i].slice(charLen, charLen * -1), type];
-      }
-
-      return splits;
-    }
-  },
-
-  methods: {
     /**
-     * Determine if text is surrounded by a specified character.
+     * Create dynamic component of markdown elements and GidgetValue components.
      *
-     * @param {string} text
-     * @param {string} char
+     * @return {component}
      */
-    isSurrounded(text, char) {
-      return text.startsWith(char) && text.endsWith(char);
+    component() {
+      const template = '<GidgetValue literal="$1" />'
+      const pattern = /\[\[(.*?)\]\]/gm  // Captures [[TEXT_HERE]]
+      const contents = this.markdownHtml.replace(pattern, template)
+
+      return {
+        components: { GidgetValue },
+        template: '<div>' + contents + '</div>'
+      }
     }
   }
 }

@@ -7,12 +7,13 @@
     >
     </b-button>
 
-    <p>
+    <template>
       <GidgetText :text="text" />
       <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
         {{ repeats + 1 }}
       </span>
-    </p>
+    </template>
+
     <div class="buttons has-addons is-centered">
       <b-button
         icon-left="chevron-left"
@@ -70,8 +71,8 @@ export default {
       internalMessages: [],
       internalText: '',
 
-      repeats: 0,
       index: 0,
+      repeats: 0,
     }
   },
 
@@ -199,3 +200,4 @@ export default {
     },
   },
 }
+</script>
