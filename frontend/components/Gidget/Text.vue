@@ -3,9 +3,11 @@
 </template>
 
 
+
 <script>
 import GidgetValue from './Value'
-import marked from 'marked'
+import DOMPurify from 'dompurify'
+import Marked from 'marked'
 
 
 export default {
@@ -16,18 +18,12 @@ export default {
   computed: {
     /**
      * Convert markdown to HTML using the 'marked' library.
-     * Also sanitize potentially harmful input text.
-     * - Removes script tags
-     * - Removes HTML attribute values with 'javascript:TEXT_HERE'
+     * Sanitize output HTML with DOMPurify.
      *
      * @return {string}
      */
     markdownHtml() {
-      return marked(
-        this.text
-          .replace(/\<script.*?\<\/script\>/gmi, '')
-          .replace(/[\W]javascript:.*?>/gmi, '>')
-      )
+      return DOMPurify.sanitize(Marked(this.text))
     },
 
     /**
