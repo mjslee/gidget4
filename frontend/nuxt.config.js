@@ -35,7 +35,6 @@ export default {
   */
   plugins: [
     'plugins/v-tooltip',
-    'plugins/vue-highlight'
   ],
 
   /*

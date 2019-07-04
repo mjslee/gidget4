@@ -3,16 +3,32 @@
 </template>
 
 
-
 <script>
 import GidgetValue from './Value'
-import DOMPurify from 'dompurify'
 import Marked from 'marked'
+import DOMPurify from 'dompurify'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/github.css';
 
 
 export default {
   props: {
     text: String,
+  },
+
+  created() {
+    Marked.setOptions({
+      highlight(code, lang) {
+        // No code? No highlighting required
+        if (!code)
+          return;
+
+        // Highlight code
+        const highlightedCode = hljs.highlight(lang, code)
+        if (highlightedCode.value)
+          return highlightedCode.value
+      }
+    })
   },
 
   computed: {
