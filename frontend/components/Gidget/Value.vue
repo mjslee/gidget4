@@ -1,81 +1,13 @@
 <template>
-  <v-popover class="popover">
-    <!-- Object.Property -->
-    <span :data-type="valueType" v-if="literalType === 'Property'">
-      <span
-        v-for="(value, index) in literal.split('.')"
-        :key="index"
-        >
-        <span class="is-object-dark" v-if="index === 0">{{ value }}</span><!--
-        --><span class="is-property" v-else>.{{ value }}</span>
-      </span>
-    </span>
-
-    <!-- Object -->
-    <span data-type="object" v-else-if="literalType === 'Object'" class="is-object">
-      {{ internalIdentifier }}
-    </span>
-
-    <!-- Variable -->
-    <span data-type="variable" v-else-if="literalType === 'Variable'" class="is-variable">
-      {{ internalIdentifier }}
-    </span>
-
-    <!-- Number -->
-    <span :data-type="valueType" v-else-if="valueType === 'Number'" class="is-integer">
-      {{ internalValue }}
-    </span>
-
-    <!-- Boolean -->
-    <span :data-type="valueType" v-else-if="valueType === 'Boolean'" class="is-boolean">
-      {{ internalValue }}
-    </span>
-
-    <!-- String -->
-    <span :data-type="valueType" v-else-if="valueType === 'String'" class="is-string">
-      '{{ internalValue }}'
-    </span>
-
-    <!-- Position -->
-    <span :data-type="valueType" v-else-if="valueType === 'Position'">
-     &#91;
-     <GidgetValue :value="internalValue.x" />,
-     <GidgetValue :value="internalValue.y" />
-     &#93;
-    </span>
-
-    <!-- Array -->
-    <span :data-type="valueType" v-else-if="valueType === 'Array'">
-     &#91;
-     <span v-for="(nestedValue, index) in internalValue" :key="`prop-${index}`">
-       <GidgetValue :value="nestedValue" />
-       <span v-if="index + 1 < internalValue.length">, </span>
-     </span>
-     &#93;
-    </span>
-
-    <!-- GameObject -->
-    <span :data-type="valueType" v-else-if="valueType === 'GameObject'">
-      <img class="image is-24x24 is-inline-block" :src="image" />
-    </span>
-
-    <!-- Object -->
-    <span :data-type="valueType" v-else-if="valueType === 'Object'">
-      Object &lt;{{ Object.keys(internalValue).length }} keys&gt;
-    </span>
-
-    <!-- Unknown -->
-    <span :data-type="valueType" v-else>
-      unknown {{ valueType }}
-    </span>
+  <v-popover class="popover" @click.native="fetchValue">
+    <span v-html="highlightedHtml"></span>
 
     <!-- Popover -->
     <Popover
-      v-if="valueType !== 'Array'"
       slot="popover"
-      :identifier="internalIdentifier"
-      :value="internalValue"
-      :type="valueType"
+      :type="type"
+      :identifier="identifier"
+      :value="evalValue || internalValue"
     />
   </v-popover>
 </template>
@@ -96,16 +28,18 @@ span:hover {
 <script>
 import { SPRITE_PATH } from '@/constants/paths'
 import Popover from './Popover'
+import hljs from 'highlight.js'
 
 
 export default {
   name: 'GidgetValue',
 
+
   props: {
-    identifier: String,
-    value: Array | Object | String | Boolean | Number,
-    literal: Array | Object | String | Boolean | Number
+    //identifier: String,
+    value: Array | Object | String | Boolean | Number
   },
+
 
   components: {
     Popover
@@ -114,135 +48,163 @@ export default {
 
   data() {
     return {
-      internalIdentifier: this.identifier,
+      identifier: '',
+      type: 'undefined',
+      internalValue: 'undefined',
+      evalValue: undefined
     };
+  },
+
+
+  mounted() {
+    this.fetchValue()
+  },
+
+
+  watch: {
+    value: {
+      handler(newVal, oldVal) {
+        this.fetchValue()
+        console.log(newVal, oldVal)
+      },
+      deep: true
+    }
   },
 
 
   computed: {
     /**
-     * Value of a literal if it exists, otherwise return literal name or value.
+     * Use highlight.js for syntax highlighting.
      *
-     * @return {string}
+     * return {string}
      */
-    internalValue() {
-      // When this.literal is a string, it can either be a: property, variable,
-      // or string; strings will be surrounded by apostrophes.
-      if (typeof this.literal === 'string') {
-        // Remove surrounding apostrophes from literal
-        if (this.isString(this.literal)) {
-          return this.literal.substring(1, this.literal.length - 1);
+    highlightedHtml() {
+      let result
+
+      // Identifiers would want to be shown over the value
+      if (this.identifier)
+        result = this.identifier
+
+      // Any value that is not a string we should stringify
+      else if (this.type !== 'string')
+        try {
+          result = JSON.stringify(this.internalValue)
+        }
+        catch (e) {  // Block circular objects
+          result = '{ ... }'
         }
 
-        // Literal may have been evaluated, so try to fetch its value
-        else {
-          this.internalIdentifier = this.literal;
-          return this.$store.getters['code/getValue'](this.literal);
-        }
-      }
+      // Type is always going to be a string
+      else
+        result = this.internalValue
 
-      // Fallback
-      return this.literal || this.value;
+      return hljs.highlight('javascript', result || 'undefined').value
     },
-
-
-    /**
-     * Get type of literal.
-     *
-     * @return {string}
-     */
-    literalType() {
-      // We don't care if there is no internalIdentifier
-      if (typeof this.internalIdentifier !== 'string')
-        return;
-
-      if (this.internalIdentifier.includes('.'))
-        return 'Property';
-
-      var firstChar = this.internalIdentifier[0];
-      return firstChar === firstChar.toUpperCase() ? 'Object' : 'Variable';
-    },
-
-
-    /**
-     * Type of value.
-     *
-     * @return {string}
-     */
-    valueType() {
-      // Display as array
-      if (Array.isArray(this.internalValue))
-        return 'Array';
-
-      // Get type of internalValue
-      let type = typeof this.internalValue;
-      type = type.charAt(0).toUpperCase() + type.slice(1);  // Title-ize
-
-      // Value is of primitive type
-      if (type !== 'Object')
-        return type;
-
-      // Is value type position?
-      if (this.isPosition())
-        return 'Position';
-
-      // Is value type a GameObject
-      if (this.isGameObject())
-        return 'GameObject';
-    },
-
-
-    /**
-     * Get path of GameObject's sprite.
-     *
-     * @return {string}
-     */
-    image() {
-      return SPRITE_PATH + this.internalValue.image;
-    },
-
   },
 
 
   methods: {
     /**
-     * Determine if value is of type 'position'
+     * Use highlight.js for syntax highlighting.
      *
-     * @return {boolean}
+     * return {string}
      */
-    isPosition() {
-      return typeof this.internalValue.x !== 'undefined' &&
-             typeof this.internalValue.y !== 'undefined';
+    fetchValue() {
+      this.internalValue = this.resolveValue(this.value)
+    },
+
+    /**
+     * Get value from a literal or from evaluated data.
+     *
+     * Do NOT use this as a computed value. Since every time the code store is
+     * updated (and we're talking about ANY value in the code store), the value
+     * will be updated and a bunch of unnecessary work will be done that will
+     * bog down the game fluidity.
+     *
+     * @return {any}
+     */
+    resolveValue(value, _recursed=false) {
+      const type = typeof value
+
+      // We don't need to worry about undefined values
+      if (type === 'undefined')
+        return
+
+      // An object can be normal or it can be of a special pseudo-type,
+      // such as a Position or GameObject. Get the object as a special
+      // object otherwise return the original value.
+      if (type === 'object')
+        return this.getAsSpecial(value) || value
+
+      // Strings can be variable names or literal values. If the value is a
+      // variable name then we shouuld try to get its value from the game's
+      // evaluation store: code.
+      if (!_recursed && type === 'string') {
+        // Primitive strings will be surrounded by apostrophes, therefore
+        // strings not surrounded may be a variable name.
+        if (!value.startsWith('\'') || !value.endsWith('\'')) {
+          this.identifier = value
+          this.evalValue = this.$store.getters['code/getValue'](value)
+
+          // No data? It's an undefined variable
+          if (!this.evalValue)
+            return value
+
+          // Resolve the new value with the _recursed flag set to true so that
+          // we don't try to process an evaluated string as a variable name
+          return this.resolveValue(this.evalValue, true)
+        }
+      }
+
+      // Any primitive type
+      this.type = type
+      return value
     },
 
 
     /**
-     * Determine if object is of type 'gameobject'
+     * Get object as the special type.
      *
-     * @return {boolean}
+     * @param {object} obj
+     * @return {object}
      */
-    isGameObject() {
-      return typeof this.internalValue.name !== 'undefined';
+    getAsSpecial(obj) {
+      return this.getAsPosition(obj) || this.getAsGameObject(obj)
     },
 
 
     /**
-     * Determine if longhand value is a object/property.
+     * Get value as a position, but only if it is a position.
      *
-     * @return {boolean}
+     * Input: { x: 0, y: 1 }
+     * Output: [0, 1]
+     *
+     * @param {object} obj
+     * @return {array}
      */
-    isProperty() {
-      return typeof this.internalValue.property !== 'undefined';
+    getAsPosition(obj) {
+      // Positions have a 'x' and 'y' properties
+      if (typeof obj.x === 'undefined' || typeof obj.y === 'undefined')
+        return
+
+      // Return as an array for those math-minded folks
+      this.type = 'Position'
+      return [ obj.x, obj.y ]
     },
 
 
     /**
-     * Determine if 'code' is a string based on its surrounding apostrophes.
+     * Get value as a GameObject.
      *
+     * @param {object} obj
      * @return {boolean}
      */
-    isString(value) {
-      return typeof value !== 'undefined' && value[0] === '\'' && value[value.length - 1] === '\'';
+    getAsGameObject(obj) {
+      if (typeof obj.name === 'undefined')
+        return
+
+      this.type = 'GameObject'
+      return true
     },
   }
 }

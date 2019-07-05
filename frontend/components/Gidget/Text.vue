@@ -48,7 +48,7 @@ export default {
      * @return {component}
      */
     component() {
-      const template = '<GidgetValue literal="$1" />'
+      const template = '<GidgetValue value="$1" />'
       const pattern = /\[\[(.*?)\]\]/gm  // Captures [[TEXT_HERE]]
       const contents = this.markdownHtml.replace(pattern, template)
 
