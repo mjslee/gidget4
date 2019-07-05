@@ -1,13 +1,13 @@
 <template>
-  <v-popover class="popover" @click.native="fetchValue">
+  <v-popover class="popover" @click.native="updateValue">
     <span v-html="highlightedHtml"></span>
 
     <!-- Popover -->
     <Popover
       slot="popover"
+      :identifier="identifier || (isIdentifier ? code : '')"
+      :value="value"
       :type="type"
-      :identifier="identifier"
-      :value="evalValue || internalValue"
     />
   </v-popover>
 </template>
@@ -36,8 +36,8 @@ export default {
 
 
   props: {
-    //identifier: String,
-    value: Array | Object | String | Boolean | Number
+    identifier: String,
+    code: Array | Object | String | Boolean | Number
   },
 
 
@@ -48,24 +48,24 @@ export default {
 
   data() {
     return {
-      identifier: '',
       type: 'undefined',
-      internalValue: 'undefined',
-      evalValue: undefined
+      value: 'undefined'
     };
   },
 
 
   mounted() {
-    this.fetchValue()
+    this.updateValue()
   },
 
 
   watch: {
-    value: {
-      handler(newVal, oldVal) {
-        this.fetchValue()
-        console.log(newVal, oldVal)
+    code: {
+      /**
+       * Update value when code is updated.
+       */
+      handler(newVal) {
+        this.updateValue()
       },
       deep: true
     }
@@ -74,29 +74,43 @@ export default {
 
   computed: {
     /**
+     * Determine if code is an identifier.
+     *
+     * @return {boolean}
+     */
+    isIdentifier() {
+      // Non-strings can never be identifiers
+      if (typeof this.code !== 'string')
+        return false;
+
+      // Avoid non-identifiers
+      if (this.code === 'true' || this.code === 'false' ||
+          this.code === 'undefined' || this.code === 'null')
+        return false;
+
+      // Test against identifier pattern
+      return /^[\w\[\]\.]+$/.test(this.code)
+    },
+
+
+    /**
      * Use highlight.js for syntax highlighting.
      *
      * return {string}
      */
     highlightedHtml() {
       let result
-
-      // Identifiers would want to be shown over the value
-      if (this.identifier)
-        result = this.identifier
-
-      // Any value that is not a string we should stringify
-      else if (this.type !== 'string')
+      if (typeof this.code !== 'string') {
+        // Stringify non-strings
         try {
-          result = JSON.stringify(this.internalValue)
+          result = JSON.stringify(this.value)
         }
-        catch (e) {  // Block circular objects
-          result = '{ ... }'
+        catch {  // Blocks circular JSON error
+          result = '[object]'
         }
-
-      // Type is always going to be a string
+      }
       else
-        result = this.internalValue
+        result = this.code
 
       return hljs.highlight('javascript', result || 'undefined').value
     },
@@ -105,16 +119,7 @@ export default {
 
   methods: {
     /**
-     * Use highlight.js for syntax highlighting.
-     *
-     * return {string}
-     */
-    fetchValue() {
-      this.internalValue = this.resolveValue(this.value)
-    },
-
-    /**
-     * Get value from a literal or from evaluated data.
+     * Update value prop.
      *
      * Do NOT use this as a computed value. Since every time the code store is
      * updated (and we're talking about ANY value in the code store), the value
@@ -123,87 +128,59 @@ export default {
      *
      * @return {any}
      */
-    resolveValue(value, _recursed=false) {
-      const type = typeof value
+    updateValue() {
+      // Identifiers can have evaluated data
+      if (this.isIdentifier)
+        this.value = this.$store.getters['code/getValue'](this.code)
 
-      // We don't need to worry about undefined values
-      if (type === 'undefined')
-        return
+      // Non-identifiers won't have evaluated data
+      else
+        this.value = this.code
 
-      // An object can be normal or it can be of a special pseudo-type,
-      // such as a Position or GameObject. Get the object as a special
-      // object otherwise return the original value.
-      if (type === 'object')
-        return this.getAsSpecial(value) || value
+      // Set type of value
+      this.type = typeof this.value
 
-      // Strings can be variable names or literal values. If the value is a
-      // variable name then we shouuld try to get its value from the game's
-      // evaluation store: code.
-      if (!_recursed && type === 'string') {
-        // Primitive strings will be surrounded by apostrophes, therefore
-        // strings not surrounded may be a variable name.
-        if (!value.startsWith('\'') || !value.endsWith('\'')) {
-          this.identifier = value
-          this.evalValue = this.$store.getters['code/getValue'](value)
+      // Special cases below
+      if (this.type !== 'object')
+        return;
 
-          // No data? It's an undefined variable
-          if (!this.evalValue)
-            return value
-
-          // Resolve the new value with the _recursed flag set to true so that
-          // we don't try to process an evaluated string as a variable name
-          return this.resolveValue(this.evalValue, true)
-        }
-      }
-
-      // Any primitive type
-      this.type = type
-      return value
+      // Go through each special case
+      return this.isPosition() || this.isGameObject()
     },
 
 
     /**
-     * Get object as the special type.
+     * Determine if value is of the pseudo-type: Position.
+     * Set type and value when true.
      *
-     * @param {object} obj
-     * @return {object}
-     */
-    getAsSpecial(obj) {
-      return this.getAsPosition(obj) || this.getAsGameObject(obj)
-    },
-
-
-    /**
-     * Get value as a position, but only if it is a position.
+     * this.value -> in  -> { x: 0, y: 1 }
+     * this.value -> out -> [0, 1]
      *
-     * Input: { x: 0, y: 1 }
-     * Output: [0, 1]
-     *
-     * @param {object} obj
      * @return {array}
      */
-    getAsPosition(obj) {
-      // Positions have a 'x' and 'y' properties
-      if (typeof obj.x === 'undefined' || typeof obj.y === 'undefined')
-        return
+    isPosition() {
+      if (typeof this.value.x === 'undefined' ||
+          typeof this.value.y === 'undefined')
+        return false
 
-      // Return as an array for those math-minded folks
       this.type = 'Position'
-      return [ obj.x, obj.y ]
+      this.value = [this.value.x, this.value.y]
+      return true
     },
 
 
     /**
-     * Get value as a GameObject.
+     * Determine if value is of the pseudo-type: GameObject.
+     * Set type and value when true.
      *
-     * @param {object} obj
      * @return {boolean}
      */
-    getAsGameObject(obj) {
-      if (typeof obj.name === 'undefined')
-        return
+    isGameObject() {
+      if (typeof this.value.name === 'undefined')
+        return false
 
       this.type = 'GameObject'
+      this.value = ''
       return true
     },
   }

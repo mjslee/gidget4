@@ -6,9 +6,33 @@
     </div>
     <table class="table is-striped is-fullwidth">
       <tbody>
-        <tr v-for="prop in props" :key="prop.key">
-          <th>{{ prop.name }}</th>
-          <td><GidgetValue :value="prop.value" /></td>
+        <tr>
+          <th>ID</th>
+          <td><GidgetValue identifier="ID" :code="object.id" /></td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <td><GidgetValue identifier="Name" :code="`'${object.name}'`" /></td>
+        </tr>
+        <tr>
+          <th>Energy</th>
+          <td><GidgetValue identifier="Energy" :code="object.energy" /></td>
+        </tr>
+        <tr>
+          <th>Layer</th>
+          <td><GidgetValue identifier="Layer" :code="object.layer" /></td>
+        </tr>
+        <tr>
+          <th>Blocking</th>
+          <td><GidgetValue identifier="Blocking" :code="object.blocking" /></td>
+        </tr>
+        <tr>
+          <th>Position</th>
+          <td><GidgetValue identifier="Position" :code="object.position" /></td>
+        </tr>
+        <tr>
+          <th>Grabbed</th>
+          <td><GidgetValue identifier="Grabbed" :code="object.grabbed" /></td>
         </tr>
       </tbody>
     </table>
@@ -28,6 +52,7 @@
 }
 
 th {
+  font-weight: bold;
   text-align: right;
 }
 </style>
@@ -56,50 +81,6 @@ export default {
     image() {
       return SPRITE_PATH + this.object.image
     },
-
-
-    /**
-     * Get a list of properties belonging to the object.
-     *
-     * @return array[object]
-     */
-    props() {
-      const p = this.createProp
-      return [
-        p('ID', 'id'),
-        p('Name', 'name'),
-        p('Energy', 'energy'),
-        p('Layer', 'layer'),
-        p('Blocking', 'blocking'),
-        p('Position', 'position'),
-        p('Grabbed', 'grabbed'),
-      ]
-    }
   },
-
-  methods: {
-    /**
-     * Create prop object with value.
-     *
-     * @param name
-     * @param key
-     * @return object
-     */
-    createProp(name, key) {
-      return { name, key, value: this.object[key] }
-    },
-
-
-    /**
-     * Get name of variable or property.
-     *
-     * @param objectName
-     * @param prop
-     * @return string
-     */
-    getName(objectName, prop) {
-      return this.object.name + '.' + objectName + (prop ? '.' + prop : '');
-    }
-  }
 }
 </script>
