@@ -32,7 +32,14 @@
         </tr>
         <tr>
           <th>Grabbed</th>
-          <td><GidgetValue identifier="Grabbed" :code="object.grabbed" /></td>
+          <td>
+            &#91;
+            <span v-for="(grabbedObj, i) in grabbed" :key="grabbedObj.id">
+              <GidgetValue :code="grabbedObj" />
+              <span v-if="i + 1 < grabbed.length">, </span>
+            </span>
+            &#93;
+          </td>
         </tr>
       </tbody>
     </table>
@@ -76,11 +83,21 @@ export default {
     /**
      * Get game object's sprite image path.
      *
-     * @return string
+     * @return {string}
      */
     image() {
       return SPRITE_PATH + this.object.image
     },
+
+    /**
+     * Get all grabbed objects belonging to object.
+     *
+     * @return {string}
+     */
+    grabbed() {
+      return this.object.world.objects.filter(obj =>
+        obj.grabber === this.object.id)
+    }
   },
 }
 </script>

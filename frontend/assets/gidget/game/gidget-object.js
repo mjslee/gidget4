@@ -28,17 +28,17 @@ export default {
    * @param {number} id Unique identification number.
    */
   create(id) {
-	this.id = id;
+    this.id = id;
 
-	// Give object a name if not already set
-	if (this.name === undefined && this.type !== undefined)
-	  this.name = this.type;
+    // Give object a name if not already set
+    if (this.name === undefined && this.type !== undefined)
+      this.name = this.type;
 
-	// Run onCreate callback
-	if (typeof this.onCreate === 'function')
-	  this.onCreate();
+    // Run onCreate callback
+    if (typeof this.onCreate === 'function')
+      this.onCreate();
 
-	return this;
+    return this;
   },
 
 
@@ -50,16 +50,16 @@ export default {
    * @param {number} ms -- Millisecond duration.
    */
   async shout(message, ms=3000) {
-	// Set message
-	this.message = message
-	if (ms < 0)
-	  return;
+    // Set message
+    this.message = message
+    if (ms < 0)
+      return;
 
-	// Wait between transitions
-	await new Promise(resolve => setTimeout(resolve, ms));
+    // Wait between transitions
+    await new Promise(resolve => setTimeout(resolve, ms));
 
-	// Reset to default
-	this.message = ''
+    // Reset to default
+    this.message = ''
   },
 
 
@@ -71,14 +71,14 @@ export default {
    * @param {number} ms -- Duration in milliseconds.
    */
   async setTransition(transition, ms) {
-	// Set custom transition
-	this.transition = transition
+    // Set custom transition
+    this.transition = transition
 
-	// Wait between transitions
-	await new Promise(resolve => setTimeout(resolve, ms));
+    // Wait between transitions
+    await new Promise(resolve => setTimeout(resolve, ms));
 
-	// Reset to default
-	this.transition = ''
+    // Reset to default
+    this.transition = ''
   },
 
 
@@ -86,18 +86,18 @@ export default {
    * Say message as an object.
    */
   say(messages) {
-	// Allow for single message object or array of message objects
-	if (!Array.isArray(messages))
-	  messages = [ messages ];
+    // Allow for single message object or array of message objects
+    if (!Array.isArray(messages))
+      messages = [ messages ];
 
-	// Add 'object' key to messages if not already set
-	messages.forEach(message => {
-	  if (typeof message.object === 'undefined')
-		message.object = this;
-	});
+    // Add 'object' key to messages if not already set
+    messages.forEach(message => {
+      if (typeof message.object === 'undefined')
+    	message.object = this;
+    });
 
-	// Say the message
-	this.world.sayMessages(messages);
+    // Say the message
+    this.world.sayMessages(messages);
   },
 
 
@@ -107,21 +107,21 @@ export default {
    * @param {number} y
    */
   move(x, y) {
-	// Validate new position
-	if (!this.world.isPositionValid(x, y))
-	  return false;
+    // Validate new position
+    if (!this.world.isPositionValid(x, y))
+      return false;
 
-	// Individually set these as to not change references
-	this.position.x = x;
-	this.position.y = y;
+    // Individually set these as to not change references
+    this.position.x = x;
+    this.position.y = y;
 
-	// Detect object collisions
-	this.world.detectCollision(this);
+    // Detect object collisions
+    this.world.detectCollision(this);
 
-	// Call without 'x' and 'y' arguments so only the callback is ran
-	this.world.moveObject(this);
+    // Call without 'x' and 'y' arguments so only the callback is ran
+    this.world.moveObject(this);
 
-	return true;
+    return true;
   },
 
 
@@ -132,40 +132,40 @@ export default {
    * @param {number} seconds Amount of seconds the walk should last for.
    */
   walk(x, y, ms=500) {
-	return new Promise((resolve, reject) => {
-	  // Get path from current position to specified position
-	  const path = this.world.getPath(this.position.x, this.position.y, x, y);
+    return new Promise((resolve, reject) => {
+      // Get path from current position to specified position
+      const path = this.world.getPath(this.position.x, this.position.y, x, y);
 
-	  // Nowhere to move!
-	  if (path.length < 1)
-		return reject(1);
+      // Nowhere to move!
+      if (path.length < 1)
+    	return reject(1);
 
-	  // Move immediately to circumvent setInterval's initial delay
-	  if (!this.move(...path[0]))
-		return reject(2);
+      // Move immediately to circumvent setInterval's initial delay
+      if (!this.move(...path[0]))
+    	return reject(2);
 
-	  // If we only needed to move once, then finish
-	  if (path.length === 1)
-		return resolve(0);
+      // If we only needed to move once, then finish
+      if (path.length === 1)
+    	return resolve(0);
 
-	  // Calculate duration of each step
-	  const stepMilliseconds = ms / (path.length - 1);
+      // Calculate duration of each step
+      const stepMilliseconds = ms / (path.length - 1);
 
-	  // Move one tile every given milliseconds
-	  let i = 1, interval = setInterval(() => {
-		if (!this.move(...path[i])) {
-		  // Could not move!
-		  clearInterval(interval);
-		  return reject(2);
-		}
+      // Move one tile every given milliseconds
+      let i = 1, interval = setInterval(() => {
+    	if (!this.move(...path[i])) {
+    	  // Could not move!
+    	  clearInterval(interval);
+    	  return reject(2);
+    	}
 
-		if (++i >= path.length) {
-		  // Reached destination
-		  clearInterval(interval);
-		  return resolve(0);
-		}
-	  }, stepMilliseconds);
-	});
+    	if (++i >= path.length) {
+    	  // Reached destination
+    	  clearInterval(interval);
+    	  return resolve(0);
+    	}
+      }, stepMilliseconds);
+    });
   },
 
 
@@ -174,26 +174,23 @@ export default {
    * @param {number/string} ID or name of object to grab.
    */
   grab(id_or_name) {
-	// Get object
-	const field = typeof id_or_name === 'number' ? 'id' : 'name';
-	const obj = this.world.getObject(obj =>
-	  obj.grabbable !== false &&
-	  obj.grabber === undefined &&
-	  obj[field] === id_or_name &&
-	  obj.position.x === this.position.x &&
-	  obj.position.y === this.position.y);
+    // Get object
+    const field = typeof id_or_name === 'number' ? 'id' : 'name';
+    const obj = this.world.getObject(obj =>
+      obj.grabbable !== false &&
+      obj.grabber === undefined &&
+      obj[field] === id_or_name &&
+      obj.position.x === this.position.x &&
+      obj.position.y === this.position.y);
 
-	// Make sure object exists
-	if (obj === undefined)
-	  return false;
+    // Make sure object exists
+    if (obj === undefined)
+      return false;
 
-	// Set grabber
-	obj.grabber = this.id;
+    // Set grabber
+    obj.grabber = this.id;
 
-	// Add object to grabbed array
-	//this.grabbed.push(obj);
-
-	return true;
+    return true;
   },
 
 
@@ -203,28 +200,25 @@ export default {
    * @param {number/string} ID or name of object to drop.
    */
   drop(id_or_name) {
-	// Drop self when self has been grabbed
-	if (this.grabber !== undefined)
-	  return this.grabber.drop(this.id);
+    // Drop self when self has been grabbed
+    if (this.grabber !== undefined)
+      return this.grabber.drop(this.id);
 
-	// Find object
-	const field = typeof id_or_name === 'number' ? 'id' : 'name';
-	const obj = this.world.getObject(obj => obj[field] === id_or_name);
+    // Find object
+    const field = typeof id_or_name === 'number' ? 'id' : 'name';
+    const obj = this.world.getObject(obj => obj[field] === id_or_name);
 
-	if (obj === undefined)
-	  return false;
+    if (obj === undefined)
+      return false;
 
-	// Save object before deleting it
-	obj.position.x = this.position.x;
-	obj.position.y = this.position.y;
+    // Save object before deleting it
+    obj.position.x = this.position.x;
+    obj.position.y = this.position.y;
 
-	// Remove grabber
-	obj.grabber = undefined;
+    // Remove grabber
+    obj.grabber = undefined;
 
-	// Remove from `grabbed` array
-	//this.grabbed.remove(obj);
-
-	return true;
+    return true;
   },
 
 
@@ -232,6 +226,6 @@ export default {
    * Remove this object from the world.
    */
   remove() {
-	return this.grabber === undefined ? this.world.removeObject(this.id) : false;
+    return this.grabber === undefined ? this.world.removeObject(this.id) : false;
   },
 }

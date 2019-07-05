@@ -92,14 +92,15 @@ export default {
     // Assign values with primitive type
     let type;
     for (let prop in object) {
+
+      // Add all values to state
       type = typeof object[prop];
       if (type !== 'function' && type !== 'object')
         state[prop] = object[prop];
     }
 
     // Position should be the ONLY object to serialize and restore
-    state.position = object.position;
-    state.grabbed = [];
+    state.position = object.position
 
     // Return state
     return state;
@@ -120,12 +121,16 @@ export default {
 
     // Object still exists, update properties
     for (let prop in objectState)
-      if (prop !== 'position')
+      if (prop !== 'position' && prop !== 'grabbed')
         obj[prop] = objectState[prop];
 
     // Update position
     obj.position.x = objectState.position.x;
     obj.position.y = objectState.position.y;
+
+    // Update grabbed array
+    obj.grabbed = objectState.grabbed || []
+    console.log(obj.grabbed.length)
   },
 
 

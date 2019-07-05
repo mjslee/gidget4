@@ -1,10 +1,24 @@
 <template>
   <v-popover class="popover" @click.native="updateValue">
-    <span v-html="highlightedHtml"></span>
+    <template v-if="inTemplate && !isIdentifier">
+      <span v-if="type === 'GameObject'">
+        <img class="image is-24x24 is-inline-block" :src="image" />
+      </span>
+      <span v-else-if="type === 'Array'">
+        &#91;
+        <span v-for="(element, i) in value" :key="i">
+          <GidgetValue :code="element" />
+          <span v-if="i + 1 < value.length">, </span>
+        </span>
+        &#93;
+      </span>
+    </template>
+    <span v-html="highlightedHtml" v-else></span>
 
     <!-- Popover -->
     <Popover
       slot="popover"
+      v-if="type !== 'Array'"
       :identifier="identifier || (isIdentifier ? code : '')"
       :value="value"
       :type="type"
@@ -48,8 +62,9 @@ export default {
 
   data() {
     return {
+      inTemplate: false,
       type: 'undefined',
-      value: 'undefined'
+      value: 'undefined',
     };
   },
 
@@ -99,20 +114,29 @@ export default {
      * return {string}
      */
     highlightedHtml() {
-      let result
-      if (typeof this.code !== 'string') {
+      let result = this.isIdentifier ? this.code : this.value || this.code
+
+      if (typeof result !== 'string') {
         // Stringify non-strings
         try {
-          result = JSON.stringify(this.value)
+          result = JSON.stringify(result)
         }
         catch {  // Blocks circular JSON error
-          result = '[object]'
+          result = '[circ]'
         }
       }
-      else
-        result = this.code
 
       return hljs.highlight('javascript', result || 'undefined').value
+    },
+
+
+    /**
+     * Get path of GameObject's sprite.
+     *
+     * @return {string}
+     */
+    image() {
+      return SPRITE_PATH + this.value.image;
     },
   },
 
@@ -144,8 +168,8 @@ export default {
       if (this.type !== 'object')
         return;
 
-      // Go through each special case
-      return this.isPosition() || this.isGameObject()
+      // Go through each object type
+      return this.isPosition() || this.isGameObject() || this.isArray()
     },
 
 
@@ -164,7 +188,7 @@ export default {
         return false
 
       this.type = 'Position'
-      this.value = [this.value.x, this.value.y]
+      this.value = '[ ' + this.value.x + ', ' + this.value.y + ' ]'
       return true
     },
 
@@ -180,7 +204,26 @@ export default {
         return false
 
       this.type = 'GameObject'
-      this.value = ''
+      this.inTemplate = true
+      return true
+    },
+
+
+    /**
+     * Determine if value is of the pseudo-type: Position.
+     * Set type and value when true.
+     *
+     * this.value -> in  -> { x: 0, y: 1 }
+     * this.value -> out -> [0, 1]
+     *
+     * @return {array}
+     */
+    isArray() {
+      if (!Array.isArray(this.value))
+        return false
+
+      this.type = 'Array'
+      this.inTemplate = true
       return true
     },
   }

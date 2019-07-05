@@ -70,6 +70,12 @@ export default {
      */
     drop(value) {
       this.object.drop(value);
+    },
+
+    goto(value) {
+      const obj = this.object.world.getObject(value)
+      if (obj)
+        this.object.walk(obj.position.x, obj.position.y)
     }
   }
 }
