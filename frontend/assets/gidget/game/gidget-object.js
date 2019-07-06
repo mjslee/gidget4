@@ -49,7 +49,7 @@ export default {
    * @param {string} message
    * @param {number} ms -- Millisecond duration.
    */
-  async shout(message, ms=3000) {
+  async say(message, ms=3000) {
     // Set message
     this.message = message
     if (ms < 0)
@@ -79,25 +79,6 @@ export default {
 
     // Reset to default
     this.transition = ''
-  },
-
-
-  /**
-   * Say message as an object.
-   */
-  say(messages) {
-    // Allow for single message object or array of message objects
-    if (!Array.isArray(messages))
-      messages = [ messages ];
-
-    // Add 'object' key to messages if not already set
-    messages.forEach(message => {
-      if (typeof message.object === 'undefined')
-    	message.object = this;
-    });
-
-    // Say the message
-    this.world.sayMessages(messages);
   },
 
 

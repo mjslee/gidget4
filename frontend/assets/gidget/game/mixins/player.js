@@ -72,10 +72,10 @@ export default {
       this.object.drop(value);
     },
 
-    goto(value) {
+    async goto(value) {
       const obj = this.object.world.getObject(value)
       if (obj)
-        this.object.walk(obj.position.x, obj.position.y)
+        await this.object.walk(obj.position.x, obj.position.y)
     }
   }
 }

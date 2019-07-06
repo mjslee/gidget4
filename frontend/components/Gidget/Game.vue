@@ -33,11 +33,9 @@
         />
       </div>
 
-      <div class="box">
-        <GidgetDialogue
-          ref="dialogue"
-          :messages="game.world.messages" />
-      </div>
+      <GidgetDialogue
+        ref="dialogue"
+        :messages="game.world.messages" />
     </div>
 
     <!-- Inspectors -->
@@ -81,7 +79,9 @@ import Messages from '@/constants/messages'
 
 import Game from '@/assets/gidget/game/gidget-game'
 import Exception from '@/assets/gidget/lang/js-exception'
-import { GIDGET_SUCCESS_IMAGE, GIDGET_FAILURE_IMAGE } from '@/constants/paths'
+import {
+  GIDGET_SUCCESS_IMAGE, GIDGET_FAILURE_IMAGE, GIDGET_START_OVER_IMAGE
+} from '@/constants/paths'
 
 
 
@@ -148,7 +148,6 @@ export default {
 
     // Set initial game dialogue
     this.game.world.messages = this.dialogue
-    this.$refs.dialogue.initialMessages = _.clone(this.dialogue)
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these variables before any code is ran
@@ -232,7 +231,10 @@ export default {
      */
     async stopScript() {
       this.resetScript();
-      this.$refs.dialogue.text = Messages.Gidget.STARTING_OVER;
+      this.$refs.dialogue.set([{
+        text: Messages.Gidget.STARTING_OVER,
+        leftImage: GIDGET_START_OVER_IMAGE
+      }])
     },
 
 
@@ -281,7 +283,7 @@ export default {
 
       const translation = Exception.translate(message,
         Messages.Exceptions.Translations);
-      this.$refs.dialogue.text = translation || message;
+      //this.$refs.dialogue.text = translation || message;
     },
 
 
@@ -297,7 +299,8 @@ export default {
 
       // Call success or failure handler
       this.$nextTick(() => {
-        this.$refs.goals.completed() ? this.onSuccess() : this.onFailure();
+        this.$refs.goals.completed() ?
+          this.onSuccess() : this.onFailure();
       });
     },
 
@@ -309,6 +312,10 @@ export default {
      */
     onSuccess() {
       this.playerObject.image = GIDGET_SUCCESS_IMAGE
+      this.$refs.dialogue.append({
+        text: Messages.Gidget.SUCCESS,
+        leftImage: GIDGET_SUCCESS_IMAGE
+      })
     },
 
 
@@ -319,6 +326,10 @@ export default {
      */
     onFailure() {
       this.playerObject.image = GIDGET_FAILURE_IMAGE
+      this.$refs.dialogue.append({
+        text: Messages.Gidget.FAILURE,
+        leftImage: GIDGET_FAILURE_IMAGE,
+      })
     }
   }
 }

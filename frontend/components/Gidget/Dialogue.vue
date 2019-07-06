@@ -1,36 +1,40 @@
 <template>
-  <div>
-    <b-button
-      icon-right="restart"
-      class="is-pulled-right"
-      @click="reset"
-    >
-    </b-button>
-
-    <template>
-      <GidgetText :text="text" />
-      <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
-        {{ repeats + 1 }}
-      </span>
-    </template>
-
-    <div class="buttons has-addons is-centered">
+  <div style="position:relative">
+    <img class="left head image is-64x64" :src="leftImage" v-if="leftImage">
+    <img class="right head image is-64x64" :src="rightImage" v-if="rightImage">
+    <div class="box">
       <b-button
-        icon-left="chevron-left"
-        :disabled="prevDisabled"
-        @click="prevMessage"
+        icon-right="restart"
+        class="is-pulled-right"
+        @click="reset"
       >
-        Prev
-      </b-button>
-      <b-button
-        type="is-primary"
-        icon-right="chevron-right"
-        :disabled="nextDisabled"
-        @click="nextMessage"
-      >
-        Next
       </b-button>
 
+      <template>
+        <GidgetText :text="message.text" v-if="message" />
+        <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
+          {{ repeats + 1 }}
+        </span>
+      </template>
+
+      <div class="buttons has-addons is-centered">
+        <b-button
+          icon-left="chevron-left"
+          :disabled="!hasPrev"
+          @click="prev"
+        >
+          Prev
+        </b-button>
+
+        <b-button
+          type="is-primary"
+          icon-right="chevron-right"
+          :disabled="!hasNext"
+          @click="next"
+        >
+          Next
+        </b-button>
+      </div>
     </div>
   </div>
 </template>
@@ -40,6 +44,35 @@
 .buttons {
   margin-top: 1rem;
 }
+
+.box {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+@keyframes slide-up {
+  from { top: 0 }
+  to { top: -3em }
+}
+
+.head {
+  position: absolute;
+  top: -3em;
+  animation-name: slide-up;
+  animation-duration: 250ms;
+}
+
+.left.head {
+  transform: rotate(-5deg);
+}
+
+
+.right.head {
+  right: 0;
+  transform: rotate(5deg);
+  animation-duration: 750ms;
+}
 </style>
 
 
@@ -47,6 +80,7 @@
 import _ from 'lodash'
 import GidgetValue from './Value'
 import GidgetText from './Text'
+import { SPRITE_PATH } from '@/constants/paths'
 
 
 export default {
@@ -66,97 +100,58 @@ export default {
 
   data() {
     return {
-      initialMessages: _.clone(this.messages),
-
+      // Clone initial messages so we can restore them whenever
+      initialMessages: _.cloneDeep(this.messages),
       internalMessages: [],
-      internalText: '',
 
       index: 0,
       repeats: 0,
+
+      isSuccess: false,
+      isFailure: false
     }
   },
 
 
   mounted() {
     // Set level introduction messages
-    if (this.internalMessages.length > 0)
-      this.nextMessage()
+    // if (this.internalMessages.length > 0)
+    //   this.nextMessage()
   },
 
 
   computed: {
-    text: {
-      /**
-       * Get text value.
-       *
-       * @return {string}
-       */
-      get() {
-        return this.internalText
-      },
-
-      /**
-       * Set text value. Increment or reset text repeat count.
-       *
-       * @param {string} newVal
-       */
-      set(newValue) {
-        if (this.text === newValue)
-          this.repeats += 1
-        else
-          this.repeats = 0
-
-        this.internalText = newValue
-      }
+    message() {
+      return this.internalMessages[this.index] || {}
     },
 
-    /**
-     * Determine if next button should be disabled.
-     *
-     * @return {boolean}
-     */
-    nextDisabled() {
-      return this.index >= this.internalMessages.length - 1
+    hasPrev() {
+      return this.index > 0
     },
 
-    /**
-     * Determine if previous button should be disabled.
-     *
-     * @return {boolean}
-     */
-    prevDisabled() {
-      return this.index <= 0
+    hasNext() {
+      return this.index < this.internalMessages.length - 1
     },
+
+    rightImage() {
+      if (this.message.rightImage)
+        return SPRITE_PATH + this.message.rightImage
+    },
+
+    leftImage() {
+      if (this.message.leftImage)
+        return SPRITE_PATH + this.message.leftImage
+    }
   },
 
 
   watch: {
-    /**
-     * Update internal messages.
-     */
-    messages() {
-      this.internalMessages = this.messages
-    },
-
-    /**
-     * Reset index on messages change.
-     */
-    internalMessages() {
-      this.index = 0
-
-      // Sometimes index is already 0 so no change is made, meaning we have
-      // to manually update the display text
-      if (this.internalMessages.length > 0)
-        this.setMessage(this.internalMessages[0])
-    },
-
-    /**
-     * Change display text on index change.
-     *
-     * @param {string} newVal
-     */
-    index(newVal) {
-      this.setMessage(this.internalMessages[newVal])
+    messages: {
+      handler(newVal) {
+        if (Array.isArray(newVal) && newVal.length > 0)
+          this.internalMessages = _.cloneDeep(newVal)
+      },
+      deep: true
     }
   },
 
@@ -166,36 +161,47 @@ export default {
      * Reset dialogue to initial messages.
      */
     reset() {
-      this.internalMessages = _.clone(this.initialMessages)
-      this.repeats = -1
+      this.internalMessages = _.cloneDeep(this.initialMessages)
+      this.index = 0
+      this.repeats = 0
     },
 
     /**
      * Set dialogue box content and style.
      *
-     * @param {object} message
+     * @param {array[object]} messages
+     * @return {void}
      */
-    setMessage(message) {
-      if (typeof message === 'undefined')
-        return
-
-      if (typeof message.text === 'string')
-        this.text = message.text
+    set(messages) {
+      this.internalMessages = messages
+      this.index = 0
     },
 
+
+    append(message) {
+      this.internalMessages.push(message)
+      this.index = this.internalMessages.length - 1
+    },
+
+
     /**
-     * Set message to next message.
+     * Load next message by incrementing index.
+     *
+     * @return {void}
      */
-    nextMessage() {
-      if (this.index < this.internalMessages.length - 1)
+    next() {
+      if (this.hasNext)
         this.index += 1
     },
 
+
     /**
-     * Set message to previous message.
+     * Load previous message by decrementing index.
+     *
+     * @return {void}
      */
-    prevMessage() {
-      if (this.index > 0)
+    prev() {
+      if (this.hasPrev)
         this.index -= 1
     },
   },

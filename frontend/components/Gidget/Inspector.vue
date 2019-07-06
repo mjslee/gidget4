@@ -92,6 +92,9 @@ export default {
     /**
      * Get all grabbed objects belonging to object.
      *
+     * This should be improved eventually to cache objects and maybe a callback
+     * to know exactly when to update.
+     *
      * @return {string}
      */
     grabbed() {

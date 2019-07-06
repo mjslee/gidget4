@@ -121,16 +121,12 @@ export default {
 
     // Object still exists, update properties
     for (let prop in objectState)
-      if (prop !== 'position' && prop !== 'grabbed')
+      if (prop !== 'position')
         obj[prop] = objectState[prop];
 
     // Update position
     obj.position.x = objectState.position.x;
     obj.position.y = objectState.position.y;
-
-    // Update grabbed array
-    obj.grabbed = objectState.grabbed || []
-    console.log(obj.grabbed.length)
   },
 
 
@@ -495,14 +491,7 @@ export default {
    * @param {number} messages -- Object array of messages.
    * @return {void}
    */
-  sayMessages(messages) {
-    // Set world messages, empty and replace data to avoid destroying references
-    while (this.messages.length)
-      this.messages.pop();
-    messages.forEach(message => this.messages.push(message))
-
-    // Call onObjectSay callback
-    if (typeof this.onObjectSay === 'function')
-      this.onObjectSay(messages);
+  appendMessage(message) {
+    this.messages.push(message)
   },
 }

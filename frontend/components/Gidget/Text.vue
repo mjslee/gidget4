@@ -1,6 +1,14 @@
 <template>
-  <component :is="component"></component>
+  <component class="gidget-text" :is="component"></component>
 </template>
+
+
+<style>
+.gidget-text h1 {
+  font-size: 2rem !important
+}
+
+</style>
 
 
 <script>
@@ -39,6 +47,9 @@ export default {
      * @return {string}
      */
     markdownHtml() {
+      if (typeof this.text !== 'string')
+        return '[error]';
+
       return DOMPurify.sanitize(Marked(this.text.replace(/```/g, '\n```')))
     },
 
