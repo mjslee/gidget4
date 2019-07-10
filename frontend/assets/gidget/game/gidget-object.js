@@ -43,42 +43,34 @@ export default {
 
 
   /**
-   * Shout message as an object (usually for an overhead message).
-   * Use -1 as a millisecond duration to not reset message to default text.
-   *
-   * @param {string} message
-   * @param {number} ms -- Millisecond duration.
+   * Temporarily modify property.
    */
-  async say(message, ms=3000) {
-    // Set message
-    this.message = message
-    if (ms < 0)
-      return;
+  async tempModify(property, tempValue, ms) {
+    // Save value
+    const value = this[property]
 
-    // Wait between transitions
+    // Set custom transition
+    this[property] = tempValue
+
     await new Promise(resolve => setTimeout(resolve, ms));
 
-    // Reset to default
-    this.message = ''
+    // Wait for transition to end, reset to empty string
+    this[property] = value
   },
 
 
   /**
-   * Set transition for a duration.
-   * Use 'await' to wait for transition to finish.
+   * Say overhead message.
    *
-   * @param {string} transition -- Transition to apply.
-   * @param {number} ms -- Duration in milliseconds.
+   * @param {object} message
    */
-  async setTransition(transition, ms) {
-    // Set custom transition
-    this.transition = transition
+  async say(message) {
+    // Ignore messages without text
+    if (typeof message.text !== 'string')
+      return false;
 
-    // Wait between transitions
-    await new Promise(resolve => setTimeout(resolve, ms));
-
-    // Reset to default
-    this.transition = ''
+    // Temporarily modify message property
+    this.tempModify('message', message.text, 3000)
   },
 
 

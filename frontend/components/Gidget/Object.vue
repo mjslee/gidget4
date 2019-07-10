@@ -8,7 +8,6 @@
 
 
 <style scoped>
-
 label {
   color: white;
   background: rgba(0, 0, 0, 0.25);

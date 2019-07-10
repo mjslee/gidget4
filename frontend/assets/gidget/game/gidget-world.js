@@ -472,7 +472,7 @@ export default {
    *
    * @param {function} conditions
    */
-  async tick() {
+  async gameTick() {
     for (var i = this.objects.length - 1; i >= 0; i--) {
       // Verify onTick exists
       if (typeof this.objects[i].onTick !== 'function')
@@ -491,7 +491,7 @@ export default {
    * @param {number} messages -- Object array of messages.
    * @return {void}
    */
-  appendMessage(message) {
+  say(message) {
     this.messages.push(message)
   },
 }
