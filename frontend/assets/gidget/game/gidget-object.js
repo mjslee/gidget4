@@ -26,6 +26,7 @@ export default {
    * Create object in world.
    *
    * @param {number} id Unique identification number.
+   * @return {object}
    */
   create(id) {
     this.id = id;
@@ -44,6 +45,11 @@ export default {
 
   /**
    * Temporarily modify property.
+   *
+   * @param {string} property -- Property key to modify
+   * @param {any} tempValue -- Value to set property to
+   * @param {number} ms -- Temporary duration in milliseconds
+   * @return {void}
    */
   async tempModify(property, tempValue, ms) {
     // Save value
@@ -63,6 +69,7 @@ export default {
    * Say overhead message.
    *
    * @param {object} message
+   * @return {boolean}
    */
   async say(message) {
     // Ignore messages without text
@@ -71,22 +78,24 @@ export default {
 
     // Temporarily modify message property
     this.tempModify('message', message.text, 3000)
+    return true;
   },
 
 
   /**
    * Move object to position in world.
-   * @param {number} x
-   * @param {number} y
+   *
+   * @param {object} position
+   * @return {boolean}
    */
-  move(x, y) {
+  move(position) {
     // Validate new position
-    if (!this.world.isPositionValid(x, y))
+    if (!this.world.isPositionValid(position))
       return false;
 
     // Individually set these as to not change references
-    this.position.x = x;
-    this.position.y = y;
+    this.position.x = position.x;
+    this.position.y = position.y;
 
     // Detect object collisions
     this.world.detectCollision(this);
@@ -100,21 +109,22 @@ export default {
 
   /**
    * Promise: Walk object to a position.
-   * @param {number} x
-   * @param {number} y
+   *
+   * @param {object} position
    * @param {number} seconds Amount of seconds the walk should last for.
+   * @return {boolean}
    */
-  walk(x, y, ms=500) {
+  walk(position, ms=500) {
     return new Promise((resolve, reject) => {
       // Get path from current position to specified position
-      const path = this.world.getPath(this.position.x, this.position.y, x, y);
+      const path = this.world.getPath(this.position, position);
 
       // Nowhere to move!
       if (path.length < 1)
     	return reject(1);
 
       // Move immediately to circumvent setInterval's initial delay
-      if (!this.move(...path[0]))
+      if (!this.move(path[0]))
     	return reject(2);
 
       // If we only needed to move once, then finish
@@ -122,11 +132,11 @@ export default {
     	return resolve(0);
 
       // Calculate duration of each step
-      const stepMilliseconds = ms / (path.length - 1);
+      const stepMs = ms / (path.length - 1);
 
       // Move one tile every given milliseconds
       let i = 1, interval = setInterval(() => {
-    	if (!this.move(...path[i])) {
+    	if (!this.move(path[i])) {
     	  // Could not move!
     	  clearInterval(interval);
     	  return reject(2);
@@ -137,14 +147,16 @@ export default {
     	  clearInterval(interval);
     	  return resolve(0);
     	}
-      }, stepMilliseconds);
+      }, stepMs);
     });
   },
 
 
   /**
    * Grab object into this object's grabbed array.
+   *
    * @param {number/string} ID or name of object to grab.
+   * @return {boolean}
    */
   grab(id_or_name) {
     // Get object
@@ -170,7 +182,9 @@ export default {
   /**
    * Drop object from this object's grabbed array.
    * Do not set 'id_or_name' to drop self when grabbed.
+   *
    * @param {number/string} ID or name of object to drop.
+   * @return {boolean}
    */
   drop(id_or_name) {
     // Drop self when self has been grabbed
@@ -197,6 +211,8 @@ export default {
 
   /**
    * Remove this object from the world.
+   *
+   * @return {boolean}
    */
   remove() {
     return this.grabber === undefined ? this.world.removeObject(this.id) : false;

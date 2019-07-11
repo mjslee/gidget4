@@ -179,6 +179,9 @@ export default {
 
     // Catch user/parse error
     catch (e) {
+      // Display error in console
+      console.log(e);
+
       // Call error callback
       if (callCallbacks && typeof this.onError === 'function')
         this.onError(step.ln, e.message);

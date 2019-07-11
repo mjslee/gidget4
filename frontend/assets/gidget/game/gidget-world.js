@@ -192,19 +192,6 @@ export default {
 
 
   /**
-   * Find object based on its position.
-   *
-   * @param {number} x
-   * @param {number} y
-   */
-  getObjectAt(x, y) {
-    return this.getObject((obj) =>
-      obj.position.x === x &&
-      obj.position.y === y);
-  },
-
-
-  /**
    * Merge two objects together while keeping the 'exposed' property intact.
    *
    * @param {object} obj1 - Object to merge into.
@@ -316,15 +303,15 @@ export default {
 
   /*
    * Move object to another tile's position.
-   * Using 'obj.move(x, y)' is the preferred way to move objects.
+   * Using 'obj.move({ x, y })' is the preferred way to move objects.
    *
    * @param {object} obj Object that was moved.
    * @return {boolean}
    */
-  moveObject(obj, x, y) {
+  moveObject(obj, position) {
     let result = true;
-    if (x !== undefined || y !== undefined)
-      result = obj.move(x, y);
+    if (typeof position === 'object' && typeof position.x !== 'undefined')
+      result = obj.move(position);
 
     // Call callback
     if (typeof this.onObjectMoved === 'function')
@@ -344,7 +331,7 @@ export default {
   detectCollision(obj) {
     this.objects.filter((obj2) =>
       obj.id !== obj2.id &&
-      this.insideObjectBoundaries(obj, obj2.position.x, obj2.position.y)
+      this.insideObjectBoundaries(obj, obj2.position)
     ).forEach((obj2) => {
       let maybePromise = undefined;
 
@@ -394,10 +381,10 @@ export default {
    * @param {number} y
    * @return {boolean}
    */
-  insideObjectBoundaries(obj, x, y) {
+  insideObjectBoundaries(obj, position) {
     // Do not scale boundaries up with object's 'scale' property
     if (!obj.scaleBoundaries)
-      return obj.position.x === x && obj.position.y === y;
+      return obj.position.x === position.x && obj.position.y === position.y;
 
     // Scale boundaries up with object scale
     // Less efficient than above, so use this only with scaleBoundaries
@@ -418,31 +405,32 @@ export default {
    * @param {number} toY
    * @return {array}
    */
-  getPath(fromX, fromY, toX, toY) {
-    // Get differences of current position and desired position
-    let diffX = toX - fromX;
-    let diffY = toY - fromY;
-
+  getPath(fromPosition, toPosition) {
     const result = [];
+    const newPosition = _.clone(fromPosition);
+
+    // Get differences of current position and desired position
+    let diffX = toPosition.x - newPosition.x;
+    let diffY = toPosition.y - newPosition.y;
 
     // Get differences to zero to be at desired position
     while (diffX != 0 || diffY != 0) {
       if (diffX > 0) {
         diffX--;
-        result.push([++fromX, fromY]);
+        result.push({ x: ++newPosition.x, y: newPosition.y });
       }
       else if (diffX < 0) {
         diffX++;
-        result.push([--fromX, fromY]);
+        result.push({ x: --newPosition.x, y: newPosition.y });
       }
 
       if (diffY > 0) {
         diffY--;
-        result.push([fromX, ++fromY]);
+        result.push({ x: newPosition.x, y: ++newPosition.y });
       }
       else if (diffY < 0) {
         diffY++;
-        result.push([fromX, --fromY]);
+        result.push({ x: newPosition.x, y: --newPosition.y });
       }
     }
 
@@ -458,11 +446,13 @@ export default {
    *
    * @param {function} conditions
    */
-  isPositionValid(x, y) {
-    return (x >= 0 && x <= this.size - 1 && y >= 0 && y <= this.size - 1) &&
-      !this.getObject((obj) =>
-        obj.blocking && this.insideObjectBoundaries(obj, x, y)
-      )
+  isPositionValid(position) {
+    return (
+      position.x >= 0 && position.x <= this.size - 1 &&
+      position.y >= 0 && position.y <= this.size - 1
+    ) && !this.getObject((obj) =>
+      obj.blocking && this.insideObjectBoundaries(obj, position)
+    )
   },
 
 

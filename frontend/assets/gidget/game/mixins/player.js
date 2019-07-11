@@ -7,9 +7,10 @@ export default {
      * Move in direction.
      */
     _move(addX, addY) {
-      const move = this.object.move(
-        this.object.position.x + addX, this.object.position.y + addY
-      );
+      const move = this.object.move({
+        x: this.object.position.x + addX,
+        y: this.object.position.y + addY
+      });
 
       if (!move)
         this.object.say({ text: Messages.Gidget.CANNOT_MOVE });
@@ -75,7 +76,7 @@ export default {
     async goto(value) {
       const obj = this.object.world.getObject(value)
       if (obj)
-        await this.object.walk(obj.position.x, obj.position.y)
+        await this.object.walk(obj.position)
     }
   }
 }
