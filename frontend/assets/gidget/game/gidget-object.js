@@ -76,8 +76,15 @@ export default {
     if (typeof message.text !== 'string')
       return false;
 
-    // Temporarily modify message property
-    this.tempModify('message', message.text, 3000)
+    // Dialogue message?
+    if (message.type === 'dialogue')
+      this.world.say(message);
+
+    // Overhead message?
+    else
+      // Temporarily modify message property
+      this.tempModify('message', message.text, 3000)
+
     return true;
   },
 
@@ -114,7 +121,7 @@ export default {
    * @param {number} seconds Amount of seconds the walk should last for.
    * @return {boolean}
    */
-  walk(position, ms=500) {
+  walk(position, ms=100) {
     return new Promise((resolve, reject) => {
       // Get path from current position to specified position
       const path = this.world.getPath(this.position, position);

@@ -27,7 +27,6 @@ export default {
 
 
   translate(message, constants) {
-    console.log(message);
     const parsedMessage = this.parse(message);
     if (typeof parsedMessage === 'undefined')
       return;

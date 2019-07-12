@@ -281,6 +281,9 @@ export default {
       this.$refs.code.setErrorLine(ln - 1);
       this.$refs.controls.reset();
 
+      if (!message)
+        return;
+
       const translation = Exception.translate(message,
         Messages.Exceptions.Translations);
       //this.$refs.dialogue.text = translation || message;

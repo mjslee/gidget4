@@ -2,78 +2,95 @@ import Messages from '@/constants/messages'
 
 
 export default {
-  exposed: {
-    /**
-     * Move in direction.
-     */
-    _move(addX, addY) {
-      const move = this.object.move({
-        x: this.object.position.x + addX,
-        y: this.object.position.y + addY
+  /**
+   * Move object relative to its current position.
+   */
+  relativeMove(direction, amount, position) {
+    position.x += this.position.x;
+    position.y += this.position.y;
+    const move = this.move(position);
+
+    // Cannot move
+    if (!move) {
+      this.say({
+        type: 'dialogue',
+        text: Messages.Gidget.CANNOT_MOVE
       });
+    }
 
-      if (!move)
-        this.object.say({ text: Messages.Gidget.CANNOT_MOVE });
-      else
-        this.object.energy -= 20;
-    },
+    // Can move
+    else {
+      const spaces = amount == 1 ? '' : `${amount} spaces` ;
+      this.say({
+        type: 'dialogue',
+        text: `I'm moving ${spaces} ${direction}!`
+      });
+      this.energy -= 20;
+    }
+  },
 
-    /**
-     * Say directional move.
-     * "I'm moving left!" || "I'm moving 2 spaces left!"
-     */
-    _moveSay(direction, amount) {
-      const spaces = amount == 1 ? '' : `${amount} spaces ` ;
-      this.object.say({ text: `I'm moving ${spaces}${direction}!` });
-    },
 
+  exposed: {
     /**
      * Move object one space to the left.
      */
     left(amount=1) {
-      this._moveSay('left', amount);
-      this._move(amount * -1, 0);
+      return this.object.relativeMove('left', amount, { x: amount * -1, y: 0 });
     },
 
     /**
-     * Move object one space to the left.
+     * Move object one space to the right.
      */
     right(amount=1) {
-      this._moveSay('right', amount);
-      this._move(amount, 0);
+      return this.object.relativeMove('right', amount, { x: amount, y: 0 });
     },
 
     /**
      * Move object one space upwards.
      */
     up(amount=1) {
-      this._moveSay('up', amount);
-      this._move(0, amount * -1);
+      return this.object.relativeMove('up', amount, { x: 0, y: amount * -1 });
     },
 
     /**
-     * Move object one space upwards.
+     * Move object one space downwards.
      */
     down(amount=1) {
-      this._moveSay('down', amount);
-      this._move(0, amount);
+      return this.object.relativeMove('down', amount, { x: 0, y: amount });
     },
 
     /**
-     *
+     * Grab an object.
      */
     grab(value) {
-      this.object.grab(value);
+      this.object.say({
+        text: `I'm grabbing the ${value}...`,
+        type: 'dialogue'
+      })
+      return this.object.grab(value);
     },
 
     /**
-     *
+     * Drop an object.
      */
     drop(value) {
-      this.object.drop(value);
+      this.object.say({
+        text: `I'm dropping the ${value}...`,
+        type: 'dialogue'
+      })
+      return this.object.drop(value);
     },
 
+
+    /**
+     * Go to an object.
+     */
     async goto(value) {
+      this.object.say({
+        text: `I'm going to the [[${value}]]...`,
+        type: 'dialogue'
+      })
+
       const obj = this.object.world.getObject(value)
       if (obj)
         await this.object.walk(obj.position)

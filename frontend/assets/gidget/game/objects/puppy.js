@@ -1,5 +1,6 @@
 export default {
   image: 'puppy.png',
+  blocking: true,
 
   onCreate() {
     // Bark every 20 seconds
