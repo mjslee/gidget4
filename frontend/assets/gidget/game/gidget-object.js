@@ -128,15 +128,15 @@ export default {
 
       // Nowhere to move!
       if (path.length < 1)
-    	return reject(1);
+    	return reject(true);
 
       // Move immediately to circumvent setInterval's initial delay
       if (!this.move(path[0]))
-    	return reject(2);
+        throw 'Wow';
 
       // If we only needed to move once, then finish
       if (path.length === 1)
-    	return resolve(0);
+    	return resolve(true);
 
       // Calculate duration of each step
       const stepMs = ms / (path.length - 1);
@@ -146,13 +146,15 @@ export default {
     	if (!this.move(path[i])) {
     	  // Could not move!
     	  clearInterval(interval);
-    	  return reject(2);
+          return reject({
+            message: 'Blank is undefined'
+          });
     	}
 
     	if (++i >= path.length) {
     	  // Reached destination
     	  clearInterval(interval);
-    	  return resolve(0);
+    	  return resolve(true);
     	}
       }, stepMs);
     });

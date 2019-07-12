@@ -75,13 +75,11 @@ import GidgetDialogue from './Dialogue'
 import GidgetGoals from './Goals'
 import GidgetControls from './Controls'
 
-import Messages from '@/constants/messages'
-
 import Game from '@/assets/gidget/game/gidget-game'
 import Exception from '@/assets/gidget/lang/js-exception'
-import {
-  GIDGET_SUCCESS_IMAGE, GIDGET_FAILURE_IMAGE, GIDGET_START_OVER_IMAGE
-} from '@/constants/paths'
+
+import { GIDGET_SPRITES } from '@/constants/paths'
+import { GIDGET_MESSAGES } from '@/constants/messages'
 
 
 
@@ -232,8 +230,8 @@ export default {
     async stopScript() {
       this.resetScript();
       this.$refs.dialogue.set([{
-        text: Messages.Gidget.STARTING_OVER,
-        leftImage: GIDGET_START_OVER_IMAGE
+        text: GIDGET_MESSAGES.STARTING_OVER,
+        leftImage: GIDGET_SPRITES.STARTING_OVER
       }])
     },
 
@@ -284,9 +282,8 @@ export default {
       if (!message)
         return;
 
-      const translation = Exception.translate(message,
-        Messages.Exceptions.Translations);
-      //this.$refs.dialogue.text = translation || message;
+      const translation = Exception.translate(message);
+      this.$refs.dialogue.append({ text: translation || message });
     },
 
 
@@ -314,10 +311,10 @@ export default {
      * @return {void}
      */
     onSuccess() {
-      this.playerObject.image = GIDGET_SUCCESS_IMAGE
+      this.playerObject.image = GIDGET_SPRITES.SUCCESS
       this.$refs.dialogue.append({
-        text: Messages.Gidget.SUCCESS,
-        leftImage: GIDGET_SUCCESS_IMAGE
+        text: GIDGET_MESSAGES.SUCCESS,
+        leftImage: this.playerObject.image
       })
     },
 
@@ -328,10 +325,10 @@ export default {
      * @return {void}
      */
     onFailure() {
-      this.playerObject.image = GIDGET_FAILURE_IMAGE
+      this.playerObject.image = GIDGET_SPRITES.FAILURE
       this.$refs.dialogue.append({
-        text: Messages.Gidget.FAILURE,
-        leftImage: GIDGET_FAILURE_IMAGE,
+        text: GIDGET_MESSAGES.FAILURE,
+        leftImage: this.playerObject.image
       })
     }
   }

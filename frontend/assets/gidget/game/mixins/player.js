@@ -1,4 +1,4 @@
-import Messages from '@/constants/messages'
+import { GIDGET_MESSAGES } from '@/constants/messages'
 
 
 export default {
@@ -14,7 +14,7 @@ export default {
     if (!move) {
       this.say({
         type: 'dialogue',
-        text: Messages.Gidget.CANNOT_MOVE
+        text: GIDGET_MESSAGES.CANNOT_MOVE
       });
     }
 
