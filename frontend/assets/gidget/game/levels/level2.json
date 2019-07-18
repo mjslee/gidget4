@@ -3,10 +3,13 @@
   "size": 4,
 
   "tiles": [
-    {
-      "type": "dirt",
-      "position": { "x": 1, "y": 2 }
-    }
+    { "type": "dirt", "position": { "x": 2, "y": 2 }},
+    { "type": "dirt", "position": { "x": 3, "y": 2 }},
+    { "type": "dirt", "position": { "x": 1, "y": 3 }},
+    { "type": "dirt", "position": { "x": 2, "y": 3 }},
+    { "type": "dirt", "position": { "x": 3, "y": 3 }},
+    { "type": "dirt", "position": { "x": 3, "y": 1 }},
+    { "type": "dirt", "position": { "x": 0, "y": 3 }}
   ],
 
   "objects": [
