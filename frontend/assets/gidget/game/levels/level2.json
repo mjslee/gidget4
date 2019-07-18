@@ -2,12 +2,19 @@
   "code": "function grabThing(name) {\n  Gidget.goto(name)\n  Gidget.grab(name)\n}\n\ngrabThing('Puppy')\ngrabThing('Bunny')",
   "size": 4,
   "tiles": [
-    { "type": "dirt", "position": { "x": 1, "y": 2 }}
+    { "type": "dirt", "position": { "x": 2, "y": 2 }},
+    { "type": "dirt", "position": { "x": 3, "y": 2 }},
+    { "type": "dirt", "position": { "x": 1, "y": 3 }},
+    { "type": "dirt", "position": { "x": 2, "y": 3 }},
+    { "type": "dirt", "position": { "x": 3, "y": 3 }},
+    { "type": "dirt", "position": { "x": 3, "y": 1 }},
+    { "type": "dirt", "position": { "x": 0, "y": 3 }}
   ],
   "objects": [
     { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
-    { "type": "Puppy", "position": { "x": 2, "y": 3 } },
-    { "type": "Bunny", "position": { "x": 2, "y": 2 } }
+    { "type": "Fox", "position": { "x": 2, "y": 3 } },
+    { "type": "Lion", "position": { "x": 2, "y": 2 } },
+    { "type": "Tiger", "position": { "x": 0, "y": 3 }}
   ],
   "goals": [
     { "assert": "equal", "arguments": [ "Gidget.position", "Puppy1.position" ] },
