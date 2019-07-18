@@ -1,0 +1,49 @@
+{
+    "code": "Gidget.goto('Puppy')",
+    "size": 4,
+  
+    "tiles": [
+      {
+        "type": "dirt",
+        "position": { "x": 1, "y": 2 },
+        "position": { "x": 2, "y": 2 },
+        "position": { "x": 3, "y": 2 }
+      }
+    ],
+  
+    "objects": [
+      {
+        "type": "Gidget",
+        "mixins": [ "Player" ],
+        "position": { "x": 1, "y": 1 }
+      },
+      {
+        "type": "Puppy",
+        "position": { "x": 3, "y": 3 }
+      }
+    ],
+  
+    "goals": [
+      {
+        "assert": "equal",
+        "arguments": [
+          "Gidget.position", { "x": 0, "y": 1 }
+        ]
+      }
+    ],
+  
+    "dialogue": [
+      {
+        "text": "[['wow']]\n# Hello\nThis is the first message."
+      },
+      {
+        "text": "This is the second message, with a left chat head!",
+        "leftImage": "gidget.png"
+      },
+      {
+        "text": "Ready? Let's go!",
+        "leftImage": "gidget-silly.png"
+      }
+    ]
+  }
+  
