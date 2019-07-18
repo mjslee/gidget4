@@ -1,0 +1,52 @@
+{
+    "code": "Gidget.goto('Bunny')",
+    "size": 4,
+  
+    "tiles": [
+      {
+        "type": "dirt",
+        "position": { "x": 4, "y": 2 }
+      },
+
+      {
+          "type": "grass",
+          "position": {"x":3, "y": 1 }
+      }
+    ],
+  
+    "objects": [
+      {
+        "type": "Gidget",
+        "mixins": [ "Player" ],
+        "position": { "x": 1, "y": 1 }
+      },
+      {
+        "type": "Bunny",
+        "mixins": [ "Object" ],
+        "position": { "x": 3, "y": 3 }
+      }
+    ],
+  
+    "goals": [
+      {
+        "assert": "equal",
+        "arguments": [
+          "Gidget.position", { "x": 0, "y": 1 }
+        ]
+      }
+    ],
+  
+    "dialogue": [
+      {
+        "text": "This is level 6."
+      },
+      {
+        "text": "This is the second message, with a left chat head!",
+        "leftImage": "gidget.png"
+      },
+      {
+        "text": "Ready? Let's go!",
+        "leftImage": "gidget-silly.png"
+      }
+    ]
+  }

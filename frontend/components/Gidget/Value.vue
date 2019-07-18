@@ -145,17 +145,17 @@ export default {
     /**
      * Update value prop.
      *
-     * Do NOT use this as a computed value. Since every time the code store is
-     * updated (and we're talking about ANY value in the code store), the value
-     * will be updated and a bunch of unnecessary work will be done that will
-     * bog down the game fluidity.
+     * Do NOT use this as a computed value. Since every time the evaldata store
+     * is updated (and we're talking about ANY value in the code store), the
+     * value will be updated and a bunch of unnecessary work will be done that
+     * will bog down the game fluidity.
      *
      * @return {any}
      */
     updateValue() {
       // Identifiers can have evaluated data
       if (this.isIdentifier)
-        this.value = this.$store.getters['code/getValue'](this.code)
+        this.value = this.$store.getters['evaldata/getValue'](this.code)
 
       // Non-identifiers won't have evaluated data
       else

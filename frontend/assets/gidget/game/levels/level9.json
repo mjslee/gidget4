@@ -1,0 +1,18 @@
+{
+  "code": "Gidget.left();",
+  "size": 3,
+  "tiles": [],
+  "objects": [
+    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
+    { "type": "Puppy", "position": { "x": 0, "y": 1 } }
+  ],
+  "goals": [
+    {
+      "assert": "equal",
+      "arguments": ["Gidget.position", "Puppy.position"]
+    }
+  ],
+  "dialogue": [
+    { "text": "This is level 9." }
+  ]
+}

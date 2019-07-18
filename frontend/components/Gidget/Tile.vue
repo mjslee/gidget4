@@ -1,5 +1,8 @@
 <template>
-  <div :style="{ height: size + 'rem', width: size + 'rem' }"></div>
+  <div
+    :id="`tile-${x}-${y}`"
+    :style="{ height: size + 'rem', width: size + 'rem' }"
+  />
 </template>
 
 

@@ -1,223 +1,185 @@
-import _ from 'lodash'
+import JSStepper from '@/assets/gidget/lang/js-stepper'
 import GidgetWorld from '@/assets/gidget/game/gidget-world'
-import Stepper from '@/assets/gidget/lang/js-stepper'
 
 
 
 export default {
   world: undefined,
-  stepper: undefined,
-  initialState: undefined,
+  states: [],
 
 
   /**
-   * Create instance of GidgetGame.
+   * Creates an instance of GidgetGame.
    *
-   * @param {array[object]} objects - Objects to insert on creation.
-   * @param {object} attrs - Keyword-arguments to merge into new instance.
-   * @return {object} - Game object.
+   * @param {array[object]} objects - GameObjects to insert on creation.
+   * @param {object} attrs - Attributes to merge into world.
+   * @return {object} An instance of GidgetGame.
    */
-  create(objects, attrs) {
-    const game = _.cloneDeep(this);
-    game.stepper = Stepper.create();
-    game.world = GidgetWorld.create(attrs);
+  create(gameobjects, attrs) {
+    // Create a deep clone of this object so we won't mutate this one
+    // and then we'll use self to set up our GidgetGame clone
+    const self = _.cloneDeep(this)
 
-    // Insert objects on creation
-    game.createObjects(objects);
+    // Create and assign a GidgetWorld object to our game. Our attributes will
+    // be merged into the new world
+    self.world = GidgetWorld.create(attrs)
 
-    game.initialState = game.world.getState();
+    // Set up the javascript stepper, set the onStep callback so the world
+    // states can be saved on each step
+    self.stepper = JSStepper.create();
+    self.stepper.onStep = () => self.save()
 
-    return game;
+    // Create game objects, then save the initial game state that we can
+    // restore on reset
+    gameobjects.forEach(gameobject => self.world.createObject(gameobject))
+    self.states.push(self.world.getState())
+
+    return self;
   },
 
 
   /**
-   * Reset game world by creating new stepper instance and restoring the game
-   * to its initial state.
+   * Resets the game by resetting the stepper and restoring the intial game
+   * state.
    *
    * @return {void}
    */
   reset() {
-    // Reset stepper
-    this.stepper = Stepper.create();
+    // Reset code stepper for a clean run
+    this.stepper.reset();
 
-    // Restore initial state
-    this.set(-1);
+    // Restore the world to its initial state, then re-add the intial state
+    // to this object so it can be re-used again and again for resets
+    this.world.restoreState(this.states[0])
+    this.states = [this.states[0]]
   },
 
 
   /**
-   * Create game world objects and save the game state.
+   * Saves world state and causes a game tick.
    *
-   * @param {array[object]} objects - Objects to create.
    * @return {void}
    */
-  createObjects(objects) {
-    objects.forEach(object => this.world.createObject(object));
+  save() {
+    this.states.push(this.world.getState())
+    this.world.gameTick()
   },
 
 
   /**
-   * Get map of world object clones.
-   * World props, object props, and functions are omitted.
+   * Sets the game to a state.
    *
-   * @return {object}
-   */
-  getObjectsMap() {
-    return _.cloneDeep(
-      _.omit(_.omitBy(this.world.getObjects(), _.isFunction), ['world', 'object'])
-    );
-  },
-
-
-  /**
-   * Add grouped game objects to the imports as their name.
-   *
-   * @param {Array[Object]} imports - Imports to be merged in on.
-   * @return {object}
-   */
-  getImports(imports) {
-    const result = Object.assign({}, imports);
-
-    const objects = this.world.getObjects();
-    Object.keys(objects).forEach(key => {
-      // Add exposed GidgetObject methods
-      if (typeof objects[key].exposed === 'object')
-        result[key] = objects[key].exposed;
-    });
-
-    return result;
-  },
-
-
-  /**
-   * Set current step and state by index.
-   *
-   * @param {number} index
-   * @return {boolean}
+   * @param {number} index - Index of state to be restored.
+   * @return {object} The step belonging to specified index.
    */
   async set(index) {
-    // Restore initial game state when passed a value less than 0
-    if (index < 0)
-      return this.world.restoreState(this.initialState);
+    // Because we set an initial state on creation, there will always be one
+    // more state than step so we'll need to add one to the index
+    index += 1
 
-    // Already have a saved state? Use it
-    if (index < this.stepper.index) {
-      const step = this.stepper.steps[index];
-      if (!step)
-        return;
+    // Ensure index is valid
+    if (index < 0 || index >= this.stepper.steps.length + 1)
+      return undefined
 
-      // Call step callback
-      if (typeof this.onStep === 'function')
-        this.onStep(step);
+    // Get state at index or return
+    const state = this.states[index]
+    if (!state)
+      return undefined
 
-      return this.world.restoreState(step.state);
+    // TODO: Simplify callback system
+    // Run pre-restore callbacks
+    await this.runCallbacks('before', state)
+
+    // Restore the world state
+    this.world.restoreState(state)
+
+    // Run post-restore callbacks
+    await this.runCallbacks('after', state)
+
+    // Get the current step and assign 'gameData' property to store a
+    // combination of gameobjects and game data. If 'gameData' is already
+    // assigned then skip this to avoid unnecessary processing.
+    const step = this.stepper.steps[index]
+    if (step && step.data && !step.gameData)
+      step.gameData = Object.assign(
+        _.cloneDeep(step.data), this.world.getObjectsSanitized()
+      )
+
+    // Return the step for further processing
+    return step
+  },
+
+
+  async runFunctions(functions) {
+    if (_.isEmpty(functions))
+      return false;
+
+    for (let i = 0, len = functions.length; i < len; i++)
+      if (_.isFunction(functions[i]))
+        await functions[i]();
+
+    return true;
+  },
+
+
+  async runCallbacks(prefix, state) {
+    if (!state[prefix]) {
+      state[prefix] = true
+      await this.runFunctions(state.callbacks[prefix + 'once'])
     }
 
-    // If we have gotten this far then we need the state of a step that hasn't
-    // been collected yet
-
-    // Call 'next' until we reached the desired state or no further steps exist
-    while (index >= this.stepper.index) {
-      if (!await this.next())
-        break;
-    }
+    await this.runFunctions(state.callbacks[prefix + 'always'])
   },
 
 
   /**
-   * Run script until it hits a breakpoint or ends.
+   * Returns an object of objects that have been exposed.
    *
-   * @param {String} code - JavaScript code to evaluate.
-   * @param {Array[Object]} imports - Game external imports.
-   * @return {boolean}
+   * @param {object} extraImports - Imports to expose.
+   * @return {object} Object of game objects.
    */
-  evaluate(code, imports) {
-    const result = this.stepper.run(code, this.getImports(imports));
+  getExposed(extraImports) {
+    // Object to collect imports
+    const exposed = {}
 
-    // Parsing error, call error callback
-    if (result.hasError && typeof this.onError === 'function')
-      this.onError(result.error.ln, result.error.message);
+    // Merge extra imports into the exposed result
+    if (typeof extraImports == 'object')
+      Object.assign(exposed, extraImports)
 
-    return !result.hasError;
+    // Merge the game objects; game objects are more important than
+    // extra imports, so if we have a conflict where a game object and an extra
+    // import have the same key then game objects will take precedence.
+    const gameObjects = this.world.getObjects()
+    Object.assign(exposed, gameObjects)
+
+    // Loop over each of the newly merged elements; when a merged objects has
+    // an 'exposed' object property, re-assign the property of 'exposed' to be
+    // the exposed property of the object.
+    for (const prop in exposed) {
+      if (exposed.hasOwnProperty(prop))
+        if (typeof exposed[prop].exposed == 'object')
+          exposed[prop] = exposed[prop].exposed
+    }
+
+    // Return the collection
+    return exposed
   },
 
 
   /**
-   * Run next step in stepper.
+   * Runs code.
    *
-   * @param {boolean} callCallbacks
-   * @return {boolean}
+   * @param {string} code - JavaScript code to evaluate.
+   * @param {object} imports - External game imports.
+   * @return {object} Details of the code evaluation.
    */
-  async next(callCallbacks=true) {
-    // Get step
-    let step = this.stepper.next();
-    if (!step)
-      return;
+  run(code, imports) {
+    // Assign imports as an object if its not passed in as one
+    if (typeof imports != 'object')
+      imports = {}
 
-    // Set stepper index to the next step's index
-    this.stepper.index = step.index;
-
-    // Get next step so we can set the nextStep property
-    // nextStep property is used to show next line in code editor
-    if (step.hasNext)
-      step.nextStep = this.stepper.next(1);
-
-    // Try running the step
-    try {
-      // Wait for next step to complete
-      step = await this.stepper.step();
-
-      // Throw parse error
-      if (step.hasError)
-        throw new Error(step.error.message);
-
-      // Save state
-      step.state = this.world.getState();
-      step.objectsMap = this.getObjectsMap();
-    }
-
-    // Catch user/parse error
-    catch (e) {
-      // Display error in console
-      console.log(e);
-
-      // Call error callback
-      if (callCallbacks && typeof this.onError === 'function')
-        this.onError(step.ln, e.message);
-      return;
-    }
-
-    finally {
-      // Call step callback
-      if (callCallbacks && typeof this.onStep === 'function')
-        this.onStep(step);
-
-      // Call finish callback if there is no next step
-      if (callCallbacks && !step.hasNext && typeof this.onFinish === 'function')
-        this.onFinish(step);
-    }
-
-    return step;
-  },
-
-
-  /**
-   * Run all stepper steps.
-   *
-   * @param {number} wait - Milliseconds to wait between steps.
-   * @return {void}
-   */
-  async run(wait=0) {
-    let step;
-    do {
-      // Run the next step
-      step = await this.next(wait > 0);
-
-      // Wait for 'wait' milliseconds
-      if (step && step.cmd && wait > 0)
-        await new Promise(resolve => setTimeout(resolve, wait));
-    }
-    while(step && step.hasNext);
+    // Run stepper with the code and the exposed game objects and imports
+    const exposedImports = this.getExposed(imports)
+    return this.stepper.run(code, exposedImports)
   }
 }

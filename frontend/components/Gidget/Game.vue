@@ -123,7 +123,10 @@ export default {
       data: {},
 
       // World
-      game: Game.create(this.objects, { size: this.size }),
+      game: Game.create(this.objects, {
+        size: this.size,
+        messages: this.dialogue
+      }),
 
       // World objects
       playerObject: undefined,
@@ -133,23 +136,16 @@ export default {
   },
 
 
-  created() {
-    this.game.onStep = this.onStep;
-    this.game.onError = this.onError;
-    this.game.onFinish = this.onFinish;
-  },
-
-
   mounted() {
+    window.stepWait = 100
+    window.stepDuration = 300
+
     // Get important objects
     this.playerObject = this.game.world.getObject('Gidget');
 
-    // Set initial game dialogue
-    this.game.world.messages = this.dialogue
-
     // Set game objects in code so components like Dialogue and Goals can
-    // access these variables before any code is ran
-    this.updateStoreData({});
+    // access these objects before any code is ran
+    this.$store.commit('evaldata/setData', this.game.world.getObjectsSanitized())
   },
 
 
@@ -157,34 +153,17 @@ export default {
     /**
      * Reset game script, components, and game object references.
      *
-     * @param {number} sayMessage
-     * @return {void}
-     */
-    updateStoreData(data, objects) {
-      if (typeof objects === 'undefined')
-        objects = this.game.getObjectsMap();
-
-      this.$store.commit('code/setData', data);
-      this.$store.commit('code/setObjects', objects);
-    },
-
-
-    /**
-     * Reset game script, components, and game object references.
-     *
      * @return {void}
      */
     resetScript() {
       // Breaks object references
-      this.game.reset();
+      this.game.reset()
 
       // Reset Vue components
-      this.$refs.code.reset();
-      this.$refs.controls.reset();
-      this.$refs.goals.reset();
-
-      // Reset data
-      this.updateStoreData({})
+      this.$refs.code.reset()
+      this.$refs.controls.reset()
+      this.$refs.goals.reset()
+      this.$refs.dialogue.reset()
     },
 
 
@@ -195,18 +174,18 @@ export default {
      */
     setupScript() {
       // Reset game
-      this.resetScript(false);
+      this.resetScript()
 
       // Evaluate user code
-      const evaluated = this.game.evaluate(this.$refs.code.code, this.imports);
-      if (!evaluated)
-        return false;
+      const runner = this.game.run(this.$refs.code.code, this.imports)
 
-      // Set controls data
-      this.$refs.controls.isRunning = true;
-      this.$refs.controls.isBusy = true;
-      this.$refs.controls.stepCount = this.game.stepper.steps.length;
-      return true;
+      // Errors? No go
+      if (_.get(runner, 'hasError'))
+        return false
+
+      // Set up the controls
+      this.$refs.controls.setup(runner.steps.length)
+      return true
     },
 
 
@@ -216,9 +195,18 @@ export default {
      * @return {void}
      */
     async runScript() {
-      if (this.setupScript())
-        await this.game.run(75);
-      this.$refs.controls.isBusy = false;
+      const $controls = this.$refs.controls
+
+      if (!$controls.isRunning)
+        this.setupScript()
+
+      while ($controls.hasNext) {
+        const step = await this.game.set(++$controls.stepIndex)
+        if (step)
+          this.onStep(step)
+
+        await new Promise(resolve => setTimeout(resolve, window.stepWait))
+      }
     },
 
 
@@ -227,12 +215,12 @@ export default {
      *
      * @return {void}
      */
-    async stopScript() {
+    stopScript() {
       this.resetScript();
-      this.$refs.dialogue.set([{
+      this.$refs.dialogue.append({
         text: GIDGET_MESSAGES.STARTING_OVER,
         leftImage: GIDGET_SPRITES.STARTING_OVER
-      }])
+      })
     },
 
 
@@ -243,12 +231,17 @@ export default {
      * @return {void}
      */
     async setStep(index) {
-      if (!this.$refs.controls.isRunning)
-        this.setupScript(false);
+      const $controls = this.$refs.controls
+      $controls.stepIndex = index
 
-      this.$refs.controls.isBusy = true;
-      await this.game.set(index);
-      this.$refs.controls.isBusy = false;
+      if (!$controls.isRunning)
+        this.setupScript()
+
+      const step = await this.game.set(index)
+      if (!step)
+        return
+
+      this.onStep(step)
     },
 
 
@@ -258,14 +251,18 @@ export default {
      * @return {void}
      */
     onStep(step) {
-      // Set controls input range value
-      this.$refs.controls.stepIndex = step.index;
+      // Probably an error, remove active line
+      if (_.isUndefined(this.$refs.code) || _.isUndefined(step)) {
+        this.$refs.code.setActiveLine(-1)
+        return
+      }
 
-      // Set code editor lines
-      this.$refs.code.setActiveLine(step.ln - 1);
+      // Set code editor line
+      this.$refs.code.setActiveLine(step.ln - 1)
 
-      // Set data collected from evaluation
-      this.updateStoreData(step.data, step.objectsMap);
+      // Store data collected from game evaluation
+      if (_.has(step, 'gameData'))
+        this.$store.commit('evaldata/setData', step.gameData)
     },
 
 
