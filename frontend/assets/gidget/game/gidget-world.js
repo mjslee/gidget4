@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import GidgetObject from './gidget-object'
 import GidgetObjects from './objects'
 import GidgetMixins from './mixins'
@@ -10,8 +9,10 @@ export default {
   size: 3,
   objects: [],
   messages: [],
+  callbacks: {},
 
   // Callbacks
+  // TODO: Remove all unnecessary callbacks
   //onObjectAdded(obj) { console.log(obj, 'An object was added!') }
   //onObjectMoved(obj) { console.log(obj, 'An object was moved!') }
   //onObjectRemoved(obj) { console.log(obj, 'An object was removed!') }
@@ -19,174 +20,193 @@ export default {
 
 
   /**
-   * Clone a new GidgetWorld instance
+   * Creates a new GidgetWorld instance.
    *
    * @param {dictionary} kwargs Default properties.
    */
-  create(kwargs) {
-    const world = _.cloneDeep(this);
-    Object.assign(world, kwargs);
-    window.world = world
-    return world;
+  create(attrs) {
+    const self = _.cloneDeep(this)
+    Object.assign(self, attrs)
+    return self
   },
 
 
   /**
-   * Get state of Gidget world.
+   * Creates a restorable world state object.
    *
-   * @return {string}
+   * @return {object} A world state object
    */
   getState() {
-    // Useful properties
+    // Create an object to restore important world properties
     const state = {
+      // Primitives
       nextId: this.nextId,
       size: this.size,
+
+      // Arrays / Objects
       objects: [],
       messages: this.messages,
+      callbacks: this.callbacks
     };
 
+    // TODO: Use a map function instead of this loop
     // Save objects
     for (let i = 0, len = this.objects.length; i < len; i++)
-      state.objects.push(this.prepareObject(this.objects[i]));
+      state.objects.push(this.getObjectState(this.objects[i]));
 
-    // Clone entire state to remove all object references
-    return _.cloneDeep(state);
+    // Deep clone the state to accidental prevent mutation
+    return _.cloneDeep(state)
   },
 
 
   /**
-   * Restore world state.
-   * State can be retrieved from the 'getState' method.
+   * Restores the world state using a world state object.
+   * State can be retrieved using the 'getState' method.
    *
-   * @param {object} state
-   * @return {string}
+   * @param {object} state - A world state object.
+   * @return {boolean} Success of restoration.
    */
   restoreState(state) {
-    // Restore primitives
-    let type;
+    // Ensure the passed state value is an object
+    if (typeof state != 'object')
+      return false
+
+    // Restore properties of primitive types (number, string, boolean)
     for (let prop in state) {
-      type = typeof state[prop];
-      if (type == 'string' || type == 'number')
-        this[prop] = state[prop];
+      const type = typeof state[prop]
+      if (type == 'number' || type == 'string' || type == 'boolean')
+        this[prop] = state[prop]
     }
 
-    // Restore objects
+    // Restore game objects
     for (let i = 0, len = state.objects.length; i < len; i++)
-      this.restoreObject(state.objects[i]);
+      this.restoreObjectState(state.objects[i])
 
-    // Restore messages
-    this.messages = state.messages;
+    // Restore messages and callbacks
+    this.messages = state.messages
+    this.callbacks = state.callbacks
+
+    return true
   },
 
 
   /**
-   * Prepare game object for serialization by recreating it without functions
-   * and nested objects (except 'position').
+   * Creates a restorable game object state object.
+   * WARNING: Result is not cloned; mutations WILL affect the game object.
    *
-   * @param {object} object -- Game Object
-   * @return {object}
+   * @param {object} gameObject - A game object.
+   * @return {object} A game object state object.
    */
-  prepareObject(object) {
-    const state = {};
+  getObjectState(gameObject) {
+    // Create state object to store the game objects state
+    const objectState = {}
 
-    // Assign values with primitive type
-    let type;
-    for (let prop in object) {
-
-      // Add all values to state
-      type = typeof object[prop];
-      if (type !== 'function' && type !== 'object')
-        state[prop] = object[prop];
+    // Copy values of primitive properties to the state object
+    for (let prop in gameObject) {
+      const type = typeof gameObject[prop]
+      if (type == 'number' || type == 'string' || type == 'boolean')
+        objectState[prop] = gameObject[prop]
     }
 
-    // Position should be the ONLY object to serialize and restore
-    state.position = object.position
-
-    // Return state
-    return state;
+    // Position should be the only object that needs to be saved
+    objectState.position = gameObject.position
+    return objectState
   },
 
 
   /**
-   * Restore object from a state.
+   * Restores a game object to a state using a game object state object.
    *
-   * @param {object} objectState
+   * @param {object} objectState - A game object state object.
+   * @return {boolean} Success of game object restoration.
    */
-  restoreObject(objectState) {
-    const obj = this.getObject(objectState);
+  restoreObjectState(objectState) {
+    // Get the object to restore by using the state
+    const gameObject = this.getObject(objectState)
 
-    // Object doesn't exist anymore, re-create it
-    if (typeof obj === 'undefined')
-      return this.createObject(objectState);
+    // If an object doesn't exist, we'll need to re-create it. An object may
+    // not exist because it was removed from the world or is grabbed by another
+    // object.
+    if (typeof gameObject != 'object')
+      return this.createObject(objectState)
 
-    // Object still exists, update properties
-    for (let prop in objectState)
-      if (prop !== 'position')
-        obj[prop] = objectState[prop];
+    // Loop over each property in the objectState
+    for (let prop in gameObject) {
+      const type = typeof gameObject[prop]
+      if (type == 'number' || type == 'string' || type == 'boolean')
+        gameObject[prop] = objectState[prop]
+    }
 
-    // Update position
-    obj.position.x = objectState.position.x;
-    obj.position.y = objectState.position.y;
+    // Update position's x and y individually to keep the variable reference
+    // TODO: Find out if this is still necessary with the new engine
+    gameObject.position.x = objectState.position.x
+    gameObject.position.y = objectState.position.y
   },
 
 
   /**
-   * Get all objects in game world.
-   * Objects with the same name will be grouped as an array.
+   * Gets a map object of all the world's game objects.
+   * Objects with the same name will be grouped into an array.
    *
-   * @return {object}
+   * @return {object} Map object of game objects.
    */
   getObjects() {
-    const result = {};
+    // TODO: Clean this function up, it's very confusing to read
+    const objectsMap = {}
 
     this.objects.forEach(obj => {
       // Create object in results if it doesn't already exist
-      if (typeof result[obj.name] === 'undefined')
-        result[obj.name] = obj;
+      if (typeof objectsMap[obj.name] == 'undefined')
+        objectsMap[obj.name] = obj
 
       // Multiple objects of the same name already exist, add new object
       // to the array
-      else if (Array.isArray(result[obj.name])) {
-        result[obj.name].push(obj);
-        obj.arrayIndex = result[obj.name].length - 1;
+      else if (Array.isArray(objectsMap[obj.name])) {
+        objectsMap[obj.name].push(obj)
+        obj.arrayIndex = objectsMap[obj.name].length - 1
       }
 
       // Object of the same name already exists, turn it into an array so they
       // can be grouped together
       else {
-        let prevObj = result[obj.name];
-        result[obj.name] = [ prevObj, obj ];
-        prevObj.arrayIndex = 0;
-        obj.arrayIndex = 1;
+        let prevObj = objectsMap[obj.name]
+        objectsMap[obj.name] = [prevObj, obj]
+        prevObj.arrayIndex = 0
+        obj.arrayIndex = 1
       }
-    });
+    })
 
-    return result;
+    return objectsMap
   },
 
 
   /**
-   * Find object based on specified conditions.
-   * @param {object|number|string|function} object -- Object, object name, or
-   *                                                  object id.
+   * Gets a cloned map object of game objects without functions and without
+   * objects that will cause a circular loop.
+   *
+   * @return {object} Map object of game objects.
    */
-  getObject(object) {
-    switch (typeof object) {
-      // ID
-      case 'number':
-        return this.objects.find(obj => obj.id === object)
+  getObjectsSanitized() {
+    // TODO: Find a more native solution. Maybe using 'getObjectState'?
+    return _.cloneDeep(
+      _.omit(_.omitBy(this.getObjects(), _.isFunction), ['world', 'object'])
+    )
+  },
 
-      // Name
-      case 'string':
-        return this.objects.find(obj => obj.name === object)
 
-      // Object
-      case 'object':
-        return this.objects.find(obj => obj.id === object.id)
-
-      // Conditions
-      default:
-        return this.objects.find(object);
+  /**
+   * Gets a game object based on specified conditions.
+   *
+   * @param {object|number|string|function} conditions - An object identifier.
+   * @return {object} A game object.
+   */
+  getObject(conditions) {
+    // TODO: This function needs to be optimized
+    switch (typeof conditions) {
+      case 'number': return this.objects.find(obj => obj.id   === conditions)
+      case 'string': return this.objects.find(obj => obj.name === conditions)
+      case 'object': return this.objects.find(obj => obj.id   === conditions.id)
+      default: return this.objects.find(conditions)
     }
   },
 
@@ -198,38 +218,42 @@ export default {
    * @param {object} obj2 - Object to merge from.
    */
   mergeObjects(obj1, obj2) {
-    if (typeof obj1 === 'undefined' || typeof obj2 === 'undefined')
-      return false;
+    // TODO: Figure out how to use '_.merge' instead of this
+
+    // Ensure obj1 and obj2 were passed in
+    if (typeof obj1 == 'undefined' || typeof obj2 == 'undefined')
+      return false
 
     // Store exposed prop
-    const exposed = obj1.exposed || {};
+    const exposed = obj1.exposed || {}
 
     // Deep clone the object we will be merging so that we can modify it
     // at any point without it disrupting other objects that also have merged
     // the same object.
-    obj2 = _.cloneDeep(obj2);
+    obj2 = _.cloneDeep(obj2)
 
     // Merge obj2[exposed] into dict that will become obj1[exposed]
     if (typeof obj2.exposed === 'object')
-      Object.assign(exposed, obj2.exposed);
+      Object.assign(exposed, obj2.exposed)
 
     // Merge obj2 into obj1
-    Object.assign(obj1, obj2);
+    Object.assign(obj1, obj2)
 
     // Reassign exposed
-    obj1.exposed = exposed;
-    obj1.exposed.object = obj1;
-    return true;
+    obj1.exposed = exposed
+    obj1.exposed.object = obj1
+    return true
   },
 
 
   /**
-   * Create object in world. 'type' attribute in kwargs is required.
+   * Creates a game object in the world. 'type' attribute in kwargs is required.
    * For example: kwargs={type: 'Gidget'}
    *
    * @param {object} kwargs Attributes to assign to object on creation.
    */
   createObject(kwargs) {
+    // TODO: Move this funtionality to GidgetObject's 'create' method
     const obj = _.cloneDeep(GidgetObject);  // Clone template object
     obj.world = this;
 
@@ -261,33 +285,34 @@ export default {
 
 
   /**
-   * Add object to world. Use 'createObject' to create a new object.
+   * Adds a game object to world.
    *
-   * @param {object} obj Object to add.
-   * @return {boolean}
+   * @param {object} gameObject - A game object.
+   * @return {boolean} Success of adding object.
    */
-  addObject(obj) {
-    this.objects.push(obj);
+  addObject(gameObject) {
+    this.objects.push(gameObject)
 
     // Call callback
     if (typeof this.onObjectAdded === 'function')
-      this.onObjectAdded(this);
+      this.onObjectAdded(this)
 
-    return true;
+    return true
   },
 
 
   /**
-   * Remove object from world.
+   * Removes an object from the world by its id.
    *
    * @param {object} obj Object to remove.
-   * @return {boolean}
+   * @return {boolean} Success of removal.
    */
   removeObject(id) {
+    // TODO: Change this to remove by the object and not by the id
     // Find objects index by its ID
-    let index = this.objects.findIndex((obj) => obj.id === id);
+    let index = this.objects.findIndex(obj => obj.id === id)
     if (index < 0)
-      return false;
+      return false
 
     // Remove from world's objects
     this.objects.splice(index, 1);
@@ -328,7 +353,7 @@ export default {
    * @param {object} obj Object to detect collisions for.
    * @return {void}
    */
-  detectCollision(obj) {
+  getCollisions(obj) {
     this.objects.filter((obj2) =>
       obj.id !== obj2.id &&
       this.insideObjectBoundaries(obj, obj2.position)
@@ -462,15 +487,15 @@ export default {
    *
    * @param {function} conditions
    */
-  async gameTick() {
-    for (var i = this.objects.length - 1; i >= 0; i--) {
-      // Verify onTick exists
-      if (typeof this.objects[i].onTick !== 'function')
-        return;
+  gameTick() {
+    // Clear callbacks, so they're not re-ran on the next tick
+    this.callbacks = {}
 
-      // Call onTick
-      await this.objects[i].onTick.call(this.objects[i]);
-    }
+    // Call 'onTick' for each object that has it
+    this.objects.forEach((object) => {
+      if (_.isFunction(object.onTick))
+        object.onTick.call(object)
+    })
   },
 
 
@@ -482,6 +507,17 @@ export default {
    * @return {void}
    */
   say(message) {
-    this.messages.push(message)
-  },
+    const lastElement = this.messages[this.messages.length - 1]
+
+    if (lastElement && message.text === lastElement.text) {
+      if (typeof lastElement.repeats != 'number')
+        lastElement.repeats = 2
+      else
+        lastElement.repeats += 1
+    }
+
+    else {
+      this.messages.push(message)
+    }
+  }
 }

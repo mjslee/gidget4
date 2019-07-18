@@ -16,7 +16,6 @@
         ref="objects"
         v-for="object in objects" :key="'obj-' + object.id"
         @click.native="selectedObject = object"
-        @update:position="updateObjectPosition"
         :class="selectedObject && selectedObject.id === object.id ? 'selected' : ''"
         :object="object"
         :size="tileSize"
@@ -57,6 +56,7 @@
 #world {
   display: inline-block;
   overflow: none;
+  user-select: none;
 }
 
 .game-row {
@@ -114,12 +114,6 @@ export default {
       tileMargin: .1,
       selectedObject: undefined,
     }
-  },
-
-
-  mounted() {
-    window.addEventListener('resize', this.updateObjectPositions);
-    this.updateObjectPositions();
   },
 
 
@@ -187,44 +181,6 @@ export default {
 
       // Return tile type or default to grass
       return tile ? tile.type : "grass";
-    },
-
-
-    /**
-     * Get visual offset of a Tile's DOM element.
-     * @param {number} x
-     * @param {number} y
-     */
-    getTileRect(x, y) {
-      const tile = this.$refs.tiles.find(tile => tile.x === x && tile.y === y);
-      return !tile ? undefined : {
-        x: tile.$el.offsetLeft, y: tile.$el.offsetTop,
-        height: tile.$el.offsetHeight, width: tile.$el.offsetWidth
-      };
-    },
-
-    /**
-     * Set a GidgetObject's absolute position.
-     * @param {object} object
-     */
-    updateObjectPosition(object) {
-      const position = object.object.position;
-      const rect = this.getTileRect(position.x, position.y);
-
-      if (rect)
-        object.setPosition(rect);
-    },
-
-    /**
-     * Update all object positions in world.
-     */
-    updateObjectPositions() {
-      if (!this.$refs.objects)
-        return;
-
-      this.$refs.objects.forEach(object => {
-        this.updateObjectPosition(object);
-      });
     },
 
     /*

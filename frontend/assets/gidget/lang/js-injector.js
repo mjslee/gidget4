@@ -6,6 +6,7 @@ export default {
   ignoreNodes: ['SwitchCase', 'BreakStatement'],
   parseOptions: { loc: true, range: true, tolerant: true },
 
+
   /*
    * Traverse through AST.
    *
@@ -51,7 +52,7 @@ export default {
    * Get all identifiers declared after an index.
    *
    * @param {number} index - Index number to search after.
-   * @return {string} String-dictionary.
+   * @return {string} - String-dictionary.
    */
   getIdentifiersAfter(index) {
     let result = '';
@@ -81,7 +82,7 @@ export default {
   /*
    * Get list of modifications to make to input string.
    *
-   * @return {array} Array of [['modification text', index]...]
+   * @return {array} - Array of [['modification text', index]...]
    */
   getModifications() {
     const result = [];
@@ -132,7 +133,7 @@ export default {
   /*
    * Run text modifications on an input.
    *
-   * @return {string} Modified input.
+   * @return {string} - Modified input.
    */
   run(input) {
     const esprima = require('esprima');
@@ -150,7 +151,7 @@ export default {
     });
 
     this.flatTree.reverse();
-    //input += `;__step__(0, [0, 0]);`;
+    input += `;__step__(0, [0, 0]);`;
     return input;
   },
 };

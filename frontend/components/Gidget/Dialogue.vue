@@ -2,22 +2,21 @@
   <div style="position:relative">
     <img class="left head image is-64x64" :src="leftImage" v-if="leftImage">
     <img class="right head image is-64x64" :src="rightImage" v-if="rightImage">
-    <div class="box">
-      <b-button
-        icon-right="restart"
-        class="is-pulled-right"
-        @click="reset"
-      >
-      </b-button>
 
+    <div class="box">
       <template>
+        <!-- Markdown -->
         <GidgetText :text="message.text" v-if="message" />
-        <span class="tag is-info is-rounded is-small" v-if="repeats > 0">
-          {{ repeats + 1 }}
+
+
+        <!-- Message Repeats -->
+        <span class="tag is-info is-rounded is-small" v-if="message.repeats">
+          {{ message.repeats }}
         </span>
       </template>
 
       <div class="buttons has-addons is-centered">
+        <!-- Previous Message -->
         <b-button
           icon-left="chevron-left"
           :disabled="!hasPrev"
@@ -26,6 +25,7 @@
           Prev
         </b-button>
 
+        <!-- Next Message -->
         <b-button
           type="is-primary"
           icon-right="chevron-right"
@@ -34,6 +34,8 @@
         >
           Next
         </b-button>
+
+        <!-- <span>&#38;nbsp;{{ index }}/{{ messages.length &#45; 1 }}</span> -->
       </div>
     </div>
   </div>
@@ -67,7 +69,6 @@
   transform: rotate(-5deg);
 }
 
-
 .right.head {
   right: 0;
   transform: rotate(5deg);
@@ -100,12 +101,8 @@ export default {
 
   data() {
     return {
-      // Clone initial messages so we can restore them whenever
-      initialMessages: _.cloneDeep(this.messages),
-      internalMessages: [],
-
-      index: 0,
-      repeats: 0,
+      messageIndex: 0,
+      internalMessages: this.messages,
 
       isSuccess: false,
       isFailure: false
@@ -113,31 +110,39 @@ export default {
   },
 
 
-  mounted() {
-    // Set level introduction messages
-    // if (this.internalMessages.length > 0)
-    //   this.nextMessage()
-  },
-
-
   computed: {
+    /**
+     *
+     */
     message() {
-      return this.internalMessages[this.index] || {}
+      return this.internalMessages[this.messageIndex] || {}
     },
 
+    /**
+     *
+     */
     hasPrev() {
-      return this.index > 0
+      return this.messageIndex > 0
     },
 
+    /**
+     *
+     */
     hasNext() {
-      return this.index < this.internalMessages.length - 1
+      return this.messageIndex < this.internalMessages.length - 1
     },
 
+    /**
+     *
+     */
     rightImage() {
       if (this.message.rightImage)
         return SPRITE_PATH + this.message.rightImage
     },
 
+    /**
+     *
+     */
     leftImage() {
       if (this.message.leftImage)
         return SPRITE_PATH + this.message.leftImage
@@ -146,12 +151,15 @@ export default {
 
 
   watch: {
-    messages: {
-      handler(newVal) {
-        if (Array.isArray(newVal) && newVal.length > 0)
-          this.internalMessages = _.cloneDeep(newVal)
-      },
-      deep: true
+    /**
+     *
+     */
+    messages(newVal, oldVal) {
+      if (!Array.isArray(newVal))
+        return
+
+      this.internalMessages = _.cloneDeep(newVal)
+      this.messageIndex = _.isEmpty(oldVal) ? 0 : newVal.length - 1
     }
   },
 
@@ -161,9 +169,7 @@ export default {
      * Reset dialogue to initial messages.
      */
     reset() {
-      this.internalMessages = _.cloneDeep(this.initialMessages)
-      this.index = 0
-      this.repeats = 0
+      this.messageIndex = 0
     },
 
     /**
@@ -172,15 +178,22 @@ export default {
      * @param {array[object]} messages
      * @return {void}
      */
-    set(messages) {
-      this.internalMessages = messages
-      this.index = 0
+    set(messages, index=-1) {
+      this.$nextTick(() => {
+        this.internalMessages = messages
+        this.messageIndex = index >= 0 ? index : messages.length - 1
+      })
     },
 
 
+    /**
+     *
+     */
     append(message) {
-      this.internalMessages.push(message)
-      this.index = this.internalMessages.length - 1
+      this.$nextTick(() => {
+        this.internalMessages.push(message)
+        this.messageIndex = this.internalMessages.length - 1
+      })
     },
 
 
@@ -191,7 +204,7 @@ export default {
      */
     next() {
       if (this.hasNext)
-        this.index += 1
+        this.messageIndex += 1
     },
 
 
@@ -202,7 +215,7 @@ export default {
      */
     prev() {
       if (this.hasPrev)
-        this.index -= 1
+        this.messageIndex -= 1
     },
   },
 }
