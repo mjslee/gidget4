@@ -9,7 +9,7 @@ export default {
   size: 3,
   objects: [],
   messages: [],
-  callbacks: {},
+  hooks: [],
 
   // Callbacks
   // TODO: Remove all unnecessary callbacks
@@ -46,7 +46,7 @@ export default {
       // Arrays / Objects
       objects: [],
       messages: this.messages,
-      callbacks: this.callbacks
+      hooks: this.hooks
     };
 
     // TODO: Use a map function instead of this loop
@@ -71,6 +71,10 @@ export default {
     if (typeof state != 'object')
       return false
 
+    // Restore messages and hooks
+    this.messages = state.messages
+    this.hooks = state.hooks
+
     // Restore properties of primitive types (number, string, boolean)
     for (let prop in state) {
       const type = typeof state[prop]
@@ -81,10 +85,6 @@ export default {
     // Restore game objects
     for (let i = 0, len = state.objects.length; i < len; i++)
       this.restoreObjectState(state.objects[i])
-
-    // Restore messages and callbacks
-    this.messages = state.messages
-    this.callbacks = state.callbacks
 
     return true
   },
@@ -488,8 +488,8 @@ export default {
    * @param {function} conditions
    */
   gameTick() {
-    // Clear callbacks, so they're not re-ran on the next tick
-    this.callbacks = {}
+    // Clear hooks, so they're not re-ran on the next tick
+    this.hooks = []
 
     // Call 'onTick' for each object that has it
     this.objects.forEach((object) => {

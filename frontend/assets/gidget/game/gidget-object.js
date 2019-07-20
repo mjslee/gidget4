@@ -75,23 +75,11 @@ export default {
    * @param {function} func -- Callback function
    * @return {void}
    */
-  run(func, options) {
-    // TODO: Find a better name to describe this action
-    // TODO: Remake this, find a more concise way to handle these callbacks
-    if (!_.isObject(options))
-      options = {}
-
-    if (!_.has(options, 'when'))
-      options.when = 'before'
-
-    if (!_.has(options, 'repeat'))
-      options.repeat = 'once'
-
-    const key = options.when + options.repeat
-    if (!_.has(this.world.callbacks, key))
-      this.world.callbacks[key] = []
-
-    this.world.callbacks[key].push(func)
+  run(callback) {
+    this.world.hooks.push({
+      callback: callback,
+      when: "before"
+    })
   },
 
 

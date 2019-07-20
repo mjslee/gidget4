@@ -15,7 +15,7 @@ export default {
    * @param {object} attrs - Attributes to merge into world.
    * @return {object} An instance of GidgetGame.
    */
-  create(gameobjects, attrs) {
+  create(gameObjects, attrs) {
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
     const self = _.cloneDeep(this)
@@ -31,7 +31,7 @@ export default {
 
     // Create game objects, then save the initial game state that we can
     // restore on reset
-    gameobjects.forEach(gameobject => self.world.createObject(gameobject))
+    gameObjects.forEach(gameobject => self.world.createObject(gameobject))
     self.states.push(self.world.getState())
 
     return self;
@@ -79,22 +79,21 @@ export default {
 
     // Ensure index is valid
     if (index < 0 || index >= this.stepper.steps.length + 1)
-      return undefined
+      return
 
     // Get state at index or return
     const state = this.states[index]
     if (!state)
-      return undefined
+      return
 
-    // TODO: Simplify callback system
-    // Run pre-restore callbacks
-    await this.runCallbacks('before', state)
+    // Run pre-restore hooks
+    await this.runHooks(state, hook => hook.when == 'before')
 
     // Restore the world state
     this.world.restoreState(state)
 
-    // Run post-restore callbacks
-    await this.runCallbacks('after', state)
+    // Run post-restore hooks
+    await this.runHooks(state, hook => hook.when == 'after')
 
     // Get the current step and assign 'gameData' property to store a
     // combination of gameobjects and game data. If 'gameData' is already
@@ -110,25 +109,27 @@ export default {
   },
 
 
-  async runFunctions(functions) {
-    if (_.isEmpty(functions))
-      return false;
+  /**
+   * Run world state hooks depending on conditions.
+   *
+   * @param {object} state - World state object that contains hooks.
+   * @param {conditions} state - World state object that contains hooks.
+   * @return {boolean} Hooks ran.
+   */
+  async runHooks(state, conditions) {
+    // Ensure we have hooks to run
+    if (typeof state.hooks != 'object')
+      return false
 
-    for (let i = 0, len = functions.length; i < len; i++)
-      if (_.isFunction(functions[i]))
-        await functions[i]();
+    // Filter hooks by specified conditions
+    const hooks = state.hooks.filter(conditions)
 
-    return true;
-  },
+    // Loop over each hook, if the callback is a function then run it
+    for (var i = 0, len = hooks.length; i < len; i++)
+      if (typeof hooks[i].callback == 'function')
+        await hooks[i].callback()
 
-
-  async runCallbacks(prefix, state) {
-    if (!state[prefix]) {
-      state[prefix] = true
-      await this.runFunctions(state.callbacks[prefix + 'once'])
-    }
-
-    await this.runFunctions(state.callbacks[prefix + 'always'])
+    return true
   },
 
 
