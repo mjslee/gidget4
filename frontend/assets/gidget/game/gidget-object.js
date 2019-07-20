@@ -21,9 +21,6 @@ export default {
   blocking: false,
   scaleBoundaries: false,
 
-  // DOM
-  elementId: '',
-
 
   /**
    * Creates object.
@@ -34,7 +31,6 @@ export default {
   create(id) {
     // TODO: Redo this, clone an instance of GidgetObject instead
     this.id = id
-    this.elementId = `${this.type}-${this.name}-${this.id}`
 
     // Give object a name if not already set
     if (this.name === undefined && this.type !== undefined)
@@ -56,16 +52,6 @@ export default {
   remove() {
     // TODO: Make this less confusing
     return this.grabber === undefined ? this.world.removeObject(this.id) : false;
-  },
-
-
-  /**
-   * Gets associated DOM element.
-   *
-   * @return {object} A dom element.
-   */
-  getElement() {
-    return document.getElementById(this.elementId)
   },
 
 
