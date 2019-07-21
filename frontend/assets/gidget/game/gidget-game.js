@@ -8,6 +8,9 @@ export default {
   world: undefined,
   states: [],
 
+  initialState: undefined,
+  initialData: undefined,
+
 
   /**
    * Creates an instance of GidgetGame.
@@ -33,7 +36,10 @@ export default {
     // Create game objects, then save the initial game state that we can
     // restore on reset
     gameObjects.forEach(gameobject => self.world.createObject(gameobject))
-    self.states.push(self.world.getState())
+
+    // Save initial world state and data so they can be restored on reset
+    self.initialState = self.world.getState()
+    self.initialData = self.world.getObjectsSanitized()
 
     return self;
   },
@@ -49,10 +55,9 @@ export default {
     // Reset code stepper for a clean run
     this.stepper.reset();
 
-    // Restore the world to its initial state, then re-add the intial state
-    // to this object so it can be re-used again and again for resets
-    this.world.restoreState(this.states[0])
-    this.states = [this.states[0]]
+    // Clear states and restore the world to its initial state
+    this.states = []
+    return this.set(-1, false)
   },
 
 
@@ -69,22 +74,22 @@ export default {
 
   /**
    * Sets the game to a state.
+   * An invalid index will restore the game to its initial state.
    *
    * @param {number} index - Index of state to be restored.
    * @return {object} The step belonging to specified index.
    */
   async set(index, runHooks=true) {
-    // Because we set an initial state on creation, there will always be one
-    // more state than step so we'll need to add one to the index
-    index += 1
+    // Get state to restore
+    const state =
+      // If the index is invalid then use the initial state
+      0 > index >= this.states.length ? _.cloneDeep(this.initialState) :
 
-    // Ensure index is valid
-    if (index < 0 || index >= this.stepper.steps.length + 1)
-      return
+      // Get state at the specified index
+      this.states[index]
 
-    // Get state at index or return
-    const state = this.states[index]
-    if (!state)
+    // Validate state exists
+    if (typeof state != 'object')
       return
 
     // Run pre-restore hooks
@@ -106,13 +111,20 @@ export default {
     // Get the current step and assign 'gameData' property to store a
     // combination of gameobjects and game data. If 'gameData' is already
     // assigned then skip this to avoid unnecessary processing.
-    const step = this.stepper.steps[index]
-    if (step && step.data && !step.gameData)
-      step.gameData = Object.assign(
-        _.cloneDeep(step.data), this.world.getObjectsSanitized()
-      )
+    let step = this.stepper.steps[index - 1]
+
+    if (step && step.data && !step.gameData) {
+      const gameObjects = this.world.getObjectsSanitized()
+      step.gameData = Object.assign(_.cloneDeep(step.data), gameObjects)
+    }
+
+    // If there is no step, we should create a fake step that contains the data
+    // for a reset
+    if (!step)
+      step = { gameData: _.cloneDeep(this.initialData) }
 
     // Return the step for further processing
+    step.hasNext = index < this.stepper.steps.length - 1
     return step
   },
 
@@ -205,6 +217,13 @@ export default {
 
     // Run stepper with the code and the exposed game objects and imports
     const exposedImports = this.getExposed(imports)
-    return this.stepper.run(code, exposedImports)
+    const result = this.stepper.run(code, exposedImports)
+
+    // Restore first state; this stops the final positions from being
+    // revealed (and a potential animation glitch)
+    if (result)
+      this.set(0, false)
+
+    return result
   }
 }
