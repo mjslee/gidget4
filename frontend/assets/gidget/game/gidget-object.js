@@ -1,3 +1,6 @@
+import { wait } from './gidget-utility'
+
+
 export default {
   // Parents
   world: undefined,
@@ -56,16 +59,13 @@ export default {
 
 
   /**
-   * Adds a function to be called during a visual step.
+   * Adds a callback to be called during a visual step.
    *
    * @param {function} func -- Callback function
    * @return {void}
    */
-  run(callback) {
-    this.world.hooks.push({
-      callback: callback,
-      when: "before"
-    })
+  addHook(callback, when='before') {
+    this.world.hooks.push({ callback, when })
   },
 
 
@@ -158,7 +158,7 @@ export default {
    * @param {object} position
    * @return {boolean}
    */
-  move(position) {
+  move(position, collisions=true, move=true) {
     // Validate new position
     if (!this.world.isPositionValid(position))
       return false
@@ -169,10 +169,12 @@ export default {
     this.position.y = position.y
 
     // Detect object collisions
-    this.world.getCollisions(this)
+    if (collisions)
+      this.world.getCollisions(this)
 
     // Call without 'x' and 'y' arguments so only the callback is ran
-    this.world.moveObject(this)
+    if (move)
+      this.world.moveObject(this)
 
     return true
   },
@@ -195,7 +197,7 @@ export default {
 
     // Step by step...
     path.forEach(position => {
-      if (!this.move(position))
+      if (!this.move(position, true, false))
         return false
 
       // Store valid path for the UI to interpret
@@ -206,16 +208,9 @@ export default {
     if (!validPath.length)
       return false
 
-    // Set path inside and add it to callbacks list
-    this.run(async () => {
-      // Walking animation
-      this.path = validPath
-
-      // Wait for the default step duration so the animation
-      // has enough time to play
-      const wait = window.stepDuration + window.stepWait
-      await new Promise(resolve => setTimeout(resolve, wait))
-    })
+    // Call onWalk callback
+    if (typeof this.onWalk == 'function')
+      this.onWalk(validPath)
 
     return true
   },

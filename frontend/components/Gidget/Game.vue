@@ -77,6 +77,7 @@ import GidgetControls from './Controls'
 
 import Game from '@/assets/gidget/game/gidget-game'
 import Exception from '@/assets/gidget/lang/js-exception'
+import { wait } from '@/assets/gidget/game/gidget-utility'
 
 import { GIDGET_SPRITES } from '@/constants/paths'
 import { GIDGET_MESSAGES } from '@/constants/messages'
@@ -138,7 +139,7 @@ export default {
 
   mounted() {
     window.stepWait = 100
-    window.stepDuration = 300
+    window.stepDuration = 500
 
     // Get important objects
     this.playerObject = this.game.world.getObject('Gidget');
@@ -176,15 +177,20 @@ export default {
       // Reset game
       this.resetScript()
 
-      // Evaluate user code
+      // Evaluate user code,
       const runner = this.game.run(this.$refs.code.code, this.imports)
 
       // Errors? No go
-      if (_.get(runner, 'hasError'))
+      if (runner.hasError)
         return false
+
+      // Restore initial state, this stops the final positions from being
+      // revealed since it is ran on the same Vue tick as 'run' above
+      this.game.set(0, false)
 
       // Set up the controls
       this.$refs.controls.setup(runner.steps.length)
+
       return true
     },
 
@@ -201,11 +207,15 @@ export default {
         this.setupScript()
 
       while ($controls.hasNext) {
-        const step = await this.game.set(++$controls.stepIndex)
-        if (step)
-          this.onStep(step)
+        const step = await this.game.set($controls.stepIndex)
+        if (!step)
+          return
 
-        await new Promise(resolve => setTimeout(resolve, window.stepWait))
+        $controls.stepIndex += 1
+
+        // Call step handler and wait the standard step wait time
+        this.onStep(step)
+        await wait(window.stepWait)
       }
     },
 

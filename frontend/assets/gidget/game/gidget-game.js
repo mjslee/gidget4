@@ -4,6 +4,7 @@ import GidgetWorld from '@/assets/gidget/game/gidget-world'
 
 
 export default {
+  key: 0,
   world: undefined,
   states: [],
 
@@ -72,7 +73,7 @@ export default {
    * @param {number} index - Index of state to be restored.
    * @return {object} The step belonging to specified index.
    */
-  async set(index) {
+  async set(index, runHooks=true) {
     // Because we set an initial state on creation, there will always be one
     // more state than step so we'll need to add one to the index
     index += 1
@@ -87,13 +88,20 @@ export default {
       return
 
     // Run pre-restore hooks
-    await this.runHooks(state, hook => hook.when == 'before')
+    if (runHooks) {
+      await this.runHooks(state, hook => hook.when == 'before')
+
+      // Increment update key so any hook callbacks that are running can
+      // be cancelled
+      this.key += 1
+    }
 
     // Restore the world state
     this.world.restoreState(state)
 
     // Run post-restore hooks
-    await this.runHooks(state, hook => hook.when == 'after')
+    if (runHooks)
+      await this.runHooks(state, hook => hook.when == 'after')
 
     // Get the current step and assign 'gameData' property to store a
     // combination of gameobjects and game data. If 'gameData' is already
@@ -110,7 +118,7 @@ export default {
 
 
   /**
-   * Run world state hooks depending on conditions.
+   * Runs hooks from the a world state depending on conditions.
    *
    * @param {object} state - World state object that contains hooks.
    * @param {conditions} state - World state object that contains hooks.
@@ -123,11 +131,27 @@ export default {
 
     // Filter hooks by specified conditions
     const hooks = state.hooks.filter(conditions)
+    if (!hooks.length)
+      return false
 
-    // Loop over each hook, if the callback is a function then run it
-    for (var i = 0, len = hooks.length; i < len; i++)
-      if (typeof hooks[i].callback == 'function')
-        await hooks[i].callback()
+    // Store an update key; when another restore happens this key will be
+    // incremented but keyCopy will keep the same value. If these two variables
+    // are not equal then we know the state has changed we shouldn't run any
+    // further hooks from this state
+    const keyCopy = this.key, wasCancelled = () => keyCopy != this.key
+
+    // Run each callback if it's a function then collect the results.
+    // Hooks callback functions retain their 'this' but are also passed the
+    // 'wasCancelled' function so the hook can determine if it needs to stop.
+    const results = []
+    for (let i = 0, len = hooks.length; i < len; i++)
+      if (typeof hooks[i].callback == 'function' && !wasCancelled())
+        results.push(await hooks[i].callback.call(null, wasCancelled))
+
+    // Hook results can be callback functions for cleaning up
+    for (let i = 0, len = results.length; i < len; i++)
+      if (typeof results[i] == 'function')
+        await results[i].call()
 
     return true
   },

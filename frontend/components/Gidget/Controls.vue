@@ -90,7 +90,7 @@ export default {
      * @return {boolean}
      */
     hasNext() {
-      return this.stepIndex < this.stepCount;
+      return this.stepIndex - 1 < this.stepCount
     },
 
 

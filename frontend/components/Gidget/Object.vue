@@ -1,6 +1,7 @@
 <template>
   <div
     :style="style"
+    :id="elementId"
     v-if="isGrabbed"
   >
     <!-- Message -->
@@ -13,8 +14,8 @@
 
     <!-- Sprite -->
     <img
-      ref="image"
-      :id="object.elementId"
+      class="gidget-sprite"
+      ref="sprite"
       :src="objectImage"
       :style="imageStyle"
     />
@@ -80,6 +81,7 @@ span {
 
 <script>
 import { SPRITE_PATH } from '@/constants/paths'
+import { getObjectElementId, moveElementToTile } from '@/assets/gidget/game/gidget-utility'
 
 
 export default {
@@ -109,6 +111,13 @@ export default {
 
   computed: {
     /**
+     *
+     */
+    elementId() {
+      return getObjectElementId(this.object)
+    },
+
+    /**
      * Calculate size of object.
      */
     tileSize() {
@@ -116,6 +125,9 @@ export default {
     },
 
 
+    /**
+     *
+     */
     style() {
       return {
         'z-index': this.object.layer
@@ -154,24 +166,15 @@ export default {
      *
      * @param {object} rect
      */
-    setPosition(pos) {
-      if (_.isUndefined(pos))
-        pos = this.object.postion
+    setPosition(position) {
+      if (typeof position != 'object')
+        position = this.object.postion
 
-      const $tile = document.getElementById(`tile-${pos.x}-${pos.y}`)
-
-      if (!$tile)
-        return false
-
-      this.$el.style.top = $tile.offsetTop - this.$refs.image.offsetTop + 'px'
-      this.$el.style.left = $tile.offsetLeft + 'px'
-
-      return true
+      return moveElementToTile(this.$el, position, this.$refs.sprite.offsetTop)
     },
 
 
     updatePosition() {
-      clearInterval(this.pathInterval);
       this.setPosition(this.object.position)
     }
   },
@@ -208,40 +211,6 @@ export default {
       $el.style.animation = 'none'
       $el.offsetHeight  // Reflow, this is the magic
       $el.style.animation = ''
-    },
-
-
-    /**
-     * Watch object's position to visually move in world.
-     */
-    'object.path'(path) {
-      // Ignore undefined, as we set that just below this
-      if (_.isUndefined(path))
-        return
-
-      // Set as undefined; because watch update gets triggered again
-      // we need to check like above
-      this.$nextTick(() => {
-        this.object.path = undefined
-      })
-
-      // Clear the interval so if any other walks are occuring it will stop them
-      clearInterval(this.pathInterval);
-
-      // We cannot do anything with an empty path array
-      if (_.isEmpty(path))
-        return
-
-      let i = 0;
-      const move = () => {
-        if (i >= path.length)
-          return clearInterval(this.pathInterval)
-
-        this.setPosition(path[i++])
-      };
-
-      move();
-      this.pathInterval = setInterval(move, window.stepDuration / (path.length - 1))
     },
 
 
