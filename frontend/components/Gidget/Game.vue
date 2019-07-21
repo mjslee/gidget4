@@ -13,7 +13,7 @@
           <GidgetControls
             ref="controls"
             @change:step="setStep"
-            @click:run="runScript"
+            @click:run="runSteps"
             @click:stop="stopScript"
           />
         </div>
@@ -150,15 +150,22 @@ export default {
   },
 
 
+  beforeDestroy() {
+    this.resetScript()
+  },
+
+
   methods: {
     /**
-     * Reset game script, components, and game object references.
+     * Resets the script, game, and its components.
      *
      * @return {void}
      */
     resetScript() {
-      // Breaks object references
-      this.game.reset()
+      // Reset game to defaults
+      const step = this.game.reset()
+      if (step)
+        this.onStep(step)
 
       // Reset Vue components
       this.$refs.code.reset()
@@ -169,54 +176,23 @@ export default {
 
 
     /**
-     * Setup components and evaluate script.
+     * Runs the user's code.
      *
-     * @return {void}
+     * @return {boolean} True when runner has an error.
      */
-    setupScript() {
+    runScript() {
       // Reset game
       this.resetScript()
 
-      // Evaluate user code,
+      // Evaluate user code
       const runner = this.game.run(this.$refs.code.code, this.imports)
-
-      // Errors? No go
       if (runner.hasError)
         return false
-
-      // Restore initial state, this stops the final positions from being
-      // revealed since it is ran on the same Vue tick as 'run' above
-      this.game.set(0, false)
 
       // Set up the controls
       this.$refs.controls.setup(runner.steps.length)
 
       return true
-    },
-
-
-    /**
-     * Run all steps.
-     *
-     * @return {void}
-     */
-    async runScript() {
-      const $controls = this.$refs.controls
-
-      if (!$controls.isRunning)
-        this.setupScript()
-
-      while ($controls.hasNext) {
-        const step = await this.game.set($controls.stepIndex)
-        if (!step)
-          return
-
-        $controls.stepIndex += 1
-
-        // Call step handler and wait the standard step wait time
-        this.onStep(step)
-        await wait(window.stepWait)
-      }
     },
 
 
@@ -235,23 +211,49 @@ export default {
 
 
     /**
+     * Sequentially runs all steps.
+     *
+     * @return {void}
+     */
+    async runSteps() {
+      const $controls = this.$refs.controls
+
+      // Run the script so we have access to the steps
+      if (!$controls.isRunning)
+        this.runScript()
+
+      // TODO: Find a cleaner way to do this
+      // Advance steps until isRunning is flagged to false or when a
+      // step has an error.
+      let index = 0
+      while ($controls.isRunning && await this.setStep(++index))
+        await wait(window.stepWait)
+    },
+
+
+    /**
      * Set step index.
      *
      * @param {number} index -- Step index to restore.
-     * @return {void}
+     * @return {boolean} True if a next step exists.
      */
     async setStep(index) {
       const $controls = this.$refs.controls
       $controls.stepIndex = index
 
+      // If the script has not been ran/evaluated, we should evaluate it so
+      // that we have access to its steps
       if (!$controls.isRunning)
-        this.setupScript()
+        this.runScript()
 
+      // Set the world state
       const step = await this.game.set(index)
       if (!step)
-        return
+        return false
 
+      // Handle the resulting step
       this.onStep(step)
+      return step.hasNext
     },
 
 

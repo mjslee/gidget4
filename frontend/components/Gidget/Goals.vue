@@ -117,7 +117,7 @@ export default {
      */
     getValueJSON(value) {
       return JSON.stringify(
-        this.$store.getters['code/getValue'](value) || value
+        this.$store.getters['evaldata/getValue'](value) || value
       );
     },
 
