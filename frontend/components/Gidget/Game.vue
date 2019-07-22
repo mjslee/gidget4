@@ -102,7 +102,7 @@ export default {
     objects: { type: Array, default: () => [] },
     goals: { type: Array, default: () => [] },
     dialogue: { type: Array, default: () => [] },
-    imports: { type: Object, default: () => {} },
+    imports: { type: Array, default: () => [] },
   },
 
 
@@ -124,7 +124,7 @@ export default {
       data: {},
 
       // World
-      game: Game.create(this.objects, {
+      game: Game.create(this.objects, this.imports, {
         size: this.size,
         messages: this.dialogue
       }),
@@ -185,7 +185,7 @@ export default {
       this.resetScript()
 
       // Evaluate user code
-      const runner = this.game.run(this.$refs.code.code, this.imports)
+      const runner = this.game.run(this.$refs.code.code)
       if (runner.hasError)
         return false
 

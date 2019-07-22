@@ -1,6 +1,6 @@
-import JSStepper from '@/assets/gidget/lang/js-stepper'
-import GidgetWorld from '@/assets/gidget/game/gidget-world'
-
+import JsStepper from '@/assets/gidget/lang/js-stepper'
+import GidgetWorld from './gidget-world'
+import GidgetImports from './imports'
 
 
 export default {
@@ -16,10 +16,11 @@ export default {
    * Creates an instance of GidgetGame.
    *
    * @param {array[object]} objects - GameObjects to insert on creation.
+   * @param {array[string]} imports - Global imports to insert.
    * @param {object} attrs - Attributes to merge into world.
    * @return {object} An instance of GidgetGame.
    */
-  create(gameObjects, attrs) {
+  create(gameObjects, imports, attrs) {
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
     const self = _.cloneDeep(this)
@@ -28,9 +29,15 @@ export default {
     // be merged into the new world
     self.world = GidgetWorld.create(attrs)
 
+    // TODO: Throw error if import doesnt exist
+    // Merge in global imports
+    self.imports = {}
+    for (let i = 0, len = imports.length; i < len; i++)
+      Object.assign(self.imports, GidgetImports[imports[i]])
+
     // Set up the javascript stepper, set the onStep callback so the world
     // states can be saved on each step
-    self.stepper = JSStepper.create();
+    self.stepper = JsStepper.create();
     self.stepper.onStep = () => self.save()
 
     // Create game objects, then save the initial game state that we can
@@ -175,13 +182,13 @@ export default {
    * @param {object} extraImports - Imports to expose.
    * @return {object} Object of game objects.
    */
-  getExposed(extraImports) {
+  getExposed() {
     // Object to collect imports
     const exposed = {}
 
     // Merge extra imports into the exposed result
-    if (typeof extraImports == 'object')
-      Object.assign(exposed, extraImports)
+    if (typeof this.imports == 'object')
+      Object.assign(exposed, this.imports)
 
     // Merge the game objects; game objects are more important than
     // extra imports, so if we have a conflict where a game object and an extra
@@ -189,13 +196,22 @@ export default {
     const gameObjects = this.world.getObjects()
     Object.assign(exposed, gameObjects)
 
-    // Loop over each of the newly merged elements; when a merged objects has
-    // an 'exposed' object property, re-assign the property of 'exposed' to be
-    // the exposed property of the object.
+    // Loop over each of the newly merged elements
     for (const prop in exposed) {
-      if (exposed.hasOwnProperty(prop))
-        if (typeof exposed[prop].exposed == 'object')
-          exposed[prop] = exposed[prop].exposed
+      if (!exposed.hasOwnProperty(prop))
+        continue
+
+      // Encase imported functions in another function with its scope being set
+      // to the game world.
+      if (typeof exposed[prop] == 'function') {
+        const func = exposed[prop]
+        exposed[prop] = (...args) => func.call(this.world, ...args)
+      }
+
+      // When a merged objects has an 'exposed' object property, re-assign the
+      // property of 'exposed' to be the exposed property of the object.
+      else if (typeof exposed[prop].exposed == 'object')
+        exposed[prop] = exposed[prop].exposed
     }
 
     // Return the collection
@@ -207,17 +223,11 @@ export default {
    * Runs code.
    *
    * @param {string} code - JavaScript code to evaluate.
-   * @param {object} imports - External game imports.
    * @return {object} Details of the code evaluation.
    */
-  run(code, imports) {
-    // Assign imports as an object if its not passed in as one
-    if (typeof imports != 'object')
-      imports = {}
-
+  run(code) {
     // Run stepper with the code and the exposed game objects and imports
-    const exposedImports = this.getExposed(imports)
-    const result = this.stepper.run(code, exposedImports)
+    const result = this.stepper.run(code, this.getExposed())
 
     // Restore first state; this stops the final positions from being
     // revealed (and a potential animation glitch)

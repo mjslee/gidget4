@@ -1,6 +1,8 @@
 {
-  "code": "Gidget.goto('Puppy')",
+  "code": "up()\nGidget.goto('Puppy')\nGidget.grab('Puppy')\nGidget.left()\nGidget.left()",
   "size": 4,
+
+  "imports": [ "PlayerControls" ],
 
   "tiles": [
     { "type": "dirt", "position": { "x": 2, "y": 2 }},
