@@ -104,7 +104,8 @@ export default {
     // Copy values of primitive properties to the state object
     for (let prop in gameObject) {
       const type = typeof gameObject[prop]
-      if (type == 'number' || type == 'string' || type == 'boolean')
+
+      if (type != 'object' && type != 'function')
         objectState[prop] = gameObject[prop]
     }
 
@@ -133,7 +134,8 @@ export default {
     // Loop over each property in the objectState
     for (let prop in gameObject) {
       const type = typeof gameObject[prop]
-      if (type == 'number' || type == 'string' || type == 'boolean')
+
+      if (type != 'object' && type != 'function')
         gameObject[prop] = objectState[prop]
     }
 

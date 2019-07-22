@@ -2,7 +2,7 @@
   <div
     :style="style"
     :id="elementId"
-    v-if="isGrabbed"
+    v-show="isGrabbed"
   >
     <!-- Message -->
     <span ref="message" :class="message ? 'new-message' : ''">
@@ -124,7 +124,6 @@ export default {
       return this.size * this.object.scale;
     },
 
-
     /**
      *
      */
@@ -155,7 +154,7 @@ export default {
      *
      */
     isGrabbed() {
-      return typeof this.object.grabber === 'undefined'
+      return typeof this.object.grabber == 'undefined'
     }
   },
 
@@ -167,10 +166,18 @@ export default {
      * @param {object} rect
      */
     setPosition(position) {
+      // Ensure position really is an object
       if (typeof position != 'object')
         position = this.object.postion
 
-      return moveElementToTile(this.$el, position, this.$refs.sprite.offsetTop)
+      // When not shown, the sprite ref is not available so we must use a saved
+      // value during the transition
+      if (this.$refs.sprite.offsetTop != 0)
+        this.offsetTop = this.$refs.sprite.offsetTop
+
+      // Visually position element on top of the tile taking the sprite offset
+      // into account, so the top left of the sprite at the top left of the tile
+      moveElementToTile(this.$el, position, this.offsetTop)
     },
 
 
@@ -208,6 +215,9 @@ export default {
 
       // Restart new message animation (this is hack)
       const $el = this.$refs.message
+      if (!$el)
+        return
+
       $el.style.animation = 'none'
       $el.offsetHeight  // Reflow, this is the magic
       $el.style.animation = ''
