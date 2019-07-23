@@ -89,7 +89,7 @@ export function moveElementToTile($el, position, offsetTop=0, offsetLeft=0) {
 
 /**
  * Helper function for animating a game object's DOM element.
- * Callback should accept arguments ($el, timeline, wasCancelled)
+ * Callback should accept arguments ($el, timeline, wasInterrupted)
  *
  * @param {object} gameObject - A game object.
  * @param {function} callback - Called with helpful arguments.
@@ -105,24 +105,44 @@ export async function animate(gameObject, callback) {
     return false
 
   // Add a hook to be ran on visual step
-  gameObject.addHook(async (wasCancelled) => {
+  const func = async (wasInterrupted) => {
     // If there are any ongoing tweens for our element, well they're gone now
     TweenLite.killTweensOf($el)
 
     const timeline = new TimelineLite()
 
-    // Call the callback with 'this' being the gameObject
-    // we'll also pass in the game object's element, a greensock timeline for
-    // animations, and a function to check if a state update has happened and
-    // if it needs to cancel.
-    await callback.call(gameObject, $el, timeline, wasCancelled)
+    // Animation helper, will throw an error to stop our animations if our
+    // animation is interrupted
+    const tween = async (ms, vars, prop='to') => {
+      if (wasInterrupted()) throw 'INTERRUPT'
+      timeline[prop]($el, ms / 1000, vars)
+      if (wasInterrupted()) throw 'INTERRUPT'
+      await wait(ms)
+    }
 
-    // Clean up timeline animations.
-    return () => {
+    // Call the callback with 'this' being the gameObject; we'll also pass in
+    // the game object's element, a greensock timeline for animations, and a
+    // function to check if a state update has happened and if it needs to
+    // cancel.
+    try {
+      await callback.call(gameObject, tween, $el, wasInterrupted, timeline)
+    }
+
+    catch (e) {
+      // Ignore INTERRUPTs from the animator
+      if (e !== 'INTERRUPT')
+        throw e
+    }
+
+    finally {
+      // Reset timeline
       timeline.pause(0)
       timeline.clear()
+      timeline.invalidate()
     }
-  })
+  }
+
+  gameObject.addHook(func)
 
   return true
 }
@@ -144,8 +164,10 @@ export async function walkAnimation(gameObject, path) {
   // Calculate wait time per movement
   const waitMs = window.stepDuration / len
 
+  // TODO: Re-write this to not use animate (since timeline isnt't even used
+  // here) or re-write to use timeline
   // This animate helper function fetches the element for us
-  animate(gameObject, async ($el, timeline, wasCancelled) => {
+  animate(gameObject, async (_, $el, wasInterrupted) => {
     // We can't animate a non-element
     if (!$el)
       return
@@ -156,9 +178,9 @@ export async function walkAnimation(gameObject, path) {
       return
 
     // Loop over each position in the path array
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       // Ensure operation isn't cancelled (more checks is always better)
-      if (wasCancelled())
+      if (wasInterrupted())
         return
 
       // With less than one position to move to, there is no need to wait
@@ -167,7 +189,7 @@ export async function walkAnimation(gameObject, path) {
 
       // Ensure the operation hasn't been cancelled (a lot can happen during a
       // wait sequence) and then move the element to the specified tile
-      if (!wasCancelled())
+      if (!wasInterrupted())
         moveElementToTile($el, path[i], $sprite.offsetTop)
     }
   })

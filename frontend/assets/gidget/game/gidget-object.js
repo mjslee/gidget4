@@ -1,6 +1,6 @@
 import GidgetObjects from './objects'
 import GidgetMixins from './mixins'
-import { wait, poscmp } from './gidget-utility'
+import { walkAnimation, poscmp } from './gidget-utility'
 
 
 export default {
@@ -280,6 +280,18 @@ export default {
       this.onWalk(validPath)
 
     return true
+  },
+
+
+  /**
+   * Walk callback: Default walking animation.
+   * This can be overridden with in a gidget object or mixin.
+   *
+   * @param {array[object]} path - Array of position objects.
+   * @return {void}
+   */
+  onWalk(path) {
+    walkAnimation(this, path)
   },
 
 

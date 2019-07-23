@@ -4,6 +4,7 @@ import GidgetImports from './imports'
 
 
 export default {
+  index: 0,
   key: 0,
   world: undefined,
   states: [],
@@ -98,8 +99,12 @@ export default {
     if (typeof state != 'object')
       return
 
+    // Determine if step is going in a positive, forward direction
+    const isPositive = index > this.index
+    this.index = index
+
     // Run pre-restore hooks
-    if (runHooks) {
+    if (runHooks && isPositive) {
       await this.runHooks(state, hook => hook.when == 'before')
 
       // Increment update key so any hook callbacks that are running can
@@ -111,7 +116,7 @@ export default {
     this.world.restoreState(state)
 
     // Run post-restore hooks
-    if (runHooks)
+    if (runHooks && isPositive)
       await this.runHooks(state, hook => hook.when == 'after')
 
     // Get the current step and assign 'gameData' property to store a
@@ -156,15 +161,15 @@ export default {
     // incremented but keyCopy will keep the same value. If these two variables
     // are not equal then we know the state has changed we shouldn't run any
     // further hooks from this state
-    const keyCopy = this.key, wasCancelled = () => keyCopy != this.key
+    const keyCopy = this.key, wasInterrupted = () => keyCopy != this.key
 
     // Run each callback if it's a function then collect the results.
     // Hooks callback functions retain their 'this' but are also passed the
-    // 'wasCancelled' function so the hook can determine if it needs to stop.
+    // 'wasInterrupted' function so the hook can determine if it needs to stop.
     const results = []
     for (let i = 0, len = hooks.length; i < len; i++)
-      if (typeof hooks[i].callback == 'function' && !wasCancelled())
-        results.push(await hooks[i].callback.call(null, wasCancelled))
+      if (typeof hooks[i].callback == 'function' && !wasInterrupted())
+        results.push(await hooks[i].callback.call(null, wasInterrupted))
 
     // Hook results can be callback functions for cleaning up
     for (let i = 0, len = results.length; i < len; i++)
