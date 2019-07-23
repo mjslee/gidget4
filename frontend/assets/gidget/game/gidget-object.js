@@ -105,8 +105,12 @@ export default {
    * @return {boolean}
    */
   remove() {
-    // TODO: Make this less confusing
-    return this.grabber === undefined ? this.world.removeObject(this.id) : false;
+    // Disallow removal of grabbed objects, drop it first
+    if (typeof this.grabber != 'undefined')
+      return false
+
+    // Call removal from the world
+    return this.world.removeObject(this.id)
   },
 
 
@@ -124,26 +128,37 @@ export default {
   /**
    * Grabs a game object into this game object's grabbed array.
    *
-   * @param {number/string} ID or name of object to grab.
-   * @return {boolean}
+   * @param {object|number|string} - A game object, id, or name.
+   * @return {boolean} True if grab success.
+   *
+   * @example
+   *   grab(Gidget)    // Gidget object
+   *   grab('Gidget')  // Object name
+   *   grab(1)         // Object ID
    */
-  grab(id_or_name) {
-    // TODO: Change arguments to include passing in the object itself
-    // Get object
-    const field = typeof id_or_name === 'number' ? 'id' : 'name';
-    const obj = this.world.getObject(obj =>
-      obj.grabbable !== false &&
-      typeof obj.grabber == 'undefined' &&
-      obj[field] === id_or_name &&
-      obj.position.x === this.position.x &&
-      obj.position.y === this.position.y)
+  grab(gameObjectId) {
+    const gameObject = this.world.getObject(gameObjectId, (gameObject) => {
+      // Game object must be able to be grabbed
+      if (gameObject.grabbable === false)
+        return
 
-    // Make sure object exists
-    if (typeof obj == 'undefined')
+      // Game object must not have a grabber
+      if (typeof gameObject.grabber != 'undefined')
+        return
+
+      // Game object must have the same position as grabber game object
+      if (!poscmp(gameObject.position, this.position))
+        return
+
+      return true
+    })
+
+    // Ensure filtered object exists
+    if (typeof gameObject == 'undefined')
       return false
 
     // Set grabber
-    obj.grabber = this.id
+    gameObject.grabber = this.id
 
     return true
   },
@@ -151,32 +166,33 @@ export default {
 
   /**
    * Drops object from this object's grabbed array.
-   * Do not set 'id_or_name' to drop self when grabbed.
    *
    * @param {number/string} ID or name of object to drop.
    * @return {boolean}
+   *
+   * @example
+   *   drop(Gidget)    // Gidget object
+   *   drop('Gidget')  // Object name
+   *   drop(1)         // Object ID
    */
-  drop(id_or_name) {
-    // TODO: Change arguments to include passing in the object itself
-    // Drop self when self has been grabbed
-    if (this.grabber !== undefined)
-      return this.grabber.drop(this.id);
+  drop(gameObjectId) {
+    // Find grabbed object to drop
+    const gameObject = this.world.getObject(gameObjectId, (gameObject) => {
+      return gameObject.grabber == this.id
+    })
 
-    // Find object
-    const field = typeof id_or_name === 'number' ? 'id' : 'name';
-    const obj = this.world.getObject(obj => obj[field] === id_or_name);
-
-    if (obj === undefined)
-      return false;
+    // Return false when game object does not exist
+    if (typeof gameObject == undefined)
+      return false
 
     // Save object before deleting it
-    obj.position.x = this.position.x;
-    obj.position.y = this.position.y;
+    gameObject.position.x = this.position.x
+    gameObject.position.y = this.position.y
 
     // Remove grabber
-    obj.grabber = undefined;
+    gameObject.grabber = undefined
 
-    return true;
+    return true
   },
 
 
@@ -215,7 +231,6 @@ export default {
     if (!this.world.isPositionValid(position))
       return false
 
-    // TODO: Check if it is still necessary to do this individually
     // Individually set these as to not change references
     this.position.x = position.x
     this.position.y = position.y

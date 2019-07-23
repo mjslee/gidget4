@@ -200,49 +200,32 @@ export default {
    * @param {object|number|string|function} conditions - An object identifier.
    * @return {object} A game object.
    */
-  getObject(conditions) {
-    // TODO: This function needs to be optimized
-    switch (typeof conditions) {
-      case 'number': return this.objects.find(obj => obj.id   === conditions)
-      case 'string': return this.objects.find(obj => obj.name === conditions)
-      case 'object': return this.objects.find(obj => obj.id   === conditions.id)
-      default: return this.objects.find(conditions)
+  getObject(gameObject, conditions) {
+    let comparison
+    switch (typeof gameObject) {
+      // passed in is an object, compare its 'id' against gameObject 'id'
+      case 'object':
+        comparison = (obj) => obj.id === gameObject.id
+        break
+
+      // compare against 'id'
+      case 'number':
+        comparison = (obj) => obj.id === gameObject
+        break
+
+      // compare against 'name'
+      case 'string':
+        comparison = (obj) => obj.name === gameObject
+        break
+
+      // some other type
+      default: return
     }
-  },
 
-
-  /**
-   * Merge two objects together while keeping the 'exposed' property intact.
-   *
-   * @param {object} obj1 - Object to merge into.
-   * @param {object} obj2 - Object to merge from.
-   */
-  mergeObjects(obj1, obj2) {
-    // TODO: Figure out how to use '_.merge' instead of this
-
-    // Ensure obj1 and obj2 were passed in
-    if (typeof obj1 == 'undefined' || typeof obj2 == 'undefined')
-      return false
-
-    // Store exposed prop
-    const exposed = obj1.exposed || {}
-
-    // Deep clone the object we will be merging so that we can modify it
-    // at any point without it disrupting other objects that also have merged
-    // the same object.
-    obj2 = _.cloneDeep(obj2)
-
-    // Merge obj2[exposed] into dict that will become obj1[exposed]
-    if (typeof obj2.exposed === 'object')
-      Object.assign(exposed, obj2.exposed)
-
-    // Merge obj2 into obj1
-    Object.assign(obj1, obj2)
-
-    // Reassign exposed
-    obj1.exposed = exposed
-    obj1.exposed.object = obj1
-    return true
+    return this.objects.find(obj => (
+      (typeof comparison == 'function' ? comparison(obj) : true) &&
+      (typeof conditions == 'function' ? conditions(obj) : true)
+    ))
   },
 
 
