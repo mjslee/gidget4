@@ -219,7 +219,9 @@ export default {
         break
 
       // some other type
-      default: return
+      case 'function':
+        comparison = gameObject
+        break
     }
 
     return this.objects.find(obj => (
@@ -295,16 +297,18 @@ export default {
    * @param {object} obj Object that was moved.
    * @return {boolean}
    */
-  moveObject(obj, position) {
-    let result = true;
-    if (typeof position === 'object' && typeof position.x !== 'undefined')
-      result = obj.move(position);
+  moveObject(gameObject, position) {
+    let result = false
+
+    //
+    if (typeof position == 'object')
+      result = gameObject.move(position);
 
     // Call callback
-    if (typeof this.onObjectMoved === 'function')
-      this.onObjectMoved(this);
+    if (result && typeof this.onObjectMoved == 'function')
+      this.onObjectMoved(gameObject)
 
-    return result;
+    return result
   },
 
 
@@ -371,14 +375,14 @@ export default {
   insideObjectBoundaries(obj, position) {
     // Do not scale boundaries up with object's 'scale' property
     if (!obj.scaleBoundaries)
-      return obj.position.x === position.x && obj.position.y === position.y;
+      return obj.position.x == position.x && obj.position.y == position.y;
 
     // Scale boundaries up with object scale
     // Less efficient than above, so use this only with scaleBoundaries
     const bounds = this.getObjectBoundaries(obj);
     return (
-      x >= bounds.fromX && x <= bounds.toX &&
-      y >= bounds.fromY && y <= bounds.toY
+      position.x >= bounds.fromX && position.x <= bounds.toX &&
+      position.y >= bounds.fromY && position.y <= bounds.toY
     );
   },
 
@@ -433,12 +437,12 @@ export default {
    *
    * @param {function} conditions
    */
-  isPositionValid(position) {
+  validatePosition(position) {
     return (
       position.x >= 0 && position.x <= this.size - 1 &&
       position.y >= 0 && position.y <= this.size - 1
-    ) && !this.getObject((obj) =>
-      obj.blocking && this.insideObjectBoundaries(obj, position)
+    ) && !this.getObject(
+      obj => obj.blocking && this.insideObjectBoundaries(obj, position)
     )
   },
 

@@ -226,9 +226,9 @@ export default {
    * @param {object} position
    * @return {boolean}
    */
-  move(position, collisions=true, move=true) {
+  move(position, collisions=true) {
     // Validate new position
-    if (!this.world.isPositionValid(position))
+    if (!this.world.validatePosition(position))
       return false
 
     // Individually set these as to not change references
@@ -239,9 +239,9 @@ export default {
     if (collisions)
       this.world.getCollisions(this)
 
-    // Call without 'x' and 'y' arguments so only the callback is ran
-    if (move)
-      this.world.moveObject(this)
+    // Call moveObject without its second argument 'position', so that only the
+    // world's 'onObjectMoved' callback is called.
+    this.world.moveObject(this)
 
     return true
   },
@@ -264,7 +264,7 @@ export default {
 
     // Step by step...
     path.forEach(position => {
-      if (!this.move(position, true, false))
+      if (!this.move(position, true))
         return false
 
       // Store valid path for the UI to interpret
