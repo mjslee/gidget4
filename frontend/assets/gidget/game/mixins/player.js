@@ -35,50 +35,50 @@ export default {
      * Move object one space to the left.
      */
     left(amount=1) {
-      return this.object.relativeMove('left', amount, { x: amount * -1, y: 0 });
+      return this.relativeMove('left', amount, { x: amount * -1, y: 0 });
     },
 
     /**
      * Move object one space to the right.
      */
     right(amount=1) {
-      return this.object.relativeMove('right', amount, { x: amount, y: 0 });
+      return this.relativeMove('right', amount, { x: amount, y: 0 });
     },
 
     /**
      * Move object one space upwards.
      */
     up(amount=1) {
-      return this.object.relativeMove('up', amount, { x: 0, y: amount * -1 });
+      return this.relativeMove('up', amount, { x: 0, y: amount * -1 });
     },
 
     /**
      * Move object one space downwards.
      */
     down(amount=1) {
-      return this.object.relativeMove('down', amount, { x: 0, y: amount });
+      return this.relativeMove('down', amount, { x: 0, y: amount });
     },
 
     /**
      * Grab an object.
      */
     grab(value) {
-      this.object.say({
+      this.say({
         text: `I'm grabbing the ${value}...`,
         type: 'dialogue'
       })
-      return this.object.grab(value);
+      return this.grab(value);
     },
 
     /**
      * Drop an object.
      */
     drop(value) {
-      this.object.say({
+      this.say({
         text: `I'm dropping the ${value}...`,
         type: 'dialogue'
       })
-      return this.object.drop(value);
+      return this.drop(value);
     },
 
 
@@ -86,14 +86,14 @@ export default {
      * Go to an object.
      */
     async goto(value) {
-      this.object.say({
+      this.say({
         text: `I'm going to the [[${value}]]...`,
         type: 'dialogue'
       })
 
-      const obj = this.object.world.getObject(value)
+      const obj = this.world.getObject(value)
       if (obj)
-        await this.object.walk(obj.position)
+        await this.walk(obj.position)
     }
   }
 }

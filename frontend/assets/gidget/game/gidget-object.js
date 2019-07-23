@@ -1,4 +1,6 @@
-import { wait } from './gidget-utility'
+import GidgetObjects from './objects'
+import GidgetMixins from './mixins'
+import { wait, poscmp } from './gidget-utility'
 
 
 export default {
@@ -31,19 +33,69 @@ export default {
    * @param {number} id Unique identification number.
    * @return {object}
    */
-  create(id) {
-    // TODO: Redo this, clone an instance of GidgetObject instead
-    this.id = id
+  create(world, id, attrs) {
+    // Create a deep clone of 'this' (GidgetObject), so we don't mutate
+    // any of the base module's properties
+    const self = _.cloneDeep(this)
 
-    // Give object a name if not already set
-    if (this.name === undefined && this.type !== undefined)
-      this.name = this.type
+    // Get base type of game object
+    let base = GidgetObjects[attrs.type]
+    if (!base)
+      return
 
-    // Run onCreate callback
-    if (typeof this.onCreate === 'function')
-      this.onCreate()
+    // Merge in base and extra attributes
+    _.merge(self, _.cloneDeep(base))
+    _.merge(self, _.cloneDeep(attrs))
 
-    return this
+    // Merge in mixins
+    if (typeof attrs.mixins == 'object')
+      attrs.mixins.forEach(mix => _.merge(self, _.cloneDeep(GidgetMixins[mix])))
+
+    // Set properties
+    self.world = world
+    self.id = id
+
+    self.updateProps()
+
+    // If no name was provided in attrs we'll use its type as its name
+    if (typeof self.name == 'undefined')
+      self.name = self.type
+
+    // Call onCreate callback
+    if (typeof self.onCreate == 'function')
+      self.onCreate()
+
+    return self
+  },
+
+
+  /**
+   * Updates target properties of getter properties.
+   *
+   * @return {void}
+   */
+  updateProps() {
+    for (let prop in this.exposed) {
+      if (!this.exposed.hasOwnProperty(prop))
+        continue
+
+      // Ensure property is a function
+      if (typeof this.exposed[prop] != 'function')
+        continue
+
+      // Functions that start with 'get ', note the extra space
+      if (prop.startsWith('get '))
+        this.exposed[prop.slice(4)] = this.exposed[prop].call(this)
+
+      // For a method to have the proper scope (this), we'll need to enclose
+      // the function to set the proper scope. We'll assign an 'isEnclosed'
+      // property to the function so we know not to enclose an enclosure.
+      else if (!this.exposed[prop].isEnclosed) {
+        const func = this.exposed[prop]
+        this.exposed[prop] = (...args) => func.call(this, ...args)
+        this.exposed[prop].isEnclosed = true
+      }
+    }
   },
 
 
@@ -222,11 +274,12 @@ export default {
    * @return {string} - Stringified position.
    */
   exposed: {
-    getPosition() {
-      return JSON.stringify({
-        x: this.object.position.x,
-        y: this.object.position.y
-      })
-    }
+    'get id'() {
+      return this.id
+    },
+
+    'get position'() {
+      return JSON.stringify(this.position)
+    },
   }
 }

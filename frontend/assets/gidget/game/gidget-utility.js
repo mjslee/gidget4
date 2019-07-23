@@ -6,9 +6,29 @@ import { TweenLite, TimelineLite } from 'gsap'
  *
  * @param {ms} Milliseconds to wait for.
  * @return {void}
+ *
+ * @example
+ *   async () => await wait(1000)  // Waits for one second
  */
 export async function wait(ms) {
   await new Promise(resolve => setTimeout(resolve, ms))
+}
+
+
+
+/**
+ * Compares two position objects.
+ *
+ * @param {object} pos1 - A position object to compare.
+ * @param {object} pos2 - A position object to compare.
+ * @return {boolean} True if positions are equal.
+ *
+ * @example
+ *   poscmp({x:1,y:2}, {x:1,y:2})  // true
+ *   poscmp({x:0,y:0}, {x:1,y:2})  // false
+ */
+export function poscmp(pos1, pos2) {
+  return pos1.x === pos2.x && pos1.y === pos2.y
 }
 
 

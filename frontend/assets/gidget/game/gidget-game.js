@@ -29,11 +29,10 @@ export default {
     // be merged into the new world
     self.world = GidgetWorld.create(attrs)
 
-    // TODO: Throw error if import doesnt exist
     // Merge in global imports
     self.imports = {}
     for (let i = 0, len = imports.length; i < len; i++)
-      Object.assign(self.imports, GidgetImports[imports[i]])
+      Object.assign(self.imports, _.cloneDeep(GidgetImports[imports[i]]))
 
     // Set up the javascript stepper, set the onStep callback so the world
     // states can be saved on each step
@@ -201,7 +200,7 @@ export default {
       if (!exposed.hasOwnProperty(prop))
         continue
 
-      // Encase imported functions in another function with its scope being set
+      // Enclose imported functions in another function with its scope being set
       // to the game world.
       if (typeof exposed[prop] == 'function') {
         const func = exposed[prop]

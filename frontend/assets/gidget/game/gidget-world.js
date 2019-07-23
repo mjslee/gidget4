@@ -1,11 +1,9 @@
 import GidgetObject from './gidget-object'
-import GidgetObjects from './objects'
-import GidgetMixins from './mixins'
 
 
 
 export default {
-  nextId: -1,
+  nextId: 0,
   size: 3,
   objects: [],
   messages: [],
@@ -253,36 +251,12 @@ export default {
    * For example: kwargs={type: 'Gidget'}
    *
    * @param {object} kwargs Attributes to assign to object on creation.
+   * @return {boolean} Success of creating object.
    */
-  createObject(kwargs) {
-    // TODO: Move this funtionality to GidgetObject's 'create' method
-    const obj = _.cloneDeep(GidgetObject);  // Clone template object
-    obj.world = this;
-
-    if (typeof kwargs === 'object') {
-      // Merge object base type
-      if (typeof kwargs.type === 'string')
-        this.mergeObjects(obj, GidgetObjects[kwargs.type]);
-
-      // Merge object mixins
-      if (Array.isArray(kwargs.mixins))
-        kwargs.mixins.forEach(mixin => {
-          this.mergeObjects(obj, GidgetMixins[mixin]);
-        });
-    }
-
-    // Merge kwargs into object
-    Object.assign(obj, kwargs);
-
-    // Add 'object' property so methods can access the object
-    if (typeof obj.methods === 'object')
-      obj.methods.object = obj;
-
+  createObject(attrs) {
     // Create the object and add it to the world
-    obj.create(++this.nextId);
-    this.addObject(obj);
-
-    return obj;
+    const gameObject = GidgetObject.create(this, this.nextId++, attrs)
+     return this.addObject(gameObject)
   },
 
 
@@ -293,6 +267,9 @@ export default {
    * @return {boolean} Success of adding object.
    */
   addObject(gameObject) {
+    if (typeof gameObject != 'object')
+      return false
+
     this.objects.push(gameObject)
 
     // Call callback
@@ -493,9 +470,12 @@ export default {
     // Clear hooks, so they're not re-ran on the next tick
     this.hooks = []
 
-    // Call 'onTick' for each object that has it
     this.objects.forEach((object) => {
-      if (_.isFunction(object.onTick))
+      // Update fake getter properties
+      object.updateProps()
+
+      // Call 'onTick' for each object that has it
+      if (typeof object.onTick == 'function')
         object.onTick.call(object)
     })
   },
