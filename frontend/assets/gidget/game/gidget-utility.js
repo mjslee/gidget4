@@ -66,13 +66,14 @@ export function getTileElement(position) {
 
 
 /**
- * Visually moves a DOM element to the position of a specified tile.
+ * Visually moves a DOM element to the position of a specified tile aligned
+ * bottom center.
  *
  * @param {object} $el - Element to manipulate.
  * @param {object} position - Object containing 'x' and 'y' properties.
  * @return {boolean}
  */
-export function moveElementToTile($el, position, offsetTop=0, offsetLeft=0) {
+export function moveElementToTile($el, position) {
   if (!$el)
     return false
 
@@ -80,8 +81,8 @@ export function moveElementToTile($el, position, offsetTop=0, offsetLeft=0) {
   if (!$tile)
     return false
 
-  $el.style.top = $tile.offsetTop - offsetTop + 'px'
-  $el.style.left = $tile.offsetLeft - offsetLeft + 'px'
+  $el.style.top = $tile.offsetTop - ($el.scrollHeight - $tile.scrollHeight) + 'px'
+  $el.style.left = $tile.offsetLeft - (($el.scrollWidth - $tile.scrollWidth) / 2) + 'px'
 
   return true
 }
