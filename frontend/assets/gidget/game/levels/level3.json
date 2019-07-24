@@ -1,18 +1,17 @@
 {
-  "code": "let x = 5;\nGidget.left();\nGidget.up();\nlet goLeft = false;\n\nfor (let i = 0; i <= 3; i++) {\n  for (let j = 0; j <= 2; j++) {\n    goLeft ? Gidget.left() : Gidget.right();\n  }\n\n  if (i == 3) {\n    // Example comment\n    break;\n    /* Switch sides or something */\n  }\n\n  Gidget.down();\n  goLeft = !goLeft;\n}\n\nGidget.right(2);\nGidget.grab('Puppy');\nGidget.left();\nGidget.drop('Puppy')",
-  "size": 4,
+  "code": "left(2)\nup()\ngrab(Piglet)\nleft(2)\nup(2)\nright(6)",
+  "imports": [ "PlayerControls" ],
+
+  "size": 5,
   "tiles": [
-    { "type": "dirt", "position": { "x": 1, "y": 2 }}
+    { "type": "dirt", "position": { "x": 1, "y": 3 } }
   ],
   "objects": [
-    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
-    { "type": "Puppy", "position": { "x": 2, "y": 3 } },
-    { "type": "Bunny", "position": { "x": 2, "y": 2 } }
+    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 4, "y": 4 } },
+    { "type": "Piglet", "position": { "x": 2, "y": 1 } }
   ],
   "goals": [
-    { "assert": "equal", "arguments": [ "Gidget.position", "Puppy1.position" ] },
-    { "assert": "equal", "arguments": [ "x", 5 ] },
-    { "assert": "equal", "arguments": [ "y", "'cool'" ] }
+    { "assert": "equal", "arguments": [ "Piglet.position", { "x": 3, "y": 1 } ] }
   ],
   "dialogue": [
     { "text": "Puppy [[Puppy]] Puppy ```javascript\nlet x = 5;```" },

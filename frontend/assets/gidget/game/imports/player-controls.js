@@ -1,5 +1,11 @@
 export default {
 
+
+  hello() {
+    const gidget = this.getObject('Gidget')
+    gidget.say({ text: 'hello', type: 'dialogue' })
+  },
+
   /**
    * Move up.
    */
@@ -34,6 +40,21 @@ export default {
     const gidget = this.getObject('Gidget')
     if (gidget)
       gidget.exposed.right(...arguments)
+  },
+
+  /**
+   * Move right.
+   */
+  grab() {
+    const gidget = this.getObject('Gidget')
+    if (gidget)
+      gidget.exposed.grab(...arguments)
+  },
+
+  drop() {
+    const gidget = this.getObject('Gidget')
+    if (gidget)
+      gidget.exposed.drop(...arguments)
   }
 
 }

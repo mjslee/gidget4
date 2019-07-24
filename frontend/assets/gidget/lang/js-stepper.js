@@ -93,6 +93,7 @@ export default {
       this.debugInput = this.injector.run(input);
     }
     catch (e) {
+      console.log('compiletime', e)
       return {
         hasError: true,
         error: {
@@ -133,6 +134,7 @@ export default {
     }
     catch (e) {
       console.debug(e);
+      console.log('runtime', e)
 
       let ln = e.lineNumber;
 

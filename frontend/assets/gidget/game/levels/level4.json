@@ -1,18 +1,32 @@
 {
-  "code": "Gidget.left();",
-  "size": 3,
-  "tiles": [],
+  "code": "left()\nup()\ndrop(Goop)\ndown(3)\nleft(1)\ngrab(Puppy)\nleft(2)\nup(3)\ngrab(Goop)\nright(4)\ndrop(Puppy)",
+  "imports": [ "PlayerControls" ],
+
+  "size": 5,
+  "tiles": [
+    { "type": "dirt", "position": { "x": 3, "y": 0 } },
+    { "type": "dirt", "position": { "x": 3, "y": 1 } },
+    { "type": "dirt", "position": { "x": 2, "y": 1 } }
+
+  ],
   "objects": [
-    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
-    { "type": "Puppy", "position": { "x": 0, "y": 1 } }
+    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 4, "y": 2 } },
+    { "type": "Puppy", "position": { "x": 1, "y": 3 } },
+    { "type": "Basket", "position": { "x": 4, "y": 4 } },
+    { "type": "Bucket", "position": { "x": 0, "y": 1 } },
+    { "type": "Goop", "position": { "x": 3, "y": 1 } }
   ],
   "goals": [
     {
       "assert": "equal",
-      "arguments": ["Gidget.position", "Puppy.position"]
+      "arguments": ["Basket.position", "Puppy.position"]
+    },
+    {
+      "assert": "equal",
+      "arguments": ["Bucket.position", "Goop.position"]
     }
   ],
   "dialogue": [
-    { "text": "This is level 4." }
+    { "text": "The goal of this level is to `drop` the [[Puppy]] into the [[Basket]] and the [[Goop]] into the [[Bucket]]. It might help to try running my code before editing to see what happens!" }
   ]
 }

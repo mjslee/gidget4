@@ -8,7 +8,7 @@ export default {
   relativeMove(direction, amount, position) {
     position.x += this.position.x;
     position.y += this.position.y;
-    const move = this.move(position);
+    const move = this.walk(position);
 
     // Cannot move
     if (!move) {

@@ -1,17 +1,13 @@
 {
-  "code": "up()\nGidget.goto('Puppy')\nGidget.grab('Puppy')\nGidget.left()\nGidget.left()",
-  "size": 4,
+  "code": "up()\nright(5)\ndown(4)\nleft(3)",
+  "size": 5,
 
   "imports": [ "PlayerControls" ],
 
   "tiles": [
-    { "type": "dirt", "position": { "x": 2, "y": 2 }},
-    { "type": "dirt", "position": { "x": 3, "y": 2 }},
-    { "type": "dirt", "position": { "x": 1, "y": 3 }},
-    { "type": "dirt", "position": { "x": 2, "y": 3 }},
-    { "type": "dirt", "position": { "x": 3, "y": 3 }},
-    { "type": "dirt", "position": { "x": 3, "y": 1 }},
-    { "type": "dirt", "position": { "x": 0, "y": 3 }}
+    { "type": "dirt", "position": { "x": 3, "y": 0 } },
+    { "type": "dirt", "position": { "x": 4, "y": 1 } },
+    { "type": "cobblestone", "position": { "x": 0, "y": 4 } }
   ],
 
   "objects": [
@@ -21,8 +17,8 @@
       "position": { "x": 1, "y": 1 }
     },
     {
-      "type": "Puppy",
-      "position": { "x": 3, "y": 3 }
+      "type": "Bird",
+      "position": { "x": 4, "y": 4 }
     }
   ],
 
@@ -30,14 +26,14 @@
     {
       "assert": "equal",
       "arguments": [
-        "Gidget.position", { "x": 0, "y": 1 }
+        "Gidget.position", "Bird.position"
       ]
     }
   ],
 
   "dialogue": [
     {
-      "text": "[['wow']]\n# Hello\nThis is the first message."
+      "text": "I should be able to move more easily by including an optional number `literal` immediately after my movement command."
     },
     {
       "text": "This is the second message, with a left chat head!",
