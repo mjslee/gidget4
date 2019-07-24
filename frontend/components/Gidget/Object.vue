@@ -14,8 +14,8 @@
 
     <!-- Sprite -->
     <img
-      class="gidget-sprite"
       ref="sprite"
+      class="gidget-sprite"
       :src="objectImage"
       :style="imageStyle"
     />
@@ -165,24 +165,8 @@ export default {
      *
      * @param {object} rect
      */
-    setPosition(position) {
-      // Ensure position really is an object
-      if (typeof position != 'object')
-        position = this.object.postion
-
-      // When not shown, the sprite ref is not available so we must use a saved
-      // value during the transition
-      if (this.$refs.sprite.offsetTop != 0)
-        this.offsetTop = this.$refs.sprite.offsetTop
-
-      // Visually position element on top of the tile taking the sprite offset
-      // into account, so the top left of the sprite at the top left of the tile
-      moveElementToTile(this.$el, position, this.offsetTop)
-    },
-
-
     updatePosition() {
-      this.setPosition(this.object.position)
+      moveElementToTile(this.$el, this.object.position)
     }
   },
 

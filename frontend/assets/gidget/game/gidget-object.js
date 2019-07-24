@@ -271,15 +271,11 @@ export default {
       validPath.push(position)
     })
 
-    // No valid movements
-    if (!validPath.length)
-      return false
-
     // Call onWalk callback
     if (typeof this.onWalk == 'function')
       this.onWalk(validPath)
 
-    return true
+    return validPath.length >= path.length
   },
 
 

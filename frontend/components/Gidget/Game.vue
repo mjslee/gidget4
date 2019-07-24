@@ -120,8 +120,7 @@ export default {
 
   data() {
     return {
-      // Editor and debugger
-      data: {},
+      error: undefined,
 
       // World
       game: Game.create(this.objects, this.imports, {
@@ -178,20 +177,27 @@ export default {
     /**
      * Runs the user's code.
      *
-     * @return {boolean} True when runner has an error.
+     * @return {boolean} True if runner is successful.
      */
     runScript() {
       // Reset game
       this.resetScript()
 
       // Evaluate user code
+      this.error = undefined
       const runner = this.game.run(this.$refs.code.code)
-      if (runner.hasError)
-        return false
 
       // Set up the controls
-      this.$refs.controls.setup(runner.steps.length)
+      if (!Array.isArray(runner.steps))
+        return false
 
+      // Save error to display on last step
+      if (typeof runner.error != 'undefined') {
+        this.error = runner.error
+        this.error.step = runner.steps[runner.steps.length - 1]
+      }
+
+      this.$refs.controls.setup(runner.steps.length)
       return true
     },
 
@@ -253,6 +259,11 @@ export default {
 
       // Handle the resulting step
       this.onStep(step)
+
+      // Finished
+      if (!step.hasNext)
+        this.onFinish()
+
       return step.hasNext
     },
 
@@ -264,7 +275,7 @@ export default {
      */
     onStep(step) {
       // Probably an error, remove active line
-      if (_.isUndefined(this.$refs.code) || _.isUndefined(step)) {
+      if (typeof this.$refs.code == 'undefined' || typeof step == 'undefined') {
         this.$refs.code.setActiveLine(-1)
         return
       }
@@ -273,26 +284,8 @@ export default {
       this.$refs.code.setActiveLine(step.ln - 1)
 
       // Store data collected from game evaluation
-      if (_.has(step, 'gameData'))
+      if (typeof step.gameData == 'object')
         this.$store.commit('evaldata/setData', step.gameData)
-    },
-
-
-    /**
-     * Handle game error.
-     *
-     * @return {void}
-     */
-    onError(ln, message) {
-      this.$refs.code.reset();
-      this.$refs.code.setErrorLine(ln - 1);
-      this.$refs.controls.reset();
-
-      if (!message)
-        return;
-
-      const translation = Exception.translate(message);
-      this.$refs.dialogue.append({ text: translation || message });
     },
 
 
@@ -306,11 +299,30 @@ export default {
       this.$refs.goals.showResults = true;
       this.$refs.goals.validate();
 
+      if (typeof this.error == 'object')
+        return this.onError()
+
       // Call success or failure handler
       this.$nextTick(() => {
         this.$refs.goals.completed() ?
           this.onSuccess() : this.onFailure();
       });
+    },
+
+
+    /**
+     * Handle game error.
+     *
+     * @return {void}
+     */
+    onError() {
+      if (typeof this.error == 'undefined')
+        return
+
+      if (typeof this.error.ln == 'number') {
+        this.$refs.code.reset()
+        this.$refs.code.setErrorLine(this.error.ln - 1)
+      }
     },
 
 

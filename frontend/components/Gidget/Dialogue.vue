@@ -102,7 +102,7 @@ export default {
   data() {
     return {
       messageIndex: 0,
-      internalMessages: this.messages,
+      internalMessages: _.cloneDeep(this.messages),
 
       isSuccess: false,
       isFailure: false
@@ -179,10 +179,8 @@ export default {
      * @return {void}
      */
     set(messages, index=-1) {
-      this.$nextTick(() => {
-        this.internalMessages = messages
-        this.messageIndex = index >= 0 ? index : messages.length - 1
-      })
+      this.internalMessages = messages
+      this.messageIndex = index >= 0 ? index : messages.length - 1
     },
 
 
@@ -190,10 +188,8 @@ export default {
      *
      */
     append(message) {
-      this.$nextTick(() => {
-        this.internalMessages.push(message)
-        this.messageIndex = this.internalMessages.length - 1
-      })
+      this.internalMessages.push(message)
+      this.messageIndex = this.internalMessages.length - 1
     },
 
 

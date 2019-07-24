@@ -2,9 +2,9 @@
   <div>
     <codemirror
       ref="code"
-      :value="code"
+      v-model="code"
       :options="codemirrorOptions"
-      @input="onInput" />
+      />
   </div>
 </template>
 
