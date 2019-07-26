@@ -182,7 +182,7 @@ export default {
     })
 
     // Return false when game object does not exist
-    if (typeof gameObject == undefined)
+    if (typeof gameObject == 'undefined')
       return false
 
     // Save object before deleting it

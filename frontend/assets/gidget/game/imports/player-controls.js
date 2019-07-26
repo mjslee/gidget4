@@ -43,7 +43,7 @@ export default {
   },
 
   /**
-   * Move right.
+   * Grab object.
    */
   grab() {
     const gidget = this.getObject('Gidget')
@@ -51,6 +51,9 @@ export default {
       gidget.exposed.grab(...arguments)
   },
 
+  /**
+   * Drop object.
+   */
   drop() {
     const gidget = this.getObject('Gidget')
     if (gidget)
