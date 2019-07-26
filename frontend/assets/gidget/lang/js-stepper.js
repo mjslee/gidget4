@@ -54,7 +54,7 @@ export default {
   __step__(ln, range) {
     this.steps.push({ index: this.steps.length, ln, range });
 
-    if (typeof this.onStep === 'function')
+    if (typeof this.onStep == 'function')
       this.onStep.call();
   },
 
@@ -71,7 +71,7 @@ export default {
     // Proxy objects can break things like Vue, so we'll have to recreate
     // the object so there is no Proxy handler
     keys.forEach(key => {
-      if (typeof data[key] === 'object')
+      if (typeof data[key] == 'object')
         data[key] = Object.assign({}, data[key]);
     });
 
@@ -93,13 +93,13 @@ export default {
       this.debugInput = this.injector.run(input);
     }
     catch (e) {
-      console.log('compiletime', e)
+      console.debug('compile time error', e)
+
       return {
-        hasError: true,
         error: {
+          ln: e.ln || e.lineNumber,
           name: 'ParseError',
-          ln: e.lineNumber,
-          message: e.description
+          text: e.text || e.message || e.description
         }
       };
     }
@@ -117,8 +117,8 @@ export default {
         const document = undefined;
         imports = undefined;
 
-        // Suppress TS6133
-        __scope__, __step__, __collect__, window, document;
+        // Suppress TS6133 linter message
+        if (0) __scope__, __step__, __collect__, window, document
 
         // Imports
         let importText = '';
@@ -133,28 +133,24 @@ export default {
       fakeSandbox.call({});
     }
     catch (e) {
-      console.debug(e);
-      console.log('runtime', e)
+      console.debug('runtime error', typeof e, e)
 
-      let ln = e.lineNumber;
+      // Get line number of where the error was thrown
+      let ln = e.ln || e.lineNumber
+      if (typeof ln == 'undefined' && this.steps.length > 0)
+        ln = this.steps[this.steps.length - 1].ln
 
-      // Get line number from stacktrace
-      if (typeof ln === 'undefined') {
-        const match = e.stack.match(/:\d+:\d+\W$/m); // Match ':1:5', line is '1'
-        if (match.length > 0)
-          ln = parseInt(match[0].split(':')[1]);
-      }
-
+      // Return error object
       return {
-        hasError: true,
+        steps: this.steps,
         error: {
+          ln: ln,
           name: e.name,
-          message: e.message || e.description,
-          ln: ln
+          text: e.text || e.message || e.description
         }
       };
     }
 
-    return { hasError: false, steps: this.steps };
+    return { steps: this.steps };
   }
 };

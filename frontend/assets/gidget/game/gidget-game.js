@@ -6,6 +6,7 @@ import GidgetImports from './imports'
 export default {
   index: 0,
   key: 0,
+  error: undefined,
   world: undefined,
   states: [],
 
@@ -48,7 +49,7 @@ export default {
     self.initialState = self.world.getState()
     self.initialData = self.world.getObjectsSanitized()
 
-    return self;
+    return self
   },
 
 
@@ -60,7 +61,8 @@ export default {
    */
   reset() {
     // Reset code stepper for a clean run
-    this.stepper.reset();
+    this.stepper.reset()
+    this.error = undefined
 
     // Clear states and restore the world to its initial state
     this.states = []
@@ -135,7 +137,6 @@ export default {
       step = { gameData: _.cloneDeep(this.initialData) }
 
     // Return the step for further processing
-    step.hasNext = index < this.stepper.steps.length - 1
     return step
   },
 
@@ -232,6 +233,10 @@ export default {
   run(code) {
     // Run stepper with the code and the exposed game objects and imports
     const result = this.stepper.run(code, this.getExposed())
+
+    // Runtime error
+    if (typeof result.error == 'object')
+      this.error = result.error
 
     // Restore first state; this stops the final positions from being
     // revealed (and a potential animation glitch)

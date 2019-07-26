@@ -120,8 +120,6 @@ export default {
 
   data() {
     return {
-      error: undefined,
-
       // World
       game: Game.create(this.objects, this.imports, {
         size: this.size,
@@ -184,20 +182,15 @@ export default {
       this.resetScript()
 
       // Evaluate user code
-      this.error = undefined
       const runner = this.game.run(this.$refs.code.code)
 
       // Set up the controls
-      if (!Array.isArray(runner.steps))
-        return false
-
-      // Save error to display on last step
-      if (typeof runner.error != 'undefined') {
-        this.error = runner.error
-        this.error.step = runner.steps[runner.steps.length - 1]
-      }
-
       this.$refs.controls.setup(runner.steps.length)
+
+      // Highlight errored line, if it exists
+      if (typeof this.game.error == 'object')
+        this.onError()
+
       return true
     },
 
@@ -232,8 +225,10 @@ export default {
       // Advance steps until isRunning is flagged to false or when a
       // step has an error.
       let index = 0
-      while ($controls.isRunning && await this.setStep(++index))
+      while ($controls.isRunning && !$controls.isComplete) {
+        await this.setStep(++index)
         await wait(window.stepWait)
+      }
     },
 
 
@@ -252,6 +247,9 @@ export default {
       if (!$controls.isRunning)
         this.runScript()
 
+      if ($controls.isComplete)
+        this.onFinish()
+
       // Set the world state
       const step = await this.game.set(index)
       if (!step)
@@ -259,12 +257,6 @@ export default {
 
       // Handle the resulting step
       this.onStep(step)
-
-      // Finished
-      if (!step.hasNext)
-        this.onFinish()
-
-      return step.hasNext
     },
 
 
@@ -295,17 +287,18 @@ export default {
      * @return {void}
      */
     onFinish() {
+      if (typeof this.game.error == 'object')
+        return this.onError()
+
       // Show red Xs on goals component
       this.$refs.goals.showResults = true;
       this.$refs.goals.validate();
 
-      if (typeof this.error == 'object')
-        return this.onError()
-
       // Call success or failure handler
       this.$nextTick(() => {
         this.$refs.goals.completed() ?
-          this.onSuccess() : this.onFailure();
+          this.onSuccess() :
+          this.onFailure();
       });
     },
 
@@ -316,13 +309,18 @@ export default {
      * @return {void}
      */
     onError() {
-      if (typeof this.error == 'undefined')
+      if (typeof this.game.error == 'undefined')
         return
 
-      if (typeof this.error.ln == 'number') {
+      const error = this.game.error
+
+      if (typeof error.ln == 'number') {
         this.$refs.code.reset()
-        this.$refs.code.setErrorLine(this.error.ln - 1)
+        this.$refs.code.setErrorLine(error.ln - 1)
       }
+
+      if (typeof error.text == 'string')
+        this.$refs.dialogue.append({ text: error.text })
     },
 
 

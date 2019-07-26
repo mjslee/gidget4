@@ -15,6 +15,7 @@ div {
 
 .grass { background-image: url("/gidget/sprites/grass.png") }
 .dirt { background-image: url("/gidget/sprites/dirt.png") }
+.cobblestone { background-image: url("/gidget/sprites/cobblestone.png") }
 </style>
 
 

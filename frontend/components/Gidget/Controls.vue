@@ -22,7 +22,7 @@
       <!-- Next Step -->
       <b-button
         icon-left="chevron-right"
-        :disabled="canReset"
+        :disabled="isComplete"
         @click="$emit('change:step', ++stepIndex)"
       />
 
@@ -41,7 +41,7 @@
         icon-left="stop"
         class="is-danger"
         @click="$emit('click:stop')"
-        v-else-if="!canReset"
+        v-else-if="!isComplete"
       >
         Stop
       </b-button>
@@ -99,9 +99,9 @@ export default {
      *
      * @return {boolean}
      */
-    canReset() {
+    isComplete() {
       return this.isRunning && this.stepIndex == this.stepCount;
-    }
+    },
   },
 
 
@@ -113,7 +113,7 @@ export default {
      */
     setup(stepCount) {
       this.isRunning = true
-      this.stepCount = stepCount - 1
+      this.stepCount = stepCount
       this.stepIndex = 1
     },
 
