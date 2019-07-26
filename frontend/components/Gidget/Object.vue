@@ -166,7 +166,7 @@ export default {
      * @param {object} rect
      */
     updatePosition() {
-      moveElementToTile(this.$el, this.object.position)
+      this.$nextTick(() => moveElementToTile(this.$el, this.object.position))
     }
   },
 
