@@ -109,6 +109,10 @@ export default {
     if (typeof this.grabber != 'undefined')
       return false
 
+    // Call onRemove for our object
+    if (typeof this.onRemove == 'function')
+      this.onRemove()
+
     // Call removal from the world
     return this.world.removeObject(this.id)
   },
@@ -160,6 +164,14 @@ export default {
     // Set grabber
     gameObject.grabber = this.id
 
+    // Call onGrab for our object
+    if (typeof this.onGrab == 'function')
+      this.onGrab(gameObject)
+
+    // Call onGrabbed for the found object
+    if (typeof gameObject.onGrabbed == 'function')
+      gameObject.onGrabbed(this).call(gameObject)
+
     return true
   },
 
@@ -192,6 +204,14 @@ export default {
     // Remove grabber
     gameObject.grabber = undefined
 
+    // Call onDrop for our object
+    if (typeof this.onDrop == 'function')
+      this.onDrop(gameObject)
+
+    // Call onDropped for the found object
+    if (typeof gameObject.onDropped == 'function')
+      gameObject.onDropped(this).call(gameObject)
+
     return true
   },
 
@@ -215,6 +235,10 @@ export default {
     // Overhead message?
     else
       this.message = message.text
+
+    // Call onSay
+    if (typeof this.onSay == 'function')
+      this.onSay(message)
 
     return true
   },
@@ -242,6 +266,10 @@ export default {
     // Call moveObject without its second argument 'position', so that only the
     // world's 'onObjectMoved' callback is called.
     this.world.moveObject(this)
+
+    // Call onMove
+    if (typeof this.onMove == 'function')
+      this.onMove(position)
 
     return true
   },

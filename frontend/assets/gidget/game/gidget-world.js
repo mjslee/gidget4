@@ -224,10 +224,21 @@ export default {
         break
     }
 
-    return this.objects.find(obj => (
+    // Attempt to find object
+    const foundObject = this.objects.find(obj => (
       (typeof comparison == 'function' ? comparison(obj) : true) &&
       (typeof conditions == 'function' ? conditions(obj) : true)
     ))
+
+    // foundObject will be undefined if nothing is found
+    if (typeof foundObject == 'undefined')
+      return
+
+    // Call onGet from the game object
+    if (typeof foundObject.onGet == 'function')
+      foundObject.onGet().call(foundObject)
+
+    return foundObject
   },
 
 
