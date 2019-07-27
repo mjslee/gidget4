@@ -35,7 +35,17 @@
           Next
         </b-button>
 
-        <!-- <span>&#38;nbsp;{{ index }}/{{ messages.length &#45; 1 }}</span> -->
+        <!-- Next Message -->
+        <b-button
+          type="is-primary"
+          icon-right="chevron-right"
+          :disabled="!hasNext"
+          @click="next"
+        >
+          Next
+        </b-button>
+
+        <span>&nbsp;{{ messageIndex }}/{{ internalMessages.length - 1 }}</span>
       </div>
     </div>
   </div>
@@ -177,6 +187,9 @@ export default {
      *
      * @param {array[object]} messages
      * @return {void}
+     *
+     * @example
+     *   set([{ text: 'First message.' }, { text: 'Second message.' }])
      */
     set(messages, index=-1) {
       this.internalMessages = messages
@@ -185,9 +198,27 @@ export default {
 
 
     /**
+     * Appends as message to the end of the messages list.
      *
+     * @param {object} message
+     * @return {void}
+     *
+     * @example
+     *   append({ text: 'Example text.' })
      */
     append(message) {
+      // Validate message input
+      if (!(typeof message == 'object' && typeof message.text == 'string'))
+        return
+
+      // Block duplicate appends
+      if (this.internalMessages.length > 0) {
+        const lastMessage = this.internalMessages[this.internalMessages.length - 1]
+        if (message.text === lastMessage.text)
+          return
+      }
+
+      // Append message to internal message list
       this.internalMessages.push(message)
       this.messageIndex = this.internalMessages.length - 1
     },
