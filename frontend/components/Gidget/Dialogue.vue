@@ -8,9 +8,8 @@
         <!-- Markdown -->
         <GidgetText :text="message.text" v-if="message" />
 
-
         <!-- Message Repeats -->
-        <span class="tag is-info is-rounded is-small" v-if="message.repeats">
+        <span class="tag is-info is-rounded is-small" v-if="message && message.repeats">
           {{ message.repeats }}
         </span>
       </template>
@@ -23,16 +22,6 @@
           @click="prev"
         >
           Prev
-        </b-button>
-
-        <!-- Next Message -->
-        <b-button
-          type="is-primary"
-          icon-right="chevron-right"
-          :disabled="!hasNext"
-          @click="next"
-        >
-          Next
         </b-button>
 
         <!-- Next Message -->
@@ -88,7 +77,6 @@
 
 
 <script>
-import _ from 'lodash'
 import GidgetValue from './Value'
 import GidgetText from './Text'
 import { SPRITE_PATH } from '@/constants/paths'
@@ -125,7 +113,7 @@ export default {
      *
      */
     message() {
-      return this.internalMessages[this.messageIndex] || {}
+      return this.internalMessages[this.messageIndex]
     },
 
     /**
@@ -146,7 +134,7 @@ export default {
      *
      */
     rightImage() {
-      if (this.message.rightImage)
+      if (typeof this.message != 'undefined' && this.message.rightImage)
         return SPRITE_PATH + this.message.rightImage
     },
 
@@ -154,7 +142,7 @@ export default {
      *
      */
     leftImage() {
-      if (this.message.leftImage)
+      if (typeof this.message != 'undefined' && this.message.leftImage)
         return SPRITE_PATH + this.message.leftImage
     }
   },
