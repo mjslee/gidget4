@@ -1,40 +1,34 @@
 {
     "code": "Gidget.goto('Bunny')",
-    "size": 4,
+    "size": 5,
   
     "tiles": [
-      {
-        "type": "dirt",
-        "position": { "x": 4, "y": 2 }
-      },
+      { "type": "dirt", "position": { "x": 0, "y": 0 } },
+      { "type": "dirt", "position": { "x": 1, "y": 0 } },
+      { "type": "dirt", "position": { "x": 0, "y": 2 } },
+      { "type": "dirt", "position": { "x": 1, "y": 1 } },
+      { "type": "dirt", "position": { "x": 0, "y": 1 } }
+  ],
 
-      {
-          "type": "grass",
-          "position": {"x":3, "y": 1 }
-      }
-    ],
-  
-    "objects": [
-      {
-        "type": "Gidget",
-        "mixins": [ "Player" ],
-        "position": { "x": 1, "y": 1 }
-      },
-      {
-        "type": "Bunny",
-        "mixins": [ "Object" ],
-        "position": { "x": 3, "y": 3 }
-      }
-    ],
-  
-    "goals": [
-      {
-        "assert": "equal",
-        "arguments": [
-          "Gidget.position", { "x": 0, "y": 1 }
-        ]
-      }
-    ],
+  "objects": [
+    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 4, "y": 2 } },
+    { "type": "Puppy", "position": { "x": 4, "y": 4 } },
+    { "type": "Basket", "position": { "x": 1, "y": 3 } },
+    { "type": "Bucket", "position": { "x": 3, "y": 1 } },
+    { "type": "Goop", "position": { "x": 0, "y": 1 } },
+    { "type": "Bird", "position": { "x": 2, "y": 3 } }
+  ],
+
+  "goals": [
+    {
+      "assert": "equal",
+      "arguments": ["Basket.position", "Puppy.position", "Bird.position" ]
+    },
+    {
+      "assert": "equal",
+      "arguments": ["Bucket.position", "Goop.position"]
+    }
+  ],
   
     "dialogue": [
       {

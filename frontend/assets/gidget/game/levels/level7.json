@@ -1,17 +1,34 @@
 {
   "code": "Gidget.left();",
-  "size": 3,
-  "tiles": [],
-  "objects": [
-    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
-    { "type": "Puppy", "position": { "x": 0, "y": 1 } }
-  ],
-  "goals": [
-    {
-      "assert": "equal",
-      "arguments": ["Gidget.position", "Puppy.position"]
-    }
-  ],
+  "size": 6,
+  "tiles": [
+    { "type": "dirt", "position": { "x": 2, "y": 3 } },
+    { "type": "dirt", "position": { "x": 3, "y": 3 } },
+    { "type": "dirt", "position": { "x": 2, "y": 4 } },
+    { "type": "dirt", "position": { "x": 3, "y": 4 } }
+],
+
+"objects": [
+  { "type": "Gidget", "mixins": ["Player"], "position": { "x": 4, "y": 2 } },
+  { "type": "Puppy", "position": { "x": 3, "y": 5 } },
+  { "type": "Basket", "position": { "x": 4, "y": 4 } },
+  { "type": "Bucket", "position": { "x": 0, "y": 1 } },
+  { "type": "Goop", "position": { "x": 2, "y": 4 } },
+  { "type": "Kitten", "position": { "x": 5, "y": 1 } },
+  { "type": "Piglet", "position": { "x": 0, "y": 3 } },
+  { "type": "Bird", "position": { "x": 2, "y": 1 } }
+],
+
+"goals": [
+  {
+    "assert": "equal",
+    "arguments": ["Basket.position", "Puppy.position", "Bird.position", "Piglet.position", "Kitten.position" ]
+  },
+  {
+    "assert": "equal",
+    "arguments": ["Bucket.position", "Goop.position"]
+  }
+],
   "dialogue": [
     { "text": "This is level 7." }
   ]
