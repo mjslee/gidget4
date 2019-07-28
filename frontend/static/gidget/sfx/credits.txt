@@ -1,0 +1,8 @@
+SFX Credits (All files have been resampled to reduce file size).
+--------------------------------------------------------------------
+
+Original Files:
+Bounce (bounce.wav): http://www.freesound.org/people/timgormly/sounds/170141/ (timgormly)
+Error (error.wav): Irwin Kwan
+Bark (bark.wav): http://freesound.org/people/deprogram/sounds/38121/ (deprogram)
+Meow (meow.wav): http://freesound.org/people/cameronmusic/sounds/138404/ (cameronmusic)
