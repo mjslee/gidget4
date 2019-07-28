@@ -1,7 +1,7 @@
 {
     "code": "Gidget.goto('Bunny')",
     "size": 5,
-  
+    "imports": [ "PlayerControls" ],
     "tiles": [
       { "type": "dirt", "position": { "x": 0, "y": 0 } },
       { "type": "dirt", "position": { "x": 1, "y": 0 } },

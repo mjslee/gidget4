@@ -1,0 +1,54 @@
+{
+    "code": "Gidget.left();",
+    "size": 6,
+    "imports": [ "PlayerControls" ],
+    "tiles": [
+      { "type": "dirt", "position": { "x": 0, "y": 0 } },
+      { "type": "dirt", "position": { "x": 0, "y": 1 } },
+      { "type": "dirt", "position": { "x": 0, "y": 2 } },
+      { "type": "dirt", "position": { "x": 0, "y": 3 } },
+      { "type": "dirt", "position": { "x": 0, "y": 4 } },
+      { "type": "dirt", "position": { "x": 0, "y": 5 } },
+      { "type": "dirt", "position": { "x": 1, "y": 0 } },
+      { "type": "dirt", "position": { "x": 1, "y": 2 } },
+      { "type": "dirt", "position": { "x": 1, "y": 3 } },
+      { "type": "dirt", "position": { "x": 1, "y": 4 } },
+      { "type": "dirt", "position": { "x": 1, "y": 5 } },
+      { "type": "dirt", "position": { "x": 2, "y": 2 } },
+      { "type": "dirt", "position": { "x": 2, "y": 3 } },
+      { "type": "dirt", "position": { "x": 2, "y": 4 } },
+      { "type": "dirt", "position": { "x": 2, "y": 5 } },
+      { "type": "dirt", "position": { "x": 3, "y": 4 } },
+      { "type": "dirt", "position": { "x": 3, "y": 5 } },
+      { "type": "dirt", "position": { "x": 4, "y": 5 } },
+      { "type": "dirt", "position": { "x": 5, "y": 4 } },
+      { "type": "dirt", "position": { "x": 5, "y": 5 } }
+    ],
+    "objects": [
+      { "type": "Gidget", "mixins": ["Player"], "position": { "x": 4, "y": 2 } },
+      { "type": "Kitten", "position": { "x": 0, "y": 1 } },
+      { "type": "Kitten", "position": { "x": 3, "y": 5 } },
+      { "type": "Piglet", "position": { "x": 1, "y": 3 } },
+      { "type": "Piglet", "position": { "x": 5, "y": 3 } },
+      { "type": "Puppy", "position": { "x": 2, "y": 5 } },
+      { "type": "Basket", "position": { "x": 1, "y": 4 } },
+      { "type": "Bird", "position": { "x": 3, "y": 1 } },
+      { "type": "Bucket", "position": { "x": 5, "y": 1 } },
+      { "type": "Goop", "position": { "x": 3, "y": 4 } },
+      { "type": "Goop", "position": { "x": 0, "y": 5 } }
+    ],
+    "goals": [
+      {
+        "assert": "equal",
+        "arguments": ["Basket.position", "Kitten.position", "Kitten.position", "Piglet.position", "Piglet.position", "Puppy.position", "Bird.position"]
+      },
+      {
+        "assert": "equal",
+        "arguments": ["Bucket.position", "Goop.position", "Goop.position"]
+      }
+    ],
+    "dialogue": [
+      { "text": "This is level 12." }
+    ]
+  }
+  

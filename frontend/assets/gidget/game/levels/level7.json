@@ -1,6 +1,7 @@
 {
   "code": "Gidget.left();",
   "size": 6,
+  "imports": [ "PlayerControls" ],
   "tiles": [
     { "type": "dirt", "position": { "x": 2, "y": 3 } },
     { "type": "dirt", "position": { "x": 3, "y": 3 } },

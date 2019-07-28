@@ -1,0 +1,42 @@
+{
+    "code": "Gidget.left();",
+    "size": 5,
+    "imports": [ "PlayerControls" ],
+    "tiles": [
+      { "type": "dirt", "position": { "x": 0, "y": 2 } },
+      { "type": "dirt", "position": { "x": 1, "y": 1 } },
+      { "type": "dirt", "position": { "x": 1, "y": 2 } },
+      { "type": "dirt", "position": { "x": 1, "y": 3 } },
+      { "type": "dirt", "position": { "x": 2, "y": 2 } },
+      { "type": "dirt", "position": { "x": 2, "y": 3 } },
+      { "type": "dirt", "position": { "x": 2, "y": 4 } },
+      { "type": "dirt", "position": { "x": 3, "y": 3 } },
+      { "type": "dirt", "position": { "x": 4, "y": 0 } },
+      { "type": "dirt", "position": { "x": 4, "y": 1 } },
+      { "type": "dirt", "position": { "x": 4, "y": 2 } }
+    ],
+    "objects": [
+      { "type": "Gidget", "mixins": ["Player"], "position": { "x": 3, "y": 0 } },
+      { "type": "Cat", "position": { "x": 4, "y": 1 } },
+      { "type": "Basket", "position": { "x": 2, "y": 4 } },
+      { "type": "Cat", "position": { "x": 3, "y": 3 } },
+      { "type": "Bucket", "position": { "x": 0, "y": 1 } },
+      { "type": "Kitten", "position": { "x": 2, "y": 1 } },
+      { "type": "Goop", "position": { "x": 1, "y": 2 } },
+      { "type": "Goop", "position": { "x": 2, "y": 3 } }
+    ],
+    "goals": [
+      {
+        "assert": "equal",
+        "arguments": ["Basket.position", "Kitten.position", "Cat.position", "Cat.position"]
+      },
+      {
+        "assert": "equal",
+        "arguments": ["Bucket.position", "Goop.position", "Goop.position"]
+      }
+    ],
+    "dialogue": [
+      { "text": "This is level 11." }
+    ]
+  }
+  

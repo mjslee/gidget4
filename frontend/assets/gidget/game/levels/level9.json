@@ -1,7 +1,48 @@
 {
   "code": "Gidget.left();",
   "size": 6,
-  "size": 6,
+  "imports": [ "PlayerControls" ],
+  "tiles": [
+    { "type": "dirt", "position": { "x": 0, "y": 0 } },
+    { "type": "dirt", "position": { "x": 1, "y": 0 } },
+    { "type": "dirt", "position": { "x": 2, "y": 0 } },
+    { "type": "dirt", "position": { "x": 3, "y": 0 } },
+    { "type": "dirt", "position": { "x": 4, "y": 0 } },
+    { "type": "dirt", "position": { "x": 0, "y": 5 } },
+    { "type": "dirt", "position": { "x": 1, "y": 5 } },
+    { "type": "dirt", "position": { "x": 4, "y": 5 } },
+    { "type": "dirt", "position": { "x": 5, "y": 5 } },
+    { "type": "dirt", "position": { "x": 1, "y": 2 } },
+    { "type": "dirt", "position": { "x": 1, "y": 3 } },
+    { "type": "dirt", "position": { "x": 1, "y": 4 } },
+    { "type": "dirt", "position": { "x": 2, "y": 2 } },
+    { "type": "dirt", "position": { "x": 2, "y": 3 } },
+    { "type": "dirt", "position": { "x": 2, "y": 4 } },
+    { "type": "dirt", "position": { "x": 3, "y": 2 } },
+    { "type": "dirt", "position": { "x": 3, "y": 3 } },
+    { "type": "dirt", "position": { "x": 3, "y": 4 } },
+    { "type": "cobblestone", "position": { "x": 5, "y": 1 } }
+  ],
+  "objects": [
+    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 3, "y": 2 } },
+    { "type": "Dog", "position": { "x": 1, "y": 4 } },
+    { "type": "Basket", "position": { "x": 5, "y": 5 } },
+    { "type": "Bucket", "position": { "x": 3, "y": 1 } },
+    { "type": "Goop", "position": { "x": 2, "y": 3 } },
+    { "type": "Bird", "position": { "x": 4, "y": 3 } },
+    { "type": "Rock", "position": { "x": 5, "y": 1 } }
+  ],
+  
+  "goals": [
+    {
+      "assert": "equal",
+      "arguments": ["Basket.position", "Dog.position", "Kitten.position", "Bird.position" ]
+    },
+    {
+      "assert": "equal",
+      "arguments": ["Bucket.position", "Goop.position", "Rock.position"]
+    }
+  ],
   "dialogue": [
     { "text": "This is level 9." }
   ]
