@@ -18,8 +18,7 @@
       :objects="game.objects"
       :goals="game.goals"
       :dialogue="game.dialogue"
-      :imports="game.imports"
-    />
+      :imports="game.imports" />
   </div>
 </template>
 
@@ -47,7 +46,7 @@ export default {
 
   data() {
     return {
-      levels: [ lvl1, lvl2, lvl3, lvl4, lvl5, lvl7, lvl7, lvl8, lvl9, lvl10 ],
+      levels: [ lvl1, lvl2, lvl3, lvl4 ],
       currentLevel: 0,
 
       updateKey: 0,
