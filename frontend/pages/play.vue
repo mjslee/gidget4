@@ -4,7 +4,12 @@
       <nav class="pagination is-large">
         <ul class="pagination-list" v-if="levels.length > 0">
           <li v-for="index in levels.length" :key="index">
-            <a class="pagination-link" @click="loadLevel(index-1)">{{ index }}</a>
+            <a
+              :class="'pagination-link' + (index - 1 == levelIndex ? ' is-current' : '')"
+              @click="loadLevel(index-1)"
+            >
+              {{ index }}
+            </a>
           </li>
         </ul>
       </nav>
