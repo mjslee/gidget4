@@ -12,6 +12,16 @@ export default {
 
   },
 
+  onMove() {
+    if (this.energy > 0)
+      this.energy -= 1
+
+    else
+      throw {
+        text: 'I ran out of energy!'
+      }
+  },
+
   exposed: {
     shake() {
       animate(this, async (tween, $el, wasInterrupted, timeline) => {
