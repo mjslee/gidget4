@@ -28,16 +28,16 @@ export default {
    */
   translate(message) {
     const parsedMessage = this.parse(message)
-    if (typeof parsedMessage === 'undefined')
-      return;
+    if (typeof parsedMessage == 'undefined')
+      return
 
     let translation = TRANSLATIONS[parsedMessage.match]
-    if (typeof translation === 'undefined')
-      return;
+    if (typeof translation == 'undefined')
+      return
 
     const token = parsedMessage.matches[1]
     translation = translation.replace(/{}/g, token || '')
 
-    return translation.trim();
+    return translation.trim()
   },
 }

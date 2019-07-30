@@ -6,7 +6,7 @@ export const PATTERNS = {
   UNEXPECTED_TOKEN: /^Unexpected token (.*?)$/,
   UNEXPECTED_STRING: /^Unexpected string$/,
   UNEXPECTED_NUMBER: /^Unexpected number$/,
-  UNEXPECTED_IDENTIFIER: /^Unexpected identifier$/,
+  UNEXPECTED_IDENTIFIER: /^Line (.*?): Unexpected identifier$/,
 }
 
 export const TRANSLATIONS = {

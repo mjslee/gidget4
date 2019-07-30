@@ -76,7 +76,7 @@ import GidgetGoals from './Goals'
 import GidgetControls from './Controls'
 
 import Game from '@/assets/gidget/game/gidget-game'
-import Exception from '@/assets/gidget/lang/js-exception'
+import JsException from '@/assets/gidget/lang/js-exception'
 import { wait } from '@/assets/gidget/game/gidget-utility'
 
 import { GIDGET_SPRITES } from '@/constants/paths'
@@ -322,7 +322,8 @@ export default {
 
       if (typeof error.text == 'string') {
         this.$nextTick(() => {
-          this.$refs.dialogue.append({ text: error.text })
+          const text = JsException.translate(error.text) || error.text
+          this.$refs.dialogue.append({ text })
         })
       }
     },
