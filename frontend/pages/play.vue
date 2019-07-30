@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div style="margin-bottom:2rem">
-      <nav class="pagination is-large" role="navigation" aria-label="pagination">
-        <ul class="pagination-list">
+      <nav class="pagination is-large">
+        <ul class="pagination-list" v-if="levels.length > 0">
           <li v-for="index in levels.length" :key="index">
-            <a class="pagination-link" @click="loadLevel(index)">{{ index }}</a>
+            <a class="pagination-link" @click="loadLevel(index-1)">{{ index }}</a>
           </li>
         </ul>
       </nav>
@@ -12,30 +12,20 @@
 
     <GidgetGame
       :key="updateKey"
-      :code="game.code"
-      :size="game.size"
-      :tiles="game.tiles"
-      :objects="game.objects"
-      :goals="game.goals"
-      :dialogue="game.dialogue"
-      :imports="game.imports" />
+      :code="level.code"
+      :size="level.size"
+      :tiles="level.tiles"
+      :objects="level.objects"
+      :goals="level.goals"
+      :dialogue="level.dialogue"
+      :imports="level.imports" />
   </div>
 </template>
 
 
 <script>
 import GidgetGame from '@/components/Gidget/Game'
-import lvl1 from '@/assets/gidget/game/levels/level1.json'
-import lvl2 from '@/assets/gidget/game/levels/level2.json'
-import lvl3 from '@/assets/gidget/game/levels/level3.json'
-import lvl4 from '@/assets/gidget/game/levels/level4.json'
-import lvl5 from '@/assets/gidget/game/levels/level5.json'
-import lvl6 from '@/assets/gidget/game/levels/level6.json'
-import lvl7 from '@/assets/gidget/game/levels/level7.json'
-import lvl8 from '@/assets/gidget/game/levels/level8.json'
-import lvl9 from '@/assets/gidget/game/levels/level9.json'
-import lvl10 from '@/assets/gidget/game/levels/level10.json'
-
+import GidgetLevels from '@/assets/gidget/game/levels'
 
 export default {
   name: 'app',
@@ -46,23 +36,51 @@ export default {
 
   data() {
     return {
-      levels: [ lvl1, lvl2, lvl3, lvl4 ],
-      currentLevel: 0,
-
       updateKey: 0,
-      game: {}
+
+      level: {},
+      levelIndex: 0,
+      levels: [],
     }
   },
 
+
   mounted() {
-    this.loadLevel(2)
+    this.setLevels(GidgetLevels.Gidget3, 0)
   },
 
+
   methods: {
+    /**
+     * Sets levels and loads a level by its index..
+     *
+     * @param {array[object]} levels - Array of levels.
+     * @param {number} index - Level index to load.
+     */
+    setLevels(levels, index) {
+      this.levels = levels
+      this.loadLevel(index)
+    },
+
+    /**
+     * Loads a level by index.
+     *
+     * @param {number} index - Level index to load.
+     */
     loadLevel(index) {
-      const level = this.levels[index - 1]
-      this.game = Object.create(level)
+      // Attempt to get level object
+      const level = this.levels[index]
+      if (typeof level == 'undefined')
+        return false
+
+      // Create level object
+      this.level = Object.create(level)
+      this.levelIndex = index
+
+      // Increment update key to re-initalize the GidgetGame component
       this.updateKey += 1
+
+      return true
     },
   }
 }
