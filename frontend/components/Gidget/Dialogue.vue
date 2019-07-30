@@ -4,12 +4,12 @@
     <img class="right head image is-64x64" :src="rightImage" v-if="rightImage">
 
     <div class="box">
-      <template>
+      <template v-if="message">
         <!-- Markdown -->
-        <GidgetText :text="message.text" v-if="message" />
+        <GidgetText :text="message.text" />
 
         <!-- Message Repeats -->
-        <span class="tag is-info is-rounded is-small" v-if="message && message.repeats">
+        <span class="tag is-info is-rounded is-small" v-if="message.repeats">
           {{ message.repeats }}
         </span>
       </template>

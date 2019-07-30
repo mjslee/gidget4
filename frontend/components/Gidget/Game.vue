@@ -185,7 +185,8 @@ export default {
       const runner = this.game.run(this.$refs.code.code)
 
       // Set up the controls
-      this.$refs.controls.setup(runner.steps.length)
+      if (typeof runner.steps == 'object')
+        this.$refs.controls.setup(runner.steps.length)
 
       // Highlight errored line, if it exists
       if (typeof this.game.error == 'object')
@@ -319,8 +320,11 @@ export default {
         this.$refs.code.setErrorLine(error.ln - 1)
       }
 
-      if (typeof error.text == 'string')
-        this.$refs.dialogue.append({ text: error.text })
+      if (typeof error.text == 'string') {
+        this.$nextTick(() => {
+          this.$refs.dialogue.append({ text: error.text })
+        })
+      }
     },
 
 
