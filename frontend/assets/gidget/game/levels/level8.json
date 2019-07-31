@@ -1,7 +1,8 @@
 
 {
-  "code": "Gidget.left();",
+  "code": "goto(Goop)\ngrab(Goop)\nleft(4)\ndown()\ndrop(Kitten)\ngoto(Basket)\nleft()\nup(2)\ndrop(Rock)\ndrop(Goop)",
   "size": 5,
+  "title":"Level 8: Where Will Gidget End Up?",
   "imports": [ "PlayerControls" ],
   "tiles": [
     { "type": "dirt", "position": { "x": 0, "y": 1 } },

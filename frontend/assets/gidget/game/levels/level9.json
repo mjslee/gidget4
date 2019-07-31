@@ -1,6 +1,7 @@
 {
-  "code": "Gidget.left();",
+  "code": "goto(Bird)\ngrab(Bird)\nup(3)\nleft(2)\ngoto(Dog)\ngrab(Goop)\nleft(4)\ndown()\ndrop(Goop)\ngoto(Basket)\nleft()\nup(2)\ndrop(Dog)\ndrop(Rock)",
   "size": 6,
+  "title":"Level 9: Where Will the Goop End Up?",
   "imports": [ "PlayerControls" ],
   "tiles": [
     { "type": "dirt", "position": { "x": 0, "y": 0 } },
@@ -34,6 +35,14 @@
   ],
   
   "goals": [
+    {
+      "assert": "equal",
+      "arguments": [ "Basket.position", { "x": 5, "y": 1 } ]
+    },
+    {
+      "assert": "equal",
+      "arguments": [ "Bucket.position", { "x": 5, "y": 3 } ]
+    },
     {
       "assert": "equal",
       "arguments": ["Basket.position", "Dog.position", "Kitten.position", "Bird.position" ]

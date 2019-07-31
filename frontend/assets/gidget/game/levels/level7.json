@@ -1,6 +1,7 @@
 {
-  "code": "Gidget.left();",
+  "code": "up(2)\nright()\ngrab(Kitten)\nleft(3)\ngrab(Bird)\nleft(2)\ndown(2)\ngrab(Piglet)\nright(2)\ndown(1)\ngrab(Goop)\nright()\ndown()\ngrab(Puppy)\nup(4)\nleft(3)\ndown(3)\nup(4)",
   "size": 6,
+  "title":"Level 7: Moving Gidget",
   "imports": [ "PlayerControls" ],
   "tiles": [
     { "type": "dirt", "position": { "x": 2, "y": 3 } },

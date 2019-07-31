@@ -1,6 +1,7 @@
 {
-    "code": "Gidget.left();",
+    "code": "goto first(Kittens)\ngrab(Kitten)\ngoto(Basket)\ngrab(Cat)\ngoto first(Cats)\ngrab first(Cat)\ngoto last(Cats)\ngoto first(Goops)\ngoto last(Goops)\ngrab last(Goops)\ngoto(Bucket)\ndrop last(Goops)\nright(2)\ndown(2)",
     "size": 5,
+    "title":"Level 11: Let's move around more efficiently to specific spots on the map!",
     "imports": [ "PlayerControls" ],
     "tiles": [
       { "type": "dirt", "position": { "x": 0, "y": 2 } },

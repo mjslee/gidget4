@@ -1,7 +1,7 @@
 {
   "code": "left()\nup()\ndrop(Goop)\ndown(3)\nleft(1)\ngrab(Puppy)\nleft(2)\nup(3)\ngrab(Goop)\nright(4)\ndrop(Puppy)",
   "imports": [ "PlayerControls" ],
-
+  "title":"Level 4: Let's organize everything correctly!",
   "size": 5,
   "tiles": [
     { "type": "dirt", "position": { "x": 3, "y": 0 } },

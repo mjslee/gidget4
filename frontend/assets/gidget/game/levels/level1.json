@@ -1,6 +1,7 @@
 {
   "code": "right()",
   "size": 3,
+  "title": "Level 1: Let's get to the puppy!",
   "tiles": [],
   "imports": [ "PlayerControls" ],
 

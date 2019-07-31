@@ -1,6 +1,7 @@
 {
-    "code": "Gidget.left();",
+    "code": "goto first(Puppys)\ngrab first(Puppys)\ngoto last(Puppys)\ngrab last(Puppys)\ngoto first(Goops)\ngrab first(Goops)\ngoto last(Goops)\ngrab last(Goops)\ngoto first(Birds)\ngrab first(Birds)\ngoto last(Birds)\ngrab last(Birds)\ngoto(Basket)\ndrop first(Puppys)\ndrop last(Puppys)\ndrop first(Birds)\ndrop last(Birds)\ngoto(Bucket)\ndrop first(Goops)\ndrop last(Goops)",
     "size": 5,
+    "title":"Level 13: Let's organize two of a kind!",
     "imports": [ "PlayerControls" ],
     "tiles": [
       { "type": "dirt", "position": { "x": 0, "y": 0 } },

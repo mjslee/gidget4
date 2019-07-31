@@ -1,6 +1,7 @@
 {
-  "code": "Gidget.left();",
+  "code": "goto first(Kittens)\ngrab first(Kittens)\ngoto last(Baskets)\ngrab last(Kittens)\ngoto first(Baskets)",
   "size": 4,
+  "title":"Level 10: Let's move more efficiently to each object!",
   "imports": [ "PlayerControls" ],
   "tiles": [
     { "type": "dirt", "position": { "x": 0, "y": 0 } },

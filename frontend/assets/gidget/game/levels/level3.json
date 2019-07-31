@@ -1,7 +1,7 @@
 {
   "code": "left(2)\nup()\ngrab(Piglet)\nleft(2)\nup(2)\nright(6)",
   "imports": [ "PlayerControls" ],
-
+  "title":"Level 3: Let's drop things into the correct containers!",
   "size": 5,
   "tiles": [
     { "type": "dirt", "position": { "x": 1, "y": 3 } }

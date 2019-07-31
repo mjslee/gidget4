@@ -1,6 +1,7 @@
 {
-    "code": "Gidget.left();",
+    "code": "goto(Bird)\ngrab(Bird)\ngoto first(Kittens)\ngrab first(Kittens)\ngoto last(Kittens)\ngrab last(Kittens)\ngoto(Puppy)\ngrab(Puppy)\ngoto(Basket)\ndrop(Bird)\ndrop(Puppy)\ngoto first(Goops)\ngrab first(Goops)\ngoto(Bucket)\ndrop first(Goops)",
     "size": 6,
+    "title":"Level 12: Testing Gidget's Mobility with Goto",
     "imports": [ "PlayerControls" ],
     "tiles": [
       { "type": "dirt", "position": { "x": 0, "y": 0 } },

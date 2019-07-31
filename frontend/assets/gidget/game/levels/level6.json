@@ -1,6 +1,7 @@
 {
-    "code": "Gidget.goto('Bunny')",
+    "code": "down(2)\ngrab(Puppy)\nup()\nleft(3)\ndrop(Puppy)\nup(2)\nleft()\ngrab(Goop)\nright(3)\ndrop(Goop)\ndown(2)\nleft(2)",
     "size": 5,
+    "title":"Level 6: New Level 2",
     "imports": [ "PlayerControls" ],
     "tiles": [
       { "type": "dirt", "position": { "x": 0, "y": 0 } },
