@@ -290,18 +290,24 @@ export default {
     if (!path.length)
       return true
 
+    // Save invalid position so an animator can do a bump effect
+    let invalidPosition
+
     // Step by step...
-    path.forEach(position => {
-      if (!this.move(position, true))
-        return false
+    for (let i = 0, len = path.length; i < len; i++) {
+      // Attempt to move
+      if (!this.move(path[i])) {
+        invalidPosition = path[i]
+        break
+      }
 
       // Store valid path for the UI to interpret
-      validPath.push(position)
-    })
+      validPath.push(path[i])
+    }
 
     // Call onWalk callback
     if (typeof this.onWalk == 'function')
-      this.onWalk(validPath)
+      this.onWalk(validPath, invalidPosition)
 
     return validPath.length >= path.length
   },

@@ -76,7 +76,7 @@ import GidgetGoals from './Goals'
 import GidgetControls from './Controls'
 
 import Game from '@/assets/gidget/game/gidget-game'
-import Exception from '@/assets/gidget/lang/js-exception'
+import JsException from '@/assets/gidget/lang/js-exception'
 import { wait } from '@/assets/gidget/game/gidget-utility'
 
 import { GIDGET_SPRITES } from '@/constants/paths'
@@ -185,7 +185,8 @@ export default {
       const runner = this.game.run(this.$refs.code.code)
 
       // Set up the controls
-      this.$refs.controls.setup(runner.steps.length)
+      if (typeof runner.steps == 'object')
+        this.$refs.controls.setup(runner.steps.length)
 
       // Highlight errored line, if it exists
       if (typeof this.game.error == 'object')
@@ -319,8 +320,12 @@ export default {
         this.$refs.code.setErrorLine(error.ln - 1)
       }
 
-      if (typeof error.text == 'string')
-        this.$refs.dialogue.append({ text: error.text })
+      if (typeof error.text == 'string') {
+        this.$nextTick(() => {
+          const text = JsException.translate(error.text) || error.text
+          this.$refs.dialogue.append({ text })
+        })
+      }
     },
 
 

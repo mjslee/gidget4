@@ -5,7 +5,7 @@ export default {
   /**
    * Move object relative to its current position.
    */
-  relativeMove(direction, amount, position) {
+  relativeWalk(direction, amount, position) {
     position.x += this.position.x;
     position.y += this.position.y;
     const move = this.walk(position);
@@ -25,7 +25,6 @@ export default {
         type: 'dialogue',
         text: `I'm moving ${spaces} ${direction}!`
       });
-      this.energy -= 20;
     }
   },
 
@@ -35,28 +34,28 @@ export default {
      * Move object one space to the left.
      */
     left(amount=1) {
-      return this.relativeMove('left', amount, { x: amount * -1, y: 0 });
+      return this.relativeWalk('left', amount, { x: amount * -1, y: 0 });
     },
 
     /**
      * Move object one space to the right.
      */
     right(amount=1) {
-      return this.relativeMove('right', amount, { x: amount, y: 0 });
+      return this.relativeWalk('right', amount, { x: amount, y: 0 });
     },
 
     /**
      * Move object one space upwards.
      */
     up(amount=1) {
-      return this.relativeMove('up', amount, { x: 0, y: amount * -1 });
+      return this.relativeWalk('up', amount, { x: 0, y: amount * -1 });
     },
 
     /**
      * Move object one space downwards.
      */
     down(amount=1) {
-      return this.relativeMove('down', amount, { x: 0, y: amount });
+      return this.relativeWalk('down', amount, { x: 0, y: amount });
     },
 
     /**
