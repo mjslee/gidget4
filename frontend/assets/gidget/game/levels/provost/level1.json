@@ -1,0 +1,27 @@
+{
+  "name": "Level 1",
+  "description": "Using functions.",
+
+  "code": "up()\nright()\ndown()",
+
+  "size": 3,
+  "tiles": [
+
+  ],
+  "imports": [ "PlayerControls" ],
+
+  "objects": [
+    { "type": "Gidget", "mixins": ["Player"], "position": { "x": 1, "y": 1 } },
+    { "type": "Kitten", "position": { "x": 2, "y": 2 } }
+  ],
+
+  "goals": [
+    {
+      "assert": "equal",
+      "arguments": ["Gidget.position", "Kitten.position"]
+    }
+  ],
+  "dialogue": [
+    { "text": "Hello test. [[Kitten.position]]" }
+  ]
+}
