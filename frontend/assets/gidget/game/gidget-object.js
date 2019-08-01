@@ -40,16 +40,34 @@ export default {
 
     // Get base type of game object
     let base = GidgetObjects[attrs.type]
-    if (!base)
+    if (!base) {
+      console.debug(attrs.type + ': Base object not found.')
       return
+    }
+
+    // Ensure game object is in world bounds
+    if (
+      attrs.position.x >= world.size || attrs.position.y >= world.size ||
+      attrs.position.x < 0 || attrs.position.y < 0
+    ) {
+      console.debug(attrs.type + ': GameObject is out of bounds.')
+      return
+    }
+
 
     // Merge in base and extra attributes
     _.merge(self, _.cloneDeep(base))
     _.merge(self, _.cloneDeep(attrs))
 
     // Merge in mixins
-    if (typeof attrs.mixins == 'object')
-      attrs.mixins.forEach(mix => _.merge(self, _.cloneDeep(GidgetMixins[mix])))
+    if (typeof attrs.mixins == 'object') {
+      attrs.mixins.forEach(mixin => {
+        if (typeof GidgetMixins[mixin] == 'undefined')
+          console.debug(mixin + ': Mixin does not exist.')
+        else
+          _.merge(self, _.cloneDeep(GidgetMixins[mixin]))
+      })
+    }
 
     // Set properties
     self.world = world
