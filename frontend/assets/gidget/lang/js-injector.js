@@ -91,18 +91,18 @@ export default {
       if (this.ignoreNodes.includes(node.type))
         return;
 
+      // Add to the flat tree
       this.flatTree.push(node);
 
-      // Create scope function to generate a __scope__() call
-      let scope;
-      if (typeof prevNode !== 'undefined') {
-        const ln = prevNode.loc.start.line;
-        const range = prevNode.range.join();
-        const type = prevNode.type;
-        scope = inside => `;__scope__(${ln},[${range}],'${type}',${inside});`;
-      }
-      else
+      // No previous node? We are the root, don't do any of this
+      if (typeof prevNode == 'undefined')
         return;
+
+      // Create scope function to generate a __scope__() call
+      const ln = prevNode.loc.start.line;
+      const range = prevNode.range.join();
+      const type = prevNode.type;
+      const scope = inside => `;__scope__(${ln},[${range}],'${type}',${inside});`;
 
       // Add scope step to BlockStatements
       if (node.type === 'BlockStatement') {
