@@ -107,7 +107,7 @@ export default {
       // Add scope step to BlockStatements
       if (node.type == 'BlockStatement') {
         result.push([ scope(true), node.range[0] + 1 ]);
-        result.push([ scope(false), node.range[1] ]);
+        result.push([ scope(false), node.range[1] - 1 ]);
       }
 
       // Add scope to node that /could/ have a block statement
