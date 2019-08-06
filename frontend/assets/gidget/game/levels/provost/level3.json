@@ -1,0 +1,51 @@
+{
+  "name": "Level 3",
+  "description": "Using object methods.",
+
+  "imports": [ "PlayerControls" ],
+  "code": "down(4)\nTeleporter.activate()\nup(3)",
+  "size": 5,
+
+  "tiles": [
+    { "type": "dirt", "position": { "x": 1, "y": 2 } },
+    { "type": "dirt", "position": { "x": 1, "y": 3 } },
+
+    { "type": "dirt", "position": { "x": 2, "y": 1 } },
+    { "type": "dirt", "position": { "x": 2, "y": 2 } },
+    { "type": "dirt", "position": { "x": 2, "y": 3 } },
+
+    { "type": "dirt", "position": { "x": 3, "y": 0 } },
+    { "type": "dirt", "position": { "x": 3, "y": 1 } },
+    { "type": "dirt", "position": { "x": 3, "y": 2 } },
+    { "type": "dirt", "position": { "x": 3, "y": 3 } }
+  ],
+
+  "objects": [
+    { "type": "Gidget", "mixins": [ "Player" ], "position": { "x": 0, "y": 0 } },
+    { "type": "Dog", "position": { "x": 4, "y": 0 } },
+
+    {
+      "name": "Teleporter", "type": "TeleporterA", "mixins": ["Teleporter"],
+      "receiver": "Receiver", "setupRequired": true, "position": { "x": 0, "y": 4 }
+    },
+
+    { "name": "Receiver", "type": "TeleporterB", "position": { "x": 4, "y": 4 } },
+
+    { "type": "Boulder", "position": { "x": 2, "y": 0 } },
+    { "type": "Boulder", "position": { "x": 2, "y": 1 } },
+    { "type": "Boulder", "position": { "x": 2, "y": 2 } },
+    { "type": "Boulder", "position": { "x": 2, "y": 3 } },
+    { "type": "Boulder", "position": { "x": 2, "y": 4 } }
+  ],
+
+  "goals": [
+    {
+      "assert": "equal",
+      "arguments": ["Gidget.position", "Dog.position"]
+    }
+  ],
+
+  "dialogue": [
+    { "text": "Help me get to the [[Puppy]] behind the boulders!" }
+  ]
+}

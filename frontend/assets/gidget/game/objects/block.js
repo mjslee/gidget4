@@ -1,3 +1,4 @@
 export default {
-    image: "block.png"
+  image: "block.png",
+  blocking: true
 }

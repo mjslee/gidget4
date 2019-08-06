@@ -15,25 +15,25 @@ export default {
    */
   traverse(node, callback) {
     // Ignore non-object nodes
-    if (node === null || typeof node !== 'object')
+    if (node == null || typeof node != 'object')
       return;
 
-    const that = this;
+    const self = this;
 
     // Traverse down all nodes in node array
     if (Array.isArray(node))
       return node.forEach(subnode => {
-        that.traverse(subnode, callback);
+        self.traverse(subnode, callback);
       });
 
     // Traverse down all property-keys of a node; non-object nodes will be
     // passed but quickly ignored in the next recurse
     Object.keys(node).forEach(key => {
-      that.traverse(node[key], callback);
+      self.traverse(node[key], callback);
     });
 
     // Check for body and a valid callback
-    if (typeof node.body === 'undefined' || typeof callback !== 'function')
+    if (typeof node.body == 'undefined' || typeof callback != 'function')
       return;
 
     // Call the callback for each body in the body array
@@ -56,7 +56,7 @@ export default {
    */
   getIdentifiersAfter(index) {
     let result = '';
-    const identifiers = this.tokens.filter(t => t.type === 'Identifier');
+    const identifiers = this.tokens.filter(t => t.type == 'Identifier');
     const names = [];
 
     identifiers.forEach(id => {
@@ -73,7 +73,7 @@ export default {
         names.push(name);
 
       // Append identifier get key-pair
-      result += `'${name}':typeof ${name}!=='undefined'?${name}:undefined,`;
+      result += `'${name}':typeof ${name}!='undefined'?${name}:undefined,`;
     });
     return '{' + result + '}';
   },
@@ -91,21 +91,21 @@ export default {
       if (this.ignoreNodes.includes(node.type))
         return;
 
+      // Add to the flat tree
       this.flatTree.push(node);
 
-      // Create scope function to generate a __scope__() call
-      let scope;
-      if (typeof prevNode !== 'undefined') {
-        const ln = prevNode.loc.start.line;
-        const range = prevNode.range.join();
-        const type = prevNode.type;
-        scope = inside => `;__scope__(${ln},[${range}],'${type}',${inside});`;
-      }
-      else
+      // No previous node? We are the root, don't do any of this
+      if (typeof prevNode == 'undefined')
         return;
 
+      // Create scope function to generate a __scope__() call
+      const ln = prevNode.loc.start.line;
+      const range = prevNode.range.join();
+      const type = prevNode.type;
+      const scope = inside => `;__scope__(${ln},[${range}],'${type}',${inside});`;
+
       // Add scope step to BlockStatements
-      if (node.type === 'BlockStatement') {
+      if (node.type == 'BlockStatement') {
         result.push([ scope(true), node.range[0] + 1 ]);
         result.push([ scope(false), node.range[1] ]);
       }

@@ -1,0 +1,39 @@
+{
+  "name": "Level 2",
+  "description": "Using function arguments.",
+
+  "imports": [ "PlayerControls" ],
+  "code": "down(2)\nright(2)\ndown(2)\nleft(2)",
+  "size": 4,
+
+  "tiles": [
+    { "type": "dirt", "position": { "x": 1, "y": 2 } },
+    { "type": "dirt", "position": { "x": 1, "y": 3 } },
+
+    { "type": "dirt", "position": { "x": 2, "y": 1 } },
+    { "type": "dirt", "position": { "x": 2, "y": 2 } },
+    { "type": "dirt", "position": { "x": 2, "y": 3 } },
+
+    { "type": "dirt", "position": { "x": 3, "y": 0 } },
+    { "type": "dirt", "position": { "x": 3, "y": 1 } },
+    { "type": "dirt", "position": { "x": 3, "y": 2 } }
+  ],
+
+  "objects": [
+    { "type": "Gidget", "mixins": [ "Player" ], "position": { "x": 1, "y": 0 } },
+    { "type": "Puppy", "position": { "x": 2, "y": 3 } },
+    { "type": "Boulder", "position": { "x": 2, "y": 2 } },
+    { "type": "Boulder", "position": { "x": 1, "y": 2 } }
+  ],
+
+  "goals": [
+    {
+      "assert": "equal",
+      "arguments": ["Gidget.position", "Puppy.position"]
+    }
+  ],
+
+  "dialogue": [
+    { "text": "Help me get to the [[Puppy]] behind the boulders!" }
+  ]
+}
