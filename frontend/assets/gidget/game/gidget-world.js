@@ -150,7 +150,7 @@ export default {
    *
    * @return {object} Map object of game objects.
    */
-  getObjects() {
+  getObjectsMap() {
     // TODO: Clean this function up, it's very confusing to read
     const objectsMap = {}
 
@@ -189,7 +189,7 @@ export default {
   getObjectsSanitized() {
     // TODO: Find a more native solution. Maybe using 'getObjectState'?
     return _.cloneDeep(
-      _.omit(_.omitBy(this.getObjects(), _.isFunction), ['world', 'object'])
+      _.omit(_.omitBy(this.getObjectsMap(), _.isFunction), ['world', 'object'])
     )
   },
 
