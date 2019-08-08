@@ -199,40 +199,20 @@ export default {
     // Merge the game objects; game objects are more important than extra
     // imports, so if we have a conflict where a game object and an extra
     // import have the same key then game objects will take precedence.
-    const gameObjects = this.world.getObjects()
+    const gameObjects = this.world.getObjectsMap(true)
     Object.assign(exposed, gameObjects)
 
     // Loop over each of the newly merged elements
-    const expose = (prop) => {
+    for (const prop in exposed) {
       if (!exposed.hasOwnProperty(prop))
-        return
-
-      const type = typeof exposed[prop]
-      if (type == 'undefined')
-        return
+        continue
 
       // Enclose imported functions in another function with its scope being set
       // to the game world.
-      if (type == 'function') {
+      if (typeof exposed[prop] == 'function') {
         const func = exposed[prop]
         exposed[prop] = (...args) => func.call(this.world, ...args)
       }
-
-      // When a merged objects has an 'exposed' object property, re-assign the
-      // property of 'exposed' to be the exposed property of the object.
-      else if (typeof exposed[prop].exposed == 'object') {
-        exposed[prop] = exposed[prop].exposed
-      }
-
-      // TODO: Expose game object array
-      else if (Array.isArray(exposed[prop])) {
-
-      }
-
-    }
-
-    for (const prop in exposed) {
-      expose(prop)
     }
 
     // Return the collection

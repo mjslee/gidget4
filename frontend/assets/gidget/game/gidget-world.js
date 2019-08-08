@@ -150,30 +150,31 @@ export default {
    *
    * @return {object} Map object of game objects.
    */
-  getObjectsMap() {
-    // TODO: Clean this function up, it's very confusing to read
+  getObjectsMap(exposed=false) {
     const objectsMap = {}
 
     this.objects.forEach(obj => {
+      const name = obj.name
+
+      // If we have an 'exposed' object, we'll expose that object instead of self
+      if (exposed && obj.hasOwnProperty('exposed'))
+        obj = obj.exposed
+
       // Create object in results if it doesn't already exist
-      if (typeof objectsMap[obj.name] == 'undefined')
-        objectsMap[obj.name] = obj
+      if (typeof objectsMap[name] == 'undefined')
+        objectsMap[name] = obj
 
-      // Multiple objects of the same name already exist, add new object
-      // to the array
-      else if (Array.isArray(objectsMap[obj.name])) {
-        objectsMap[obj.name].push(obj)
-        obj.arrayIndex = objectsMap[obj.name].length - 1
+      // Multiple objects of the same name already exist; append object to
+      // the array
+      else if (Array.isArray(objectsMap[name])) {
+        objectsMap[name].push(obj)
+        obj.index = objectsMap[name].length - 1
       }
 
-      // Object of the same name already exists, turn it into an array so they
+      // Object of the same name already exists; turn it into an array so they
       // can be grouped together
-      else {
-        let prevObj = objectsMap[obj.name]
-        objectsMap[obj.name] = [prevObj, obj]
-        prevObj.arrayIndex = 0
-        obj.arrayIndex = 1
-      }
+      else
+        objectsMap[name] = [objectsMap[name], obj]
     })
 
     return objectsMap
@@ -252,7 +253,7 @@ export default {
   createObject(attrs) {
     // Create the object and add it to the world
     const gameObject = GidgetObject.create(this, this.nextId++, attrs)
-     return this.addObject(gameObject)
+    return this.addObject(gameObject)
   },
 
 
