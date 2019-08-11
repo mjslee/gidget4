@@ -45,10 +45,6 @@ html, body {
 .gidget-and-friends:hover {
   background-image: url('/gidget/intro/landingHover.png');
 }
-
-section {
-  background: url('')
-}
 </style>
 
 
