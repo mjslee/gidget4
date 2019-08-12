@@ -35,6 +35,7 @@ export default {
    * @return {object} A world state object
    */
   getState() {
+    // TODO: Rip state management out of engine and put it into its own module
     // Create an object to restore important world properties
     const state = {
       // Primitives
@@ -166,10 +167,8 @@ export default {
 
       // Multiple objects of the same name already exist; append object to
       // the array
-      else if (Array.isArray(objectsMap[name])) {
+      else if (Array.isArray(objectsMap[name]))
         objectsMap[name].push(obj)
-        obj.index = objectsMap[name].length - 1
-      }
 
       // Object of the same name already exists; turn it into an array so they
       // can be grouped together
@@ -267,6 +266,12 @@ export default {
     if (typeof gameObject != 'object')
       return false
 
+    // TODO: Find out if an object indexing that only needs 2 iterations
+    // would be much more beneficial.
+    // Calculate index
+    gameObject.index = this.objects.filter(
+      obj => obj.name === gameObject.name).length
+
     this.objects.push(gameObject)
 
     // Call callback
@@ -332,6 +337,8 @@ export default {
    * @return {void}
    */
   getCollisions(obj) {
+    // TODO: Simplify this, by moving object boundaries responsiblities
+    // into GidgetObject
     this.objects.filter((obj2) =>
       obj.id !== obj2.id &&
       this.insideObjectBoundaries(obj, obj2.position)
@@ -366,6 +373,7 @@ export default {
    * @return {object}
    */
   getObjectBoundaries(obj) {
+    // TODO: Move this into GidgetObject or make a helper function for this
     const fromX = Math.floor(obj.position.x - ((obj.scale / 2) - 1));
     return {
       fromX: fromX,
@@ -385,6 +393,7 @@ export default {
    * @return {boolean}
    */
   insideObjectBoundaries(obj, position) {
+    // TODO: Move this into GidgetObject or make a helper function for this
     // Do not scale boundaries up with object's 'scale' property
     if (!obj.scaleBoundaries)
       return obj.position.x == position.x && obj.position.y == position.y;
@@ -409,6 +418,7 @@ export default {
    * @return {array}
    */
   getPath(fromPosition, toPosition) {
+    // TODO: Move this into a helper function
     const result = [];
     const newPosition = _.clone(fromPosition);
 
@@ -450,6 +460,7 @@ export default {
    * @param {function} conditions
    */
   validatePosition(position) {
+    // TODO: Move this into a helper function
     return (
       position.x >= 0 && position.x <= this.size - 1 &&
       position.y >= 0 && position.y <= this.size - 1
