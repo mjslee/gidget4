@@ -5,12 +5,15 @@
     v-show="isGrabbed"
   >
     <!-- Message -->
-    <span ref="message" :class="message ? 'new-message' : ''">
+    <span class="gidget-message" ref="message" :class="message ? 'new-message' : ''">
       {{ message }}
     </span>
 
     <!-- Name -->
-    <label>{{ object.name }}</label>
+    <span class="gidget-name">
+      {{ object.name }}
+      {{ object.index }}
+    </span>
 
     <!-- Sprite -->
     <img
@@ -34,7 +37,7 @@ div {
   transition: all 200ms;
 }
 
-label {
+.gidget-name {
   display: inline-block;
   color: white;
   padding: 0.1rem 0.5rem;
@@ -44,7 +47,7 @@ label {
   pointer-events: none;
 }
 
-span {
+.gidget-message {
   position: absolute;
   transition: none !important;
   color: yellow;
