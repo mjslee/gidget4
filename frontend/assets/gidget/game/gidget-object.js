@@ -33,7 +33,14 @@ export default {
    * @param {number} id Unique identification number.
    * @return {object}
    */
-  create(world, id, attrs) {
+  create(attrs) {
+    // Get base type of game object
+    const type = typeof attrs == 'object' ? attrs.type : undefined
+    if (typeof type == 'undefined') {
+      console.debug('type: Missing property.')
+      return
+    }
+
     // Create a deep clone of 'this' (GidgetObject), so we don't mutate
     // any of the base module's properties
     const self = _.cloneDeep(this)
@@ -44,16 +51,6 @@ export default {
       console.debug(attrs.type + ': Base object not found.')
       return
     }
-
-    // Ensure game object is in world bounds
-    if (
-      attrs.position.x >= world.size || attrs.position.y >= world.size ||
-      attrs.position.x < 0 || attrs.position.y < 0
-    ) {
-      console.debug(attrs.type + ': GameObject is out of bounds.')
-      return
-    }
-
 
     // Merge in base and extra attributes
     _.merge(self, _.cloneDeep(base))
@@ -69,10 +66,7 @@ export default {
       })
     }
 
-    // Set properties
-    self.world = world
-    self.id = id
-
+    // Update exposed 'get' properties
     self.updateProps()
 
     // If no name was provided in attrs we'll use its type as its name
