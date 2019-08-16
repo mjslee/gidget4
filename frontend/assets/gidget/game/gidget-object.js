@@ -113,17 +113,6 @@ export default {
 
 
   /**
-   * Adds a callback to be called during a visual step.
-   *
-   * @param {function} func -- Callback function
-   * @return {void}
-   */
-  addHook(callback, when='before') {
-    this.world.hooks.push({ callback, when })
-  },
-
-
-  /**
    * Grabs a game object into this game object's grabbed array.
    *
    * @param {object|number|string} - A game object, id, or name.
