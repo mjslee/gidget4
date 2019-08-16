@@ -1,5 +1,6 @@
 import JsStepper from '@/assets/gidget/lang/js-stepper'
 import GidgetWorld from './gidget-world'
+import GidgetObject from './gidget-object'
 import GidgetImports from './imports'
 
 
@@ -44,7 +45,10 @@ export default {
 
     // Create game objects, then save the initial game state that we can
     // restore on reset
-    gameObjects.forEach(gameobject => self.world.createObject(gameobject))
+    gameObjects.forEach((gameObjectAttr) => {
+      const gameObject = GidgetObject.create(gameObjectAttr)
+      self.world.addObject(gameObject)
+    })
 
     // Save initial world state and data so they can be restored on reset
     self.initialState = self.world.getState()
