@@ -1,3 +1,4 @@
+import Test from './test'
 import Gidget from './gidget'
 import Bunny from './bunny'
 import Puppy from './puppy'
@@ -198,6 +199,7 @@ import YellowBrick from './yellow-brick'
 
 
 export default {
+  Test,
   Gidget,
   Bunny,
   Puppy,
@@ -393,6 +395,4 @@ export default {
   Wood,
   World,
   YellowBrick
-
-
 }

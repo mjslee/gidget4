@@ -2,14 +2,14 @@
  * This module is for the purpose of testing.
  */
 export default {
-  exposed: {
-    isType: true,
+  isObject: true,
 
+  exposed: {
     /**
      * This should be overriden by the 'Test' mixin.
      */
     testOverride() {
-      return false;
+      return 0
     },
   }
 }
