@@ -268,31 +268,6 @@ export default {
   },
 
 
-  /**
-   * Removes an object from the world by its id.
-   *
-   * @param {object} obj Object to remove.
-   * @return {boolean} Success of removal.
-   */
-  removeObject(id) {
-    // TODO: Change this to remove by the object and not by the id
-    // Find objects index by its ID
-    let index = this.objects.findIndex(obj => obj.id === id)
-    if (index < 0)
-      return false
-
-    // Remove from world's objects
-    this.objects.splice(index, 1);
-
-    // Call callback
-    if (typeof this.onObjectRemoved === 'function')
-      this.onObjectRemoved(this);
-
-    delete this;
-    return true;
-  },
-
-
   /*
    * Move object to another tile's position.
    * Using 'obj.move({ x, y })' is the preferred way to move objects.
