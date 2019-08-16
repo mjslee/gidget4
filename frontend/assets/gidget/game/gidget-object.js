@@ -246,10 +246,6 @@ export default {
     if (collisions)
       this.world.getCollisions(this)
 
-    // Call moveObject without its second argument 'position', so that only the
-    // world's 'onObjectMoved' callback is called.
-    this.world.moveObject(this)
-
     // Call onMove
     if (typeof this.onMove == 'function')
       this.onMove(position)

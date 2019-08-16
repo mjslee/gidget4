@@ -10,13 +10,6 @@ export default {
   messages: [],
   hooks: [],
 
-  // Callbacks
-  // TODO: Remove all unnecessary callbacks
-  //onObjectAdded(obj) { console.log(obj, 'An object was added!') }
-  //onObjectMoved(obj) { console.log(obj, 'An object was moved!') }
-  //onObjectRemoved(obj) { console.log(obj, 'An object was removed!') }
-  //onObjectSay(messages) { console.log(messages, 'An object said something!') }
-
 
   /**
    * Creates a new GidgetWorld instance.
