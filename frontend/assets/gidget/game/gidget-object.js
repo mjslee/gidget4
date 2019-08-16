@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import GidgetObjects from './objects'
 import GidgetMixins from './mixins'
 import { walkAnimation, poscmp } from './gidget-utility'
@@ -108,25 +109,6 @@ export default {
         this.exposed[prop].isEnclosed = true
       }
     }
-  },
-
-
-  /**
-   * Removes this object from the world.
-   *
-   * @return {boolean}
-   */
-  remove() {
-    // Disallow removal of grabbed objects, drop it first
-    if (typeof this.grabber != 'undefined')
-      return false
-
-    // Call onRemove for our object
-    if (typeof this.onRemove == 'function')
-      this.onRemove()
-
-    // Call removal from the world
-    return this.world.removeObject(this.id)
   },
 
 
