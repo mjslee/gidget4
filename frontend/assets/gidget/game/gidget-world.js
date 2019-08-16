@@ -244,21 +244,8 @@ export default {
 
 
   /**
-   * Creates a game object in the world. 'type' attribute in kwargs is required.
-   * For example: kwargs={type: 'Gidget'}
-   *
-   * @param {object} kwargs Attributes to assign to object on creation.
-   * @return {boolean} Success of creating object.
-   */
-  createObject(attrs) {
-    // Create the object and add it to the world
-    const gameObject = GidgetObject.create(this, this.nextId++, attrs)
-    return this.addObject(gameObject)
-  },
-
-
-  /**
    * Adds a game object to world.
+   * Create a gameObject using `GidgetObject.create()`.
    *
    * @param {object} gameObject - A game object.
    * @return {boolean} Success of adding object.
@@ -267,6 +254,9 @@ export default {
     if (typeof gameObject != 'object')
       return false
 
+    gameObject.world = this
+    gameObject.id = this.nextId++
+
     // TODO: Find out if an object indexing that only needs 2 iterations
     // would be much more beneficial.
     // Calculate index
@@ -274,11 +264,6 @@ export default {
       obj => obj.name === gameObject.name).length
 
     this.objects.push(gameObject)
-
-    // Call callback
-    if (typeof this.onObjectAdded === 'function')
-      this.onObjectAdded(this)
-
     return true
   },
 
