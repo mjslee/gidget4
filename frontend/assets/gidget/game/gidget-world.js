@@ -268,28 +268,6 @@ export default {
   },
 
 
-  /*
-   * Move object to another tile's position.
-   * Using 'obj.move({ x, y })' is the preferred way to move objects.
-   *
-   * @param {object} obj Object that was moved.
-   * @return {boolean}
-   */
-  moveObject(gameObject, position) {
-    let result = false
-
-    //
-    if (typeof position == 'object')
-      result = gameObject.move(position);
-
-    // Call callback
-    if (result && typeof this.onObjectMoved == 'function')
-      this.onObjectMoved(gameObject)
-
-    return result
-  },
-
-
   /**
    * Detect an object collision based on position. Run 'onCollision' for each
    * collided object.
