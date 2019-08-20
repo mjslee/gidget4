@@ -4,6 +4,7 @@ import GidgetMixins from './mixins'
 import { walkAnimation, poscmp } from './gidget-utility'
 
 
+
 export default {
   // Parents
   world: undefined,
@@ -124,6 +125,10 @@ export default {
    *   grab(1)         // Object ID
    */
   grab(gameObjectId) {
+    // Ensure world object is set
+    if (typeof this.world == 'undefined')
+      return false
+
     const gameObject = this.world.getObject(gameObjectId, (gameObject) => {
       // Game object must be able to be grabbed
       if (gameObject.grabbable === false)
@@ -152,8 +157,9 @@ export default {
       this.onGrab(gameObject)
 
     // Call onGrabbed for the found object
-    if (typeof gameObject.onGrabbed == 'function')
-      gameObject.onGrabbed(this).call(gameObject)
+    if (typeof gameObject.onGrabbed == 'function') {
+      gameObject.onGrabbed.call(gameObject, this)
+    }
 
     return true
   },
@@ -171,6 +177,10 @@ export default {
    *   drop(1)         // Object ID
    */
   drop(gameObjectId) {
+    // Ensure world object is set
+    if (typeof this.world == 'undefined')
+      return false
+
     // Find grabbed object to drop
     const gameObject = this.world.getObject(gameObjectId, (gameObject) => {
       return gameObject.grabber == this.id
@@ -234,6 +244,10 @@ export default {
    * @return {boolean}
    */
   move(position, collisions=true) {
+    // Ensure world object is set
+    if (typeof this.world == 'undefined')
+      return false
+
     // Validate new position
     if (!this.world.validatePosition(position))
       return false
