@@ -143,7 +143,8 @@ export async function animate(gameObject, callback) {
     }
   }
 
-  gameObject.addHook(func)
+  if (typeof gameObject.world == 'object')
+    gameObject.world.hooks.push({ callback: func, when: 'before' })
 
   return true
 }
