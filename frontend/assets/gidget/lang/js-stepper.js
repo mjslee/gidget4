@@ -15,7 +15,7 @@ export default {
    * @return {object} Stepper instance.
    */
   create() {
-    return _.cloneDeep(this);
+    return _.cloneDeep(this)
   },
 
 
@@ -23,8 +23,8 @@ export default {
    * Reset properties.
    */
   reset() {
-    this.steps = [];
-    this.debugInput = undefined;
+    this.steps = []
+    this.debugInput = undefined
   },
 
 
@@ -38,8 +38,12 @@ export default {
    */
   __scope__(ln, range, scope, inside) {
     const step = this.steps[this.steps.length - 1];
-    if (step.ln == ln && step.range[0] == range[0] && step.range[1] == range[1])
+    if (
+      typeof step == 'object' && typeof step.range == 'object' &&
+      step.ln == ln && step.range[0] == range[0] && step.range[1] == range[1]
+    )
       step.scope = { type: scope, inside };
+
     //else
     //  this.steps.push({ ln, range, scope: { type: scope, inside }});
   },

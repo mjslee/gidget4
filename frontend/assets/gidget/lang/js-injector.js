@@ -1,4 +1,5 @@
 export default {
+  tree: {},
   flatTree: [],
 
   // Node types
@@ -8,17 +9,17 @@ export default {
 
 
   /*
-   * Traverse through AST.
+   * Traverse through Abstract Syntax Tree nodes.
    *
    * @param {object} node - Tree node to traverse.
-   * @param {function(node, prevNode)} callback - Callback to access bodies.
+   * @param {function(node, prevNode, i)} callback - Callback to access bodies.
    */
   traverse(node, callback) {
     // Ignore non-object nodes
     if (node == null || typeof node != 'object')
-      return;
+      return
 
-    const self = this;
+    const self = this
 
     // Traverse down all nodes in node array
     if (Array.isArray(node))
@@ -36,15 +37,15 @@ export default {
     if (typeof node.body == 'undefined' || typeof callback != 'function')
       return;
 
-    // Call the callback for each body in the body array
+    // Call the callback for each element in the body array
     if (Array.isArray(node.body))
       node.body.forEach(body => {
-        callback(body, node);
+        callback(body, node, 0);
       });
 
     // Call the callback
     else
-      callback(node.body, node);
+      callback(node.body, node, 1);
   },
 
 
@@ -55,36 +56,36 @@ export default {
    * @return {string} - String-dictionary.
    */
   getIdentifiersAfter(index) {
-    let result = '';
-    const identifiers = this.tokens.filter(t => t.type == 'Identifier');
-    const names = [];
+    let result = ''
+    const identifiers = this.tokens.filter(t => t.type == 'Identifier')
+    const names = []
 
     identifiers.forEach(id => {
       // The node's range-end must be *after* the iterated identifier's
       // range-start
       if (id.range[0] > index)
-        return;
+        return
 
-      // Ignore duplicate identifier names
-      const name = id.value;
+      // Ignore duplicate identifiers
+      const name = id.value
       if (names.includes(name))
-        return;
-      else
-        names.push(name);
+        return
 
-      // Append identifier get key-pair
-      result += `'${name}':typeof ${name}!='undefined'?${name}:undefined,`;
+      // Add unique identifier name and key-pair for result
+      names.push(name)
+      result += `'${name}':typeof ${name}!='undefined'?${name}:undefined,`
     });
-    return '{' + result + '}';
+
+    return '{' + result + '}'
   },
 
 
   /*
-   * Get list of modifications to make to input string.
+   * Get list of patches to make to input string.
    *
    * @return {array} - Array of [['modification text', index]...]
    */
-  getModifications() {
+  getPatches() {
     const result = [];
     this.traverse([this.tree], (node, prevNode) => {
       // No modifications needed for these types of nodes
@@ -143,8 +144,7 @@ export default {
     this.tokens = esprima.tokenize(input, this.parseOptions);
 
     // Sort
-    const sortedMods = this.getModifications().sort((a, b) => b[1] - a[1]);
-
+    const sortedMods = this.getPatches().sort((a, b) => b[1] - a[1]);
     sortedMods.forEach(mod => {
       // Insert (string)mod[0] at index of (int)mod[1]
       input = input.substring(0, mod[1]) + mod[0] + input.substring(mod[1]);
