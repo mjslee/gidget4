@@ -41,13 +41,39 @@ describe('syntax scope', () => {
 })
 
 
-test('__scope__ sets scope property of last step', () => {
-  const range = [0, 1]
-  const ln = 5
+describe('collecting data', () => {
+  let proxyTampered = 0  // should never be true
+  const obj = { testValue: 'abc' }
+  const data = {
+    testValue: 'hello world',
+    proxyObject: new Proxy(obj, {
+      get: (target, prop) => {
+        // proxy tampered will be set 1 if this proxy object returns a property
+        proxyTampered++
+        return target[prop]
+      }    
+    })
+  }
 
   const stepper = JsStepper.create()
-  stepper.steps = [{}, { ln, range }]  // two steps
-  stepper.__scope__(ln, range, 'scope', true)
+  stepper.steps = [{}, {}]  // two steps
+  stepper.__collect__(data)  // run step collection
 
-  expect(typeof stepper.steps[1].scope).toBe('object')
+  const step = stepper.steps[1]
+
+  test('__collect__ sets data property', () => {
+    expect(typeof step.data).toBe('object')
+    expect(step.data.testValue).toBe('hello world')
+  })
+
+  test('__collect__ removes object proxy handlers', () => {
+    // because Proxy is removed, proxyTampered should not be incremented on
+    // property fetch
+    const proxyObject = step.data.proxyObject
+    expect(proxyObject.testValue).toBe('abc')  // proxyTampered would be 1
+    expect(proxyObject.testValue).toBe('abc')  // proxyTampered would be 2
+    expect(proxyObject.testValue).toBe('abc')  // proxyTampered would be 3
+    expect(proxyTampered).toBe(1)
+  })
+})
 })
