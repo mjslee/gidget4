@@ -24,17 +24,20 @@ describe('stepper initialization', () => {
 })
 
 
-test('reset stepper', () => {
-  const stepper = JsStepper.create()
-  stepper.steps = [1, 2, 3]
-  stepper.debugInput = '123'
-  expect(stepper.steps.length).toBe(3)
-  expect(stepper.debugInput).toBe('123')
+describe('syntax scope', () => {
+  test('__scope__ sets scope property', () => {
+    const range = [0, 1]
+    const ln = 5
 
-  // Reset stepper and test changes
-  stepper.reset()
-  expect(stepper.steps.length).toBe(0)
-  expect(stepper.debugInput).toBe(undefined)
+    const stepper = JsStepper.create()
+    stepper.steps = [{}, { ln, range }]  // two steps
+    stepper.__scope__(ln, range, 'scope', true)
+
+    const scope = stepper.steps[1].scope
+    expect(typeof scope).toBe('object')
+    expect(scope.type).toBe('scope')
+    expect(scope.inside).toBe(true)
+  })
 })
 
 
