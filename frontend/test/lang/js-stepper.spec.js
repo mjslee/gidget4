@@ -76,4 +76,32 @@ describe('collecting data', () => {
     expect(proxyTampered).toBe(1)
   })
 })
+
+
+describe('stepping', () => {
+  const stepper = JsStepper.create()
+
+  let onStepCalled = false
+  stepper.onStep = () => { onStepCalled = true }
+  stepper.__step__(0, [0, 5])  // line 0, range 0-5
+
+  test('__step__ adds step', () => {
+    expect(stepper.steps.length).toBe(1)
+    expect(stepper.steps[0].index).toBe(0)
+    expect(stepper.steps[0].ln).toBe(0)
+    expect(stepper.steps[0].range[0]).toBe(0)
+    expect(stepper.steps[0].range[1]).toBe(5)
+
+    // add another step for good measure
+    stepper.__step__(4, [10, 20])  // line 4, range 10-20
+    expect(stepper.steps.length).toBe(2)
+    expect(stepper.steps[1].index).toBe(1)
+    expect(stepper.steps[1].ln).toBe(4)
+    expect(stepper.steps[1].range[0]).toBe(10)
+    expect(stepper.steps[1].range[1]).toBe(20)
+  })
+
+  test('onStep callback is called', () => {
+    expect(onStepCalled).toBe(true)
+  })
 })
