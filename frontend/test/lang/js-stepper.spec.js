@@ -1,10 +1,26 @@
 import JsStepper from '@/assets/gidget/lang/js-stepper'
 
 
-test('create stepper instance', () => {
-  const stepper = JsStepper.create()
-  expect(typeof stepper).toBe('object')
-  expect(stepper.steps.length).toBe(0)
+describe('stepper initialization', () => {
+  test('create stepper instance', () => {
+    const stepper = JsStepper.create()
+    expect(typeof stepper).toBe('object')
+    expect(stepper.steps.length).toBe(0)
+  })
+
+
+  test('reset stepper', () => {
+    const stepper = JsStepper.create()
+    stepper.steps = [1, 2, 3]
+    stepper.debugInput = '123'
+    expect(stepper.steps.length).toBe(3)
+    expect(stepper.debugInput).toBe('123')
+
+    // Reset stepper and test changes
+    stepper.reset()
+    expect(stepper.steps.length).toBe(0)
+    expect(stepper.debugInput).toBe(undefined)
+  })
 })
 
 
