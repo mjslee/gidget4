@@ -51,7 +51,7 @@ describe('collecting data', () => {
         // proxy tampered will be set 1 if this proxy object returns a property
         proxyTampered++
         return target[prop]
-      }    
+      }
     })
   }
 
@@ -143,15 +143,14 @@ describe('running', () => {
     const code = `let i = ${stepper.maxSteps*2}; while (i > 0) { i -= 1 }`
     const result = stepper.run(code)
 
-    expect(result.steps.length).toBe(stepper.maxSteps)
+    expect(result.steps.length).toBe(100)
   })
 
   test('compile time error returns error dictionary', () => {
     const code = `// first line
       /* second line */ this is invalid syntax`
 
-    const stepper = JsStepper.create()
-    const result = stepper.run(code)
+    const result = JsStepper.create().run(code)
 
     expect(typeof result.error).toBe('object')
     expect(result.error.ln).toBe(2)
@@ -164,11 +163,11 @@ describe('running', () => {
       const dontAssignToMe = false  // line 2
       dontAssignToMe = true // line 3, error`
 
-    const stepper = JsStepper.create()
-    const result = stepper.run(code)
+    const result = JsStepper.create().run(code)
     expect(typeof result.error).toBe('object')
     expect(result.error.ln).toBe(3)
     expect(result.error.name).toBe('TypeError')
     expect(result.error.text).toBe('Assignment to constant variable.')
+    expect(result.steps.length).toBe(2)
   })
 })
