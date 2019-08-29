@@ -108,6 +108,24 @@ describe('stepping', () => {
 
 
 describe('running', () => {
+
+  test('importing data', () => {
+    let flag = false
+    const importedFunction = () => flag = true
+
+    const importedObject = new Object()
+    importedObject.flag = true
+
+    const code = `importedFunction(); importedObject`
+    const result = JsStepper.create().run(code, {
+      importedFunction,
+      importedObject
+    })
+
+    expect(flag).toBe(true)
+    expect(result.steps[1].data.importedObject.flag).toBe(true)
+  })
+
   test('steps are limited', () => {
     const stepper = JsStepper.create()
 
