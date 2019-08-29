@@ -105,3 +105,19 @@ describe('stepping', () => {
     expect(onStepCalled).toBe(true)
   })
 })
+
+
+describe('running', () => {
+  test('compile time error returns error dictionary', () => {
+    const code = `// first line
+      /* second line */ this is invalid syntax`
+
+    const stepper = JsStepper.create()
+    const result = stepper.run(code)
+
+    expect(typeof result.error).toBe('object')
+    expect(result.error.ln).toBe(2)
+    expect(result.error.name).toBe('ParseError')
+    expect(result.error.text).toBe('Line 2: Unexpected identifier')
+  })
+})
