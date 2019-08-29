@@ -120,4 +120,17 @@ describe('running', () => {
     expect(result.error.name).toBe('ParseError')
     expect(result.error.text).toBe('Line 2: Unexpected identifier')
   })
+
+  test('runtime error returns steps and error dictionary', () => {
+    const code = `// line 1
+      const dontAssignToMe = false  // line 2
+      dontAssignToMe = true // line 3, error`
+
+    const stepper = JsStepper.create()
+    const result = stepper.run(code)
+    expect(typeof result.error).toBe('object')
+    expect(result.error.ln).toBe(3)
+    expect(result.error.name).toBe('TypeError')
+    expect(result.error.text).toBe('Assignment to constant variable.')
+  })
 })
