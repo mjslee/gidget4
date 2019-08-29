@@ -108,6 +108,15 @@ describe('stepping', () => {
 
 
 describe('running', () => {
+  test('steps are limited', () => {
+    const stepper = JsStepper.create()
+
+    const code = `let i = ${stepper.maxSteps*2}; while (i > 0) { i -= 1 }`
+    const result = stepper.run(code)
+
+    expect(result.steps.length).toBe(stepper.maxSteps)
+  })
+
   test('compile time error returns error dictionary', () => {
     const code = `// first line
       /* second line */ this is invalid syntax`

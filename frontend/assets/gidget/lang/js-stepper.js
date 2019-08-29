@@ -8,6 +8,7 @@ import Injector from './js-injector';
 export default {
   // Steps
   steps: [],
+  maxSteps: 100,
 
 
   /**
@@ -37,6 +38,7 @@ export default {
    * @param {boolean} inside - Is inside scope. 'false' when leaving scope.
    */
   __scope__(ln, range, scope, inside) {
+    // Get final step
     const step = this.steps[this.steps.length - 1];
     if (
       typeof step == 'object' && typeof step.range == 'object' &&
@@ -56,6 +58,16 @@ export default {
    * @param {array} range - Array in the form of [fromNumber, toNumber]
    */
   __step__(ln, range) {
+    // Limit amount of steps to prevent infinite loops and exhaust resources
+    if (this.steps.length >= this.maxSteps)
+      throw {
+        error: {
+          ln: ln,
+          type: 'MaxStepsExceeded',
+          text: 'Maximum number of steps exceeded.'
+        }
+      }
+
     this.steps.push({ index: this.steps.length, ln, range });
 
     if (typeof this.onStep == 'function')
@@ -69,7 +81,11 @@ export default {
    * @param {dictionary} Data to save.
    */
   __collect__(data) {
+    // Get final step
     const step = this.steps[this.steps.length - 1];
+    if (typeof step == 'undefined')
+      return
+
     const keys = Object.keys(data);
 
     // Proxy objects can break things like Vue, so we'll have to recreate
@@ -105,7 +121,7 @@ export default {
           name: 'ParseError',
           text: e.text || e.message || e.description
         }
-      };
+      }
     }
 
     try {
