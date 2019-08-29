@@ -108,6 +108,17 @@ describe('stepping', () => {
 
 
 describe('running', () => {
+  test('collects data from steps', () => {
+    const code = `let x = 5; x++`
+    // 2 steps:             ^   ^
+
+    const result = JsStepper.create().run(code)
+
+    expect(Array.isArray(result.steps)).toBe(true)
+    expect(result.steps.length).toBe(2)
+    expect(result.steps[0].data.x).toBe(5)
+    expect(result.steps[1].data.x).toBe(6)
+  })
 
   test('importing data', () => {
     let flag = false
