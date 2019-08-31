@@ -188,7 +188,7 @@ export default {
      */
     'object.message'(newVal) {
       // Ignore empty/undefined values
-      if (_.isEmpty(newVal))
+      if (!document.hasFocus() || typeof newVal != 'string' || newVal.length < 1)
         return
 
       // Set as undefined; watch will get triggered again
@@ -202,7 +202,7 @@ export default {
 
       // Restart new message animation (this is hack)
       const $el = this.$refs.message
-      if (!$el)
+      if (typeof $el == 'undefined')
         return
 
       $el.style.animation = 'none'
