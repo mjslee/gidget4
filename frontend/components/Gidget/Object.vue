@@ -11,8 +11,8 @@
 
     <!-- Name -->
     <span class="gidget-name">
-      {{ object.name }}
-      {{ object.index }}
+      {{ object.name }}<!--
+   --><template v-if="typeof object.index == 'number'">[{{ object.index }}]</template>
     </span>
 
     <!-- Sprite -->
