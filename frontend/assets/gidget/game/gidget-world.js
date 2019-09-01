@@ -40,12 +40,12 @@ export default {
       objects: [],
       messages: this.messages,
       hooks: this.hooks
-    };
+    }
 
     // TODO: Use a map function instead of this loop
     // Save objects
     for (let i = 0, len = this.objects.length; i < len; i++)
-      state.objects.push(this.getObjectState(this.objects[i]));
+      state.objects.push(this.getObjectState(this.objects[i]))
 
     // Deep clone the state to accidental prevent mutation
     return _.cloneDeep(state)
@@ -247,16 +247,20 @@ export default {
     if (typeof gameObject != 'object')
       return false
 
+    // Set GameObject props
     gameObject.world = this
     gameObject.id = this.nextId++
 
-    // TODO: Find out if an object indexing that only needs 2 iterations
-    // would be much more beneficial.
-    // Calculate index
-    gameObject.index = this.objects.filter(
-      obj => obj.name === gameObject.name).length
-
+    // Add to world objects
     this.objects.push(gameObject)
+
+    // Set game object indexes
+    const gameObjects = this.objects.filter(obj => obj.name === gameObject.name)
+    if (gameObjects.length > 1) {
+      let index = 0
+      gameObjects.forEach(obj => obj.index = index++)
+    }
+
     return true
   },
 
