@@ -45,6 +45,7 @@ div {
   text-align: center;
   text-shadow: 1px 1px 1px #000;
   pointer-events: none;
+  transform: translate(0, 20%);
 }
 
 .gidget-message {
@@ -56,11 +57,11 @@ div {
   opacity: 0;
 }
 
-.selected > label {
+.selected > .gidget-name {
   z-index: 101 !important;
 }
 
-.selected > img {
+.selected > .gidget-sprite {
   z-index: 100 !important;
   pointer-events: none;
   box-shadow: 0 0 3rem 1rem gold inset, 0 0 2rem goldenrod;
