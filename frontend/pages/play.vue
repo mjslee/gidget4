@@ -23,7 +23,8 @@
       :objects="level.objects"
       :goals="level.goals"
       :dialogue="level.dialogue"
-      :imports="level.imports" />
+      :imports="level.imports"
+    />
   </div>
 </template>
 

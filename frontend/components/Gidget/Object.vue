@@ -11,8 +11,7 @@
 
     <!-- Name -->
     <span class="gidget-name">
-      {{ object.name }}<!--
-   --><template v-if="typeof object.index == 'number'">[{{ object.index }}]</template>
+      {{ object.name }}{{ typeof index == 'number' ? '[' + index + ']' : '' }}
     </span>
 
     <!-- Sprite -->
@@ -135,6 +134,10 @@ export default {
       return {
         'z-index': this.object.layer
       }
+    },
+
+    index() {
+      return this.object.index
     },
 
     /**

@@ -6,17 +6,16 @@
       v-text="`[${hoveredTile.x}, ${hoveredTile.y}]`"
     />
 
-    <main ref="world" id="world"
+    <main
+      ref="world" id="world"
       @mouseenter="popupPosition.display = 'block'"
       @mouseleave="popupPosition.display = 'none'"
       @mousemove="movePopupPosition"
     >
       <!-- Gidget Game Objects -->
       <GidgetObject
-        ref="objects"
-        v-for="object in objects" :key="'obj-' + object.id"
-        @click.native="selectedObject = object"
-        :class="selectedObject && selectedObject.id === object.id ? 'selected' : ''"
+        v-for="object in objects"
+        :key="'obj-' + object.id"
         :object="object"
         :size="tileSize"
       />
@@ -25,7 +24,7 @@
       <div class="game-row x-axis">
         <label
           v-for="i in size" :key="'i-'+i"
-          :style="axisLabelWidth" v-text="i-1"
+          :style="axisLabelStyle" v-text="i-1"
         />
       </div>
 
@@ -160,7 +159,7 @@ export default {
     /**
      * Calculate X axis label width.
      */
-    axisLabelWidth() {
+    axisLabelStyle() {
       return {
         width: this.tileSize + (this.tileMargin * 2) + 'rem'
       }
@@ -176,11 +175,10 @@ export default {
      */
     getTileType(x, y) {
       const tile = this.tiles.find(tile =>
-        x === tile.position.x && y === tile.position.y
-      );
+        x == tile.position.x && y == tile.position.y)
 
       // Return tile type or default to grass
-      return tile ? tile.type : "grass";
+      return tile ? tile.type : "grass"
     },
 
     /*
@@ -198,8 +196,8 @@ export default {
      * @param {number} y
      */
     setPopupPosition(x, y) {
-      this.hoveredTile.x = x;
-      this.hoveredTile.y = y;
+      this.hoveredTile.x = x
+      this.hoveredTile.y = y
     }
   }
 }
