@@ -8,6 +8,9 @@ services:
     build:
       context: ./app/php
       dockerfile: Dockerfile
+      args:
+        UID: 1000
+        GID: 1000
     container_name: php
     networks:
       - gidget
