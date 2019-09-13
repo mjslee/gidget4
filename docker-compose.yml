@@ -43,4 +43,4 @@ services:
     networks:
       - gidget
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./db-data:/var/lib/postgresql/data
