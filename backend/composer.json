@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "mjslee/gidget4",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Gidget, the game.",
     "keywords": [
         "framework",
         "laravel"
