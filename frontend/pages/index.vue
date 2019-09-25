@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <section class="hero">
       <div class="hero-body is-inline">
         <div class="container">
@@ -10,17 +11,17 @@
 
     <section class="section">
       <div class="container">
-          <div class="columns">
-            <div class="column is-three-quarters">
-              <div class="gidget-and-friends" alt="Gidget and friends" />
+        <div class="columns">
+          <div class="column is-three-quarters">
+            <div class="gidget-and-friends" alt="Gidget and friends" />
               <!-- <img src="gidget/intro/landingDefault.png" alt="Gidget and friends" /> -->
-            </div>
             <div class="column">
               <b-button size="is-large" class="is-fullwidth">Play</b-button>
               <b-button size="is-large" class="is-fullwidth" disabled>Level Editor</b-button>
               <b-button size="is-large" class="is-fullwidth">About</b-button>
             </div>
           </div>
+        </div>
       </div>
     </section>
 
@@ -49,14 +50,14 @@ html, body {
 
 
 <script>
-import Card from '~/components/Card'
+import Navbar from '@/components/Navbar'
 
 export default {
   name: 'HomePage',
   layout: 'landing',
 
   components: {
-    Card
+    Navbar
   }
 }
 </script>

@@ -1,28 +1,29 @@
 <template>
   <main>
-    <div class="block">
-      <b-button icon-left="facebook"></b-button>
-      <b-button icon-left="twitter"></b-button>
-    </div>
 
-    <div class="block">
-      <b-dropdown hoverable aria-role="menu">
-        <button class="button is-info" slot="trigger">Account Name</button>
-      <b-dropdown-item aria-role="menuitem">Change Name</b-dropdown-item>
-      <b-dropdown-item aria-role="menuitem">Change Password</b-dropdown-item> 
-      <b-dropdown-item aria-role="menuitem">Logout</b-dropdown-item> 
-
-      </b-dropdown-item>
-      </b-dropdown>
-    </div>
+    <!-- <div class="block"> -->
+    <!--   <b&#45;dropdown hoverable aria&#45;role="menu"> -->
+    <!--     <button class="button is&#45;info" slot="trigger">Account Name</button> -->
+    <!--     <b&#45;dropdown&#45;item aria&#45;role="menuitem">Change Name</b&#45;dropdown&#45;item> -->
+    <!--     <b&#45;dropdown&#45;item aria&#45;role="menuitem">Change Password</b&#45;dropdown&#45;item>  -->
+    <!--     <b&#45;dropdown&#45;item aria&#45;role="menuitem">Logout</b&#45;dropdown&#45;item>  -->
+    <!--   </b&#45;dropdown> -->
+    <!-- </div> -->
 
     <nuxt />
+
   </main>
 </template>
 
 
 <script>
+import Navbar from '@/components/Navbar'
+
 export default {
+  components: {
+    Navbar
+  },
+
   data() {
     return {
       items: [
