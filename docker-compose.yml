@@ -14,8 +14,6 @@ services:
     networks:
       - gidget
   php:
-    depends_on:
-      - db
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -24,6 +22,8 @@ services:
         GID: 1000
     networks:
       - gidget
+    ports:
+      - 8000:8000
     volumes:
       - ./backend:/backend
   nginx:

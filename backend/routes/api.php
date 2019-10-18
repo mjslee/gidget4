@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['middleware' => ['web']], function () {
+    // GitHub Auth
+    Route::get('login/github', 'Auth\GitHubLoginController@redirectToProvider');
+    Route::get('login/github/callback', 'Auth\GitHubLoginController@handleProviderCallback');
+});
