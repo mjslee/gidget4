@@ -1,2 +1,7 @@
 #!/usr/bin/env sh
-exec ./cmd php $@
+
+# Run a PHP command.
+# Usage: ./php {command}
+
+cd "${0%/*}"
+exec ./php_run php $@

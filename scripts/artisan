@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Run an artisan command.
+# Usage: ./artisan {command}
+# Examples:
+#   ./artisan migrate
+#   ./artisan serve
+#   ./artisan list
+
+cd "${0%/*}"
+exec ./php_run php artisan $@

@@ -1,2 +1,7 @@
 #!/usr/bin/env sh
-exec ./cmd composer $@
+
+# Run a composer command.
+# Usage: ./composer {command}
+
+cd "${0%/*}"
+exec ./php_run composer $@
