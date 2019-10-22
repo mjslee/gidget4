@@ -4,4 +4,4 @@
 # Usage: ./php {command}
 
 cd "${0%/*}"
-exec ./php_run php $@
+exec ./php_exec php $@

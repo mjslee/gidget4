@@ -4,4 +4,4 @@
 # Usage: ./composer {command}
 
 cd "${0%/*}"
-exec ./php_run composer $@
+exec ./php_exec composer $@
