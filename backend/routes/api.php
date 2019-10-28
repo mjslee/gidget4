@@ -13,12 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::group(['middleware' => ['web']], function () {
+//     // GitHub Auth
+//     Route::get('login/github', 'Auth\GitHubLoginController@redirectToProvider');
+//     Route::get('login/github/callback', 'Auth\GitHubLoginController@handleProviderCallback');
+// });
 
-Route::group(['middleware' => ['web']], function () {
-    // GitHub Auth
-    Route::get('login/github', 'Auth\GitHubLoginController@redirectToProvider');
-    Route::get('login/github/callback', 'Auth\GitHubLoginController@handleProviderCallback');
+Route::group(['prefix' => 'auth'], function () {
+    // Guest Access
+    Route::post('login', 'AuthController@login');
+    Route::post('signup', 'AuthController@signup');
+
+    // Authorized Access
+    Route::group(['middleware' => 'auth:api'], function() {
+        Route::get('logout', 'AuthController@logout');
+        Route::get('user', 'AuthController@user');
+    });
 });
