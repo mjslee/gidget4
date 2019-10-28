@@ -1,19 +1,54 @@
 <template>
   <main>
 
-    <!-- <div class="block"> -->
-    <!--   <b&#45;dropdown hoverable aria&#45;role="menu"> -->
-    <!--     <button class="button is&#45;info" slot="trigger">Account Name</button> -->
-    <!--     <b&#45;dropdown&#45;item aria&#45;role="menuitem">Change Name</b&#45;dropdown&#45;item> -->
-    <!--     <b&#45;dropdown&#45;item aria&#45;role="menuitem">Change Password</b&#45;dropdown&#45;item>  -->
-    <!--     <b&#45;dropdown&#45;item aria&#45;role="menuitem">Logout</b&#45;dropdown&#45;item>  -->
-    <!--   </b&#45;dropdown> -->
-    <!-- </div> -->
+    <section class="hero">
+      <div class="hero-head">
+        <nav class="navbar">
+          <div class="container">
+            <div class="navbar-brand">
+              <span class="navbar-burger burger" data-target="navbar">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
+            <div id="navbar" class="navbar-menu">
+              <div class="navbar-end">
+                <b-button>Sign up</b-button>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <p class="title">
+            Gidget
+          </p>
+          <p class="subtitle">&nbsp;</p>
+        </div>
+      </div>
+    </section>
 
     <nuxt />
 
   </main>
 </template>
+
+
+<style>
+html, body {
+  background: #82af55;
+}
+</style>
+
+
+<style scoped>
+.hero {
+  background: #79cbe8;
+}
+</style>
 
 
 <script>
