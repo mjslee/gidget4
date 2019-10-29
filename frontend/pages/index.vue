@@ -56,8 +56,6 @@
 
 <script>
 import Navbar from '@/components/Navbar'
-import SignUp from '@/components/Auth/SignUp'
-import LogIn from '@/components/Auth/LogIn'
 
 
 export default {
@@ -65,7 +63,7 @@ export default {
   layout: 'landing',
 
   components: {
-    Navbar, SignUp, LogIn
+    Navbar
   }
 }
 </script>

@@ -14,7 +14,8 @@
             </div>
             <div id="navbar" class="navbar-menu">
               <div class="navbar-end">
-                <b-button>Sign up</b-button>
+                <Signup />
+                <Login />
               </div>
             </div>
           </div>
@@ -53,10 +54,13 @@ html, body {
 
 <script>
 import Navbar from '@/components/Navbar'
+import Signup from '@/components/Auth/Signup'
+import Login from '@/components/Auth/Login'
+
 
 export default {
   components: {
-    Navbar
+    Navbar, Signup, Login
   },
 
   data() {

@@ -1,24 +1,48 @@
-
 <template>
   <section>
+    <!-- Button -->
+    <button class="button is-primary is-medium" @click="isModalActive = true">
+      Log in
+    </button>
 
-    <b-field>
-      <b-input placeholder="E-mail" v-model="email" />
-    </b-field>
+    <!-- Modal -->
+    <b-modal :active.sync="isModalActive" :width="640">
+      <div class="modal-card" style="width: auto">
 
-    <b-field>
-      <b-input placeholder="Password" v-model="password" password-reveal />
-    </b-field>
+        <!-- Modal Header -->
+        <header class="modal-card-head">
+          <p class="modal-card-title">Log in</p>
+        </header>
 
-    <div class="field is-grouped is-grouped-right">
-      <b-button
-        type="is-primary"
-        size="is-medium"
-        icon-right="chevron-right"
-      >
-        Continue
-      </b-button>
-    </div>
+        <!-- Modal Body -->
+        <section class="modal-card-body">
+          <b-field label="E-mail" expanded>
+            <b-input placeholder="E-mail" v-model="formData.email" />
+          </b-field>
+
+          <b-field label="Password" expanded>
+            <b-input
+              type="password"
+              placeholder="Password"
+              v-model="formData.password"
+              password-reveal
+              />
+          </b-field>
+        </section>
+
+        <!-- Modal Footer -->
+        <section class="modal-card-foot">
+          <b-button
+            @click="submit"
+            type="is-primary"
+            icon-right="chevron-right"
+          >
+            Continue
+          </b-button>
+        </section>
+
+      </div>
+    </b-modal>
 
   </section>
 </template>
@@ -32,11 +56,22 @@
 
 
 <script>
+import { LOGIN_ENDPOINT } from '@/constants/endpoints'
+
+
 export default {
-  data() {
-    return {
+  data: () => ({
+    isModalActive: false,
+
+    formData: {
       email: '',
       password: ''
+    }
+  }),
+
+  methods: {
+    submit() {
+      /* axios call */
     }
   }
 }
