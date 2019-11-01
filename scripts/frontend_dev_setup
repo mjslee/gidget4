@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+#
+# This script must be ran from the project's root directory.
+# Usage: ./scripts/frontend_dev_setup
+#
+
+# Ensure node exists
+which npm || (echo -e "\nNodeJS and/or NPM do not seem to be installed." && exit 1)
+
+# Run npm install in frontend
+cd ./frontend
+npm install
