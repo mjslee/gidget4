@@ -11,10 +11,4 @@
 |
 */
 
-Route::get('/', function () {
-    return 'abc';
-});
-
-Route::get('/a', function () {
-    return view('welcome');
-});
+Route::get('/', function () { abort(404); })->name('home');
