@@ -11,5 +11,6 @@ export const AUTH_MESSAGES = {
   TOAST_DURATION: 5000,
   INVALID_CREDENTIALS: 'Invalid credentials.',
   UNKNOWN_EXCEPTION: 'An unknown error occured. Please try again!',
-  LOGIN_SUCCESSFUL: 'Logged in!'
+  LOGIN_SUCCESSFUL: 'Logged in!',
+  LOGOUT_SUCCESSFUL: 'Logged out!'
 }

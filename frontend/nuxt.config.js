@@ -60,6 +60,9 @@ export default {
     proxy: true
   },
 
+  /**
+  ** Proxy API requests
+  */
   proxy: {
     '/api': { target: 'http://localhost:8000' }
   },
@@ -75,7 +78,7 @@ export default {
         endpoints: {
           user: { url: USER_ENDPOINT, method: 'get', propertyName: false },
           login: { url: LOGIN_ENDPOINT, method: 'post', propertyName: 'access_token' },
-          logout: { url: LOGOUT_ENDPOINT, method: 'post' }
+          logout: { url: LOGOUT_ENDPOINT, method: 'get', propertyName: false }
         },
       }
     }

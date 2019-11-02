@@ -16,6 +16,7 @@
               <div class="navbar-end">
                 <Signup v-if="!$auth.loggedIn"  />
                 <Login v-if="!$auth.loggedIn" />
+                <Logout v-if="$auth.loggedIn" />
               </div>
             </div>
           </div>
@@ -54,12 +55,13 @@ html, body {
 <script>
 import Navbar from '@/components/Navbar'
 import Signup from '@/components/Auth/Signup'
-import Login from '@/components/Auth/Login'
+import Login  from '@/components/Auth/Login'
+import Logout from '@/components/Auth/Logout'
 
 
 export default {
   components: {
-    Navbar, Signup, Login
+    Navbar, Signup, Login, Logout
   },
 
   data() {
