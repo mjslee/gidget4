@@ -1,14 +1,15 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 use App\User;
+use Carbon\Carbon;
 
 
 class AuthController extends Controller
 {
-
     /**
      * Create new user.
      *
@@ -55,8 +56,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'boolean'
+            'password' => 'required|string'
         ]);
 
         $credentials = request(['email', 'password']);
@@ -67,9 +67,6 @@ class AuthController extends Controller
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
-
-        if ($request->remember_me)
-            $token->expires_at = Carbon::now()->addWeeks(1);
 
         $token->save();
 
@@ -104,5 +101,4 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
-
 }

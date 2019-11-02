@@ -21,12 +21,12 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix' => 'auth'], function () {
     // Guest Access
-    Route::post('login', 'AuthController@login');
-    Route::post('signup', 'AuthController@signup');
+    Route::post('login', 'API\AuthController@login');
+    Route::post('signup', 'API\AuthController@signup');
 
     // Authorized Access
     Route::group(['middleware' => 'auth:api'], function() {
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
+        Route::get('logout', 'API\AuthController@logout');
+        Route::get('user', 'API\AuthController@user');
     });
 });
