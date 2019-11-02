@@ -1,4 +1,6 @@
 import pkg from './package'
+import { LOGIN_ENDPOINT, LOGOUT_ENDPOINT, USER_ENDPOINT } from './constants/endpoints'
+
 
 export default {
   mode: 'spa',
@@ -44,9 +46,12 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
+
     // Doc: https://buefy.github.io/#/documentation
     'nuxt-buefy',
   ],
+
   /*
   ** Axios module configuration
   */
@@ -55,12 +60,25 @@ export default {
     proxy: true
   },
 
-  /**
-  ** Proxy API requests
-  */
   proxy: {
     '/api': { target: 'http://localhost:8000' }
   },
+
+  /*
+  ** Auth module configuration
+  */
+  auth: {
+    strategies: {
+      tokenType: 'bearer',
+
+      local: {
+        endpoints: {
+          user: { url: USER_ENDPOINT, method: 'get', propertyName: false },
+          login: { url: LOGIN_ENDPOINT, method: 'post', propertyName: 'access_token' },
+          logout: { url: LOGOUT_ENDPOINT, method: 'post' }
+        },
+      }
+    }
   },
 
   /*

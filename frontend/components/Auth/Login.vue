@@ -8,11 +8,6 @@
     <!-- Modal -->
     <b-modal :active.sync="isModalActive" :width="400">
 
-        <b-loading
-          :is-full-page="false"
-          :active.sync="isLoading"
-          :can-cancel="true"
-        />
       <form @submit.prevent="submitForm" class="modal-card" style="width: auto">
 
         <!-- Modal Header -->
@@ -22,6 +17,12 @@
 
         <!-- Modal Body -->
         <section class="modal-card-body">
+          <b-loading
+            :is-full-page="false"
+            :active.sync="isLoading"
+            :can-cancel="true"
+          />
+
           <b-notification
             type="is-danger"
             v-for="(value, key) in formErrors"
@@ -76,7 +77,7 @@
 
 
 <script>
-import { LOGIN_ENDPOINT } from '@/constants/endpoints'
+import { AUTH_MESSAGES, TOAST_DURATION } from '@/constants/messages'
 
 
 export default {
@@ -94,25 +95,37 @@ export default {
   methods: {
     async submitForm() {
       this.isLoading = true
+      const duration = AUTH_MESSAGES.TOAST_DURATION
 
-      // Fetch response from signup endpoint
+      // Valid login
       try {
-        const response = await this.$axios.post(LOGIN_ENDPOINT, this.formData)
+        const res = await this.$auth.loginWith('local', { data: this.formData })
+        const message = AUTH_MESSAGES.LOGIN_SUCCESSFUL
+        this.$buefy.toast.open({ message, duration, type: 'is-success' })
       }
 
-      // Set form errors
+      // Invalid login
       catch (err) {
-        const formErrors = _.get(err, 'response.data.errors')
-        console.log(formErrors);
+        console.debug(err.response)
 
-        if (typeof formErrors != 'undefined')
-          this.formErrors = formErrors
+        let message = ''
+        switch (_.get(err, 'response.status')) {
+          case 401:
+            message = AUTH_MESSAGES.INVALID_CREDENTIALS
+            break
+
+          default:
+            message = AUTH_MESSAGES.UNKNOWN_EXCEPTION
+            break
+        }
+
+        this.$buefy.toast.open({ message, duration, type: 'is-danger' })
       }
 
-      // Not loading anymore
       finally {
         this.isLoading = false
       }
+
     }
   }
 }

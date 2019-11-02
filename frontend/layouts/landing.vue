@@ -14,8 +14,8 @@
             </div>
             <div id="navbar" class="navbar-menu">
               <div class="navbar-end">
-                <Signup />
-                <Login />
+                <Signup v-if="!$auth.loggedIn"  />
+                <Login v-if="!$auth.loggedIn" />
               </div>
             </div>
           </div>
@@ -33,7 +33,6 @@
     </section>
 
     <nuxt />
-
   </main>
 </template>
 

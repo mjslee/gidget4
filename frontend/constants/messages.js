@@ -5,3 +5,11 @@ export const GIDGET_MESSAGES = {
   STARTING_OVER: "Okay, I'm starting over!",
   CANNOT_MOVE: "I can't reach that!",
 }
+
+
+export const AUTH_MESSAGES = {
+  TOAST_DURATION: 5000,
+  INVALID_CREDENTIALS: 'Invalid credentials.',
+  UNKNOWN_EXCEPTION: 'An unknown error occured. Please try again!',
+  LOGIN_SUCCESSFUL: 'Logged in!'
+}
