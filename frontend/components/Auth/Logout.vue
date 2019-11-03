@@ -6,7 +6,7 @@
 
 
 <script>
-import { AUTH_MESSAGES, TOAST_DURATION } from '@/constants/messages'
+import { AUTH_MESSAGES } from '@/constants/messages'
 
 export default {
   methods: {
@@ -22,7 +22,7 @@ export default {
       // Exception or not, the user will always be logged out
       finally {
         const message = AUTH_MESSAGES.LOGOUT_SUCCESSFUL
-        const duration = TOAST_DURATION
+        const duration = AUTH_MESSAGES.TOAST_DURATION
         this.$buefy.toast.open({ message, duration, type: 'is-warning' })
       }
     }

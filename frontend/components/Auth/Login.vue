@@ -77,7 +77,7 @@
 
 
 <script>
-import { AUTH_MESSAGES, TOAST_DURATION } from '@/constants/messages'
+import { AUTH_MESSAGES } from '@/constants/messages'
 
 
 export default {
