@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 //     Route::get('login/github/callback', 'Auth\GitHubLoginController@handleProviderCallback');
 // });
 
+
 Route::group(['prefix' => 'auth'], function () {
     // Guest Access
     Route::post('login', 'API\AuthController@login');
@@ -30,3 +31,11 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('user', 'API\AuthController@user');
     });
 });
+
+
+Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function () {
+    Route::put('profile', 'UserProfileController@updateOrCreate');
+});
+
+
+Route::post('login', 'API\AuthController@login');
