@@ -2,7 +2,7 @@
 
 #
 # This script must be ran from the project's root directory.
-# Usage: ./scripts/frontend_dev_setup
+# Usage: ./scripts/setup_dev_frontend
 #
 
 # Ensure node exists
