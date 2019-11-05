@@ -20,7 +20,7 @@ class CreateUserProfilesTable extends Migration
             $table->string('name')->nullable();
             $table->string('gender')->nullable();
             $table->string('has_coding_experience')->nullable();
-            $table->datetime('birthdate')->nullable();
+            $table->datetime('birthday')->nullable();
             $table->timestamps();
         });
     }
