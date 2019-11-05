@@ -1,6 +1,5 @@
 <template>
-  <main>
-
+  <div>
     <section class="hero">
       <div class="hero-head">
         <nav class="navbar">
@@ -13,10 +12,13 @@
               </span>
             </div>
             <div id="navbar" class="navbar-menu">
-              <div class="navbar-end">
-                <Signup v-if="!$auth.loggedIn"  />
-                <Login v-if="!$auth.loggedIn" />
-                <Logout v-if="$auth.loggedIn" />
+              <div class="navbar-end" v-if="$auth.loggedIn">
+                <b-button @click="$auth.logout()">Log out</b-button>
+                <b-button @click="showProfileForm">Edit Profile</b-button>
+              </div>
+              <div class="navbar-end" v-else>
+                <b-button @click="showSignupForm">Sign up</b-button>
+                <b-button @click="showLoginForm">Log in</b-button>
               </div>
             </div>
           </div>
@@ -34,7 +36,7 @@
     </section>
 
     <nuxt />
-  </main>
+  </div>
 </template>
 
 
@@ -54,25 +56,56 @@ html, body {
 
 <script>
 import Navbar from '@/components/Navbar'
-import Signup from '@/components/Auth/Signup'
-import Login  from '@/components/Auth/Login'
-import Logout from '@/components/Auth/Logout'
+import SignupModalForm from '@/components/Auth/SignupModalForm'
+import LoginModalForm  from '@/components/Auth/LoginModalForm'
+import ProfileModalForm  from '@/components/User/ProfileModalForm'
 
 
 export default {
   components: {
-    Navbar, Signup, Login, Logout
+    Navbar
   },
 
-  data() {
-    return {
-      items: [
-        {
-          title: 'Landing',
-          icon: 'home',
-          to: { name: 'landing' }
-        }
-      ]
+  data: () => ({
+    items: [{
+        title: 'Landing',
+        icon: 'home',
+        to: { name: 'landing' }
+    }]
+  }),
+
+  methods: {
+    /**
+     *
+     */
+    launchModal(component, formProps) {
+      this.$buefy.modal.open({
+        parent: this,
+        hasModalCard: true,
+        component,
+        formProps
+      })
+    },
+
+    /**
+     *
+     */
+    showSignupForm() {
+      this.launchModal(SignupModalForm)
+    },
+
+    /**
+     *
+     */
+    showLoginForm() {
+      this.launchModal(LoginModalForm)
+    },
+
+    /**
+     *
+     */
+    showProfileForm() {
+      this.launchModal(ProfileModalForm)
     }
   }
 }
