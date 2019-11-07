@@ -46,16 +46,15 @@ class UserProfileController extends Controller
 
         $year = date('Y');
         $birthyear = $year - $request->age;
-
-        $birthdate = $birthyear > 0 && $birthyear < $year ?
+        $birthday = $birthyear > 0 && $birthyear < $year ?
             Carbon::create($birthyear, 1, 1, 0, 0, 0, 'GMT') : null;
 
         $user = $request->user();
         $profile = $user->profile()->updateOrCreate([], [
             'name'                  => $request->name,
             'gender'                => $request->gender,
-            'has_coding_experience' => $request->has_coding_experience
-            'birthdate'             => $birthdate,
+            'has_coding_experience' => $request->has_coding_experience,
+            'birthday'              => $birthday
         ]);
 
         return response()->json([

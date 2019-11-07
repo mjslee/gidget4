@@ -13,7 +13,7 @@ class UserProfile extends Model
     protected $fillable = [
         'name',
         'gender',
-        'birthdate',
+        'birthday',
         'has_coding_experience'
     ];
 }
