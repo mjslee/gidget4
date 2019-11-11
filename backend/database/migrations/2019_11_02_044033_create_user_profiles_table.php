@@ -14,14 +14,15 @@ class CreateUserProfilesTable extends Migration
     public function up()
     {
         Schema::create('user_profiles', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->bigIncrements('id')->unsigned();
+            $table->bigInteger('user_id')->unsigned()->unique();
             $table->string('name')->nullable();
             $table->string('gender')->nullable();
             $table->string('has_coding_experience')->nullable();
             $table->datetime('birthday')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
