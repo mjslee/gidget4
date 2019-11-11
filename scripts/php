@@ -4,4 +4,4 @@
 # Usage: ./php {command}
 
 cd "${0%/*}"
-exec ./php_exec php $@
+exec docker-compose exec --user www-data --workdir='/backend' php php $@

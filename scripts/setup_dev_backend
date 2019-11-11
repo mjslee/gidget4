@@ -15,7 +15,7 @@ docker-compose up -d db
 # Run composer install and generate keys
 php() { docker-compose run --rm php $@;  }
 php composer install
-php php artisan key:generate
+php artisan key:generate
 
 # The next commands require the database. We must be sure it's up but there's
 # no easy way to actually know if its done being provisioned, so just wait.
@@ -23,7 +23,7 @@ echo 'Waiting for 30 seconds to give database time to create itself...'
 sleep 30
 
 # Run initial migrations
-php php artisan migrate
+php artisan migrate
 
 # Create passport keys
-php php artisan passport:install
+php artisan passport:install
