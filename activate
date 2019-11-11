@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-PATH="$PATH:$(pwd)/scripts/"
+cd "${0%/*}" 2> /dev/null
+export PATH="$(pwd)/scripts:$PATH"
