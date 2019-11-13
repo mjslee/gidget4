@@ -14,3 +14,9 @@ export const AUTH_MESSAGES = {
   LOGIN_SUCCESSFUL: 'Logged in!',
   LOGOUT_SUCCESSFUL: 'Logged out!'
 }
+
+
+export const UserMessages = {
+  toastDuration: 3000,
+  profileUpdateSuccess: 'Invalid credentials.',
+}
