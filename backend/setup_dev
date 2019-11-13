@@ -5,18 +5,21 @@
 # Usage: ./scripts/setup_dev_backend
 #
 
+cd "${0%/*}"  # cd to script's directory
+
 # Start database before anything to give it as much time as it needs
 docker-compose down
 docker-compose up -d db
 
 # Copy _env to .env if .env does not exist
-[[ ! -f ./backend/.env ]] && cp backend/_env backend/.env && echo 'Copied .env'
+[[ ! -f .env ]] && cp _env .env && echo 'Copied .env'
+
+# PHP helper
+run() { docker-compose run --rm php $@; }
 
 # Run composer install and generate keys
-_php() { docker-compose run --rm php --workdir='/backend' $@; }
-
-_php composer install
-_php artisan key:generate
+run composer install
+run php artisan key:generate
 
 # The next commands require the database. We must be sure it's up but there's
 # no easy way to actually know if its done being provisioned, so just wait.
@@ -24,7 +27,7 @@ echo 'Waiting for 30 seconds to give database time to create itself...'
 sleep 30
 
 # Run initial migrations
-_php artisan migrate
+run php artisan migrate
 
 # Create passport keys
-_php artisan passport:install
+run php artisan passport:install

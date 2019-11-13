@@ -1,7 +1,0 @@
-#!/usr/bin/env sh
-
-# Run a composer command.
-# Usage: ./composer {command}
-
-cd "${0%/*}"
-exec docker-compose exec --user www-data --workdir='/backend' php composer $@

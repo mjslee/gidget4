@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# Run a PHPUnit command.
-# Usage: ./phpunit {command}
-
-cd "${0%/*}"
-exec docker-compose exec php /backend/vendor/bin/phpunit $@

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Run a command in the PHP docker container.
+# Usage: ./cmd {args}
+exec docker-compose exec --user www-data --workdir=/backend php $@
