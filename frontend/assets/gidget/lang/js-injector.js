@@ -140,7 +140,7 @@ export default {
     const esprima = require('esprima');
 
     // Parse input into AST and tokens
-    this.tree = esprima.parseScript(input, this.parseOptions);
+    this.tree = esprima.parse(input, this.parseOptions);
     this.tokens = esprima.tokenize(input, this.parseOptions);
 
     // Sort
