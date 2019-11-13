@@ -38,14 +38,6 @@
           </option>
         </b-select>
       </b-field>
-
-      <b-field label="Have Coding Experience?">
-        <b-select v-model="formData.has_coding_experience" expanded>
-          <option v-for="option in codingExperienceOptions" :key="option">
-            {{ option }}
-          </option>
-        </b-select>
-      </b-field>
     </main>
 
     <!-- Modal Footer -->
@@ -63,6 +55,9 @@
 </template>
 
 <script>
+import { UserEndpoints } from '@/constants/endpoints'
+import { UserMessage } from '@/constants/messages'
+
 export default {
   props: {
     title: {
@@ -71,22 +66,34 @@ export default {
     }
   },
 
-  data: () => ({
-    loading: false,
-    genderOptions: [ 'Male', 'Female', 'Other' ],
-    codingExperienceOptions: [ 'No', 'Yes' ],
+  mounted() {
+    if (!this.$auth.loggedIn)
+      this.$parent.close()
+  },
 
-    formData: {
-      name: '',
-      gender: '',
-      age: 5,
-      has_coding_experience: false
+  data() {
+    const formData = {};
+    const genderOptions = [ 'Male', 'Female', 'Other' ];
+
+    const profile = _.get(this.$auth, 'user.profile')
+    if (typeof profile != 'undefined') {
+      formData.name = profile.name
+      formData.gender = profile.gender
     }
-  }),
+
+    return { loading: false, genderOptions, formData }
+  },
 
   methods: {
-    submitForm() {
+    async submitForm() {
+      try {
+        const res = await this.$axios.put(UserEndpoints.profile, this.formData)
+        const message = UserMessages.profileUpdateSuccess
+        this.$buefy.toast.open({ message })
+      }
+      catch (err) {
 
+      }
     }
   }
 }
