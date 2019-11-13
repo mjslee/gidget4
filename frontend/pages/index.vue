@@ -12,6 +12,8 @@
           <div class="column">
             <div class="buttons">
               <b-button
+                tag="router-link"
+                to="/play"
                 size="is-large"
                 class="is-fullwidth"
                 type="is-primary"
