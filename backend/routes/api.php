@@ -20,7 +20,10 @@ use Illuminate\Http\Request;
 // });
 
 
-Route::group(['prefix' => 'auth'], function () {
+/**
+ * User Authentication
+ */
+Route::group(['prefix' => 'auth'], function() {
     // Guest Access
     Route::post('login', 'API\AuthController@login');
     Route::post('signup', 'API\AuthController@signup');
@@ -33,9 +36,17 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 
-Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function () {
+/**
+ *
+ */
+Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function() {
     Route::put('profile', 'UserProfileController@updateOrCreate');
 });
 
 
-Route::post('login', 'API\AuthController@login');
+/**
+ * API Resources
+ */
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::apiResource('levels', 'LevelController');
+});
