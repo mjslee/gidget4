@@ -40,14 +40,11 @@
 </template>
 
 
-<style>
+<style scoped>
 html, body {
   background: #82af55;
 }
-</style>
 
-
-<style scoped>
 .hero {
   background: #79cbe8;
 }

@@ -35,6 +35,8 @@ import GidgetLevels from '@/assets/gidget/game/levels'
 
 export default {
   name: 'app',
+  layout: 'default',
+
   components: {
     GidgetGame
   },
