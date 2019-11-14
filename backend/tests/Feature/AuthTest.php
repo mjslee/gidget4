@@ -42,4 +42,27 @@ class AuthTest extends TestCase
              ->assertStatus(201)
              ->assertJsonStructure(['message']);
     }
+
+    /**
+     * Test user logging in returns a token.
+     *
+     * @return void
+     */
+    public function testLogin(): void
+    {
+        $email = 'test@user.com';
+        $password = 'test1234';
+
+        $user = factory(User::class)->create([
+            'email' => $email,
+            'password' => bcrypt($password),
+        ]);
+
+        $payload = ['email' => $email, 'password' => $password];
+
+        $this->json('post', '/api/auth/login', $payload)
+             ->assertJsonStructure(['access_token', 'token_type', 'expires_at'])
+             ->assertStatus(200);
+    }
+
 }
