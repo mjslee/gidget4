@@ -24,15 +24,8 @@ use Illuminate\Http\Request;
  * User Authentication
  */
 Route::group(['prefix' => 'auth'], function() {
-    // Guest Access
-    Route::post('login', 'API\AuthController@login');
-    Route::post('signup', 'API\AuthController@signup');
-
-    // Authorized Access
-    Route::group(['middleware' => 'auth:api'], function() {
-        Route::get('logout', 'API\AuthController@logout');
-        Route::get('user', 'API\AuthController@user');
-    });
+    Route::post('register', 'Auth\RegisterController@register')->name('register');
+    Route::post('login', 'Auth\LoginController@login')->name('login');
 });
 
 

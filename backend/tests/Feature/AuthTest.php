@@ -38,7 +38,7 @@ class AuthTest extends TestCase
             'password_confirmation' => 'test1234'
         ];
 
-        $this->json('post', '/api/auth/register', $payload)
+        $this->json('post', route('register'), $payload)
              ->assertStatus(201)
              ->assertJsonStructure(['message']);
     }
@@ -60,7 +60,7 @@ class AuthTest extends TestCase
 
         $payload = ['email' => $email, 'password' => $password];
 
-        $this->json('post', '/api/auth/login', $payload)
+        $this->json('post', route('login'), $payload)
              ->assertJsonStructure(['access_token', 'token_type', 'expires_at'])
              ->assertStatus(200);
     }
