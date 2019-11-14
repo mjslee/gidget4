@@ -21,6 +21,8 @@ class AuthTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        // Create personal access client
         Artisan::call('passport:install');
     }
 

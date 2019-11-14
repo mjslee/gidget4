@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Http\Request;
 
 /*
@@ -13,15 +12,8 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::group(['middleware' => ['web']], function () {
-//     // GitHub Auth
-//     Route::get('login/github', 'Auth\GitHubLoginController@redirectToProvider');
-//     Route::get('login/github/callback', 'Auth\GitHubLoginController@handleProviderCallback');
-// });
-
-
 /**
- * User Authentication
+ * Authentication
  */
 Route::group(['prefix' => 'auth'], function() {
     Route::post('register', 'Auth\RegisterController@register')->name('register');
@@ -30,16 +22,8 @@ Route::group(['prefix' => 'auth'], function() {
 
 
 /**
- *
+ * Users
  */
 Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function() {
-    Route::put('profile', 'UserProfileController@updateOrCreate');
-});
-
-
-/**
- * API Resources
- */
-Route::group(['middleware' => 'auth:api'], function() {
-    Route::apiResource('levels', 'LevelController');
+    Route::get('/', 'Users\UserController@user')->name('user');
 });
