@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+#
+# Run a command in the PHP docker container.
+# Usage: ./run {args}
+#   ./run tests
+#   ./run artisan migrate
+#   ./run artisan migrate:reset
+#
+
+# Defaults
+cmd=$1
+user='--user=www-data'
+workdir='--workdir=/backend'
+
+# Arguments
+case $cmd in
+  # Run tests
+  test|tests|phpunit)
+    user=''  # phpunit does not like the www-data user
+    cmd='vendor/bin/phpunit'
+    ;;
+
+  # Run artisan
+  artisan)
+    cmd='php artisan'
+    ;;
+esac
+
+# Execute
+exec docker-compose exec $workdir $user php $cmd ${@:2}

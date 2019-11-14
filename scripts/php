@@ -1,7 +1,0 @@
-#!/usr/bin/env sh
-
-# Run a PHP command.
-# Usage: ./php {command}
-
-cd "${0%/*}"
-exec docker-compose exec --user www-data --workdir='/backend' php php $@

@@ -2,7 +2,7 @@
 
 #
 # This script must be ran from the project's root directory.
-# Usage: ./scripts/setup_dev_backend
+# Usage: ./setup_dev
 #
 
 cd "${0%/*}"  # cd to script's directory
