@@ -25,5 +25,6 @@ Route::group(['prefix' => 'auth'], function() {
  * Users
  */
 Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function() {
-    Route::get('/', 'Users\UserController@user')->name('user');
+    Route::get('/', 'Users\UserController@show')->name('user.show');
+    Route::patch('/', 'Users\UserController@update')->name('user.update');
 });
