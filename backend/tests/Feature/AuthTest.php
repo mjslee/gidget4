@@ -23,4 +23,23 @@ class AuthTest extends TestCase
         parent::setUp();
         Artisan::call('passport:install');
     }
+
+    /**
+     * Test registering a user.
+     *
+     * @return void
+     */
+    public function testRegister(): void
+    {
+        $payload = [
+            'name' => 'Test User',
+            'email' => 'test@user.com',
+            'password' => 'test1234',
+            'password_confirmation' => 'test1234'
+        ];
+
+        $this->json('post', '/api/auth/register', $payload)
+             ->assertStatus(201)
+             ->assertJsonStructure(['message']);
+    }
 }
