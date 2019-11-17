@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Users;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 
 class UserController extends Controller
@@ -38,19 +39,15 @@ class UserController extends Controller
             'birthdate' => 'sometimes|required|date'
         ]);
         
+        // Fetch user
         $user = $request->user();
 
         // Update user
-        if (isset($user->name)) {
-            $user->name = $request->name;
-            $user->save();
-        }
+        if ($request->filled('name'))
+            $user->update(['name' => $request->name]);
 
-        // Update user profile
-        $user->profile()->updateOrCreate([], [
-            'gender' => $request->gender,
-            'birthdate' => $request->birthdate,
-        ]);
+        // Update profile
+        $user->profile()->updateOrCreate([], $request->except('name'));
 
         return response()->json(['message' => 'User updated.']);
     }
