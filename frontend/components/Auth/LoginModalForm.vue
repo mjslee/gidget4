@@ -100,6 +100,7 @@ export default {
         let message = ''
         switch (_.get(err, 'response.status')) {
           case 401:
+          case 422:
             message = AUTH_MESSAGES.INVALID_CREDENTIALS
             break
 

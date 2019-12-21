@@ -66,5 +66,4 @@ class AuthTest extends TestCase
              ->assertJsonStructure(['access_token', 'token_type', 'expires_at'])
              ->assertStatus(200);
     }
-
 }

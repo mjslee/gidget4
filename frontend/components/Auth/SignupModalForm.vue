@@ -84,7 +84,7 @@
 
 <script>
 import _ from 'lodash'
-import { SIGNUP_ENDPOINT } from '@/constants/endpoints'
+import { REGISTER_ENDPOINT } from '@/constants/endpoints'
 
 
 export default {
@@ -105,12 +105,12 @@ export default {
 
       // Fetch response from signup endpoint
       try {
-        const response = await this.$axios.post(SIGNUP_ENDPOINT, this.formData)
-        console.log(response)
+        const response = await this.$axios.post(REGISTER_ENDPOINT, this.formData)
       }
 
       // Set form errors
       catch (err) {
+        console.debug(err)
         const formErrors = _.get(err, 'response.data.errors')
 
         if (typeof formErrors != 'undefined')

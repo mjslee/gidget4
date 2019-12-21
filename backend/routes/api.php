@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Http\Request;
+//use Illuminate\Routing\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,4 +28,12 @@ Route::group(['prefix' => 'auth'], function() {
 Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function() {
     Route::get('/', 'Users\UserController@show')->name('user.show');
     Route::patch('/', 'Users\UserController@update')->name('user.update');
+});
+
+
+/**
+ * Levels
+ */
+Route::group(['prefix' => 'levels'], function() {
+    Route::post('/', 'Levels\LevelController@store')->name('level.store');
 });

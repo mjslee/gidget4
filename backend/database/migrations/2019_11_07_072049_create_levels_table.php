@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -11,17 +10,16 @@ class CreateLevelsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
        Schema::create('levels', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned()->nullable();
-            $table->string('name');
+            $table->string('title');
             $table->text('description');
             $table->string('type', 16);
             $table->json('level');
-            $table->text('solution_code')->default('');
-            $table->string('difficulty', 16)->default('');
+            $table->integer('difficulty')->default(0);
             $table->boolean('published')->default(false);
             $table->boolean('official')->default(false);
             $table->timestamps();
@@ -35,7 +33,7 @@ class CreateLevelsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('levels');
     }

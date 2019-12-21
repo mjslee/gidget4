@@ -1,7 +1,11 @@
 {
-  "code": "right()",
-  "size": 3,
   "title": "Level 1: Let's get to the puppy!",
+  "description": "Help gidget get to the puppy!",
+
+  "code": "right()",
+  "solution": "left()",
+
+  "size": 3,
   "tiles": [],
   "imports": [ "PlayerControls" ],
 
