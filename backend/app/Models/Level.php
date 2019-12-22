@@ -35,28 +35,34 @@ class Level extends Model
 
 
     /**
-     * Types of levels and the keys they can keep.
+     * Validation rules for Level forms.
      *
-     * @var array
+     * @return array
      */
-    public static $rules = [
-        'title'       => 'required',
-        'description' => 'required',
-        'type'        => 'required',
-    ];
+    public static function rules(): array
+    {
+        return [
+            'title'       => 'required',
+            'description' => 'required',
+            'type'        => 'required|in:DEBUGGING',
+        ];
+    }
 
 
     /**
-     * Types of levels and the keys they can keep.
+     * Validation rules for level types.
      *
-     * @var array
+     * @return array
      */
-    public static $levelRules = [
-        'DEBUGGING' => [
-            'code'     => 'required',
-            'solution' => 'required'
-        ]
-    ];
+    public static function levelRules(): array
+    {
+        return [
+            'DEBUGGING' => [
+                'code'     => 'required',
+                'solution' => 'required'
+            ]
+        ];
+    }  
 
 
     /**
@@ -77,28 +83,18 @@ class Level extends Model
      */
     public static function fromRequest(Request $request, Level $level = null): Level
     {
-        $request->validate(self::$rules);
-
-        // TODO: Find a better way to do this
-        // Validation error if level type doesn't exist
-        $type = strtoupper($request->type);
-        if (!array_key_exists($type, self::$levelRules)) {
-            $request['type'] = null;
-            $request->validate(['type' => 'required']);
-        }
+        $request->validate(self::rules());
 
         if ($level == null)
             $level = new Level;
 
-        $levelRules = !array_key_exists($type, self::$levelRules)
-            ?: self::$levelRules[$type];
-
-        $request->validate($levelRules);
+        $levelRules = self::levelRules();
+        $request->validate($levelRules[$request->type]);
 
         $level->setRelation('user', $request->user('api'));
         $level->title       = $request->title;
         $level->description = $request->description;
-        $level->type        = $type;
+        $level->type        = $request->type;
         $level->level       = json_encode($request->all());
 
         return $level;

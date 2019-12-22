@@ -15,7 +15,7 @@ class LevelTest extends TestCase
     use RefreshDatabase;
        
     /**
-     * Test creating a level by a user with normal POST data.
+     * Test creating a level by a user.
      *
      * @return void
      */
@@ -50,7 +50,7 @@ class LevelTest extends TestCase
        
 
     /**
-     * Test creating a level by a user with normal POST data.
+     * Test creating a level with an invalid level type.
      *
      * @return void
      */
