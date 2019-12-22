@@ -11,28 +11,39 @@ use Carbon\Carbon;
 
 class LevelTest extends TestCase
 {
+
     use RefreshDatabase;
        
     /**
-     * Test creating a level by a user.
+     * Test creating a level by a user with normal POST data.
      *
      * @return void
      */
     public function testCreateLevel(): void
     {
-        // Partial update, only one profile field
         $user = factory(User::class)->create();
-        $this->actingAs($user, 'api')
-             ->post(route('level.store'), [
-                 'title' => 'My Level',
-                 'description' => 'Description of my new level.',
-                 'type' => 'DEBUGGING',
-                 'level' => '{code:"Gidget.left();"}'
-             ]);
+        $data = [
+            'title'       => 'My Level',
+            'description' => 'Description of my new level.',
+            'type'        => 'DEBUGGING',
+            'code'        => 'Gidget.left();',
+            'solution'    => 'Gidget.right();',
+        ];
 
-        dd(Level::all());
-        // $this->assertNotNull();
-        // $this->assertEquals($user->profile->gender, 'New Gender');
-        // $this->assertNull($user->profile->birthdate);
+        $response = $this
+            ->actingAs($user, 'api')
+            ->json('post', route('level.store'), $data);
+
+        $response
+            ->assertStatus(200);
+
+        $level = Level::first();
+        $this->assertNotNull($level);
+        $this->assertEquals($level->title, $data['title']);
+        $this->assertEquals($level->description, $data['description']);
+        $this->assertEquals($level->type, $data['type']);
+        $this->assertEquals($level->code, $data['code']);
+        $this->assertEquals($level->solution, $data['solution']);
     }
+
 }
