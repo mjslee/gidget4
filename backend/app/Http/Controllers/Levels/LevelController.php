@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Levels;
 use App\Http\Controllers\Controller;
 use App\Models\Level;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -18,27 +19,9 @@ class LevelController extends Controller
      */
     public function store(Request $request)
     {
-        // TODO: Move this logic to a Level model method
-        // Validate level content
-        $request->validate([
-            'title'       => 'required',
-            'description' => 'required',
-            'type'        => 'required',
-            'code'        => 'required',
-            'solution'    => 'required',
-        ]);
-
-        // Create level instance
-        $level = new Level;
-
-        $level->title       = $request->title;
-        $level->description = $request->description;
-        $level->type        = $request->type;
-
-        // TODO: Run this through an array_filter
-        $level->level = json_encode($request->all());
-
+        $level = Level::fromRequest($request);
         $level->save();
+        return Response::json($level, 200);
     }
 
 
