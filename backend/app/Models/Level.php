@@ -7,8 +7,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+
 class Level extends Model
 {
+
+    /**
+     * Fields belonging to the Level model.
+     *
+     * @var array
+     */
+    protected $fields = [
+        'id'          => 'integer',
+        'user_id'     => 'integer',
+        'title'       => 'string',
+        'description' => 'string',
+        'type'        => 'string',
+        'level'       => 'json',
+        'difficulty'  => 'integer',
+        'published'   => 'boolean',
+        'official'    => 'boolean',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -62,7 +80,7 @@ class Level extends Model
                 'solution' => 'required'
             ]
         ];
-    }  
+    }
 
 
     /**
