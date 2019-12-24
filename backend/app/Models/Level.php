@@ -28,6 +28,7 @@ class Level extends Model
         'official'    => 'boolean',
     ];
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -109,7 +110,7 @@ class Level extends Model
         $levelRules = self::levelRules();
         $request->validate($levelRules[$request->type]);
 
-        $level->setRelation('user', $request->user('api'));
+        $level->user()->associate($request->user());
         $level->title       = $request->title;
         $level->description = $request->description;
         $level->type        = $request->type;
