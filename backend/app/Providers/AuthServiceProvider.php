@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Providers;
 
 use Laravel\Passport\Passport;
@@ -15,7 +14,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+        'App\Model'        => 'App\Policies\ModelPolicy',
+        'App\Models\Level' => 'App\Policies\LevelPolicy',
     ];
 
     /**
