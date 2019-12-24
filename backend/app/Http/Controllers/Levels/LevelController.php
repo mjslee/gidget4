@@ -1,15 +1,25 @@
 <?php
 namespace App\Http\Controllers\Levels;
 
-use App\Http\Controllers\Controller;
-use App\Models\Level;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\LevelResource;
+use App\Models\Level;
+
 
 class LevelController extends Controller
 {
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Level::class, 'level');
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -21,7 +31,8 @@ class LevelController extends Controller
     {
         $level = Level::fromRequest($request);
         $level->save();
-        return Response::json($level, 200);
+
+        return new LevelResource($level);
     }
 
 
@@ -33,7 +44,7 @@ class LevelController extends Controller
      */
     public function show(Level $level)
     {
-        //
+        return new LevelResource($level); //Response::json($level, 200);
     }
 
     /**
