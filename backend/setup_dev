@@ -23,7 +23,7 @@ run php artisan key:generate
 
 # The next commands require the database. We must be sure it's up but there's
 # no easy way to actually know if its done being provisioned, so just wait.
-echo 'Waiting for 30 seconds to give database time to create itself...'
+echo 'Waiting for 30 seconds to give database time to initialize...'
 sleep 30
 
 # Run initial migrations
