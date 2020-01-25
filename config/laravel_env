@@ -2,16 +2,16 @@ APP_NAME=Gidget
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
-APP_URL=http://localhost:8000
+APP_URL=http://gidget.test:8000
 
 LOG_CHANNEL=stack
 
 DB_CONNECTION=pgsql
-DB_HOST=db
+DB_HOST=postgres
 DB_PORT=5432
-DB_DATABASE=gidget
-DB_USERNAME=gidget
-DB_PASSWORD=gidget
+DB_DATABASE=default
+DB_USERNAME=default
+DB_PASSWORD=secret
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=file
