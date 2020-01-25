@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+cd "${0%/*}/../laradock"
+docker-compose up -d postgres nginx && \
+  exec docker-compose exec --user=laradock workspace bash

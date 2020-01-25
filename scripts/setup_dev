@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+#
+# Usage: ./setup_dev
+#
+
+cd "${0%/*}/.."  # cd to project root
+
+# Create environment files
+[[ ! -f ./laradock/.env ]] && \
+  cp ./config/laradock_env ./laradock/.env && \
+  echo 'Installed laradock .env'
+
+[[ ! -f ./backend/.env ]] && \
+  cp ./config/laravel_env ./backend/.env && \
+  echo 'Installed laravel .env'
+
+cd laradock || (echo 'Laradock submodule not found.' && exit 1)
+
+# Start database before anything to give it as much time as it needs
+docker-compose down
+docker-compose up -d postgres nginx
+
+CMD='composer install;'
+CMD+='php artisan key:generate;'
+CMD+='php artisan migrate;'
+CMD+='php artisan passport:install;'
+
+# PHP helper
+exec docker-compose run --rm --user=laradock workspace sh -c "$CMD"
