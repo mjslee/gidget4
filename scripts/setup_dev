@@ -4,18 +4,26 @@
 # Usage: ./setup_dev
 #
 
-cd "${0%/*}/.."  # cd to project root
+cd "./${0%/*}/.."  # cd to project root
+
+# Clone laradock submodule
+if [[ -d './laradock' ]]; then
+  [[ ! -d './laradock/.git' ]] && \
+    echo 'ERROR: Laradock directory exists but is not a submodule.' && exit 1
+else
+  git clone 'https://github.com/Laradock/laradock.git' || exit 1
+fi
 
 # Create environment files
-[[ ! -f ./laradock/.env ]] && \
+[[ ! -f './laradock/.env' ]] && \
   cp ./config/laradock_env ./laradock/.env && \
   echo 'Installed laradock .env'
 
-[[ ! -f ./backend/.env ]] && \
+[[ ! -f './backend/.env' ]] && \
   cp ./config/laravel_env ./backend/.env && \
   echo 'Installed laravel .env'
 
-cd laradock || (echo 'Laradock submodule not found.' && exit 1)
+cd ./laradock
 
 # Start database before anything to give it as much time as it needs
 docker-compose down
