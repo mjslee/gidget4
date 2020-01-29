@@ -16,11 +16,11 @@ fi
 
 # Create environment files
 [[ ! -f './laradock/.env' ]] && \
-  cp ./config/laradock_env ./laradock/.env && \
+  ln -sf ./config/laradock_env ./laradock/.env && \
   echo 'Installed laradock .env'
 
 [[ ! -f './backend/.env' ]] && \
-  cp ./config/laravel_env ./backend/.env && \
+  ln -sf ./config/laravel_env ./backend/.env && \
   echo 'Installed laravel .env'
 
 cd ./laradock
@@ -33,6 +33,7 @@ CMD='composer install;'
 CMD+='php artisan key:generate;'
 CMD+='php artisan migrate;'
 CMD+='php artisan passport:install;'
+CMD+='php artisan ide-helper:generate;'
 
 # PHP helper
 exec docker-compose run --rm --user=laradock workspace sh -c "$CMD"
