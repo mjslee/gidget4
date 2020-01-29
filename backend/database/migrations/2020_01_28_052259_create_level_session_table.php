@@ -17,6 +17,10 @@ class CreateLevelSessionTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned()->unique();
             $table->bigInteger('level_id')->unsigned()->unique();
+            $table->json('data');
+            $table->boolean('completed');
+            $table->integer('updates');
+            $table->datetime('completed_at');
             $table->timestamps();
             
             $table->foreign('user_id')->references('id')->on('users');
