@@ -34,6 +34,8 @@ CMD+='php artisan key:generate;'
 CMD+='php artisan migrate;'
 CMD+='php artisan passport:install;'
 CMD+='php artisan ide-helper:generate;'
+CMD+='mkdir -p ~/.bash_completion.d;'
+CMD+='cp /var/www/vendor/balping/artisan-bash-completion/artisan ~/.bash_completion.d;'
 
 # PHP helper
 exec docker-compose run --rm --user=laradock workspace sh -c "$CMD"

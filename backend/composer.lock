@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42551addd7fbd61d565587f0e6aef117",
+    "content-hash": "84b6bb909857a4db7b3d2be30907d8fd",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -57,6 +57,63 @@
                 "stack"
             ],
             "time": "2017-12-20T14:37:45+00:00"
+        },
+        {
+            "name": "balping/artisan-bash-completion",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/balping/artisan-bash-completion.git",
+                "reference": "50049a8a70091d5a6808a5b194a118f32ee5861f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/balping%2Fartisan-bash-completion/repository/archive.zip?sha=50049a8a70091d5a6808a5b194a118f32ee5861f",
+                "reference": "50049a8a70091d5a6808a5b194a118f32ee5861f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^5.5.0|^6.0",
+                "illuminate/support": "^5.5.0|^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Balping\\ArtisanBashCompletion\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Balping\\ArtisanBashCompletion\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Balázs Dura-Kovács"
+                },
+                {
+                    "name": "Russel Waters",
+                    "homepage": "https://github.com/argakiig"
+                },
+                {
+                    "name": "Jan Hansen",
+                    "homepage": "https://github.com/janka"
+                }
+            ],
+            "description": "Adds bash completion for Laravel 5.5+, 6.0+ artisan CLI.",
+            "keywords": [
+                "artisan",
+                "bash",
+                "completion",
+                "laravel"
+            ],
+            "time": "2019-09-05T10:29:20+00:00"
         },
         {
             "name": "barryvdh/laravel-cors",
