@@ -1,5 +1,4 @@
 <?php
-
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,6 +13,8 @@ use App\Models\LevelSession;
 class LevelSessionTest extends TestCase
 {
 
+    use RefreshDatabase;
+
     /**
      * Test create session model function.
      *
@@ -21,11 +22,29 @@ class LevelSessionTest extends TestCase
      */
     public function testCreateSession()
     {
-        $user = factory(User::class)->create();
         $level = factory(Level::class)->create();
-        $levelSession = LevelSession::newSession($level, $user);
+        $user = factory(User::class)->create();
+        $session = LevelSession::newSession($level, $user);
 
-        $this->assertNotNull($levelSession);
+        $session->save();
+
+        $this->assertNotNull($session);
+    }
+
+    /**
+     * Test create session model function with null user.
+     *
+     * @return void
+     */
+    public function testGuestCreateSession()
+    {
+        $level = factory(Level::class)->create();
+        $user = null;
+        $session = LevelSession::newSession($level, $user);
+
+        $session->save();
+
+        $this->assertNotNull($session);
     }
 
 }
