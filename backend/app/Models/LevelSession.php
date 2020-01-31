@@ -15,15 +15,26 @@ class LevelSession extends Model
      */
     public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get level session created for level.
+     */
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
     }
 
     /**
      * New level session instance.
      */
-    public function newSession(Level $level, User $user = null) : LevelSession
+    public static function newSession(Level $level, User $user = null) : LevelSession
     {
-        $instance = LevelSession::create();
+        $instance = new LevelSession;
+        $instance->level()->associate($level);
+        $instance->user()->associate($user);
+
         return $instance;
     }
 
