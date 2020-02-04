@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+composer install
+
+php artisan key:generate
+php artisan migrate
+php artisan passport:install
+php artisan ide-helper:generate
+
+echo 'source /var/www/vendor/balping/artisan-bash-completion/artisan' >> /home/laradock/.bashrc
