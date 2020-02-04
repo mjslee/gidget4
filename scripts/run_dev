@@ -2,6 +2,14 @@
 cd "${0%/*}/../laradock"
 
 case $1 in
+  start|up)
+    exec docker-compose up -d postgres nginx
+    ;;
+
+  stop|down)
+    exec docker-compose down
+    ;;
+
   phpunit)
     CMD="/var/www/vendor/bin/phpunit ${@:2}"
     ;;
