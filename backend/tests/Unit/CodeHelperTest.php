@@ -15,10 +15,10 @@ class CodeHelperTest extends TestCase
      */
     public function testMinifyJavaScript()
     {
-        $code = "if   (true ) {\r\nconsole.log(\"This is a test.\") }; \r\n" .
+        $code = "if   (true ) {\r\nconsole.log(\"            \") }; \r\n" .
             "test ();\r\n\t\ttest;\r\ntest( param, 'apostrophe' );\r\n";
 
-        $expected = "if(true){console.log(\"   \")}test()testtest(param,'apostrophe')";
+        $expected = "if(true){console.log(\"\")}test()testtest(param,'apostrophe')";
 
         $minified = CodeHelper::minifyJavaScript($code);
         $this->assertEquals($expected, $minified);
@@ -35,7 +35,6 @@ class CodeHelperTest extends TestCase
         $expected = '7cc66303e958f681d2accb666c62584ef0bd0ae2';
 
         $hash = CodeHelper::hashCode($code);
-        dd($hash);
         $this->assertEquals($expected, $hash);
     }
 
