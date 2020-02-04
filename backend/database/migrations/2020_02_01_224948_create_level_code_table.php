@@ -41,6 +41,10 @@ class CreateLevelCodeTable extends Migration
      */
     public function down()
     {
+        Schema::table('level_code', function($table) {
+            $table->dropForeign('level_code_user_id_foreign');
+            $table->dropForeign('level_code_level_id_foreign');
+        });
         Schema::dropIfExists('level_code');
     }
 }
