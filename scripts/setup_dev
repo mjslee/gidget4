@@ -16,11 +16,11 @@ fi
 
 # Create environment files
 [[ ! -f './laradock/.env' ]] && \
-  ln -sf ./config/laradock_env ./laradock/.env && \
+  cp ./config/laradock_env ./laradock/.env && \
   echo 'Installed laradock .env'
 
 [[ ! -f './backend/.env' ]] && \
-  ln -sf ./config/laravel_env ./backend/.env && \
+  cp ./config/laravel_env ./backend/.env && \
   echo 'Installed laravel .env'
 
 cd ./laradock
@@ -29,13 +29,5 @@ cd ./laradock
 docker-compose down
 docker-compose up -d postgres nginx
 
-CMD='composer install;'
-CMD+='php artisan key:generate;'
-CMD+='php artisan migrate;'
-CMD+='php artisan passport:install;'
-CMD+='php artisan ide-helper:generate;'
-CMD+='mkdir -p ~/.bash_completion.d;'
-CMD+='echo "source /var/www/vendor/balping/artisan-bash-completion/artisan" >> ~/.bashrc'
-
 # PHP helper
-exec docker-compose run --rm --user=laradock workspace sh -c "$CMD"
+exec docker-compose run --user=laradock workspace /var/www/setup
