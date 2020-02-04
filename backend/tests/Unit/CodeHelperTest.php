@@ -24,4 +24,19 @@ class CodeHelperTest extends TestCase
         $this->assertEquals($expected, $minified);
     }
 
+    /**
+     * Test hashCode method.
+     *
+     * @return void
+     */
+    public function testHashCode()
+    {
+        $code = "if(true){console.log(\"\")}test()testtest(param,'apostrophe')";
+        $expected = '7cc66303e958f681d2accb666c62584ef0bd0ae2';
+
+        $hash = CodeHelper::hashCode($code);
+        dd($hash);
+        $this->assertEquals($expected, $hash);
+    }
+
 }
