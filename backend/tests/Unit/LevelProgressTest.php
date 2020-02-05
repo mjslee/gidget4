@@ -7,41 +7,41 @@ use Tests\TestCase;
 
 use App\Models\User;
 use App\Models\Level;
-use App\Models\LevelSession;
+use App\Models\LevelProgress;
 
 
-class LevelSessionTest extends TestCase
+class LevelProgressTest extends TestCase
 {
 
     use RefreshDatabase;
 
     /**
-     * Test create session model function.
+     * Test creating LevelProgress instance with user.
      *
      * @return void
      */
-    public function testCreateSession()
+    public function testCreateProgressSession()
     {
         $level = factory(Level::class)->create();
         $user = factory(User::class)->create();
-        $session = LevelSession::newSession($level, $user);
 
+        $session = LevelProgress::createInstance($level, $user);
         $session->save();
 
         $this->assertNotNull($session);
     }
 
     /**
-     * Test create session model function with null user.
+     * Test creating LevelProgress instance with null user.
      *
      * @return void
      */
-    public function testGuestCreateSession()
+    public function testGuestCreateProgressSession()
     {
         $level = factory(Level::class)->create();
         $user = null;
-        $session = LevelSession::newSession($level, $user);
 
+        $session = LevelProgress::createInstance($level, $user);
         $session->save();
 
         $this->assertNotNull($session);
