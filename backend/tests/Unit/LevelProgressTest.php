@@ -28,7 +28,10 @@ class LevelProgressTest extends TestCase
         $session = LevelProgress::createInstance($level, $user);
         $session->save();
 
-        $this->assertNotNull($session);
+        $freshSession = $session->fresh();
+        $this->assertNotNull($freshSession);
+        $this->assertEquals($freshSession->level->id, $level->id);
+        $this->assertEquals($freshSession->user->id, $user->id);
     }
 
     /**
@@ -44,7 +47,10 @@ class LevelProgressTest extends TestCase
         $session = LevelProgress::createInstance($level, $user);
         $session->save();
 
-        $this->assertNotNull($session);
+        $freshSession = $session->fresh();
+        $this->assertNotNull($freshSession);
+        $this->assertEquals($freshSession->level->id, $level->id);
+        $this->assertNull($freshSession->user);
     }
 
 }
