@@ -3,6 +3,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\LevelProgress;
+use App\Models\Level;
+use App\Models\User;
 
 
 class LevelCode extends Model
@@ -12,6 +14,13 @@ class LevelCode extends Model
      */
     protected $table = 'level_code';
 
+    /**
+     * Create new instance of LevelCode.
+     *
+     * @param \App\Models\LevelProgress $levelProgress
+     * @param String $code
+     * @return LevelCode
+     */
     public static function createInstance(LevelProgress $levelProgress, String $code) : LevelCode
     {
         $obj = new LevelCode;
@@ -20,8 +29,33 @@ class LevelCode extends Model
         return $obj;
     }
 
+    /**
+     * LevelCode instance belongs to a LevelProgress instance.
+     *
+     * @return LevelProgress
+     */
     public function progress()
     {
         return $this->belongsTo(LevelProgress::class);
+    }
+
+    /**
+     * LevelCode instance belongs to a Level.
+     *
+     * @return Level
+     */
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
+    }
+
+    /**
+     * LevelCode instance belongs to a User.
+     *
+     * @return User
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
