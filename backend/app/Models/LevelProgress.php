@@ -22,7 +22,7 @@ class LevelProgress extends Model
      * @param \App\Models\User $user (optional) A user object.
      * @return LevelProgress Instance of LevelProgress.
      */
-    public static function newSession(Level $level, User $user = null) : LevelProgress
+    public static function createInstance(Level $level, User $user = null) : LevelProgress
     {
         $obj = new LevelProgress;
         $obj->level()->associate($level);
@@ -47,13 +47,4 @@ class LevelProgress extends Model
         return $this->belongsTo(Level::class);
     }
 
-    public function addCode(String $code)
-    {
-
-    }
-
-    public function addActivity()
-    {
-
-    }
 }
