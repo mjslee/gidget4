@@ -18,7 +18,7 @@ class LevelController extends Controller
      */
     public function __construct()
     {
-        $this->authorizeResource(Level::class, 'level');
+        //$this->authorizeResource(Level::class, 'level');
     }
 
     /**
