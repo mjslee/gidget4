@@ -1,12 +1,14 @@
 <?php
 namespace Tests\Feature;
 
-use App\Models\Level;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Carbon\Carbon;
+
+use App\Models\User;
+use App\Models\Level;
+use LevelsTableSeeder;
 
 
 class LevelTest extends TestCase
@@ -71,6 +73,29 @@ class LevelTest extends TestCase
 
         $response
             ->assertStatus(422);
+    }
+
+
+    /**
+     * Test getting a level as a guest.
+     *
+     * @return void
+     */
+    public function testGuestGetsLevel(): void
+    {
+        $level = factory(Level::class)->create();
+
+        $response = $this->json('GET', route('level.show', [$level->id]));
+        $response
+            ->assertJson([
+                'data' => [
+                    'id'          => $level->id,
+                    'title'       => $level->title,
+                    'description' => $level->description,
+                    'type'        => $level->type,
+                    'level'       => $level->level,
+                ]
+            ]);
     }
 
 }
