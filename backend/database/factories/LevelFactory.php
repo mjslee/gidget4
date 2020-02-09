@@ -5,7 +5,7 @@ use App\Models\Level;
 
 
 $factory->define(Level::class, function (Faker $faker) {
-    $size = 5;
+    $size = rand(2, 10);
 
     $levelTypes = array_keys(Level::levelRules());
     $level = [
@@ -17,6 +17,7 @@ $factory->define(Level::class, function (Faker $faker) {
         'published'   => $faker->boolean(95),
         'official'    => $faker->boolean(5),
 
+        'size'     => $size + 1,
         'objects'  => [],
         'tiles'    => [],
         'dialogue' => [],
