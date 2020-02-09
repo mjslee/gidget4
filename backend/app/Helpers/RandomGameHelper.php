@@ -1,5 +1,6 @@
 <?php
 namespace App\Helpers;
+use Faker\Generator as Faker;
 
 
 class RandomGameHelper
@@ -32,6 +33,48 @@ class RandomGameHelper
     }
 
     /**
+     * Create a tile.
+     *
+     * @param string $type
+     * @param array $position
+     * @return array
+     */
+    public static function tile(string $type, array $position): array
+    {
+        return [
+            'type' => $type,
+            'position' => $position
+        ];
+    }
+
+    /**
+     * Create a goal.
+     *
+     * @param string $assert
+     * @param array $arguments
+     * @return array
+     */
+    public static function goal(string $assert, array $arguments): array
+    {
+        return [
+            'assert' => $assert,
+            'arguments' => $arguments
+        ];
+    }
+
+
+    /**
+     * Create a dialogue.
+     *
+     * @param string $text
+     * @return array
+     */
+    public static function dialogue(string $text): array
+    {
+        return [ 'text' => $text ];
+    }
+
+    /**
      * Generate random position array.
      *
      * @param int $worldSize
@@ -56,5 +99,43 @@ class RandomGameHelper
             self::$gameObjectTypes[array_rand(self::$gameObjectTypes)],
             self::randomPosition($worldSize)
         );
+    }
+
+
+    /**
+     * Generate a random goal.
+     *
+     * @return array
+     */
+    public static function randomTile(int $worldSize): array
+    {
+        return self::tile(
+            self::$tileTypes[array_rand(self::$tileTypes)],
+            self::randomPosition($worldSize)
+        );
+    }
+
+
+    /**
+     * Generate a random goal.
+     *
+     * @return array
+     */
+    public static function randomGoal(): array
+    {
+        $num = rand(1, 100);
+        return self::goal('equal', [$num, $num]);
+    }
+
+
+    /**
+     * Generate random dialogue.
+     *
+     * @return array
+     */
+    public static function randomDialogue(): array
+    {
+        $num = rand(1, 100);
+        return self::dialogue($num);
     }
 }
