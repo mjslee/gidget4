@@ -4,7 +4,7 @@
       ref="code"
       v-model="code"
       :options="codemirrorOptions"
-      />
+    />
   </div>
 </template>
 

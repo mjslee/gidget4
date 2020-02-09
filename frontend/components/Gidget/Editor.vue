@@ -8,7 +8,8 @@
       :tileSize="tileSize"
       :size="world.size"
       :tiles="world.tiles"
-      :objects="world.objects" />
+      :objects="world.objects"
+    />
   </div>
 </template>
 
