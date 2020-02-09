@@ -24,9 +24,11 @@ class LevelTest extends TestCase
         $obj = factory(Level::class)->create();
         $obj = $obj->fresh();
 
-        $this->assertJson($obj->level);
-        $level = json_decode($obj->level);
-        $this->assertIsObject($level);
+        $this->assertIsArray($obj->level);
+        $this->assertIsArray($obj->level['dialogue']);
+        $this->assertIsArray($obj->level['tiles']);
+        $this->assertIsArray($obj->level['goals']);
+        $this->assertIsArray($obj->level['objects']);
     }
 
     /**
