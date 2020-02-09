@@ -123,7 +123,7 @@ class RandomGameHelper
      */
     public static function randomGoal(): array
     {
-        $num = rand(1, 100);
+        $num = strval(rand(1, 100));
         return self::goal('equal', [$num, $num]);
     }
 
@@ -135,7 +135,7 @@ class RandomGameHelper
      */
     public static function randomDialogue(): array
     {
-        $num = rand(1, 100);
+        $num = strval(rand(1, 100));
         return self::dialogue($num);
     }
 }
