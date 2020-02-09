@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="goals" v-for="goal in internalGoals" :key="goal.id">
+    <div class="goals" v-for="goal in goals" :key="goal.id">
       <b-icon
         icon="close-circle"
         type="is-danger"
@@ -18,7 +18,6 @@
         size="is-small"
         v-else
       />
-
       <span v-if="goal.assert === 'equal'">
         <span class="is-keyword">assert</span>
         <GidgetValue :code="goal.arguments[0]" />
@@ -49,16 +48,15 @@ export default {
 
 
   props: {
-    goals: Array[Object],
+    initialGoals: Array[Object],
     world: Object
   },
 
 
   data() {
     return {
-      data: undefined,
       showResults: true,
-      internalGoals: this.goals,
+      goals:       [],
     };
   },
 
@@ -66,7 +64,7 @@ export default {
   created() {
     // Assign IDs to goals
     let i = 0;
-    this.internalGoals.forEach(goal => {
+    this.goals.forEach((goal) => {
       this.$set(goal, 'id', i++);
     });
     window.$store = this.$store;
@@ -81,7 +79,13 @@ export default {
      */
     reset() {
       //this.showResults = false;
-      this.internalGoals.forEach(goal => {
+
+      if (typeof this.goals == 'undefined') {
+        console.debug('goals are undefined.');
+        return;
+      }
+
+      this.goals.forEach((goal) => {
         this.$set(goal, 'completed', undefined);
       });
     },
@@ -93,7 +97,7 @@ export default {
      * @return {void}
      */
     validate() {
-      this.internalGoals.forEach(goal => {
+      this.goals.forEach(goal => {
         this.$set(goal, 'completed', this.assert(goal))
       });
     },
@@ -105,7 +109,7 @@ export default {
      * @return {boolean}
      */
     completed() {
-      return this.internalGoals.every(goal => goal.completed === true);
+      return this.goals.every(goal => goal.completed === true);
     },
 
 
