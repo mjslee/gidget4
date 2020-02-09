@@ -56,6 +56,7 @@ export const mutations = {
 
     set('size',     'number');
     set('code',     'string');
+
     set('tiles',    'object');
     set('objects',  'object');
     set('goals',    'object');
@@ -71,21 +72,32 @@ export const actions = {
    *
    * @param object commit
    * @param object data
-   * @return void
+   * @return object|void
    */
-  fetch({ commit }, data) {
-    if (typeof data != 'object' || typeof data.id == 'undefined') {
+  async fetch({ commit }, { id }) {
+    if (typeof id == 'undefined') {
       console.debug('`data` is not an object or `data.id` is undefined.');
       return;
     }
 
-    return this.$axios.$get(`${LEVELS}/${data.id}`);
+    const level = await this.$axios.$get(`${LEVELS}/${id}`);
+    return typeof level == 'object' ? level.data : null;
   },
-};
 
-
-export const getters = {
-  getValue(state) {
-    return value => _.get(state.data, value)
+  /**
+   * Fetch level from API and load it.
+   *
+   * @async
+   * @param {object} commit
+   * @param {object} dispatch
+   * @param {number|string} id
+   * @return {void}
+   */
+  async fetchAndLoad({ commit, dispatch }, { id }) {
+    const data = await dispatch('fetch', { id });
+    commit('load', data);
   }
 };
+
+
+export const getters = { };
