@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+
 
 class LevelResource extends JsonResource
 {
@@ -14,6 +14,23 @@ class LevelResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id'          => $this->id,
+            'published'   => $this->published,
+
+            'title'       => $this->title,
+            'description' => $this->description,
+
+            'type'        => $this->level['type']     ?? $this->type,
+            'size'        => $this->level['size']     ?? null,
+            'code'        => $this->level['code']     ?? null,
+            'tiles'       => $this->level['tiles']    ?? null,
+            'objects'     => $this->level['objects']  ?? null,
+            'goals'       => $this->level['goals']    ?? null,
+            'dialogue'    => $this->level['dialogue'] ?? null,
+            'imports'     => $this->level['imports']  ?? null
+        ];
+
+        //return parent::toArray($request);
     }
 }
