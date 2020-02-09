@@ -9,7 +9,11 @@
         />
         <div class="card-footer"></div>
         <div class="card-content">
-          <GidgetGoals ref="goals" :world="game.world" :goals="goals" />
+          <GidgetGoals
+            ref="goals"
+            :world="game.world"
+            :goals="goals"
+          />
           <GidgetControls
             ref="controls"
             @change:step="setStep"
@@ -35,7 +39,8 @@
 
       <GidgetDialogue
         ref="dialogue"
-        :messages="game.world.messages" />
+        :messages="game.world.messages"
+      />
     </div>
 
     <!-- Inspectors -->
@@ -48,13 +53,13 @@
 
 
 <style>
-.is-keyword { color: #770088 !important }
-.is-variable { color: #0000ff !important }
-.is-object { color: #e47200 !important }
+.is-keyword     { color: #770088 !important }
+.is-variable    { color: #0000ff !important }
+.is-object      { color: #e47200 !important }
 .is-object-dark { color: #000000 !important }
-.is-boolean { color: #221199 !important }
-.is-integer { color: #116644 !important }
-.is-string { color: #aa1111 !important }
+.is-boolean     { color: #221199 !important }
+.is-integer     { color: #116644 !important }
+.is-string      { color: #aa1111 !important }
 </style>
 
 
@@ -83,7 +88,6 @@ import { GIDGET_SPRITES } from '@/constants/paths'
 import { GIDGET_MESSAGES } from '@/constants/messages'
 
 
-
 export default {
   components: {
     GidgetCode,
@@ -96,13 +100,13 @@ export default {
 
 
   props: {
-    code: { type: String, default: '' },
-    size: { type: Number, default: 3 },
-    tiles: { type: Array, default: () => [] },
-    objects: { type: Array, default: () => [] },
-    goals: { type: Array, default: () => [] },
-    dialogue: { type: Array, default: () => [] },
-    imports: { type: Array, default: () => [] },
+    initialCode:     { type: String, default: '// CODE\nlet x = 1;' },
+    initialSize:     { type: Number, default: 3 },
+    initialTiles:    { type: Array,  default: () => [] },
+    initialObjects:  { type: Array,  default: () => [] },
+    initialGoals:    { type: Array,  default: () => [] },
+    initialDialogue: { type: Array,  default: () => [] },
+    initialImports:  { type: Array,  default: () => [] }
   },
 
 
@@ -120,35 +124,47 @@ export default {
 
   data() {
     return {
-      // World
-      game: Game.create(this.objects, this.imports, {
-        size: this.size,
-        messages: this.dialogue
-      }),
+      // Game Data
+      code:     this.initialCode,
+      size:     this.initialSize,
+      tiles:    this.initialTiles,
+      objects:  this.initialObjects,
+      goals:    this.initialGoals,
+      dialogue: this.initialDialogue,
+      imports:  this.initialImports,
 
-      // World objects
-      playerObject: undefined,
+      // Game World
+      game: Game.create(
+        this.initialObjects, this.initialImports,
+        {
+          size:     this.initialSize,
+          messages: this.initialDialogue
+        }
+      ),
+
+      // World Objects
+      playerObject:   undefined,
       selectedObject: undefined,
-      selectedTile: undefined,
+      selectedTile:   undefined
     }
   },
 
 
   mounted() {
-    window.stepWait = 100
-    window.stepDuration = 500
+    window.stepWait = 100;
+    window.stepDuration = 500;
 
     // Get important objects
     this.playerObject = this.game.world.getObject('Gidget');
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these objects before any code is ran
-    this.$store.commit('evaldata/setData', this.game.world.getObjectsSanitized())
+    this.$store.commit('evaldata/setData', this.game.world.getObjectsSanitized());
   },
 
 
   beforeDestroy() {
-    this.resetScript()
+    this.resetScript();
   },
 
 
@@ -160,15 +176,15 @@ export default {
      */
     resetScript() {
       // Reset game to defaults
-      const step = this.game.reset()
+      const step = this.game.reset();
       if (step)
-        this.onStep(step)
+        this.onStep(step);
 
       // Reset Vue components
-      this.$refs.code.reset()
-      this.$refs.controls.reset()
-      this.$refs.goals.reset()
-      this.$refs.dialogue.reset()
+      this.$refs.code.reset();
+      this.$refs.controls.reset();
+      this.$refs.goals.reset();
+      this.$refs.dialogue.reset();
     },
 
 
@@ -179,20 +195,20 @@ export default {
      */
     runScript() {
       // Reset game
-      this.resetScript()
+      this.resetScript();
 
       // Evaluate user code
-      const runner = this.game.run(this.$refs.code.code)
+      const runner = this.game.run(this.$refs.code.code);
 
       // Set up the controls
       if (typeof runner.steps == 'object')
-        this.$refs.controls.setup(runner.steps.length)
+        this.$refs.controls.setup(runner.steps.length);
 
       // Highlight errored line, if it exists
       if (typeof this.game.error == 'object')
-        this.onError()
+        this.onError();
 
-      return true
+      return true;
     },
 
 
@@ -204,9 +220,9 @@ export default {
     stopScript() {
       this.resetScript();
       this.$refs.dialogue.append({
-        text: GIDGET_MESSAGES.STARTING_OVER,
+        text:      GIDGET_MESSAGES.STARTING_OVER,
         leftImage: GIDGET_SPRITES.STARTING_OVER
-      })
+      });
     },
 
 
@@ -216,19 +232,19 @@ export default {
      * @return {void}
      */
     async runSteps() {
-      const $controls = this.$refs.controls
+      const $controls = this.$refs.controls;
 
       // Run the script so we have access to the steps
       if (!$controls.isRunning)
-        this.runScript()
+        this.runScript();
 
       // TODO: Find a cleaner way to do this
       // Advance steps until isRunning is flagged to false or when a
       // step has an error.
-      let index = 0
+      let index = 0;
       while ($controls.isRunning && !$controls.isComplete) {
-        await this.setStep(++index)
-        await wait(window.stepWait)
+        await this.setStep(++index);
+        await wait(window.stepWait);
       }
     },
 
@@ -240,24 +256,24 @@ export default {
      * @return {boolean} True if a next step exists.
      */
     async setStep(index) {
-      const $controls = this.$refs.controls
-      $controls.stepIndex = index
+      const $controls = this.$refs.controls;
+      $controls.stepIndex = index;
 
       // If the script has not been ran/evaluated, we should evaluate it so
       // that we have access to its steps
       if (!$controls.isRunning)
-        this.runScript()
+        this.runScript();
 
       if ($controls.isComplete)
-        this.onFinish()
+        this.onFinish();
 
       // Set the world state
-      const step = await this.game.set(index)
+      const step = await this.game.set(index);
       if (!step)
-        return false
+        return false;
 
       // Handle the resulting step
-      this.onStep(step)
+      this.onStep(step);
     },
 
 
@@ -269,16 +285,16 @@ export default {
     onStep(step) {
       // Probably an error, remove active line
       if (typeof this.$refs.code == 'undefined' || typeof step == 'undefined') {
-        this.$refs.code.setActiveLine(-1)
-        return
+        this.$refs.code.setActiveLine(-1);
+        return;
       }
 
       // Set code editor line
-      this.$refs.code.setActiveLine(step.ln - 1)
+      this.$refs.code.setActiveLine(step.ln - 1);
 
       // Store data collected from game evaluation
       if (typeof step.gameData == 'object')
-        this.$store.commit('evaldata/setData', step.gameData)
+        this.$store.commit('evaldata/setData', step.gameData);
     },
 
 
@@ -289,7 +305,7 @@ export default {
      */
     onFinish() {
       if (typeof this.game.error == 'object')
-        return this.onError()
+        return this.onError();
 
       // Show red Xs on goals component
       this.$refs.goals.showResults = true;
@@ -311,20 +327,20 @@ export default {
      */
     onError() {
       if (typeof this.game.error == 'undefined')
-        return
+        return;
 
-      const error = this.game.error
+      const error = this.game.error;
 
       if (typeof error.ln == 'number') {
-        this.$refs.code.reset()
-        this.$refs.code.setErrorLine(error.ln - 1)
+        this.$refs.code.reset();
+        this.$refs.code.setErrorLine(error.ln - 1);
       }
 
       if (typeof error.text == 'string') {
         this.$nextTick(() => {
-          const text = JsException.translate(error.text) || error.text
-          this.$refs.dialogue.append({ text })
-        })
+          const text = JsException.translate(error.text) || error.text;
+          this.$refs.dialogue.append({ text });
+        });
       }
     },
 
@@ -335,11 +351,14 @@ export default {
      * @return {void}
      */
     onSuccess() {
-      this.playerObject.image = GIDGET_SPRITES.SUCCESS
+      if (typeof this.playerObject == 'undefined')
+        return;
+
+      this.playerObject.image = GIDGET_SPRITES.SUCCESS;
       this.$refs.dialogue.append({
         text: GIDGET_MESSAGES.SUCCESS,
         leftImage: this.playerObject.image
-      })
+      });
     },
 
 
@@ -349,11 +368,14 @@ export default {
      * @return {void}
      */
     onFailure() {
-      this.playerObject.image = GIDGET_SPRITES.FAILURE
+      if (typeof this.playerObject == 'undefined')
+        return;
+
+      this.playerObject.image = GIDGET_SPRITES.FAILURE;
       this.$refs.dialogue.append({
         text: GIDGET_MESSAGES.FAILURE,
         leftImage: this.playerObject.image
-      })
+      });
     }
   }
 }
