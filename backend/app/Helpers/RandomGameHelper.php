@@ -10,6 +10,11 @@ class RandomGameHelper
     public static $gameObjectTypes = ['Cat', 'Dog', 'Kitten', 'Puppy'];
 
     /**
+     * @var array List of possible tile types.
+     */
+    public static $tileTypes = ['dirt'];
+
+    /**
      * Create a game object.
      *
      * @param string $type
