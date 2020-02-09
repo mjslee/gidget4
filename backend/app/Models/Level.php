@@ -55,6 +55,14 @@ class Level extends Model
         'difficulty', 'level', 'user'
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'level' => 'array'
+    ];
 
     /**
      * Validation rules for Level forms.
