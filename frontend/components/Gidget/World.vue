@@ -124,7 +124,7 @@ export default {
     size: {
       handler() {
         this.$nextTick(() => {
-          this.updateObjectPositions();
+          //this.updateObjectPositions();
         });
       }
     },

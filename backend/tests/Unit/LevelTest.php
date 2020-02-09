@@ -41,7 +41,6 @@ class LevelTest extends TestCase
         $this->seed(LevelsTableSeeder::class);
 
         $levelCount = DB::table('levels')->count();
-
         $this->assertGreaterThan(1, $levelCount);
     }
 
