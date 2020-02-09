@@ -12,7 +12,7 @@ class LevelResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id'          => $this->id,
@@ -30,7 +30,5 @@ class LevelResource extends JsonResource
             'dialogue'    => $this->level['dialogue'] ?? null,
             'imports'     => $this->level['imports']  ?? null
         ];
-
-        //return parent::toArray($request);
     }
 }
