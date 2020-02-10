@@ -1,3 +1,3 @@
 export default {
-    image: "fridge.png"
+  image: 'fridge.png'
 }

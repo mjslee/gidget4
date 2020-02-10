@@ -1,3 +1,3 @@
 export default {
-    image: "jar.png"
+  image: 'jar.png'
 }

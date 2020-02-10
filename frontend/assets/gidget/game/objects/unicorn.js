@@ -1,6 +1,6 @@
 export default {
-    image: 'unicorn.png',
-  
+  image: 'unicorn.png',
+
   onCreate() {
     // Bark every 20 seconds
     const messages = ['neigh', 'neigh!', 'neigh.', 'neigh?'];
@@ -9,9 +9,9 @@ export default {
         await this.say({ text: _.sample(messages, -1) });
     }, 1000)
   },
-  
+
   onDestroy() {
     clearInterval(this.interval);
-    }
   }
-  
+}
+

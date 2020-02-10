@@ -1,3 +1,3 @@
 export default {
-    image: "hidden.png"
+  image: 'hidden.png'
 }

@@ -1,6 +1,6 @@
 export default {
-    image: 'monkey.png',
-  
+  image: 'monkey.png',
+
   onCreate() {
     // Bark every 20 seconds
     const messages = ['oo oo', 'aa aa!', 'oo oo.', 'aa aa?'];
@@ -9,11 +9,11 @@ export default {
         await this.say({ text: _.sample(messages, -1) });
     }, 1000)
   },
-  
+
   onDestroy() {
     clearInterval(this.interval);
-    }
   }
-  
+}
+
 
 

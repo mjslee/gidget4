@@ -1,3 +1,3 @@
 export default {
-    image: "masterswitch.png"
+  image: 'masterswitch.png'
 }

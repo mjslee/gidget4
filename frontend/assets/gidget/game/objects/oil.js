@@ -1,3 +1,3 @@
 export default {
-    image: "oil.png"
+  image: 'oil.png'
 }

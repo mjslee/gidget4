@@ -1,3 +1,3 @@
 export default {
-    image: "unknown.png"
+  image: 'unknown.png'
 }

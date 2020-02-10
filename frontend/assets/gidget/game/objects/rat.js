@@ -1,6 +1,6 @@
 export default {
-    image: 'rat.png',
-  
+  image: 'rat.png',
+
   onCreate() {
     // Bark every 20 seconds
     const messages = ['squeak', 'squeak!', 'squeak.', 'squeak?'];
@@ -9,9 +9,9 @@ export default {
         await this.say({ text: _.sample(messages, -1) });
     }, 1000)
   },
-  
+
   onDestroy() {
     clearInterval(this.interval);
-    }
   }
-  
+}
+

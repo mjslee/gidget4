@@ -1,3 +1,3 @@
 export default {
-    image: "teleporter-b.png"
+  image: 'teleporter-b.png'
 }

@@ -1,3 +1,3 @@
 export default {
-    image: "plug.png"
+  image: 'plug.png'
 }

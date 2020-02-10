@@ -1,3 +1,3 @@
 export default {
-    image: "road-cross.png"
+  image: 'road-cross.png'
 }

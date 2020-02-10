@@ -1,3 +1,3 @@
 export default {
-    image: "bin.png"
+  image: 'bin.png'
 }

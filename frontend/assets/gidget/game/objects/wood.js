@@ -1,3 +1,3 @@
 export default {
-    image: "wood.png"
+  image: 'wood.png'
 }

@@ -1,3 +1,3 @@
 export default {
-    image: "shrub.png"
+  image: 'shrub.png'
 }

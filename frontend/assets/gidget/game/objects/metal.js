@@ -1,3 +1,3 @@
 export default {
-    image: "metal.png"
+  image: 'metal.png'
 }

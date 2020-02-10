@@ -1,6 +1,6 @@
 export default {
-    image: 'panda.png',
-  
+  image: 'panda.png',
+
   onCreate() {
     // Bark every 20 seconds
     const messages = ['grr', 'grr!', 'grr.', 'grr?'];
@@ -9,12 +9,12 @@ export default {
         await this.say({ text: _.sample(messages, -1) });
     }, 1000)
   },
-  
+
   onDestroy() {
     clearInterval(this.interval);
-    }
   }
-  
+}
+
 
 
 

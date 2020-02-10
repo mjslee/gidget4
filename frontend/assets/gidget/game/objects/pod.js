@@ -1,3 +1,3 @@
 export default {
-    image: "pod.png"
+  image: 'pod.png'
 }

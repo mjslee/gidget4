@@ -1,3 +1,3 @@
 export default {
-    image: "tile-grey.png"
+  image: 'tile-grey.png'
 }

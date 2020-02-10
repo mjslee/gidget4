@@ -1,6 +1,6 @@
 export default {
-    image: 'bat.png',
-  
+  image: 'bat.png',
+
   onCreate() {
     // Bark every 20 seconds
     const messages = ['crick', 'crick!', 'crick.', 'crick?'];
@@ -9,9 +9,8 @@ export default {
         await this.say({ text: _.sample(messages, -1) });
     }, 1000)
   },
-  
+
   onDestroy() {
     clearInterval(this.interval);
-    }
   }
-  
+}

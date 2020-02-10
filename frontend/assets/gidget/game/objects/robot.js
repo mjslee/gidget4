@@ -1,3 +1,3 @@
 export default {
-    image: "robot.png"
+  image: 'robot.png'
 }

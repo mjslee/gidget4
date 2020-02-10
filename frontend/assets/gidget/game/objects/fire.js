@@ -1,3 +1,3 @@
 export default {
-    image: "fire.png"
+  image: 'fire.png'
 }

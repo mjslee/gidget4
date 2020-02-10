@@ -1,3 +1,3 @@
 export default {
-    image: "polkadot.png"
+  image: 'polkadot.png'
 }

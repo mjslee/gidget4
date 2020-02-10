@@ -1,3 +1,3 @@
 export default {
-    image: "blueprint.png"
+  image: 'blueprint.png'
 }
