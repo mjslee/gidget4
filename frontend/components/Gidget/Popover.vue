@@ -1,6 +1,8 @@
 <template>
   <div class="box">
-    {{ identifier }} ({{ type }}): {{ internalValue }}
+    <div>
+      {{ identifier }} ({{ type }}): {{ internalValue }}
+    </div>
   </div>
 </template>
 

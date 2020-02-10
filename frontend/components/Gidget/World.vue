@@ -1,48 +1,51 @@
 <template>
   <div>
-    <div
-      class="position-popup"
-      :style="popupPosition"
-      v-text="`[${hoveredTile.x}, ${hoveredTile.y}]`"
-    />
+    <!-- <div -->
+    <!--   :style="popupPosition" -->
+    <!--   v&#45;text="`[${hoveredTile.x}, ${hoveredTile.y}]`" -->
+    <!--   class="position&#45;popup" -->
+    <!--   @mouseenter="popupPosition.display = 'block'" -->
+    <!--   @mouseleave="popupPosition.display = 'none'" -->
+    <!--   @mousemove="movePopupPosition" -->
+    <!-- /> -->
 
-    <main
-      ref="world" id="world"
-      @mouseenter="popupPosition.display = 'block'"
-      @mouseleave="popupPosition.display = 'none'"
-      @mousemove="movePopupPosition"
-    >
+    <main ref="world" id="world">
       <!-- Gidget Game Objects -->
       <GidgetObject
-        v-for="object in objects"
-        :key="'obj-' + object.id"
+        @click.native="$emit('click:object', object)"
         :object="object"
         :size="tileSize"
+        :key="'obj-' + object.id"
+        v-for="object in objects"
       />
 
       <!-- Horizontal Axis Labels (1, 2, 3, etc.) -->
       <div class="game-row x-axis">
         <label
-          v-for="i in size" :key="'i-'+i"
-          :style="axisLabelStyle" v-text="i-1"
+          :style="axisLabelStyle"
+          :class="hoveredTile.x == x ? 'active': ''"
+          :key="'x-' + x"
+          v-for="(i, x) in size"
+          v-text="x"
         />
       </div>
 
-      <div class="game-row" v-for="y in size" :key="'y-' +y">
+      <div class="game-row y-axis" v-for="(i, y) in size" :key="'y-' + y">
         <!-- Vertical Axis Labels (1, 2, 3, etc.) -->
-        <label v-text="y-1" />
+        <label v-text="y" :class="hoveredTile.y === y ? 'active': ''" />
 
         <!-- Gidget Game Tiles -->
         <GidgetTile
-          ref="tiles"
-          v-for="x in size" :key="'x-' + x"
-          @click.native="selectedObject = undefined"
-          @mouseenter.native="setPopupPosition(x-1, y-1)"
-          :class="getTileType(x-1, y-1)"
+          @click.native="clickTile(x, y)"
+          @mouseenter.native="hoverTile(x, y)"
+          :class="tileClasses[x + ',' + y] || 'grass'"
           :style="tileStyle"
           :size="tileSize"
-          :x="x-1"
-          :y="y-1"
+          :x="x"
+          :y="y"
+          :key="'x-' + x + '-y-' + y"
+          v-for="(i, x) in size"
+          ref="tiles"
         />
       </div>
 
@@ -81,7 +84,12 @@ label {
   text-align: center;
   font-size: 0.8rem;
   width: 1rem;
-  color: #666;
+  color: #888;
+}
+
+label.active {
+  color: black;
+  font-weight: bold;
 }
 </style>
 
@@ -102,19 +110,29 @@ export default {
     objects: Array,
     tiles: Array[Object],
     size: Number,
+    editMode: {
+      type: Boolean,
+      default: false
+    }
   },
 
 
   data() {
     return {
-      popupPosition: { top: 0, left: 0, display: 'none' },
-      hoveredTile: { x: 0, y: 0 },
-
+      popupPosition: {
+        top: 0,
+        left: 0,
+        display: 'none'
+      },
+      hoveredTile: {
+        x: 0,
+        y: 0
+      },
+      tileClasses: {},
       tileMargin: .1,
       selectedObject: undefined,
     }
   },
-
 
   watch: {
     /**
@@ -123,6 +141,7 @@ export default {
      */
     size: {
       handler() {
+        console.log('updated');
         this.$nextTick(() => {
           //this.updateObjectPositions();
         });
@@ -130,11 +149,21 @@ export default {
     },
 
     /**
-     * Emit selected object update.
-     * @param {number} newValue
+     * 
+     *
      */
-    selectedObject(newValue) {
-      this.$emit("change:object", newValue);
+    tiles: {
+      immediate: true,
+      handler(val) {
+        // Generate tile classes
+        this.tiles.forEach((tile) => {
+          if (typeof tile != 'object')
+            return;
+
+          const pos = tile.position;
+          this.tileClasses[pos.x + ',' + pos.y] = tile.type;
+        });
+      }
     }
   },
 
@@ -153,7 +182,7 @@ export default {
     tileStyle() {
       return {
         margin: this.tileMargin + 'rem'
-      }
+      };
     },
 
     /**
@@ -162,7 +191,7 @@ export default {
     axisLabelStyle() {
       return {
         width: this.tileSize + (this.tileMargin * 2) + 'rem'
-      }
+      };
     },
   },
 
@@ -170,34 +199,40 @@ export default {
   methods: {
     /**
      * Get tile type at position.
+     *
      * @param {number} x
      * @param {number} y
+     * @return {void}
      */
     getTileType(x, y) {
-      const tile = this.tiles.find(tile =>
-        x == tile.position.x && y == tile.position.y)
+      const tile = this.tiles.find((tile) => {
+        return x == tile.position.x && y == tile.position.y;
+      });
 
       // Return tile type or default to grass
-      return tile ? tile.type : "grass"
+      return tile ? tile.type : 'grass';
     },
 
-    /*
-     * Set absolute position of floating coordinates.
-     * @param {object} event
+    /**
+     *
+     * @param {number} x
+     * @param {number} y
+     * @return {void}
      */
-    movePopupPosition(event) {
-      this.popupPosition.left = (event.pageX + 25) + 'px';
-      this.popupPosition.top = (event.pageY - 150) + 'px';
+    clickTile(x, y) {
+      console.log(x, y);
     },
 
     /*
      * Set floating coordinates tile position.
+     *
      * @param {number} x
      * @param {number} y
+     * @return {void}
      */
-    setPopupPosition(x, y) {
-      this.hoveredTile.x = x
-      this.hoveredTile.y = y
+    hoverTile(x, y) {
+      this.hoveredTile.x = x;
+      this.hoveredTile.y = y;
     }
   }
 }

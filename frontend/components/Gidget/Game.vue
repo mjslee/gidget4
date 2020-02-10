@@ -32,8 +32,7 @@
           :objects="game.world.objects"
           :tiles="tiles"
           :size="game.world.size"
-          @change:object="selectedObject = arguments[0]"
-          @change:tile="selectedTile = arguments[0]"
+          @click:object="selectedObject = arguments[0]"
         />
       </div>
 
@@ -127,7 +126,7 @@ export default {
       // Game Data
       code:     this.initialCode,
       size:     this.initialSize,
-      tiles:    this.initialTiles,
+      tiles:    _.cloneDeep(this.initialTiles),
       objects:  this.initialObjects,
       goals:    this.initialGoals,
       dialogue: this.initialDialogue,

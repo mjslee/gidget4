@@ -50,7 +50,7 @@ export default {
       self.world.addObject(gameObject)
     })
 
-    // Save initial world state and data so they can be restored on reset
+    // Save initial world state and data so it can be restored on reset
     self.initialState = self.world.getState()
     self.initialData = self.world.getObjectsSanitized()
 

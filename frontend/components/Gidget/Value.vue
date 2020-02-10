@@ -22,6 +22,7 @@
       :identifier="identifier || (isIdentifier ? code : '')"
       :value="value"
       :type="type"
+      v-model="value"
     />
   </v-popover>
 </template>
@@ -64,13 +65,13 @@ export default {
     return {
       inTemplate: false,
       type: 'undefined',
-      value: 'undefined',
+      value: 'undefined'
     };
   },
 
 
   mounted() {
-    this.updateValue()
+    this.updateValue();
   },
 
 
@@ -80,7 +81,7 @@ export default {
        * Update value when code is updated.
        */
       handler(newVal) {
-        this.updateValue()
+        this.updateValue();
       },
       deep: true
     }
@@ -114,19 +115,19 @@ export default {
      * return {string}
      */
     highlightedHtml() {
-      let result = this.isIdentifier ? this.code : this.value || this.code
+      let result = this.isIdentifier ? this.code : this.value || this.code;
 
-      if (typeof result !== 'string') {
+      if (typeof result != 'string') {
         // Stringify non-strings
         try {
-          result = JSON.stringify(result)
+          result = JSON.stringify(result);
         }
         catch {  // Blocks circular JSON error
-          result = '[circ]'
+          result = '[circ]';
         }
       }
 
-      return hljs.highlight('javascript', result || 'undefined').value
+      return hljs.highlight('javascript', result || 'undefined').value;
     },
 
 
@@ -155,21 +156,21 @@ export default {
     updateValue() {
       // Identifiers can have evaluated data
       if (this.isIdentifier)
-        this.value = this.$store.getters['evaldata/getValue'](this.code)
+        this.value = this.$store.getters['evaldata/getValue'](this.code);
 
       // Non-identifiers won't have evaluated data
       else
-        this.value = this.code
+        this.value = this.code;
 
       // Set type of value
-      this.type = typeof this.value
+      this.type = typeof this.value;
 
       // Special cases below
       if (this.type !== 'object')
         return;
 
       // Go through each object type
-      return this.isPosition() || this.isGameObject() || this.isArray()
+      return this.isPosition() || this.isGameObject() || this.isArray();
     },
 
 
@@ -185,11 +186,11 @@ export default {
     isPosition() {
       if (typeof this.value.x === 'undefined' ||
           typeof this.value.y === 'undefined')
-        return false
+        return false;
 
-      this.type = 'Position'
-      this.value = '[ ' + this.value.x + ', ' + this.value.y + ' ]'
-      return true
+      this.type = 'Position';
+      this.value = '[ ' + this.value.x + ', ' + this.value.y + ' ]';
+      return true;
     },
 
 
@@ -201,11 +202,11 @@ export default {
      */
     isGameObject() {
       if (typeof this.value.name === 'undefined')
-        return false
+        return false;
 
-      this.type = 'GameObject'
-      this.inTemplate = true
-      return true
+      this.type = 'GameObject';
+      this.inTemplate = true;
+      return true;
     },
 
 
@@ -220,11 +221,11 @@ export default {
      */
     isArray() {
       if (!Array.isArray(this.value))
-        return false
+        return false;
 
-      this.type = 'Array'
-      this.inTemplate = true
-      return true
+      this.type = 'Array';
+      this.inTemplate = true;
+      return true;
     },
   }
 }
