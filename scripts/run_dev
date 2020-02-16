@@ -3,7 +3,7 @@ cd "${0%/*}/../laradock"
 
 case $1 in
   start|up)
-    exec docker-compose up -d postgres nginx
+    docker-compose up -d postgres nginx
     ;;
 
   stop|down)
@@ -15,6 +15,7 @@ case $1 in
     ;;
 
   *)
+    docker-compose up -d postgres nginx
     CMD='bash'
     ;;
 esac
