@@ -11,8 +11,7 @@
 
           <div class="column">
             <div class="buttons">
-              <b-button
-                tag="router-link"
+              <b-button tag="router-link"
                 to="/play"
                 size="is-large"
                 class="is-fullwidth"
@@ -21,18 +20,18 @@
                 Play
               </b-button>
               <b-button
+                tag="router-link"
+                to="/levels"
                 size="is-large"
                 class="is-fullwidth"
-                disabled
               >
+                Browse Levels
+              </b-button>
+
+              <b-button size="is-large" class="is-fullwidth" disabled>
                 Level Editor
               </b-button>
-              <b-button
-                size="is-large"
-                class="is-fullwidth"
-              >
-                About
-              </b-button>
+              <b-button size="is-large" class="is-fullwidth">About</b-button>
             </div>
           </div>
 
