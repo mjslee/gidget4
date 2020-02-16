@@ -1,17 +1,10 @@
 <template>
   <div>
-    <nav
-      class="navbar header has-shadow is-primary"
-      role="navigation"
-      aria-label="main navigation"
-    >
+    <nav class="navbar header has-shadow is-primary">
+
       <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <img
-            src="~assets/buefy.png"
-            alt="Buefy"
-            height="28"
-          />
+        <a class="navbar-item logo" href="/">
+          Gidget
         </a>
 
         <div class="navbar-burger">
@@ -20,6 +13,22 @@
           <span />
         </div>
       </div>
+
+      <div class="navbar-end">
+        <div class="navbar-item" v-if="$auth.loggedIn">
+          <div class="buttons">
+            <a class="button is-primary">Log out</a>
+          </div>
+        </div>
+
+        <div class="navbar-item" v-else>
+          <div class="buttons">
+            <a class="button is-primary">Sign in</a>
+            <a class="button is-light">Log in</a>
+          </div>
+        </div>
+      </div>
+
     </nav>
 
     <section class="main-content">
@@ -31,6 +40,15 @@
     </section>
   </div>
 </template>
+
+
+<style scoped>
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+</style>
+
 
 <script>
 export default {
