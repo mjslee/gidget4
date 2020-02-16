@@ -6,15 +6,12 @@
       aria-label="main navigation"
     >
       <div class="navbar-brand">
-        <a
-          class="navbar-item"
-          href="/"
-        >
+        <a class="navbar-item" href="/">
           <img
             src="~assets/buefy.png"
             alt="Buefy"
             height="28"
-          >
+          />
         </a>
 
         <div class="navbar-burger">
@@ -27,22 +24,6 @@
 
     <section class="main-content">
 
-      <div class="tabs is-centered">
-        <ul>
-          <li
-            v-for="(item, key) of items"
-            :key="key"
-          >
-            <nuxt-link
-              :to="item.to"
-              exact-active-class="is-active"
-            >
-              <b-icon :icon="item.icon" /> {{ item.title }}
-            </nuxt-link>
-          </li>
-        </ul>
-      </div>
-
       <div class="container column is-12">
         <nuxt />
       </div>
@@ -54,25 +35,7 @@
 <script>
 export default {
   data() {
-    return {
-      items: [
-        {
-          title: 'Home',
-          icon: 'home',
-          to: { name: 'index' }
-        },
-        {
-          title: 'Inspire',
-          icon: 'lightbulb',
-          to: { name: 'inspire' }
-        },
-        {
-          title: 'Play',
-          icon: 'play',
-          to: { name: 'play' }
-        }
-      ]
-    }
+    return { };
   }
 }
 </script>
