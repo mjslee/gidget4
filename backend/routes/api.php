@@ -35,10 +35,17 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function() {
  * Levels
  */
 Route::group(['prefix' => 'levels'], function() {
-    Route::get('/{level}', 'Levels\LevelController@show')
-        ->name('level.show');
+    Route::get('/', 'Levels\LevelController@index')
+        ->name('level.index');
 
     Route::post('/', 'Levels\LevelController@store')
         ->middleware('auth:api')
         ->name('level.store');
+
+    Route::post('/', 'Levels\LevelController@store')
+        ->middleware('auth:api')
+        ->name('level.store');
+
+    Route::get('/{level}', 'Levels\LevelController@show')
+        ->name('level.show');
 });
