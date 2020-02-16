@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LevelResource;
+use App\Http\Resources\LevelIndexResource;
 use App\Models\Level;
 
 
@@ -14,12 +15,25 @@ class LevelController extends Controller
 {
 
     /**
-     *
+     * Constructor of LevelController.
      */
     public function __construct()
     {
         //$this->authorizeResource(Level::class, 'level');
     }
+
+    /**
+     * Show index page.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    function index(Request $request)
+    {
+        $levels = Level::all();
+        return LevelIndexResource::collection($levels);
+    }
+    
 
     /**
      * Store a newly created resource in storage.
