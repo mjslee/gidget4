@@ -200,8 +200,12 @@ export default {
       const runner = this.game.run(this.$refs.code.code);
 
       // Set up the controls
-      if (typeof runner.steps == 'object')
+      if (typeof runner.steps == 'object') {
+        if (runner.steps.length < 1)
+          return false;
+
         this.$refs.controls.setup(runner.steps.length);
+      }
 
       // Highlight errored line, if it exists
       if (typeof this.game.error == 'object')
