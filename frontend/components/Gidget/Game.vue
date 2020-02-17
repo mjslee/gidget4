@@ -47,6 +47,7 @@
     <!-- Inspectors -->
     <div class="column">
       <template v-if="editorMode">
+        <GidgetSizeEditor :size="size" @update:size="game.world.size = parseInt($event)" />
         <GidgetObjectEditor :object="selectedObject" />
       </template>
       <template v-else>
