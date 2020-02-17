@@ -93,11 +93,12 @@ class RandomGameHelper
      *
      * @return array
      */
-    public static function randomGameObject(int $worldSize): array
+    public static function randomGameObject(int $worldSize, array $mixins = []): array
     {
         return self::gameObject(
             self::$gameObjectTypes[array_rand(self::$gameObjectTypes)],
-            self::randomPosition($worldSize)
+            self::randomPosition($worldSize),
+            $mixins
         );
     }
 
