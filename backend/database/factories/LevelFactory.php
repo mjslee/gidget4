@@ -24,6 +24,11 @@ $factory->define(Level::class, function (Faker $faker) {
         'goals'    => [],
     ];
 
+    // Player object
+    $position = RandomGameHelper::randomPosition($size);
+    $player = RandomGameHelper::gameObject('Gidget', $position, ['Player']);
+    array_push($level['objects'], $player);
+
     for ($i = 0; $i < 3; $i++)
         array_push($level['objects'], RandomGameHelper::randomGameObject($size));
 
