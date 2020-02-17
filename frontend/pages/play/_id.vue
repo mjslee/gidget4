@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+
     <GidgetGame
       :key="updateKey"
       :initialCode="level.code"
@@ -26,10 +27,10 @@ export default {
     GidgetGame
   },
 
-
   data() {
     return {
-      updateKey: 0,
+      id: this.$route.params.id,
+      updateKey: 0
     }
   },
 
@@ -39,11 +40,9 @@ export default {
     }
   },
 
-
   async mounted() {
-    this.setLevel('1');
+    await this.setLevel(this.id);
   },
-
 
   methods: {
     async setLevel(id) {
