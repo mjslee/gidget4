@@ -36,16 +36,23 @@
         />
       </div>
 
-      <GidgetDialogue
-        ref="dialogue"
-        :messages="game.world.messages"
-      />
+      <template v-if="editorMode">
+        <GidgetDialogue ref="dialogue" :messages="game.world.messages" />
+      </template>
+      <template v-else>
+        <GidgetDialogue ref="dialogue" :messages="game.world.messages" />
+      </template>
     </div>
 
     <!-- Inspectors -->
     <div class="column">
-      <GidgetInspector :object="playerObject" />
-      <GidgetInspector :object="selectedObject || selectedTile" />
+      <template v-if="editorMode">
+        <GidgetObjectEditor :object="selectedObject" />
+      </template>
+      <template v-else>
+        <GidgetInspector :object="playerObject" />
+        <GidgetInspector :object="selectedObject || selectedTile" />
+      </template>
     </div>
   </div>
 </template>
@@ -72,19 +79,22 @@
 
 
 <script>
-import GidgetWorld from './World'
-import GidgetInspector from './Inspector'
-import GidgetCode from './Code'
-import GidgetDialogue from './Dialogue'
-import GidgetGoals from './Goals'
-import GidgetControls from './Controls'
+import GidgetCode from './Code';
+import GidgetWorld from './World';
+import GidgetGoals from './Goals';
+import GidgetControls from './Controls';
+import GidgetDialogue from './Dialogue';
+import GidgetInspector from './Inspector';
 
-import Game from '@/assets/gidget/game/gidget-game'
-import JsException from '@/assets/gidget/lang/js-exception'
-import { wait } from '@/assets/gidget/game/gidget-utility'
+import GidgetSizeEditor from './Editor/SizeEditor';
+import GidgetObjectEditor from './Editor/ObjectEditor';
 
-import { GIDGET_SPRITES } from '@/constants/paths'
-import { GIDGET_MESSAGES } from '@/constants/messages'
+import Game from '@/assets/gidget/game/gidget-game';
+import JsException from '@/assets/gidget/lang/js-exception';
+import { wait } from '@/assets/gidget/game/gidget-utility';
+
+import { GIDGET_SPRITES } from '@/constants/paths';
+import { GIDGET_MESSAGES } from '@/constants/messages';
 
 
 export default {
@@ -95,17 +105,21 @@ export default {
     GidgetDialogue,
     GidgetGoals,
     GidgetControls,
+
+    GidgetSizeEditor,
+    GidgetObjectEditor,
   },
 
 
   props: {
-    initialCode:     { type: String, default: '// CODE\nlet x = 1;' },
-    initialSize:     { type: Number, default: 3 },
-    initialTiles:    { type: Array,  default: () => [] },
-    initialObjects:  { type: Array,  default: () => [] },
-    initialGoals:    { type: Array,  default: () => [] },
-    initialDialogue: { type: Array,  default: () => [] },
-    initialImports:  { type: Array,  default: () => [] }
+    editorMode:      { type: Boolean, default: false },
+    initialCode:     { type: String,  default: '// CODE\nlet x = 1;' },
+    initialSize:     { type: Number,  default: 3 },
+    initialTiles:    { type: Array,   default: () => [] },
+    initialObjects:  { type: Array,   default: () => [] },
+    initialGoals:    { type: Array,   default: () => [] },
+    initialDialogue: { type: Array,   default: () => [] },
+    initialImports:  { type: Array,   default: () => [] }
   },
 
 
