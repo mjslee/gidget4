@@ -1,6 +1,9 @@
 <template>
   <div id="app">
 
+    {{ level.title }}
+    {{ level.description }}
+
     <GidgetGame
       :key="updateKey"
       :initialCode="level.code"
@@ -10,6 +13,7 @@
       :initialGoals="level.goals"
       :initialDialogue="level.dialogue"
       :initialImports="level.imports"
+      :editorMode="true"
     />
   </div>
 </template>
