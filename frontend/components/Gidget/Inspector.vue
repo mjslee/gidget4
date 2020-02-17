@@ -9,35 +9,26 @@
         <tr>
           <th>ID</th>
           <td><GidgetValue identifier="ID" :code="object.id" /></td>
-          <td><b-numberinput v-model="object.id" /></td>
         </tr>
         <tr>
           <th>Name</th>
           <td><GidgetValue identifier="Name" :code="`'${object.name}'`" /></td>
-          <td><b-input v-model="object.name" /></td>
         </tr>
         <tr>
           <th>Energy</th>
           <td><GidgetValue identifier="Energy" :code="object.energy" /></td>
-          <td><b-numberinput v-model="object.energy" /></td>
         </tr>
         <tr>
           <th>Layer</th>
           <td><GidgetValue identifier="Layer" :code="object.layer" /></td>
-          <td><b-numberinput v-model="object.layer" /></td>
         </tr>
         <tr>
           <th>Blocking</th>
           <td><GidgetValue identifier="Blocking" :code="object.blocking" /></td>
-          <td><b-checkbox v-model="object.blocking" /></td>
         </tr>
         <tr>
           <th>Position</th>
           <td><GidgetValue identifier="Position" :code="object.position" /></td>
-          <td>
-            <b-input style="width:2rem" v-model="object.position.x" />,
-            <b-input style="width:2rem" v-model="object.position.y" />
-          </td>
         </tr>
         <tr>
           <th>Grabbed</th>
