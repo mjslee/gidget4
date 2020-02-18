@@ -11,6 +11,8 @@ import { LEVELS } from '@/constants/endpoints';
  * @return object
  */
 export const state = () => ({
+  key: 0,
+
   title:       '',
   description: '',
 
@@ -20,7 +22,7 @@ export const state = () => ({
   objects:  [],
   goals:    [],
   dialogue: [],
-  imports:  [] 
+  imports:  []
 });
 
 
@@ -56,12 +58,23 @@ export const mutations = {
 
     set('size',     'number');
     set('code',     'string');
-
     set('tiles',    'object');
     set('objects',  'object');
     set('goals',    'object');
     set('dialogue', 'object');
     set('imports',  'object');
+
+    state.key += 1;
+  },
+
+  /**
+   * Reload game by updating the key to update attached components.
+   *
+   * @param {object} state
+   * @return {void}
+   */
+  reload(state) {
+    state.key += 1;
   }
 };
 
@@ -96,7 +109,7 @@ export const actions = {
   async fetchAndLoad({ commit, dispatch }, { id }) {
     const data = await dispatch('fetch', { id });
     commit('load', data);
-  }
+  },
 };
 
 
