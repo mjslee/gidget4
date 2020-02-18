@@ -1,7 +1,9 @@
 <template>
   <div>
-    <div>
-      <button class="button is-fullwidth is-primary">New Object</button>
+    <div class="box is-paddingless">
+      <button class="button is-fullwidth is-primary" @click="newObject">
+        New Object
+      </button>
     </div>
 
     <div class="box" v-if="object">
@@ -33,7 +35,7 @@
       </b-field>
 
       <b-field label="Scale">
-        <b-numberinput min="1" max="3" v-model="object.scale" controls-position="compact" />
+        <b-numberinput min="0.1" max="3" step="0.1" v-model="object.scale" controls-position="compact" />
       </b-field>
 
       <b-field label="Layer">
@@ -103,7 +105,9 @@ export default {
   },
 
   methods: {
+    newObject() {
 
+    }
   }
 }
 </script>
