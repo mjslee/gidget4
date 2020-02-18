@@ -65,7 +65,7 @@ export default {
       this.say({
         text: `I'm grabbing the ${value}...`,
         type: 'dialogue'
-      })
+      });
       return this.grab(value);
     },
 
@@ -76,10 +76,9 @@ export default {
       this.say({
         text: `I'm dropping the ${value}...`,
         type: 'dialogue'
-      })
+      });
       return this.drop(value);
     },
-
 
     /**
      * Go to an object.
@@ -88,11 +87,21 @@ export default {
       this.say({
         text: `I'm going to the [[${value}]]...`,
         type: 'dialogue'
-      })
+      });
 
-      const obj = this.world.getObject(value)
+      const obj = this.world.getObject(value);
       if (obj)
-        await this.walk(obj.position)
+        await this.walk(obj.position);
+    },
+
+    /**
+     * Speak a message over the object's head.
+     */
+    speak(text) {
+      if (typeof text != 'string')
+        text = JSON.stringify(text);
+
+      this.say({ type: 'overhead', text });
     }
   }
 }

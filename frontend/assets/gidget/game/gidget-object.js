@@ -219,21 +219,21 @@ export default {
     // TODO: Add a shorthand for message to only be a string
     // Ignore messages without text
     if (typeof message.text != 'string')
-      return false
+      return false;
 
     // Dialogue message?
     if (message.type === 'dialogue')
-      this.world.say(message)
+      this.world.say(message);
 
     // Overhead message?
     else
-      this.message = message.text
+      this.message = message.text;
 
     // Call onSay
     if (typeof this.onSay == 'function')
-      this.onSay(message)
+      this.onSay(message);
 
-    return true
+    return true;
   },
 
 
