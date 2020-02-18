@@ -27,34 +27,34 @@ export default {
   create(gameObjects, imports, attrs) {
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
-    const self = _.cloneDeep(this)
+    const self = _.cloneDeep(this);
 
     // Create and assign a GidgetWorld object to our game. Our attributes will
     // be merged into the new world
-    self.world = GidgetWorld.create(attrs)
+    self.world = GidgetWorld.create(attrs);
 
     // Merge in global imports
-    self.imports = {}
+    self.imports = {};
     for (let i = 0, len = imports.length; i < len; i++)
-      Object.assign(self.imports, _.cloneDeep(GidgetImports[imports[i]]))
+      Object.assign(self.imports, _.cloneDeep(GidgetImports[imports[i]]));
 
     // Set up the javascript stepper, set the onStep callback so the world
     // states can be saved on each step
     self.stepper = JsStepper.create();
-    self.stepper.onStep = () => self.save()
+    self.stepper.onStep = () => self.save();
 
     // Create game objects, then save the initial game state that we can
     // restore on reset
     gameObjects.forEach((gameObjectAttr) => {
-      const gameObject = GidgetObject.create(gameObjectAttr)
-      self.world.addObject(gameObject)
+      const gameObject = GidgetObject.create(gameObjectAttr);
+      self.world.addObject(gameObject);
     })
 
     // Save initial world state and data so it can be restored on reset
-    self.initialState = self.world.getState()
-    self.initialData = self.world.getObjectsSanitized()
+    self.initialState = self.world.getState();
+    self.initialData = self.world.getObjectsSanitized();
 
-    return self
+    return self;
   },
 
 
@@ -66,12 +66,12 @@ export default {
    */
   reset() {
     // Reset code stepper for a clean run
-    this.stepper.reset()
-    this.error = undefined
+    this.stepper.reset();
+    this.error = undefined;
 
     // Clear states and restore the world to its initial state
-    this.states = []
-    return this.set(-1, false)
+    this.states = [];
+    return this.set(-1, false);
   },
 
 
@@ -81,8 +81,18 @@ export default {
    * @return {void}
    */
   save() {
-    this.states.push(this.world.getState())
-    this.world.gameTick()
+    this.states.push(this.world.getState());
+    this.world.gameTick();
+  },
+
+
+  /**
+   * Saves the current state as the new initial game state.
+   *
+   * @return {void}
+   */
+  updateInitialState() {
+    this.initialState = this.world.getState();
   },
 
 
@@ -100,49 +110,49 @@ export default {
       0 > index >= this.states.length ? _.cloneDeep(this.initialState) :
 
       // Get state at the specified index
-      this.states[index]
+      this.states[index];
 
     // Validate state exists
     if (typeof state != 'object')
-      return
+      return;
 
     // Determine if step is going in a positive, forward direction
-    const isPositive = index > this.index
-    this.index = index
+    const isPositive = index > this.index;
+    this.index = index;
 
     // Run pre-restore hooks
     if (runHooks && isPositive) {
-      await this.runHooks(state, hook => hook.when == 'before')
+      await this.runHooks(state, hook => hook.when == 'before');
 
       // Increment update key so any hook callbacks that are running can
       // be cancelled
-      this.key += 1
+      this.key += 1;
     }
 
     // Restore the world state
-    this.world.restoreState(state)
+    this.world.restoreState(state);
 
     // Run post-restore hooks
     if (runHooks && isPositive)
-      await this.runHooks(state, hook => hook.when == 'after')
+      await this.runHooks(state, hook => hook.when == 'after');
 
     // Get the current step and assign 'gameData' property to store a
     // combination of gameobjects and game data. If 'gameData' is already
     // assigned then skip this to avoid unnecessary processing.
-    let step = this.stepper.steps[index - 1]
+    let step = this.stepper.steps[index - 1];
 
     if (step && step.data && !step.gameData) {
-      const gameObjects = this.world.getObjectsSanitized()
-      step.gameData = Object.assign(_.cloneDeep(step.data), gameObjects)
+      const gameObjects = this.world.getObjectsSanitized();
+      step.gameData = Object.assign(_.cloneDeep(step.data), gameObjects);
     }
 
     // If there is no step, we should create a fake step that contains the data
     // for a reset
     if (!step)
-      step = { gameData: _.cloneDeep(this.initialData) }
+      step = { gameData: _.cloneDeep(this.initialData) };
 
     // Return the step for further processing
-    return step
+    return step;
   },
 
 
@@ -156,33 +166,33 @@ export default {
   async runHooks(state, conditions) {
     // Ensure we have hooks to run
     if (typeof state.hooks != 'object')
-      return false
+      return false;
 
     // Filter hooks by specified conditions
-    const hooks = state.hooks.filter(conditions)
+    const hooks = state.hooks.filter(conditions);
     if (!hooks.length)
-      return false
+      return false;
 
     // Store an update key; when another restore happens this key will be
     // incremented but keyCopy will keep the same value. If these two variables
     // are not equal then we know the state has changed we shouldn't run any
     // further hooks from this state
-    const keyCopy = this.key, wasInterrupted = () => keyCopy != this.key
+    const keyCopy = this.key, wasInterrupted = () => keyCopy != this.key;
 
     // Run each callback if it's a function then collect the results.
     // Hooks callback functions retain their 'this' but are also passed the
     // 'wasInterrupted' function so the hook can determine if it needs to stop.
-    const results = []
+    const results = [];
     for (let i = 0, len = hooks.length; i < len; i++)
       if (typeof hooks[i].callback == 'function' && !wasInterrupted())
-        results.push(await hooks[i].callback.call(null, wasInterrupted))
+        results.push(await hooks[i].callback.call(null, wasInterrupted));
 
     // Hook results can be callback functions for cleaning up
     for (let i = 0, len = results.length; i < len; i++)
       if (typeof results[i] == 'function')
-        await results[i].call()
+        await results[i].call();
 
-    return true
+    return true;
   },
 
 
@@ -194,33 +204,33 @@ export default {
    */
   getExposed() {
     // Object to collect imports
-    const exposed = {}
+    const exposed = {};
 
     // Merge extra imports into the exposed result
     if (typeof this.imports == 'object')
-      Object.assign(exposed, this.imports)
+      Object.assign(exposed, this.imports);
 
     // Merge the game objects; game objects are more important than extra
     // imports, so if we have a conflict where a game object and an extra
     // import have the same key then game objects will take precedence.
-    const gameObjects = this.world.getObjectsMap(true)
-    Object.assign(exposed, gameObjects)
+    const gameObjects = this.world.getObjectsMap(true);
+    Object.assign(exposed, gameObjects);
 
     // Loop over each of the newly merged elements
     for (const prop in exposed) {
       if (!exposed.hasOwnProperty(prop))
-        continue
+        continue;
 
       // Enclose imported functions in another function with its scope being set
       // to the game world.
       if (typeof exposed[prop] == 'function') {
-        const func = exposed[prop]
-        exposed[prop] = (...args) => func.call(this.world, ...args)
+        const func = exposed[prop];
+        exposed[prop] = (...args) => func.call(this.world, ...args);
       }
     }
 
     // Return the collection
-    return exposed
+    return exposed;
   },
 
 
@@ -232,17 +242,17 @@ export default {
    */
   run(code) {
     // Run stepper with the code and the exposed game objects and imports
-    const result = this.stepper.run(code, this.getExposed())
+    const result = this.stepper.run(code, this.getExposed());
 
     // Runtime error
     if (typeof result.error == 'object')
-      this.error = result.error
+      this.error = result.error;
 
     // Restore first state; this stops the final positions from being
     // revealed (and a potential animation glitch)
     if (result)
-      this.set(0, false)
+      this.set(0, false);
 
-    return result
+    return result;
   }
 }

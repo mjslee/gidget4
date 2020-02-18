@@ -127,8 +127,8 @@ export default {
     try {
       const fakeSandbox = () => {
         // Step functions
-        const __scope__ = (...args) => this.__scope__(...args);
-        const __step__ = (...args) => this.__step__(...args);
+        const __scope__   = (...args) => this.__scope__(...args);
+        const __step__    = (...args) => this.__step__(...args);
         const __collect__ = (...args) => this.__collect__(...args);
         const __imports__ = imports;
 
