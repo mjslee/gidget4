@@ -80,22 +80,19 @@
 
 
 <script>
+import Game from '@/assets/gidget/game/gidget-game';
 import GidgetCode from './Code';
 import GidgetWorld from './World';
 import GidgetGoals from './Goals';
 import GidgetControls from './Controls';
 import GidgetDialogue from './Dialogue';
 import GidgetInspector from './Inspector';
-
 import GidgetSizeEditor from './Editor/SizeEditor';
 import GidgetObjectEditor from './Editor/ObjectEditor';
-
-import Game from '@/assets/gidget/game/gidget-game';
-import JsException from '@/assets/gidget/lang/js-exception';
 import { wait } from '@/assets/gidget/game/gidget-utility';
-
 import { GIDGET_SPRITES } from '@/constants/paths';
 import { GIDGET_MESSAGES } from '@/constants/messages';
+import JsException from '@/assets/gidget/lang/js-exception';
 
 
 export default {
@@ -208,6 +205,10 @@ export default {
      * @return {boolean} True if runner is successful.
      */
     runScript() {
+      // Update initial game state in editor mode
+      if (this.editorMode)
+        this.game.updateInitialState();
+
       // Reset game
       this.resetScript();
 
