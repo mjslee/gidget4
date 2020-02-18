@@ -140,6 +140,10 @@ export default {
       return this.object.index
     },
 
+    scale() {
+      return this.object.scale;
+    },
+
     /**
      * Create object style object.
      */
@@ -186,6 +190,12 @@ export default {
       this.updatePosition();
     },
 
+    /**
+     * Update position on scale change.
+     */
+    'scale'() {
+      this.updatePosition();
+    },
 
     /**
      * Watch object's message.
