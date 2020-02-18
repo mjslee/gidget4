@@ -5,7 +5,7 @@
     {{ level.description }}
 
     <GidgetGame
-      :key="updateKey"
+      :key="level.key"
       :initialCode="level.code"
       :initialSize="level.size"
       :initialTiles="level.tiles"
@@ -27,9 +27,11 @@ export default {
   name: 'app',
   layout: 'default',
 
+
   components: {
     GidgetGame
   },
+
 
   data() {
     return {
@@ -38,20 +40,22 @@ export default {
     }
   },
 
+
   computed: {
     level() {
       return this.$store.state.level
     }
   },
 
-  async mounted() {
-    await this.setLevel(this.id);
+
+  mounted() {
+    this.setLevel(this.id);
   },
 
+
   methods: {
-    async setLevel(id) {
-      await this.$store.dispatch('level/fetchAndLoad', { id });
-      this.updateKey += 1;
+    setLevel(id) {
+      this.$store.dispatch('level/fetchAndLoad', { id });
     }
   }
 }
