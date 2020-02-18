@@ -129,6 +129,13 @@ export default {
      */
     size(value) {
       this.game.world.size = value;
+    },
+
+    /**
+     * Update initial state on mode change.
+     */
+    editorMode() {
+      this.game.updateInitialState();
     }
   },
 

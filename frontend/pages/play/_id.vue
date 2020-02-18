@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-
-    {{ level.title }}
-    {{ level.description }}
+    <h1 class="title">{{ level.title }}</h1>
+    <h2 class="subtitle">{{ level.description }}</h2>
+    <b-checkbox v-model="editorMode">Editor Mode</b-checkbox>
 
     <GidgetGame
       :key="level.key"
@@ -13,7 +13,7 @@
       :initialGoals="level.goals"
       :initialDialogue="level.dialogue"
       :initialImports="level.imports"
-      :editorMode="true"
+      :editorMode="editorMode"
     />
   </div>
 </template>
@@ -36,7 +36,8 @@ export default {
   data() {
     return {
       id: this.$route.params.id,
-      updateKey: 0
+      editorMode: false,
+      updateKey: 0,
     }
   },
 
