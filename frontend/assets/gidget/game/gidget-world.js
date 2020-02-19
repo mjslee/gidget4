@@ -4,11 +4,12 @@ import GidgetObject from './gidget-object'
 
 
 export default {
-  nextId: 0,
-  size: 3,
-  objects: [],
+  nextId:   0,
+  size:     3,
+  tiles:    [],
+  objects:  [],
   messages: [],
-  hooks: [],
+  hooks:    [],
 
 
   /**
@@ -33,22 +34,23 @@ export default {
     // Create an object to restore important world properties
     const state = {
       // Primitives
-      nextId: this.nextId,
-      size: this.size,
+      nextId:   this.nextId,
+      size:     this.size,
 
       // Arrays / Objects
-      objects: [],
+      tiles:    [],
+      objects:  [],
       messages: this.messages,
-      hooks: this.hooks
-    }
+      hooks:    this.hooks
+    };
 
     // TODO: Use a map function instead of this loop
     // Save objects
     for (let i = 0, len = this.objects.length; i < len; i++)
-      state.objects.push(this.getObjectState(this.objects[i]))
+      state.objects.push(this.getObjectState(this.objects[i]));
 
     // Deep clone the state to accidental prevent mutation
-    return _.cloneDeep(state)
+    return _.cloneDeep(state);
   },
 
 
@@ -62,24 +64,28 @@ export default {
   restoreState(state) {
     // Ensure the passed state value is an object
     if (typeof state != 'object')
-      return false
+      return false;
 
     // Restore messages and hooks
-    this.messages = state.messages
-    this.hooks = state.hooks
+    this.messages = state.messages;
+    this.hooks = state.hooks;
+
+    // Restore tiles if existing
+    if (Array.isArray(state.tiles))
+      this.tiles = state.tiles;
 
     // Restore properties of primitive types (number, string, boolean)
     for (let prop in state) {
-      const type = typeof state[prop]
+      const type = typeof state[prop];
       if (type == 'number' || type == 'string' || type == 'boolean')
-        this[prop] = state[prop]
+        this[prop] = state[prop];
     }
 
     // Restore game objects
     for (let i = 0, len = state.objects.length; i < len; i++)
-      this.restoreObjectState(state.objects[i])
+      this.restoreObjectState(state.objects[i]);
 
-    return true
+    return true;
   },
 
 
@@ -92,19 +98,19 @@ export default {
    */
   getObjectState(gameObject) {
     // Create state object to store the game objects state
-    const objectState = {}
+    const objectState = {};
 
     // Copy values of primitive properties to the state object
     for (let prop in gameObject) {
-      const type = typeof gameObject[prop]
+      const type = typeof gameObject[prop];
 
       if (type != 'object' && type != 'function')
-        objectState[prop] = gameObject[prop]
+        objectState[prop] = gameObject[prop];
     }
 
     // Position should be the only object that needs to be saved
-    objectState.position = gameObject.position
-    return objectState
+    objectState.position = gameObject.position;
+    return objectState;
   },
 
 

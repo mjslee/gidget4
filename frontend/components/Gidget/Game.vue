@@ -31,7 +31,7 @@
           ref="world"
           :size="game.world.size"
           :objects="game.world.objects"
-          :tiles="tiles"
+          :tiles="game.world.tiles"
           @click:object="selectedObject = arguments[0]"
         />
       </div>
@@ -145,20 +145,17 @@ export default {
       // Game Data
       code:     this.initialCode,
       size:     this.initialSize,
-      tiles:    _.cloneDeep(this.initialTiles),
-      objects:  this.initialObjects,
       goals:    this.initialGoals,
       dialogue: this.initialDialogue,
-      imports:  this.initialImports,
 
       // Game World
-      game: Game.create(
-        this.initialObjects, this.initialImports,
-        {
-          size:     this.initialSize,
-          messages: this.initialDialogue
-        }
-      ),
+      game: Game.create({
+        objects:  this.initialObjects,
+        tiles:    this.initialTiles,
+        imports:  this.initialImports,
+        size:     this.initialSize,
+        messages: this.initialDialogue
+      }),
 
       // World Objects
       playerObject:   undefined,

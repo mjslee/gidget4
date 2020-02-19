@@ -21,17 +21,17 @@ export default {
    *
    * @param {array[object]} objects - GameObjects to insert on creation.
    * @param {array[string]} imports - Global imports to insert.
-   * @param {object} attrs - Attributes to merge into world.
+   * @param {object} attributes - Attributes to merge into world.
    * @return {object} An instance of GidgetGame.
    */
-  create(gameObjects, imports, attrs) {
+  create({ objects, tiles, imports, attributes }) {
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
     const self = _.cloneDeep(this);
 
     // Create and assign a GidgetWorld object to our game. Our attributes will
     // be merged into the new world
-    self.world = GidgetWorld.create(attrs);
+    self.world = GidgetWorld.create(attributes);
 
     // Merge in global imports
     self.imports = {};
@@ -45,10 +45,14 @@ export default {
 
     // Create game objects, then save the initial game state that we can
     // restore on reset
-    gameObjects.forEach((gameObjectAttr) => {
+    objects.forEach((gameObjectAttr) => {
       const gameObject = GidgetObject.create(gameObjectAttr);
       self.world.addObject(gameObject);
     })
+
+    // Restore tiles
+    if (Array.isArray(tiles))
+      self.world.tiles = _.cloneDeep(tiles);
 
     // Save initial world state and data so it can be restored on reset
     self.initialState = self.world.getState();
@@ -142,8 +146,8 @@ export default {
     let step = this.stepper.steps[index - 1];
 
     if (step && step.data && !step.gameData) {
-      const gameObjects = this.world.getObjectsSanitized();
-      step.gameData = Object.assign(_.cloneDeep(step.data), gameObjects);
+      const objects = this.world.getObjectsSanitized();
+      step.gameData = Object.assign(_.cloneDeep(step.data), objects);
     }
 
     // If there is no step, we should create a fake step that contains the data
