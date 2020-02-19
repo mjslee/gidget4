@@ -44,11 +44,6 @@
 
       <b-checkbox v-model="object.blocking">Blocking</b-checkbox>
     </div>
-
-    <!-- xPosition --> 
-    <!-- xBlocking --> 
-    <!-- Layer --> 
-    <!-- Scale --> 
   </div>
 </template>
 

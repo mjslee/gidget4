@@ -29,9 +29,9 @@
       <div class="world">
         <GidgetWorld
           ref="world"
+          :size="game.world.size"
           :objects="game.world.objects"
           :tiles="tiles"
-          :size="game.world.size"
           @click:object="selectedObject = arguments[0]"
         />
       </div>
@@ -48,7 +48,7 @@
     <div class="column">
       <template v-if="editorMode">
         <GidgetObjectEditor :object="selectedObject" />
-        <GidgetSizeEditor :size="size" @update:size="game.world.size = parseInt($event)" />
+        <GidgetWorldSizeEditor v-model="game.world.size" />
       </template>
       <template v-else>
         <GidgetInspector :object="playerObject" />
@@ -87,7 +87,7 @@ import GidgetGoals from './Goals';
 import GidgetControls from './Controls';
 import GidgetDialogue from './Dialogue';
 import GidgetInspector from './Inspector';
-import GidgetSizeEditor from './Editor/SizeEditor';
+import GidgetWorldSizeEditor from './Editor/WorldSizeEditor';
 import GidgetObjectEditor from './Editor/ObjectEditor';
 import { wait } from '@/assets/gidget/game/gidget-utility';
 import { GIDGET_SPRITES } from '@/constants/paths';
@@ -104,7 +104,7 @@ export default {
     GidgetGoals,
     GidgetControls,
 
-    GidgetSizeEditor,
+    GidgetWorldSizeEditor,
     GidgetObjectEditor,
   },
 
