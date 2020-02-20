@@ -26,7 +26,7 @@ export default {
 
   // Boundaries
   blocking: false,
-  scaleBoundaries: false,
+  scaleBoundaries: true,
 
 
   /**
