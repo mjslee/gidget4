@@ -38,7 +38,7 @@
         <GidgetTile
           @click.native="clickTile(x, y)"
           @mouseenter.native="hoverTile(x, y)"
-          :class="tileClasses[x + ',' + y] || 'grass'"
+          :type="tileTypes[x + ',' + y]"
           :style="tileStyle"
           :size="tileSize"
           :x="x"
@@ -128,7 +128,7 @@ export default {
         x: 0,
         y: 0
       },
-      tileClasses: {},
+      tileTypes: {},
       tileMargin: .1,
       selectedObject: undefined,
     }
@@ -161,7 +161,7 @@ export default {
             return;
 
           const pos = tile.position;
-          this.tileClasses[pos.x + ',' + pos.y] = tile.type;
+          this.tileTypes[pos.x + ',' + pos.y] = tile.type;
         });
       }
     }
