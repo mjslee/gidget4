@@ -1,5 +1,5 @@
-import _ from 'lodash'
-import GidgetObject from './gidget-object'
+import _ from 'lodash';
+import GidgetObject from './gidget-object';
 
 
 
@@ -21,6 +21,62 @@ export default {
     const self = _.cloneDeep(this);
     Object.assign(self, _.cloneDeep(attrs));
     return self;
+  },
+
+
+  /**
+   * Creates a restorable game object state object.
+   * WARNING: Result is not cloned; mutations WILL affect the game object.
+   *
+   * @param {object} gameObject - A game object.
+   * @return {object} A game object state object.
+   */
+  getObjectState(gameObject) {
+    // Create state object to store the game objects state
+    const objectState = {};
+
+    // Copy values of primitive properties to the state object
+    for (let prop in gameObject) {
+      const type = typeof gameObject[prop];
+
+      if (type != 'object' && type != 'function')
+        objectState[prop] = gameObject[prop];
+    }
+
+    // Position should be the only object that needs to be saved
+    objectState.position = gameObject.position;
+    return objectState;
+  },
+
+
+  /**
+   * Restores a game object to a state using a game object state object.
+   *
+   * @param {object} objectState - A game object state object.
+   * @return {boolean} Success of game object restoration.
+   */
+  restoreObjectState(objectState) {
+    // Get the object to restore by using the state
+    const gameObject = this.getObject(objectState)
+
+    // If an object doesn't exist, we'll need to re-create it. An object may
+    // not exist because it was removed from the world or is grabbed by another
+    // object.
+    if (typeof gameObject != 'object')
+      return this.createObject(objectState)
+
+    // Loop over each property in the objectState
+    for (let prop in gameObject) {
+      const type = typeof gameObject[prop]
+
+      if (type != 'object' && type != 'function')
+        gameObject[prop] = objectState[prop]
+    }
+
+    // Update position's x and y individually to keep the variable reference
+    // TODO: Find out if this is still necessary with the new engine
+    gameObject.position.x = objectState.position.x
+    gameObject.position.y = objectState.position.y
   },
 
 
@@ -86,62 +142,6 @@ export default {
       this.restoreObjectState(state.objects[i]);
 
     return true;
-  },
-
-
-  /**
-   * Creates a restorable game object state object.
-   * WARNING: Result is not cloned; mutations WILL affect the game object.
-   *
-   * @param {object} gameObject - A game object.
-   * @return {object} A game object state object.
-   */
-  getObjectState(gameObject) {
-    // Create state object to store the game objects state
-    const objectState = {};
-
-    // Copy values of primitive properties to the state object
-    for (let prop in gameObject) {
-      const type = typeof gameObject[prop];
-
-      if (type != 'object' && type != 'function')
-        objectState[prop] = gameObject[prop];
-    }
-
-    // Position should be the only object that needs to be saved
-    objectState.position = gameObject.position;
-    return objectState;
-  },
-
-
-  /**
-   * Restores a game object to a state using a game object state object.
-   *
-   * @param {object} objectState - A game object state object.
-   * @return {boolean} Success of game object restoration.
-   */
-  restoreObjectState(objectState) {
-    // Get the object to restore by using the state
-    const gameObject = this.getObject(objectState)
-
-    // If an object doesn't exist, we'll need to re-create it. An object may
-    // not exist because it was removed from the world or is grabbed by another
-    // object.
-    if (typeof gameObject != 'object')
-      return this.createObject(objectState)
-
-    // Loop over each property in the objectState
-    for (let prop in gameObject) {
-      const type = typeof gameObject[prop]
-
-      if (type != 'object' && type != 'function')
-        gameObject[prop] = objectState[prop]
-    }
-
-    // Update position's x and y individually to keep the variable reference
-    // TODO: Find out if this is still necessary with the new engine
-    gameObject.position.x = objectState.position.x
-    gameObject.position.y = objectState.position.y
   },
 
 

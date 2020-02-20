@@ -177,7 +177,7 @@ export default {
      * @param {object} rect
      */
     updatePosition() {
-      this.$nextTick(() => moveElementToTile(this.$el, this.object.position))
+      this.$nextTick(() => moveElementToTile(this.$el, this.object.position));
     }
   },
 
@@ -203,25 +203,25 @@ export default {
     'object.message'(newVal) {
       // Ignore empty/undefined values
       if (!document.hasFocus() || typeof newVal != 'string' || newVal.length < 1)
-        return
+        return;
 
       // Set as undefined; watch will get triggered again
       // so we'll ignore it on the next go
       this.$nextTick(() => {
-        this.object.message = undefined
-      })
+        this.object.message = undefined;
+      });
 
       // Set our internal message
-      this.message = newVal
+      this.message = newVal;
 
       // Restart new message animation (this is hack)
-      const $el = this.$refs.message
+      const $el = this.$refs.message;
       if (typeof $el == 'undefined')
-        return
+        return;
 
-      $el.style.animation = 'none'
-      $el.offsetHeight  // Reflow, this is the magic
-      $el.style.animation = ''
+      $el.style.animation = 'none';
+      $el.offsetHeight;  // Reflow, this is the magic
+      $el.style.animation = '';
     },
 
 
@@ -230,7 +230,7 @@ export default {
      */
     'object.position': {
       handler() {
-        this.updatePosition()
+        this.updatePosition();
       },
       deep: true
     },

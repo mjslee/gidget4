@@ -12,12 +12,11 @@ import { LEVELS } from '@/constants/endpoints';
  */
 export const state = () => ({
   key: 0,
-
   title:       '',
   description: '',
-
   size:     3,
   code:     '',
+
   tiles:    [],
   objects:  [],
   goals:    [],
@@ -27,14 +26,6 @@ export const state = () => ({
 
 
 export const mutations = {
-  setSize:     (state, size)     => state.size     = size,
-  setCode:     (state, code)     => state.code     = code,
-  setTiles:    (state, tiles)    => state.code     = code,
-  setObjects:  (state, objects)  => state.objects  = objects,
-  setGoals:    (state, goals)    => state.goals    = goals,
-  setDialogue: (state, dialogue) => state.dialogue = dialogue,
-  setImports:  (state, imports)  => state.imports  = imports,
-
   /**
    * Load a level object's keys into the state.
    *
@@ -56,6 +47,7 @@ export const mutations = {
       console.debug(`level[${field}] has been set.`, state[field]);
     };
 
+    // TODO: Prefix non-mutable with 'initial'
     set('size',     'number');
     set('code',     'string');
     set('tiles',    'object');
