@@ -9,11 +9,7 @@
         />
         <div class="card-footer"></div>
         <div class="card-content">
-          <GidgetGoals
-            ref="goals"
-            :world="game.world"
-            :goals="goals"
-          />
+          <GidgetGoals ref="goals" :goals="goals" />
           <GidgetControls
             ref="controls"
             @change:step="setStep"
@@ -37,10 +33,10 @@
       </div>
 
       <template v-if="editorMode">
-        <GidgetDialogue ref="dialogue" :messages="game.world.messages" />
+        <GidgetDialogue ref="dialogue" :messages="game.world.dialogue" />
       </template>
       <template v-else>
-        <GidgetDialogue ref="dialogue" :messages="game.world.messages" />
+        <GidgetDialogue ref="dialogue" :messages="game.world.dialogue" />
       </template>
     </div>
 
@@ -141,16 +137,14 @@ export default {
 
     return {
       // Game Data
-      code,
-      goals,
+      code, goals,
 
       // Game World
       game: Game.create({ size, tiles, objects, imports, dialogue }),
 
       // World Objects
-      player:       undefined,
-      selected:     undefined,
-      selectedTile: undefined
+      player:   undefined,
+      selected: undefined,
     }
   },
 

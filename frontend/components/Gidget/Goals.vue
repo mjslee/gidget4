@@ -1,17 +1,17 @@
 <template>
   <div>
-    <div class="goals" v-for="goal in goals" :key="goal.id">
+    <div class="goals" v-for="(goal, i) in internalGoals" :key="`goal-${i}`">
       <b-icon
         icon="close-circle"
         type="is-danger"
         size="is-small"
-        v-if="showResults && goal.completed === false"
+        v-if="reveal && goal.completed === false"
       />
       <b-icon
         icon="check-circle"
         type="is-success"
         size="is-small"
-        v-else-if="showResults && goal.completed"
+        v-else-if="reveal && goal.completed"
       />
       <b-icon
         icon="checkbox-blank-circle-outline"
@@ -48,26 +48,15 @@ export default {
 
 
   props: {
-    initialGoals: Array[Object],
-    world: Object
+    goals: Array[Object]
   },
 
 
   data() {
     return {
-      showResults: true,
-      goals:       [],
+      internalGoals: _.cloneDeep(this.goals),
+      reveal: true
     };
-  },
-
-
-  created() {
-    // Assign IDs to goals
-    let i = 0;
-    this.goals.forEach((goal) => {
-      this.$set(goal, 'id', i++);
-    });
-    window.$store = this.$store;
   },
 
 
@@ -78,14 +67,14 @@ export default {
      * @return {void}
      */
     reset() {
-      //this.showResults = false;
+      //this.reveal = false;
 
-      if (typeof this.goals == 'undefined') {
+      if (typeof this.internalGoals == 'undefined') {
         console.debug('goals are undefined.');
         return;
       }
 
-      this.goals.forEach((goal) => {
+      this.internalGoals.forEach((goal) => {
         this.$set(goal, 'completed', undefined);
       });
     },
@@ -97,7 +86,7 @@ export default {
      * @return {void}
      */
     validate() {
-      this.goals.forEach(goal => {
+      this.internalGoals.forEach((goal) => {
         this.$set(goal, 'completed', this.assert(goal))
       });
     },
@@ -109,7 +98,7 @@ export default {
      * @return {boolean}
      */
     completed() {
-      return this.goals.every(goal => goal.completed === true);
+      return this.internalGoals.every((goal) => goal.completed === true);
     },
 
 

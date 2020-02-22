@@ -55,7 +55,7 @@ class GameRandomizationHelper
     {
         $type = Game::$assertionTypes[array_rand(Game::$assertionTypes)];
         $obj = $level['objects'][array_rand($level['objects'])];
-        $props = ['.x', '.y'];
+        $props = ['.position.x', '.position.y'];
         $prop = $props[array_rand($props)];
 
         return Game::goal($type, [$obj['type'] . $prop, 0]);
