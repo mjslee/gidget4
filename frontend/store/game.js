@@ -11,17 +11,20 @@ import { LEVELS } from '@/constants/endpoints';
  * @return object
  */
 export const state = () => ({
-  key: 0,
   title:       '',
   description: '',
-  size:     3,
-  code:     '',
 
-  tiles:    [],
-  objects:  [],
-  goals:    [],
-  dialogue: [],
-  imports:  []
+  key:  0,
+  code: '',
+
+  initialData: {
+    size: 3,
+    tiles:    [],
+    objects:  [],
+    goals:    [],
+    dialogue: [],
+    imports:  []
+  }
 });
 
 
@@ -33,29 +36,9 @@ export const mutations = {
    * @param {object} level - Level object.
    * @return {void}
    */
-  load(state, level) {
-    if (typeof level != 'object') {
-      console.debug('level is not an object.')
-      return;
-    }
-
-    const set = (field, type) => {
-      if (typeof level[field] != type || level[field] == null)
-        return;  // field must exist and not be null
-
-      state[field] = level[field];
-      console.debug(`level[${field}] has been set.`, state[field]);
-    };
-
-    // TODO: Prefix non-mutable with 'initial'
-    set('size',     'number');
-    set('code',     'string');
-    set('tiles',    'object');
-    set('objects',  'object');
-    set('goals',    'object');
-    set('dialogue', 'object');
-    set('imports',  'object');
-
+  load(state, data) {
+    Object.assign(state.initialData, data);
+    console.debug("Level Loaded:", data, state.key);
     state.key += 1;
   },
 
