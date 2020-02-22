@@ -160,7 +160,7 @@ export default {
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these objects before any code is ran
-    this.$store.commit('game/setEvalData', this.game.world.getObjectsSanitized());
+    this.resetScript();
   },
 
 
@@ -186,6 +186,9 @@ export default {
       this.$refs.controls.reset();
       this.$refs.goals.reset();
       this.$refs.dialogue.reset();
+
+      this.$store.commit('game/setEvalData',
+        this.game.world.getObjectsSanitized());
     },
 
 
