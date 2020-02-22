@@ -32,7 +32,7 @@
           :size="game.world.size"
           :objects="game.world.objects"
           :tiles="game.world.tiles"
-          @click:object="selectedObject = arguments[0]"
+          @selected="selected = arguments[0]"
         />
       </div>
 
@@ -47,12 +47,12 @@
     <!-- Inspectors -->
     <div class="column">
       <template v-if="editorMode">
-        <GidgetObjectEditor :object="selectedObject" />
+        <GidgetObjectEditor :object="selected" />
         <GidgetWorldSizeEditor v-model="game.world.size" />
       </template>
       <template v-else>
-        <GidgetInspector :object="playerObject" />
-        <GidgetInspector :object="selectedObject || selectedTile" />
+        <GidgetInspector :object="player" />
+        <GidgetInspector :object="selected" />
       </template>
     </div>
   </div>
@@ -148,9 +148,9 @@ export default {
       game: Game.create({ size, tiles, objects, imports, dialogue }),
 
       // World Objects
-      playerObject:   undefined,
-      selectedObject: undefined,
-      selectedTile:   undefined
+      player:       undefined,
+      selected:     undefined,
+      selectedTile: undefined
     }
   },
 
@@ -161,7 +161,7 @@ export default {
     window.game = this.game;
 
     // Get important objects
-    this.playerObject = this.game.world.getObject('Gidget');
+    this.player = this.game.world.getObject('Gidget');
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these objects before any code is ran
@@ -365,13 +365,13 @@ export default {
      * @return {void}
      */
     onSuccess() {
-      if (typeof this.playerObject == 'undefined')
+      if (typeof this.player == 'undefined')
         return;
 
-      this.playerObject.image = GIDGET_SPRITES.SUCCESS;
+      this.player.image = GIDGET_SPRITES.SUCCESS;
       this.$refs.dialogue.append({
         text: GIDGET_MESSAGES.SUCCESS,
-        leftImage: this.playerObject.image
+        leftImage: this.player.image
       });
     },
 
@@ -382,13 +382,13 @@ export default {
      * @return {void}
      */
     onFailure() {
-      if (typeof this.playerObject == 'undefined')
+      if (typeof this.player == 'undefined')
         return;
 
-      this.playerObject.image = GIDGET_SPRITES.FAILURE;
+      this.player.image = GIDGET_SPRITES.FAILURE;
       this.$refs.dialogue.append({
         text: GIDGET_MESSAGES.FAILURE,
-        leftImage: this.playerObject.image
+        leftImage: this.player.image
       });
     }
   }

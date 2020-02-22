@@ -2,6 +2,7 @@
   <div
     :style="style"
     :id="elementId"
+    :class="selected ? 'selected' : ''"
     v-show="isGrabbed"
   >
     <!-- Message -->
@@ -89,8 +90,9 @@ import { getObjectElementId, moveElementToTile } from '@/assets/gidget/game/gidg
 
 export default {
   props: {
-    object: Object,
-    size: Number
+    size:     Number,
+    object:   Object,
+    selected: Boolean
   },
 
 

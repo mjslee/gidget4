@@ -12,8 +12,10 @@
     <main ref="world" id="world">
       <!-- Gidget Game Objects -->
       <GidgetObject
-        @click.native="$emit('click:object', object)"
+        @click.native="clickObject(object)"
+        @mouseenter.native="hoverTile(object.position.x, object.position.y)"
         :object="object"
+        :selected="selected.id === object.id"
         :size="tileSize"
         :key="'obj-' + object.id"
         v-for="object in objects"
@@ -23,7 +25,7 @@
       <div class="game-row x-axis">
         <label
           :style="axisLabelStyle"
-          :class="hoveredTile.x == x ? 'active': ''"
+          :class="hovered.x == x ? 'active': ''"
           :key="'x-' + x"
           v-for="(i, x) in size"
           v-text="x"
@@ -32,17 +34,17 @@
 
       <div class="game-row y-axis" v-for="(i, y) in size" :key="'y-' + y">
         <!-- Vertical Axis Labels (1, 2, 3, etc.) -->
-        <label v-text="y" :class="hoveredTile.y === y ? 'active': ''" />
+        <label v-text="y" :class="hovered.y === y ? 'active': ''" />
 
         <!-- Gidget Game Tiles -->
         <GidgetTile
           @click.native="clickTile(x, y)"
           @mouseenter.native="hoverTile(x, y)"
+          :x="x" :y="y"
           :type="tileTypes[x + ',' + y]"
-          :style="tileStyle"
+          :selected="selected.x == x && selected.y == y"
           :size="tileSize"
-          :x="x"
-          :y="y"
+          :margin="tileMargin"
           :key="'x-' + x + '-y-' + y"
           v-for="(i, x) in size"
           ref="tiles"
@@ -119,17 +121,14 @@ export default {
 
   data() {
     return {
-      popupPosition: {
-        top: 0,
-        left: 0,
-        display: 'none'
-      },
-      hoveredTile: {
-        x: 0,
-        y: 0
-      },
+      popupPosition: { top: 0, left: 0, display: 'none' },
+
+      selected: { x: 0, y: 0 },
+      hovered: { x: 0, y: 0 },
+
       tileTypes: {},
       tileMargin: .1,
+
       selectedObject: undefined,
     }
   },
@@ -141,7 +140,6 @@ export default {
      */
     size: {
       handler() {
-        console.log('updated');
         this.$nextTick(() => {
           //this.updateObjectPositions();
         });
@@ -149,7 +147,7 @@ export default {
     },
 
     /**
-     * 
+     *
      *
      */
     tiles: {
@@ -174,15 +172,6 @@ export default {
      */
     tileSize() {
       return 26 / this.size;
-    },
-
-    /**
-     * Tile style.
-     */
-    tileStyle() {
-      return {
-        margin: this.tileMargin + 'rem'
-      };
     },
 
     /**
@@ -220,7 +209,9 @@ export default {
      * @return {void}
      */
     clickTile(x, y) {
-      console.log(x, y);
+      this.selected.x = x;
+      this.selected.y = y;
+      this.selected.id = undefined;
     },
 
     /*
@@ -231,8 +222,16 @@ export default {
      * @return {void}
      */
     hoverTile(x, y) {
-      this.hoveredTile.x = x;
-      this.hoveredTile.y = y;
+      this.hovered.x = x;
+      this.hovered.y = y;
+    },
+
+
+    clickObject(object) {
+      this.selected.x = undefined;
+      this.selected.y = undefined;
+      this.selected.id = object.id;
+      this.$emit('selected', object);
     }
   }
 }
