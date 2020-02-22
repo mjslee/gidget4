@@ -156,7 +156,7 @@ export default {
     updateValue() {
       // Identifiers can have evaluated data
       if (this.isIdentifier)
-        this.value = this.$store.getters['evaldata/getValue'](this.code);
+        this.value = this.$store.getters['game/getEvalValue'](this.code);
 
       // Non-identifiers won't have evaluated data
       else

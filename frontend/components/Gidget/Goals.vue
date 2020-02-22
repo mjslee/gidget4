@@ -21,7 +21,7 @@
       <span v-if="goal.assert === 'equal'">
         <span class="is-keyword">assert</span>
         <GidgetValue :code="goal.arguments[0]" />
-        <span class="is-operator">===</span>
+        <span class="is-operator">==</span>
         <GidgetValue :code="goal.arguments[1]" />
       </span>
     </div>
@@ -108,10 +108,8 @@ export default {
      * @param {any} value
      * @return {string}
      */
-    getValueJSON(value) {
-      return JSON.stringify(
-        this.$store.getters['evaldata/getValue'](value) || value
-      );
+    getValueJSON(key) {
+      return JSON.stringify(this.$store.getters['game/getEvalValueDefault'](key));
     },
 
 
@@ -127,6 +125,7 @@ export default {
         case 'equal':
           const a = this.getValueJSON(assertion.arguments[0]);
           const b = this.getValueJSON(assertion.arguments[1]);
+          console.debug(assertion, a, b);
           return a == b;
 
         // Default assertion

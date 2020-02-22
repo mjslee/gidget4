@@ -24,7 +24,9 @@ export const state = () => ({
     goals:    [],
     dialogue: [],
     imports:  []
-  }
+  },
+
+  evalData: {}
 });
 
 
@@ -50,6 +52,17 @@ export const mutations = {
    */
   reload(state) {
     state.key += 1;
+  },
+
+  /**
+   * [TODO:description]
+   *
+   * @param {[TODO:type]} state - [TODO:description]
+   * @param {[TODO:type]} data - [TODO:description]
+   * @return {[TODO:type]} [TODO:description]
+   */
+  setEvalData(state, data) {
+    Vue.set(state, 'evalData', data);
   }
 };
 
@@ -88,4 +101,15 @@ export const actions = {
 };
 
 
-export const getters = { };
+export const getters = {
+  getEvalValue({ evalData }) {
+    return (key) => _.get(evalData, key);
+  },
+
+  getEvalValueDefault({ evalData }) {
+    return (key, defaultValue) => {
+      const value = _.get(evalData, key);
+      return typeof value == 'undefined' ? defaultValue || key : value;
+    }
+  }
+};

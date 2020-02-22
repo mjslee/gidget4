@@ -156,10 +156,11 @@ export default {
 
     // Get important objects
     this.player = this.game.world.getObject('Gidget');
+    window.$store = this.$store;
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these objects before any code is ran
-    this.$store.commit('evaldata/setData', this.game.world.getObjectsSanitized());
+    this.$store.commit('game/setEvalData', this.game.world.getObjectsSanitized());
   },
 
 
@@ -302,7 +303,7 @@ export default {
 
       // Store data collected from game evaluation
       if (typeof step.gameData == 'object')
-        this.$store.commit('evaldata/setData', step.gameData);
+        this.$store.commit('game/setEvalData', step.gameData);
     },
 
 

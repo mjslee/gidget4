@@ -182,7 +182,7 @@ export default {
 
   /**
    * Gets a cloned map object of game objects without functions and without
-   * objects that will cause a circular loop.
+   * objects that will cause a loop.
    *
    * @return {object} Map object of game objects.
    */
