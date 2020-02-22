@@ -8,7 +8,7 @@ export default {
   size:     3,
   tiles:    [],
   objects:  [],
-  messages: [],
+  dialogue: [],
   hooks:    [],
 
 
@@ -17,9 +17,9 @@ export default {
    *
    * @param {dictionary} kwargs Default properties.
    */
-  create(attrs) {
+  create( attributes) {
     const self = _.cloneDeep(this);
-    Object.assign(self, _.cloneDeep(attrs));
+    Object.assign(self, _.cloneDeep(attributes));
     return self;
   },
 
@@ -96,7 +96,7 @@ export default {
       // Arrays / Objects
       tiles:    [],
       objects:  [],
-      messages: this.messages,
+      dialogue: this.dialogue,
       hooks:    this.hooks
     };
 
@@ -122,8 +122,8 @@ export default {
     if (typeof state != 'object')
       return false;
 
-    // Restore messages and hooks
-    this.messages = state.messages;
+    // Restore dialogue and hooks
+    this.dialogue = state.dialogue;
     this.hooks = state.hooks;
 
     // Restore tiles if existing
@@ -437,11 +437,11 @@ export default {
    * Run onObjectSay() callback to pass to a UI.
    *
    * @param {number} object -- Object to send to callback.
-   * @param {number} messages -- Object array of messages.
+   * @param {number} dialogue -- Object array of dialogue.
    * @return {void}
    */
   say(message) {
-    const lastElement = this.messages[this.messages.length - 1]
+    const lastElement = this.dialogue[this.dialogue.length - 1]
 
     if (lastElement && message.text === lastElement.text) {
       if (typeof lastElement.repeats != 'number')
@@ -451,7 +451,7 @@ export default {
     }
 
     else {
-      this.messages.push(message)
+      this.dialogue.push(message)
     }
   }
 }

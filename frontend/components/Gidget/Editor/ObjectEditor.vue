@@ -95,7 +95,7 @@ export default {
     },
 
     maxPos() {
-      return this.$store.state.level.size - 1;
+      return this.$store.state.game.size - 1;
     }
   },
 

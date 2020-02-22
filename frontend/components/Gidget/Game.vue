@@ -110,14 +110,8 @@ export default {
 
 
   props: {
-    editorMode:      { type: Boolean, default: false },
-    initialCode:     { type: String,  default: '// CODE\nlet x = 1;' },
-    initialSize:     { type: Number,  default: 3 },
-    initialTiles:    { type: Array,   default: () => [] },
-    initialObjects:  { type: Array,   default: () => [] },
-    initialGoals:    { type: Array,   default: () => [] },
-    initialDialogue: { type: Array,   default: () => [] },
-    initialImports:  { type: Array,   default: () => [] }
+    editorMode:  { type: Boolean, default: false },
+    initialData: { type: Object, default: () => {} },
   },
 
 
@@ -137,25 +131,21 @@ export default {
     editorMode() {
       this.game.updateInitialState();
     }
+
   },
 
 
   data() {
+    const { code, size, tiles, objects, imports, goals, dialogue }
+      = this.initialData;
+
     return {
       // Game Data
-      code:     this.initialCode,
-      size:     this.initialSize,
-      goals:    this.initialGoals,
-      dialogue: this.initialDialogue,
+      code,
+      goals,
 
       // Game World
-      game: Game.create({
-        objects:  this.initialObjects,
-        tiles:    this.initialTiles,
-        imports:  this.initialImports,
-        size:     this.initialSize,
-        messages: this.initialDialogue
-      }),
+      game: Game.create({ size, tiles, objects, imports, dialogue }),
 
       // World Objects
       playerObject:   undefined,
@@ -168,6 +158,7 @@ export default {
   mounted() {
     window.stepWait = 100;
     window.stepDuration = 500;
+    window.game = this.game;
 
     // Get important objects
     this.playerObject = this.game.world.getObject('Gidget');

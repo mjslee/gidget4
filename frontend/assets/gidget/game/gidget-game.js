@@ -24,19 +24,22 @@ export default {
    * @param {object} attributes - Attributes to merge into world.
    * @return {object} An instance of GidgetGame.
    */
-  create({ objects, tiles, imports, attributes }) {
+  create({ size, tiles, objects, imports, dialogue }) {
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
     const self = _.cloneDeep(this);
+    const data = _.cloneDeep({ size, tiles, imports, dialogue });
+    objects = _.cloneDeep(objects);
 
     // Create and assign a GidgetWorld object to our game. Our attributes will
     // be merged into the new world
-    self.world = GidgetWorld.create(attributes);
+    self.world = GidgetWorld.create(data);
 
     // Merge in global imports
     self.imports = {};
-    for (let i = 0, len = imports.length; i < len; i++)
-      Object.assign(self.imports, _.cloneDeep(GidgetImports[imports[i]]));
+    if (Array.isArray(imports))
+      for (let i = 0, len = imports.length; i < len; i++)
+        Object.assign(self.imports, _.cloneDeep(GidgetImports[imports[i]]));
 
     // Set up the javascript stepper, set the onStep callback so the world
     // states can be saved on each step
@@ -45,8 +48,8 @@ export default {
 
     // Create game objects, then save the initial game state that we can
     // restore on reset
-    objects.forEach((gameObjectAttr) => {
-      const gameObject = GidgetObject.create(gameObjectAttr);
+    objects.forEach((gameObjectData) => {
+      const gameObject = GidgetObject.create(gameObjectData);
       self.world.addObject(gameObject);
     })
 

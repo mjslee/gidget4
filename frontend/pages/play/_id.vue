@@ -1,19 +1,13 @@
 <template>
   <div id="app">
-    <h1 class="title">{{ level.title }}</h1>
-    <h2 class="subtitle">{{ level.description }}</h2>
+    <h1 class="title">{{ game.title }}</h1>
+    <h2 class="subtitle">{{ game.description }}</h2>
     <b-checkbox v-model="editorMode">Editor Mode</b-checkbox>
 
     <GidgetGame
-      :key="level.key"
-      :initialCode="level.code"
-      :initialSize="level.size"
-      :initialTiles="level.tiles"
-      :initialObjects="level.objects"
-      :initialGoals="level.goals"
-      :initialDialogue="level.dialogue"
-      :initialImports="level.imports"
+      :key="game.key"
       :editorMode="editorMode"
+      :initialData="game.initialData"
     />
   </div>
 </template>
@@ -43,9 +37,9 @@ export default {
 
 
   computed: {
-    level() {
-      return this.$store.state.level
-    }
+    game() {
+      return this.$store.state.game
+    },
   },
 
 
@@ -56,7 +50,7 @@ export default {
 
   methods: {
     setLevel(id) {
-      this.$store.dispatch('level/fetchAndLoad', { id });
+      this.$store.dispatch('game/fetchAndLoad', { id });
     }
   }
 }
