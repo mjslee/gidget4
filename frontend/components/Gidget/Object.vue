@@ -91,6 +91,7 @@ import { getObjectElementId, moveElementToTile } from '@/assets/gidget/game/gidg
 export default {
   props: {
     size:     Number,
+    margin:   Number,
     object:   Object,
     selected: Boolean
   },
@@ -134,6 +135,7 @@ export default {
      */
     style() {
       return {
+        'margin': this.margin + 'rem',
         'z-index': this.object.layer
       }
     },

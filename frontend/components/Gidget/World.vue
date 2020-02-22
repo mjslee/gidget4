@@ -17,6 +17,7 @@
         :object="object"
         :selected="selected.id === object.id"
         :size="tileSize"
+        :margin="tileMargin"
         :key="'obj-' + object.id"
         v-for="object in objects"
       />
