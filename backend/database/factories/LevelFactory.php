@@ -1,23 +1,26 @@
 <?php
 use Faker\Generator as Faker;
-use App\Helpers\RandomGameHelper;
+use App\Helpers\GameHelper as Game;
+use App\Helpers\GameRandomizationHelper as GameRand;
 use App\Models\Level;
 
 
 $factory->define(Level::class, function (Faker $faker) {
-    $size = rand(2, 10);
+    $size = rand(2, 9);
+    $code = '';
 
     $levelTypes = array_keys(Level::levelRules());
     $level = [
-        'title'       => $faker->sentence(4),
-        'description' => $faker->sentence(1),
+        'title'       => $faker->sentence(3),
+        'description' => $faker->sentence(10),
         'type'        => $faker->randomElement($levelTypes),
-        'code'        => '// CODE',
+        'code'        => $code,
         'solution'    => '// SOLUTION',
         'published'   => $faker->boolean(95),
         'official'    => $faker->boolean(5),
 
         'size'     => $size + 1,
+        'imports'  => ['Player'],
         'objects'  => [],
         'tiles'    => [],
         'dialogue' => [],
@@ -25,21 +28,25 @@ $factory->define(Level::class, function (Faker $faker) {
     ];
 
     // Player object
-    $position = RandomGameHelper::randomPosition($size);
-    $player = RandomGameHelper::gameObject('Gidget', $position, ['Player']);
+    $position = GameRand::randomPosition($size);
+    $player = Game::gameObject('Gidget', $position, ['Player']);
     array_push($level['objects'], $player);
 
-    for ($i = 0; $i < 3; $i++)
-        array_push($level['objects'], RandomGameHelper::randomGameObject($size));
+    // Tiles
+    for ($i = $faker->numberBetween(1, 5); $i > 0; $i--)
+        array_push($level['tiles'], GameRand::randomTile($level));
 
-    for ($i = 0; $i < 3; $i++)
-        array_push($level['tiles'], RandomGameHelper::randomTile($size));
+    // Objects
+    for ($i = $faker->numberBetween(2, 5); $i > 0; $i--)
+        array_push($level['objects'], GameRand::randomGameObject($level));
 
-    for ($i = 0; $i < 3; $i++)
-        array_push($level['goals'], RandomGameHelper::randomGoal());
+    // Dialogue
+    for ($i = $faker->numberBetween(1, 5); $i > 0; $i--)
+        array_push($level['dialogue'], Game::dialogue($faker->sentence($faker->numberBetween(10, 20))));
 
-    for ($i = 0; $i < 3; $i++)
-        array_push($level['dialogue'], RandomGameHelper::randomDialogue());
+    // Goals
+    for ($i = $faker->numberBetween(1, 5); $i > 0; $i--)
+        array_push($level['goals'], GameRand::randomGoal($level));
 
     return [
         'title'       => $level['title'],
