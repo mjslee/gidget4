@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+#
+# Usage: ./setup_frontend_dev
+#
+
+cd "./${0%/*}/../frontend"
+exec npm run install

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# Usage: ./setup_dev
+# Usage: ./setup_backend_dev
 #
 
 cd "./${0%/*}/.."  # cd to project root
