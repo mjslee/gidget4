@@ -24,9 +24,8 @@ export default {
 
   exposed: {
     shake() {
+      this.say({ type: 'overhead', text: "I'm shaking!" });
       animate(this, async (tween, $el, wasInterrupted, timeline) => {
-        await tween(50, { x: 500 })
-        await tween(50, { x: -50 })
         await tween(50, { x: 50 })
         await tween(50, { x: -50 })
         await tween(50, { x: 50 })
@@ -39,7 +38,15 @@ export default {
         await tween(50, { x: -50 })
         await tween(50, { x: 50 })
         await tween(50, { x: -50 })
-      })
+        await tween(50, { x: 50 })
+        await tween(5000, { x: -50 })
+      });
+
+      if (false)
+        throw {
+          text: 'This is an error.'
+        };
+
     }
   }
 }

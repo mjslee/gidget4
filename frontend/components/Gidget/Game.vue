@@ -3,15 +3,13 @@
     <!-- Code and Goals -->
     <div class="column is-one-third">
       <div class="card">
-        <GidgetCode
-          ref="code"
+        <Code ref="code"
           :value="code"
         />
         <div class="card-footer"></div>
         <div class="card-content">
-          <GidgetGoals ref="goals" :goals="goals" />
-          <GidgetControls
-            ref="controls"
+          <Goals ref="goals" :goals="goals" />
+          <Controls ref="controls"
             @change:step="setStep"
             @click:run="runSteps"
             @click:stop="stopScript"
@@ -23,8 +21,7 @@
     <!-- World and Dialogue -->
     <div class="column">
       <div class="world">
-        <GidgetWorld
-          ref="world"
+        <World ref="world"
           :size="game.world.size"
           :objects="game.world.objects"
           :tiles="game.world.tiles"
@@ -33,22 +30,22 @@
       </div>
 
       <template v-if="editorMode">
-        <GidgetDialogue ref="dialogue" :messages="game.world.dialogue" />
+        <Dialogue ref="dialogue" :messages="game.world.dialogue" />
       </template>
       <template v-else>
-        <GidgetDialogue ref="dialogue" :messages="game.world.dialogue" />
+        <Dialogue ref="dialogue" :messages="game.world.dialogue" />
       </template>
     </div>
 
     <!-- Inspectors -->
     <div class="column">
       <template v-if="editorMode">
-        <GidgetObjectEditor :object="selected" />
-        <GidgetWorldSizeEditor v-model="game.world.size" />
+        <ObjectEditor :object="selected" />
+        <WorldSizeEditor v-model="game.world.size" />
       </template>
       <template v-else>
-        <GidgetInspector :object="player" />
-        <GidgetInspector :object="selected" />
+        <Inspector :object="player" />
+        <Inspector :object="selected" />
       </template>
     </div>
   </div>
@@ -77,32 +74,36 @@
 
 <script>
 import Game from '@/assets/gidget/game/gidget-game';
-import GidgetCode from './Code';
-import GidgetWorld from './World';
-import GidgetGoals from './Goals';
-import GidgetControls from './Controls';
-import GidgetDialogue from './Dialogue';
-import GidgetInspector from './Inspector';
-import GidgetWorldSizeEditor from './Editor/WorldSizeEditor';
-import GidgetObjectEditor from './Editor/ObjectEditor';
+import Code from './Code';
+import World from './World';
+import Goals from './Goals';
+import Controls from './Controls';
+import Dialogue from './Dialogue';
+import Inspector from './Inspector';
+import WorldSizeEditor from './Editor/WorldSizeEditor';
+import ObjectEditor from './Editor/ObjectEditor';
+
 import { wait } from '@/assets/gidget/game/gidget-utility';
 import { GIDGET_SPRITES } from '@/constants/paths';
 import { GIDGET_MESSAGES } from '@/constants/messages';
 import JsException from '@/assets/gidget/lang/js-exception';
+import Logger from '@/mixins/gidget-logger';
 
 
 export default {
   components: {
-    GidgetCode,
-    GidgetWorld,
-    GidgetInspector,
-    GidgetDialogue,
-    GidgetGoals,
-    GidgetControls,
+    Code,
+    World,
+    Inspector,
+    Dialogue,
+    Goals,
+    Controls,
 
-    GidgetWorldSizeEditor,
-    GidgetObjectEditor,
+    WorldSizeEditor,
+    ObjectEditor,
   },
+
+  mixins: [ Logger ],
 
 
   props: {
@@ -156,11 +157,11 @@ export default {
 
     // Get important objects
     this.player = this.game.world.getObject('Gidget');
-    window.$store = this.$store;
 
     // Set game objects in code so components like Dialogue and Goals can
     // access these objects before any code is ran
     this.resetScript();
+    this.startLogger();
   },
 
 
