@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { LEVELS } from '@/constants/endpoints';
+import { Levels as LevelsEndpoint } from '@/constants/endpoints';
 
 
 /**
@@ -81,7 +81,7 @@ export const actions = {
       return;
     }
 
-    const level = await this.$axios.$get(`${LEVELS}/${id}`);
+    const level = await this.$axios.$get(`${LevelsEndpoint}/${id}`);
     return typeof level == 'object' ? level.data : null;
   },
 

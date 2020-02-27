@@ -1,8 +1,8 @@
 // Auth
-export const REGISTER_ENDPOINT = '/api/auth/register'
-export const LOGIN_ENDPOINT    = '/api/auth/login'
-export const LOGOUT_ENDPOINT   = '/api/auth/logout'
-export const USER_ENDPOINT     = '/api/user'
+export const Register = '/api/auth/register'
+export const Login    = '/api/auth/login'
+export const Logout   = '/api/auth/logout'
+export const User     = '/api/user';
 
 // Levels
-export const LEVELS            = '/api/levels';
+export const Levels   = '/api/levels';

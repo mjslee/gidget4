@@ -84,7 +84,7 @@
 
 <script>
 import _ from 'lodash'
-import { REGISTER_ENDPOINT } from '@/constants/endpoints'
+import { Register as RegisterEndpoint } from '@/constants/endpoints'
 
 
 export default {
@@ -101,25 +101,25 @@ export default {
 
   methods: {
     async submitForm() {
-      this.loading = true
+      this.loading = true;
 
       // Fetch response from signup endpoint
       try {
-        const response = await this.$axios.post(REGISTER_ENDPOINT, this.formData)
+        const response = await this.$axios.post(RegisterEndpoint, this.formData);
       }
 
       // Set form errors
       catch (err) {
-        console.debug(err)
-        const formErrors = _.get(err, 'response.data.errors')
+        console.debug(err);
+        const formErrors = _.get(err, 'response.data.errors');
 
-        if (typeof formErrors != 'undefined')
-          this.formErrors = formErrors
+        if (typeof formErrors != 'undefined');
+          this.formErrors = formErrors;
       }
 
       // Not loading anymore
       finally {
-        this.loading = false
+        this.loading = false;
       }
 
     }

@@ -1,5 +1,9 @@
 import pkg from './package'
-import { LOGIN_ENDPOINT, LOGOUT_ENDPOINT, USER_ENDPOINT } from './constants/endpoints'
+import {
+  Login  as LoginEndpoint,
+  Logout as LogoutEndpoint,
+  User   as UserEndpoint
+} from './constants/endpoints'
 
 
 export default {
@@ -76,9 +80,9 @@ export default {
 
       local: {
         endpoints: {
-          user: { url: USER_ENDPOINT, method: 'get', propertyName: false },
-          login: { url: LOGIN_ENDPOINT, method: 'post', propertyName: 'access_token' },
-          logout: { url: LOGOUT_ENDPOINT, method: 'get', propertyName: false }
+          user: { url: UserEndpoint, method: 'get', propertyName: false },
+          login: { url: LoginEndpoint, method: 'post', propertyName: 'access_token' },
+          logout: { url: LogoutEndpoint, method: 'get', propertyName: false }
         },
       }
     }

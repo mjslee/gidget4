@@ -7,11 +7,7 @@ export default {
 
   methods: {
     startLogger() {
-      this.startBeating();
-    },
 
-    startBeating() {
-      // TODO
     },
   }
 }
