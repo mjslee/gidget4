@@ -16,6 +16,29 @@ class LevelProgress extends Model
     protected $table = 'level_progress';
 
     /**
+     * @var Fields belonging to LevelProgress.
+     * This is only for reference!
+     * View: 2020_01_28_052259_create_level_progress_table.php
+     */
+    protected $fields = [
+        'id'                => 'unsignedBigInteger',
+        'user_id'           => 'unsignedBigInteger',
+        'level_id'          => 'unsignedBigInteger',
+        'data'              => 'json',
+        'load_count'        => 'unsignedInteger',
+        'update_count'      => 'unsignedInteger',
+        'doc_count'         => 'unsignedInteger',
+        'restore_count'     => 'unsignedInteger',
+        'reset_count'       => 'unsignedInteger',
+        'play_duration'     => 'unsignedInteger',
+        'doc_duration'      => 'unsignedInteger',
+        'focus_duration'    => 'unsignedInteger',
+        'idle_duration'     => 'unsignedInteger',
+        'tutorial_duration' => 'unsignedInteger',
+        'completed_at'      => 'datetime',
+    ];
+
+    /**
      * Create new progression session.
      *
      * @param \App\Models\Level $level A level object.
@@ -32,7 +55,7 @@ class LevelProgress extends Model
     }
 
     /**
-     * Get user that created level progress.
+     * User that created level progress.
      */
     public function user()
     {
@@ -40,11 +63,26 @@ class LevelProgress extends Model
     }
 
     /**
-     * Get level progress created for level.
+     * Level progress created for level.
      */
     public function level()
     {
         return $this->belongsTo(Level::class);
     }
 
+    /**
+     * Code updates belonging for this progress.
+     */
+    public function code()
+    {
+        return $this->hasMany(LevelCode::class);
+    }
+
+    /**
+     * Add a code update to this progress.
+     */
+    public function addCode($code)
+    {
+        $levelCode = LevelCode::createInstance($this, $code);
+    }
 }
