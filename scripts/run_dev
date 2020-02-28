@@ -19,4 +19,5 @@ case $1 in
     ;;
 esac
 
-exec docker-compose exec --user=laradock workspace $CMD
+docker-compose exec --user=laradock workspace $CMD || \
+  echo "Run \`$0 start\` to start containers."
