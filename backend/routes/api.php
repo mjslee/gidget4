@@ -42,3 +42,8 @@ Route::group(['prefix' => 'levels'], function() {
         ->middleware('auth:api')
         ->name('level.store');
 });
+
+Route::group(['prefix' => 'progress'], function() {
+    Route::post('/ping', 'Levels\ProgressController@ping')
+        ->name('progress.ping');
+});
