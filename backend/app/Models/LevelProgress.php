@@ -55,4 +55,18 @@ class LevelProgress extends Model
         return $this->belongsTo(Level::class);
     }
 
+    /**
+     * Get latest incomplete progress of user for a level.
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\Level $level
+     * @return LevelProgress
+     */
+    public static function getLatestIncomplete(Level $level, User $user = null, String $strId = null)
+    {
+        return self::query()->where([
+            'level_id' => $level->id,
+            'user_id' => $user->id,
+        ])->first();
+    }
 }

@@ -55,4 +55,30 @@ class LevelProgressTest extends TestCase
         $this->assertNotNull($freshSession->string_id);
     }
 
+    /**
+     * Test getting an already created session as a user.
+     *
+     * @return void
+     */
+    public function testGetLatestIncompleteAsUser()
+    {
+        $user = factory(User::class)->create();
+        $level = factory(Level::class)->create();
+
+        // can't get what doesn't exist
+        $progress1 = LevelProgress::getLatestIncomplete($level, $user);
+        $this->assertNull($progress1);
+
+        // create and get existing progress
+        factory(LevelProgress::class)->create([
+            'level_id' => $level,
+            'user_id'  => $user
+        ]);
+        $progress2 = LevelProgress::getLatestIncomplete($level, $user);
+        $this->assertNotNull($progress2);
+
+        // gets the same progress again
+        $progress3 = LevelProgress::getLatestIncomplete($level, $user);
+        $this->assertEquals($progress2->id, $progress3->id);
+    }
 }
