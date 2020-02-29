@@ -5,4 +5,4 @@
 #
 
 cd "./${0%/*}/../frontend"
-exec npm run install
+exec npm install
