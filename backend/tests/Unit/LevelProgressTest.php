@@ -20,7 +20,7 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testCreateProgressSession()
+    public function testCreateProgress()
     {
         $level = factory(Level::class)->create();
         $user = factory(User::class)->create();
@@ -40,7 +40,7 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testGuestCreateProgressSession()
+    public function testCreateGuestProgress()
     {
         $level = factory(Level::class)->create();
         $user = null;
