@@ -32,6 +32,7 @@ class LevelProgressTest extends TestCase
         $this->assertNotNull($freshSession);
         $this->assertEquals($freshSession->level->id, $level->id);
         $this->assertEquals($freshSession->user->id, $user->id);
+        $this->assertNull($freshSession->string_id);
     }
 
     /**
@@ -51,6 +52,7 @@ class LevelProgressTest extends TestCase
         $this->assertNotNull($freshSession);
         $this->assertEquals($freshSession->level->id, $level->id);
         $this->assertNull($freshSession->user);
+        $this->assertNotNull($freshSession->string_id);
     }
 
 }
