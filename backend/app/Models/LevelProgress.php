@@ -98,4 +98,53 @@ class LevelProgress extends Model
         return $progress;
     }
 
+    /**
+     * Increment count of level progress loads.
+     *
+     * @return @int
+     */
+    public function incrementLoads(): int
+    {
+        return self::query()->increment('load_count');
+    }
+
+    /**
+     * Increment count of level progress updates.
+     *
+     * @return @int
+     */
+    public function incrementUpdates(): int
+    {
+        return self::query()->increment('update_count');
+    }
+
+    /**
+     * Increment count of times documentation has been accessed.
+     *
+     * @return @int
+     */
+    public function incrementDocumentation(): int
+    {
+        return self::query()->increment('doc_count');
+    }
+
+    /**
+     * Increment count of times documentation has been accessed.
+     *
+     * @return @int
+     */
+    public function incrementRestore(): int
+    {
+        return self::query()->increment('restore_count');
+    }
+
+    /**
+     * Increment count of times player has reset their progress.
+     *
+     * @return @int
+     */
+    public function incrementReset(): int
+    {
+        return self::query()->increment('reset_count');
+    }
 }
