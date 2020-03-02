@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -63,7 +64,7 @@ class LevelProgress extends Model
      * @param String $strId (optional) String ID of progress.
      * @return LevelProgress
      */
-    public static function findLatestIncomplete(Level $level, User $user = null, String $strId = null): ?LevelProgress
+    public static function findIncomplete(Level $level, User $user = null, String $strId = null): ?LevelProgress
     {
         if (is_null($level))
             return null;
@@ -88,7 +89,7 @@ class LevelProgress extends Model
      */
     public static function findOrNew(Level $level, User $user = null, String $strId = null)
     {
-        $progress = self::findLatestIncomplete($level, $user, $strId);
+        $progress = self::findIncomplete($level, $user, $strId);
 
         if (is_null($progress)) {
             $progress = self::createInstance($level, $user, $strId);
@@ -99,52 +100,63 @@ class LevelProgress extends Model
     }
 
     /**
+     * Set Progress as completed.
+     * TODO: Compare against solution result.
+     *
+     * @return void
+     */
+    public function setComplete(): void
+    {
+        $this->update(['completed_at' => Carbon::now()]);
+    }
+
+    /**
      * Increment count of level progress loads.
      *
-     * @return @int
+     * @return int
      */
     public function incrementLoads(): int
     {
-        return self::query()->increment('load_count');
+        return $this->increment('load_count');
     }
 
     /**
      * Increment count of level progress updates.
      *
-     * @return @int
+     * @return int
      */
     public function incrementUpdates(): int
     {
-        return self::query()->increment('update_count');
+        return $this->increment('update_count');
     }
 
     /**
      * Increment count of times documentation has been accessed.
      *
-     * @return @int
+     * @return int
      */
     public function incrementDocumentation(): int
     {
-        return self::query()->increment('doc_count');
+        return $this->increment('doc_count');
     }
 
     /**
      * Increment count of times documentation has been accessed.
      *
-     * @return @int
+     * @return int
      */
     public function incrementRestore(): int
     {
-        return self::query()->increment('restore_count');
+        return $this->increment('restore_count');
     }
 
     /**
      * Increment count of times player has reset their progress.
      *
-     * @return @int
+     * @return int
      */
     public function incrementReset(): int
     {
-        return self::query()->increment('reset_count');
+        return $this->increment('reset_count');
     }
 }

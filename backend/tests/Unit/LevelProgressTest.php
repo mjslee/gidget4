@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -66,7 +67,7 @@ class LevelProgressTest extends TestCase
         $level = factory(Level::class)->create();
 
         // can't get what doesn't exist
-        $progress1 = LevelProgress::findLatestIncomplete($level, $user);
+        $progress1 = LevelProgress::findIncomplete($level, $user);
         $this->assertNull($progress1);
 
         // create and get existing progress
@@ -74,11 +75,11 @@ class LevelProgressTest extends TestCase
             'level_id' => $level->id,
             'user_id'  => $user->id
         ]);
-        $progress2 = LevelProgress::findLatestIncomplete($level, $user);
+        $progress2 = LevelProgress::findIncomplete($level, $user);
         $this->assertNotNull($progress2);
 
         // gets the same progress again
-        $progress3 = LevelProgress::findLatestIncomplete($level, $user);
+        $progress3 = LevelProgress::findIncomplete($level, $user);
         $this->assertEquals($progress2->id, $progress3->id);
     }
 
@@ -93,7 +94,7 @@ class LevelProgressTest extends TestCase
         $level = factory(Level::class)->create();
 
         // try to get progress, none exists
-        $progress = LevelProgress::findLatestIncomplete($level, null);
+        $progress = LevelProgress::findIncomplete($level, null);
         $this->assertNull($progress);
     }
 
@@ -134,6 +135,4 @@ class LevelProgressTest extends TestCase
         self::assertNotNull($progress2->string_id);
         self::assertNotEquals($progress2->id, $progress3->id);
     }
-    
-
 }
