@@ -79,16 +79,16 @@ class LevelProgress extends Model
     }
 
     /**
-     * Get current progress or create a new progress session.
+     * Find current progress or create a new progress session.
      *
-     * @param \App\Models\Level $level [TODO:description]
-     * @param \App\Models\User $user (optional) [TODO:description]
-     * @param String $strId (optional) [TODO:description]
+     * @param \App\Models\Level $level
+     * @param \App\Models\User $user (optional)
+     * @param String $strId (optional)
      * @return LevelProgress
      */
-    public static function getOrCreate(Level $level, User $user = null, String $strId = null)
+    public static function findOrNew(Level $level, User $user = null, String $strId = null)
     {
-        $progress = self::getLatestIncomplete($level, $user, $strId);
+        $progress = self::findLatestIncomplete($level, $user, $strId);
 
         if (is_null($progress)) {
             $progress = self::createInstance($level, $user, $strId);
