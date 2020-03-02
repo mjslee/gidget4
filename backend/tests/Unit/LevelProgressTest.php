@@ -56,29 +56,29 @@ class LevelProgressTest extends TestCase
     }
 
     /**
-     * Test getting an already created session as a user.
+     * Test finding an already created session as a user.
      *
      * @return void
      */
-    public function testGetLatestIncompleteAsUser()
+    public function testFindLatestIncompleteAsUser()
     {
         $user = factory(User::class)->create();
         $level = factory(Level::class)->create();
 
         // can't get what doesn't exist
-        $progress1 = LevelProgress::getLatestIncomplete($level, $user);
+        $progress1 = LevelProgress::findLatestIncomplete($level, $user);
         $this->assertNull($progress1);
 
         // create and get existing progress
         factory(LevelProgress::class)->create([
-            'level_id' => $level,
-            'user_id'  => $user
+            'level_id' => $level->id,
+            'user_id'  => $user->id
         ]);
-        $progress2 = LevelProgress::getLatestIncomplete($level, $user);
+        $progress2 = LevelProgress::findLatestIncomplete($level, $user);
         $this->assertNotNull($progress2);
 
         // gets the same progress again
-        $progress3 = LevelProgress::getLatestIncomplete($level, $user);
+        $progress3 = LevelProgress::findLatestIncomplete($level, $user);
         $this->assertEquals($progress2->id, $progress3->id);
     }
 
@@ -87,16 +87,14 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testGetLatestIncompleteAsGuest()
+    public function testFindLatestIncompleteAsGuest()
     {
         // create level
         $level = factory(Level::class)->create();
 
         // try to get progress, none exists
-        $progress = LevelProgress::getLatestIncomplete($level, null);
+        $progress = LevelProgress::findLatestIncomplete($level, null);
         $this->assertNull($progress);
-
-        // try to get progress, exists, get first
     }
 
     /**
@@ -104,14 +102,14 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testGetOrCreateAsUser()
+    public function testFindOrNewAsUser()
     {
         $user = factory(User::class)->create();
         $level = factory(Level::class)->create();
 
         // does not exist
-        $progress1 = LevelProgress::getOrCreate($level, $user);
-        $progress2 = LevelProgress::getOrCreate($level, $user);
+        $progress1 = LevelProgress::findOrNew($level, $user);
+        $progress2 = LevelProgress::findOrNew($level, $user);
 
         // ensure they're the same row by id
         self::assertEquals($progress1->id, $progress2->id);
@@ -123,17 +121,17 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testGetOrCreateAsGuest()
+    public function testFindOrNewAsGuest()
     {
         $level = factory(Level::class)->create();
 
         // does not exist
-        $progress1 = LevelProgress::getOrCreate($level);
-        $progress2 = LevelProgress::getOrCreate($level, null, $progress1->string_id);
-        $progress3 = LevelProgress::getOrCreate($level);
+        $progress1 = LevelProgress::findOrNew($level);
+        $progress2 = LevelProgress::findOrNew($level, null, $progress1->string_id);
+        $progress3 = LevelProgress::findOrNew($level);
 
         self::assertEquals($progress1->id, $progress2->id);
-        //self::assertNotNull($progress2->string_id);
+        self::assertNotNull($progress2->string_id);
         self::assertNotEquals($progress2->id, $progress3->id);
     }
     
