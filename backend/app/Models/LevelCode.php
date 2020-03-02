@@ -9,6 +9,7 @@ use App\Models\User;
 
 class LevelCode extends Model
 {
+
     /**
      * @var Table name of LevelCode model.
      */
@@ -58,4 +59,5 @@ class LevelCode extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Laravel\Passport\HasApiTokens;
@@ -10,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+
     use HasApiTokens, Notifiable;
 
     /**
@@ -46,4 +46,5 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Models\UserProfile');
     }
+
 }
