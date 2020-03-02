@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -32,8 +33,7 @@ class LevelProgress extends Model
         if (is_null($user)) {
             do {
                 $obj->string_id = Str::random(64);
-            }
-            while (self::where('string_id', '=', $obj->string_id)->exists());
+            } while (self::where('string_id', $obj->string_id)->exists());
         }
 
         return $obj;
@@ -58,18 +58,25 @@ class LevelProgress extends Model
     /**
      * Get latest incomplete progress of user for a level.
      *
-     * @param \App\Models\User $user
      * @param \App\Models\Level $level
+     * @param \App\Models\User $user (optional)
+     * @param String $strId (optional) String ID of progress.
      * @return LevelProgress
      */
-    public static function getLatestIncomplete(Level $level, User $user = null, String $strId = null)
+    public static function findLatestIncomplete(Level $level, User $user = null, String $strId = null): ?LevelProgress
     {
-        return self::query()->where([
-            'level_id' => $level->id,
-            'user_id' => $user->id,
-        ])->first();
-    }
+        if (is_null($level))
+            return null;
 
+        return self::query()
+            ->where(function ($query) use ($user, $strId) {
+                if (!is_null($user))
+                    $query->where('user_id', $user->id);
+                else
+                    $query->where('string_id', $strId);
+            })
+            ->firstWhere('level_id', $level->id);
+    }
 
     /**
      * Get current progress or create a new progress session.
