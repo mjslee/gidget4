@@ -33,6 +33,9 @@ class CreateLevelProgressTable extends Migration
             $table->unsignedBigInteger('idle_duration')->default(0);
             $table->unsignedBigInteger('tutorial_duration')->default(0);
 
+            $table->ipAddress('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
+
             $table->datetime('completed_at')->nullable(true);
             $table->timestamps();
             

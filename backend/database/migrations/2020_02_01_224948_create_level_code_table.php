@@ -16,16 +16,15 @@ class CreateLevelCodeTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->nullable(true);
             $table->unsignedBigInteger('level_id')->nullable(true);
+            $table->unsignedBigInteger('level_progress_id')->nullable(true);
 
             $table->longText('code');
             $table->string('hash');
 
-            $table->unsignedInteger('step_count');
-            $table->unsignedInteger('evaluation_count');
-            $table->unsignedBigInteger('evaluation_duration');
+            $table->unsignedInteger('step_count')->default(0);
+            $table->unsignedInteger('eval_count')->default(1);
+            $table->unsignedBigInteger('eval_duration')->default(0);
 
-            $table->ipAddress('ip_address');
-            $table->string('user_agent');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
@@ -43,6 +42,7 @@ class CreateLevelCodeTable extends Migration
         Schema::table('level_code', function($table) {
             $table->dropForeign('level_code_user_id_foreign');
             $table->dropForeign('level_code_level_id_foreign');
+            $table->dropForeign('level_code_level_progress_id_foreign');
         });
         Schema::dropIfExists('level_code');
     }
