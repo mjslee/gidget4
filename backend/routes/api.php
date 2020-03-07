@@ -59,3 +59,15 @@ Route::group(['prefix' => 'levels'], function () {
     Route::post('/{level}/progress/complete', 'Levels\ProgressController@complete')
         ->name('progress.complete');
 });
+
+
+/**
+ * Level Collections
+ */
+Route::group(['prefix' => 'collections'], function () {
+    Route::get('/', 'Levels\LevelCollectionController@index')
+        ->name('collection.index');
+
+    Route::get('/{collection}', 'Levels\LevelCollectionController@show')
+        ->name('collection.show');
+});
