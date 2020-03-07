@@ -1,6 +1,8 @@
 <template>
-  <div>
+  <div class="grass">
     <section class="hero">
+      <div class="clouds"></div>
+
       <div class="hero-head">
         <nav class="navbar">
           <div class="container">
@@ -27,7 +29,7 @@
 
       <div class="hero-body">
         <div class="container has-text-centered">
-          <p class="title">
+          <p class="title is-size-1">
             Gidget
           </p>
           <p class="subtitle">&nbsp;</p>
@@ -39,14 +41,34 @@
   </div>
 </template>
 
+<style>
+body, html, #__nuxt, #__layout {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+</style>
+
 
 <style scoped>
-html, body {
-  background: #82af55;
+.hero {
+  position: relative;
 }
 
-.hero {
+.grass {
+  background: #82af55;
+  width: 100%;
+  height: 100%;
+}
+
+.clouds {
   background: #79cbe8;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: url('/gidget/intro/clouds.gif');
+  background-size: cover;
+  box-shadow: 0 4px 2px -2px #79cbe8;
 }
 </style>
 
