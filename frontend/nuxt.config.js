@@ -33,7 +33,8 @@ export default {
   ** Global CSS
   */
   css: [
-    'highlight.js/styles/default.css'
+    'highlight.js/styles/default.css',
+    '@/assets/scss/main.scss'
   ],
 
   /*
