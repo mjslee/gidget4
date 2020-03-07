@@ -8,6 +8,7 @@ use Tests\TestCase;
 
 use App\Models\User;
 use App\Models\Level;
+use App\Models\LevelCode;
 use App\Models\LevelProgress;
 
 
@@ -134,5 +135,58 @@ class LevelProgressTest extends TestCase
         self::assertEquals($progress1->id, $progress2->id);
         self::assertNotNull($progress2->string_id);
         self::assertNotEquals($progress2->id, $progress3->id);
+    }
+
+
+    public function testAddsCode()
+    {
+        $level = factory(Level::class)->create();
+        $progress = LevelProgress::findOrNew($level);
+
+        $hashShouldBe = '04dc2f65b40395273aa3656115f7097475ff1e31';
+        $codeStr = "function hello() {\r\n  Gidget.say('Hello!');\r\n}\r\n\r\nhello();";
+
+        $code = $progress->addCode([
+            'code'       => $codeStr,
+            'step_count' => 2
+        ]);
+
+        $progress->addCode(['code' => 'false;' ]);
+        self::assertGreaterThan(1, LevelCode::count());
+
+        self::assertEquals($hashShouldBe, $code->hash);
+        self::assertIsObject($code);
+        self::assertGreaterThan(0, $code->step_count);
+    }
+
+
+    public function testIncrementsEvalCount()
+    {
+        $level = factory(Level::class)->create();
+        $progress = LevelProgress::findOrNew($level);
+
+        $codeStr = "function hello() {\r\n  Gidget.say('Hello!');\r\n}\r\n\r\nhello();";
+
+        $code1 = $progress->addCode([
+            'code'       => $codeStr,
+            'step_count' => 2
+        ]);
+
+        $code2 = $progress->addCode([
+            'code'       => $codeStr,
+            'step_count' => 2
+        ]);
+        self::assertEquals(1, LevelCode::count());
+        self::assertEquals(2, $code2->eval_count);
+    }
+
+
+    public function testDoesntAddEmptyCode()
+    {
+        $level = factory(Level::class)->create();
+        $progress = LevelProgress::findOrNew($level);
+
+        $code = $progress->addCode(['code' => '']);
+        self::assertNull($code);
     }
 }
