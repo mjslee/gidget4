@@ -29,6 +29,7 @@ class ProgressController extends Controller
             ]
         );
         $progress->incrementLoads();
+
         return new ProgressResource($progress);
     }
 
@@ -40,10 +41,21 @@ class ProgressController extends Controller
      */
     public function run(Request $request, Level $level)
     {
-        $progress = LevelProgress::findIncomplete(
-            $level, $request->user(), $request->input('id')
+        // TODO: Combine show and run methods
+        $progress = LevelProgress::findOrNew(
+            $level, $request->user(), $request->input('id'), [
+                'user_agent' => $request->header('User-Agent'),
+                'ip_address' => $request->ip()
+            ]
         );
+
         $progress->incrementUpdates();
+        $progress->addCode([
+            'code' => $request->input('code'),
+            'step_count' => $request->input('step_count', 0),
+        ]);
+
+        return ':)';
     }
 
     /**
