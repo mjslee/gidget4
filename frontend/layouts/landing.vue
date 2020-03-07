@@ -67,7 +67,7 @@ body, html, #__nuxt, #__layout {
   height: 100%;
   width: 100%;
   background-image: url('/gidget/intro/clouds.gif');
-  background-size: cover;
+  background-size: contain;
   box-shadow: 0 4px 2px -2px #79cbe8;
 }
 </style>
