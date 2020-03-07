@@ -6,9 +6,18 @@ use App\Models\Level;
 
 
 $factory->define(Level::class, function (Faker $faker) {
-    $size = rand(2, 9);
-    $code = '';
 
+    $options = [
+        'Gidget.left();', 'Gidget.right();', 'Gidget.up();', 'Gidget.down();',
+        'Gidget.left()', 'Gidget.right()', 'Gidget.up()', 'Gidget.down()'
+    ];
+
+    $lc = rand(2, 15);
+    $code = '';
+    for ($i = 0; $i < $lc; $i++)
+        $code .= $options[rand(0, count($options) - 1)] . "\r\n";
+
+    $size = rand(2, 9);
     $levelTypes = array_keys(Level::levelRules());
     $level = [
         'title'       => $faker->sentence(3),
