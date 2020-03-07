@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\Level;
 use App\Models\LevelCode;
 
+use App\Helpers\CodeHelper;
+
 
 class LevelProgress extends Model
 {
@@ -19,16 +21,21 @@ class LevelProgress extends Model
      */
     protected $table = 'level_progress';
 
+    protected $fillable = [
+        'ip_address',
+        'user_agent',
+    ];
+
     /**
-     * Create new progression session.
+     * Make a new progression session.
      *
      * @param \App\Models\Level $level A level object.
      * @param \App\Models\User $user (optional) A user object.
      * @return LevelProgress Instance of LevelProgress.
      */
-    public static function createInstance(Level $level, User $user = null): LevelProgress
+    public static function makeInstance(Level $level, User $user = null, Array $attributes): LevelProgress
     {
-        $obj = new LevelProgress;
+        $obj = new LevelProgress($attributes);
         $obj->level()->associate($level);
         $obj->user()->associate($user);
 
@@ -96,12 +103,12 @@ class LevelProgress extends Model
      * @param String $strId (optional)
      * @return LevelProgress
      */
-    public static function findOrNew(Level $level, User $user = null, String $strId = null)
+    public static function findOrNew(Level $level, User $user = null, String $strId = null, array $attributes = [])
     {
         $progress = self::findIncomplete($level, $user, $strId);
 
         if (is_null($progress)) {
-            $progress = self::createInstance($level, $user, $strId);
+            $progress = self::makeInstance($level, $user, $attributes);
             $progress->save();
         }
 
@@ -120,13 +127,39 @@ class LevelProgress extends Model
     }
 
     /**
+     * Add a new level code relation to this progress.
      *
+     * @param Array $attributes  Attributes for the new LevelCode instance.
+     *   $attributes = [
+     *     'code'          => (string)  Code to import. **Required**
+     *     'step_count'    => (int)     Amount to increase step count by.
+     *     'ip_address'    => (string)  IP address of the submitter.
+     *     'user_agent'    => (string)  User agent of the submitter.
+     *   ]
+     * @return void
      */
-    public function addCode($code, $request): LevelCode
+    public function addCode(Array $attributes):? LevelCode
     {
-        $this->code()->create([
-            'code' => $code
-        ]);
+        if (!array_key_exists('code', $attributes))
+            return null;
+
+        $code = $attributes['code'];
+        if (empty($code))
+            return null;
+
+        $hash = CodeHelper::hashCode($code);
+        $levelCode = $this->code()->firstOrNew(
+            [ 'hash' => $hash ], $attributes
+        );
+
+        // code eval already exists, user ran the same code again
+        // if $levelCode was just created then it wouldn't have an id
+        if ($levelCode->id)
+            $levelCode->increment('eval_count', 1);
+        else
+            $levelCode->save();
+
+        return $levelCode;
     }
 
     /**

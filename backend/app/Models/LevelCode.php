@@ -15,6 +15,15 @@ class LevelCode extends Model
      */
     protected $table = 'level_code';
 
+    protected $fillable = [
+        'code',
+        'hash',
+
+        'step_count',
+        'eval_count',
+        'eval_duration',
+    ];
+
     /**
      * LevelCode instance belongs to a LevelProgress instance.
      *
