@@ -10,8 +10,8 @@ use Faker\Generator as Faker;
 
 $factory->define(LevelCollection::class, function (Faker $faker) {
     return [
-        'title'       => $faker->title,
-        'description' => $faker->sentences(5, true)
+        'title'       => $faker->sentence(),
+        'description' => $faker->paragraph()
     ];
 });
 
