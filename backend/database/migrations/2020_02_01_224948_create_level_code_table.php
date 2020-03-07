@@ -29,6 +29,7 @@ class CreateLevelCodeTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('level_id')->references('id')->on('levels');
+            $table->foreign('level_progress_id')->references('id')->on('level_progress');
         });
     }
 
