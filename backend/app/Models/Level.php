@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Models\User;
 use App\Models\LevelProgress;
-
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Level extends Model
 {
@@ -102,6 +102,17 @@ class Level extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+
+    /**
+     * Level can belong to many level collections.
+     *
+     * @return BelongsToMany
+     */
+    public function collection(): BelongsToMany
+    {
+        return $this->belongsToMany(LevelCollection::class);
     }
 
 

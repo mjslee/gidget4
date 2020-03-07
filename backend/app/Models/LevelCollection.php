@@ -9,11 +9,11 @@ class LevelCollection extends Model
 {
 
     /**
-     * Get levels belonging to the level set.
+     * Get levels belonging to the level collection.
      */
     public function levels()
     {
-        return $this->hasMany(Level::class);
+        return $this->belongsToMany(Level::class);
     }
     
 }
