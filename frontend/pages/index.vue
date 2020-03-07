@@ -6,7 +6,8 @@
         <div class="columns is-vcentered">
 
           <div class="column is-three-quarters">
-            <div class="gidget-and-friends" alt="Gidget and friends" />
+            <img class="preload" src="/gidget/intro/landingHover.png" />
+            <div class="gidget-and-friends" alt="Gidget and friends!" />
           </div>
 
           <div class="column">
@@ -46,11 +47,16 @@
 <style scoped>
 .gidget-and-friends {
   background: url('/gidget/intro/landingDefault.png') no-repeat;
+  background-size: contain;
   height: 436px;
 }
 
 .gidget-and-friends:hover {
   background-image: url('/gidget/intro/landingHover.png');
+}
+
+.preload {
+  display: none;
 }
 </style>
 
@@ -65,6 +71,6 @@ export default {
 
   components: {
     Navbar
-  }
+  },
 }
 </script>
