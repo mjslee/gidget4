@@ -20,7 +20,7 @@ class ProgressTest extends TestCase
      *
      * @return void
      */
-    public function testNewProgressRouteAsGuest()
+    public function testNewProgressAsGuest()
     {
         $level = factory(Level::class)->create();
         $response = $this->get(route('progress.show', [
@@ -42,7 +42,7 @@ class ProgressTest extends TestCase
      *
      * @return void
      */
-    public function testShowProgressRouteAsGuest()
+    public function testShowProgressAsGuest()
     {
         // first GET creates the progress
         $level = factory(Level::class)->create();
@@ -74,7 +74,26 @@ class ProgressTest extends TestCase
      */
     public function testProgressRunAsGuest()
     {
-        //
+        // step 1: get string id
+        $level = factory(Level::class)->create();
+        $response = $this->get(route('progress.show', [
+            'level' => $level->id
+        ]));
+
+        $stringId = $response->json('data')['string_id'];
+        self::assertEquals(64, strlen($stringId));
+
+        // step 2: run using the string id
+        $response = $this->post(route('progress.run', [
+            'id'    => $stringId,
+            'level' => $level->id,
+            'code'  => 'true;'
+        ]));
+
+        $progress = LevelProgress::first();
+        self::assertEquals($progress->user_agent, 'Symfony');
+        self::assertEquals($progress->ip_address, '127.0.0.1');
+        self::assertEquals($progress->code->first()->code, 'true;');
     }
 
 
