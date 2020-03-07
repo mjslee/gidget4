@@ -45,7 +45,7 @@
 body, html, #__nuxt, #__layout {
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow-y: auto;
 }
 </style>
 
