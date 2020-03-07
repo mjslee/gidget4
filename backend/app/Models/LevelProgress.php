@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 use App\Models\User;
 use App\Models\Level;
+use App\Models\LevelCode;
 
 
 class LevelProgress extends Model
@@ -46,6 +47,14 @@ class LevelProgress extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Code relationship that belongs to level progress.
+     */
+    public function code()
+    {
+        return $this->hasMany(LevelCode::class);
     }
 
     /**
@@ -108,6 +117,16 @@ class LevelProgress extends Model
     public function setComplete(): void
     {
         $this->update(['completed_at' => Carbon::now()]);
+    }
+
+    /**
+     *
+     */
+    public function addCode($code, $request): LevelCode
+    {
+        $this->code()->create([
+            'code' => $code
+        ]);
     }
 
     /**

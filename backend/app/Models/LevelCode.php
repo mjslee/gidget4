@@ -16,21 +16,6 @@ class LevelCode extends Model
     protected $table = 'level_code';
 
     /**
-     * Create new instance of LevelCode.
-     *
-     * @param \App\Models\LevelProgress $levelProgress
-     * @param String $code
-     * @return LevelCode
-     */
-    public static function createInstance(LevelProgress $levelProgress, String $code) : LevelCode
-    {
-        $obj = new LevelCode;
-        $obj->progress()->associate($levelProgress);
-
-        return $obj;
-    }
-
-    /**
      * LevelCode instance belongs to a LevelProgress instance.
      *
      * @return LevelProgress
