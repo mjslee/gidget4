@@ -23,7 +23,10 @@ class ProgressController extends Controller
     public function show(Request $request, Level $level): ProgressResource
     {
         $progress = LevelProgress::findOrNew(
-            $level, $request->user(), $request->input('id')
+            $level, $request->user(), $request->input('id'), [
+                'user_agent' => $request->header('User-Agent'),
+                'ip_address' => $request->ip()
+            ]
         );
         $progress->incrementLoads();
         return new ProgressResource($progress);
