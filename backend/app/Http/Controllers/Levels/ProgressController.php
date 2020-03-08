@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Levels;
 
+use App\Helpers\CodeHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,10 +50,14 @@ class ProgressController extends Controller
             ]
         );
 
+        $data = CodeHelper::isValidJSON($request->input('data'))
+            ? $request->input('data') : '{}';
+
         $progress->incrementUpdates();
         $progress->addCode([
-            'code' => $request->input('code'),
+            'code'       => $request->input('code'),
             'step_count' => $request->input('step_count', 0),
+            'data'       => $data
         ]);
 
         return ':)';

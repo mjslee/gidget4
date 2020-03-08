@@ -84,16 +84,20 @@ class ProgressTest extends TestCase
         self::assertEquals(64, strlen($stringId));
 
         // step 2: run using the string id
+        $data = '{"test": 1}';
         $response = $this->post(route('progress.run', [
             'id'    => $stringId,
             'level' => $level->id,
-            'code'  => 'true;'
+            'code'  => 'true;',
+            'data'  => $data
         ]));
+
 
         $progress = LevelProgress::first();
         self::assertEquals($progress->user_agent, 'Symfony');
         self::assertEquals($progress->ip_address, '127.0.0.1');
         self::assertEquals($progress->code->first()->code, 'true;');
+        self::assertEquals($progress->code->first()->data, $data);
     }
 
 
