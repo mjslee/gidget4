@@ -1,14 +1,38 @@
 <template>
-  <div class="columns is-multiline is-mobile">
-    <div class="column is-one-quarter" v-for="row in rows" :key="row.id">
-      <LevelCard :id="row.id" :title="row.title" :description="row.description" />
+  <div v-if="typeof items != 'undefined'">
+    <div class="box" v-for="(item, i) in items" :key="item.id">
+      <h1 class="title">{{ item.title }}</h1>
+      <h2 class="subtitle">{{ item.description }}</h2>
+      <div class="card-container">
+        <LevelCard
+          :number="n+1"
+          :key="`${i}-${n}`"
+          v-for="(level, n) in item.levels.data"
+
+          :id="level.id"
+          :title="level.title"
+          :description="level.description"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 
+<style scoped>
+.card-container {
+  display: flex;
+}
+
+.card-container .card {
+  min-width: 15rem;
+  height: 10rem;
+  margin: 0.75rem;
+}
+</style>
+
+
 <script>
-import { LEVELS } from '@/constants/endpoints';
 import LevelCard from './LevelCard';
 
 
@@ -18,29 +42,13 @@ export default {
   },
 
   props: {
-
+    items: Array
   },
 
   data() {
     return {
-      columns: [
-        { field: 'id' },
-        { field: 'title' },
-        { field: 'description' }
-      ],
-      rows: [],
+      //
     };
-  },
-
-  async mounted() {
-    this.rows = await this.getLevels();
-  },
-
-  methods: {
-    async getLevels() {
-      const res = await this.$axios.$get(LEVELS);
-      return res.data;
-    }
-  },
+  }
 }
 </script>

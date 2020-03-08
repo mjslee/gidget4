@@ -1,30 +1,17 @@
 <template>
   <div class="card">
-
-    <section class="card-content">
-      <p class="title">
-        {{ title }}
-      </p>
-      <p class="subtitle">
-        {{ description }}
-      </p>
-    </section>
-
-    <footer class="card-footer">
-      <nuxt-link :to="`/play/${id}`" class="card-footer-item">
-        Play
-      </nuxt-link>
-    </footer>
-
+    <nuxt-link :to="`/play/${id}`">
+      <section class="card-content">
+        Level {{ number }}
+      </section>
+    </nuxt-link>
   </div>
 </template>
 
 
 <style scoped>
 .card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: inline-block;
 }
 
 .card-footer {
@@ -36,9 +23,10 @@
 <script>
 export default {
   props: {
-    id: Number,
-    title: String,
-    description: String
+    id:          Number,
+    title:       String,
+    description: String,
+    number:      Number
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LevelCards />
+    <LevelCards :items="collections" />
   </div>
 </template>
 
@@ -19,7 +19,14 @@ export default {
   },
 
   data() {
-    return { };
-  }
+    return {
+      collections: [],
+    };
+  },
+
+  async mounted() {
+    const { data } = await this.$store.dispatch('collections/fetchCollections');
+    this.collections = data;
+  },
 }
 </script>
