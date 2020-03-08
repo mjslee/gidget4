@@ -18,6 +18,7 @@ class LevelCode extends Model
     protected $fillable = [
         'code',
         'hash',
+        'data',
 
         'step_count',
         'eval_count',
