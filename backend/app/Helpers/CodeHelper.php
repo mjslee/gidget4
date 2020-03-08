@@ -25,5 +25,17 @@ class CodeHelper
     {
         return sha1($minifiedCode);
     }
+
+    /**
+     * Test if value is a valid JSON string.
+     *
+     * @param String $value JSON string.
+     * @return Boolean
+     */
+    public static function isValidJSON(String $value)
+    {
+        json_decode($value);
+        return json_last_error() == JSON_ERROR_NONE;
+    }
     
 }
