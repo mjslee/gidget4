@@ -19,7 +19,8 @@ class CreateLevelCodeTable extends Migration
             $table->unsignedBigInteger('level_progress_id')->nullable(true);
 
             $table->longText('code');
-            $table->string('hash');
+            $table->string('hash')->nullable(true);
+            $table->json('data')->nullable(true);
 
             $table->unsignedInteger('step_count')->default(0);
             $table->unsignedInteger('eval_count')->default(1);
