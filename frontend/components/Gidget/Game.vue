@@ -87,7 +87,6 @@ import { wait } from '@/assets/gidget/game/gidget-utility';
 import { GIDGET_SPRITES } from '@/constants/paths';
 import { GIDGET_MESSAGES } from '@/constants/messages';
 import JsException from '@/assets/gidget/lang/js-exception';
-import Logger from '@/mixins/gidget-logger';
 
 
 export default {
@@ -102,8 +101,6 @@ export default {
     WorldSizeEditor,
     ObjectEditor,
   },
-
-  mixins: [ Logger ],
 
 
   props: {
@@ -161,7 +158,6 @@ export default {
     // Set game objects in code so components like Dialogue and Goals can
     // access these objects before any code is ran
     this.resetScript();
-    this.startLogger();
   },
 
 
@@ -190,6 +186,8 @@ export default {
 
       this.$store.commit('game/setEvalData',
         this.game.world.getObjectsSanitized());
+
+      this.$emit('reset');
     },
 
 
@@ -220,6 +218,11 @@ export default {
       // Highlight errored line, if it exists
       if (typeof this.game.error == 'object')
         this.onError();
+
+      this.$emit('run', {
+        code: this.$refs.code.code,
+        data: JSON.stringify(this.$store.state.game.evalData)
+      });
 
       return true;
     },
