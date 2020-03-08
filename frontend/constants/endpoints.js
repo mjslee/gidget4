@@ -5,4 +5,5 @@ export const Logout   = '/api/auth/logout'
 export const User     = '/api/user';
 
 // Levels
-export const Levels   = '/api/levels';
+export const Levels        = '/api/levels';
+export const Collections   = '/api/collections';
