@@ -8,6 +8,7 @@
       :key="game.key"
       :editorMode="editorMode"
       :initialData="game.initialData"
+      @run="runCode"
     />
   </div>
 </template>
@@ -29,28 +30,32 @@ export default {
 
   data() {
     return {
-      id: this.$route.params.id,
       editorMode: false,
-      updateKey: 0,
+      updateKey:  0
     }
   },
 
 
   computed: {
     game() {
-      return this.$store.state.game
+      return this.$store.state.game;
     },
+
+    id() {
+      return this.$route.params.id;
+    }
   },
 
 
   mounted() {
-    this.setLevel(this.id);
+    this.$store.dispatch('game/fetchAndLoad', { id: this.id });
+    this.$store.dispatch('progress/fetchProgress', { levelId: this.id });
   },
 
 
   methods: {
-    setLevel(id) {
-      this.$store.dispatch('game/fetchAndLoad', { id });
+    runCode({ code, data }) {
+      this.$store.dispatch('progress/updateProgress', { code, data });
     }
   }
 }
