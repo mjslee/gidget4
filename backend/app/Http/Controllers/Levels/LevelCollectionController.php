@@ -16,9 +16,9 @@ class LevelCollectionController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    function index(Request $request)
+    function getIndex(Request $request)
     {
-        $levels = LevelCollection::all();
+        $levels = LevelCollection::paginate(10);
         return LevelCollectionResource::collection($levels);
     }
 
@@ -28,7 +28,7 @@ class LevelCollectionController extends Controller
      * @param  \App\Level  $level
      * @return \Illuminate\Http\Response
      */
-    public function show(LevelCollection $collection)
+    public function getShow(LevelCollection $collection)
     {
         return new LevelCollectionResource($collection);
     }

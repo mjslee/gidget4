@@ -50,10 +50,10 @@ Route::group(['prefix' => 'levels'], function () {
     Route::get('/{level}', 'Levels\LevelController@show')
         ->name('level.show');
 
-    Route::get('/{level}/progress', 'Levels\ProgressController@show')
+    Route::get('/{level}/progress', 'Levels\ProgressController@getShow')
         ->name('progress.show');
 
-    Route::post('/{level}/progress', 'Levels\ProgressController@run')
+    Route::post('/{level}/progress', 'Levels\ProgressController@postRun')
         ->name('progress.run');
 
     Route::post('/{level}/progress/complete', 'Levels\ProgressController@complete')
@@ -65,9 +65,9 @@ Route::group(['prefix' => 'levels'], function () {
  * Level Collections
  */
 Route::group(['prefix' => 'collections'], function () {
-    Route::get('/', 'Levels\LevelCollectionController@index')
+    Route::get('/', 'Levels\LevelCollectionController@getIndex')
         ->name('collection.index');
 
-    Route::get('/{collection}', 'Levels\LevelCollectionController@show')
+    Route::get('/{collection}', 'Levels\LevelCollectionController@getShow')
         ->name('collection.show');
 });
