@@ -20,7 +20,7 @@ class ProgressController extends Controller
      * @param \App\Models\Level $level
      * @return ProgressResource
      */
-    public function show(Request $request, Level $level): ProgressResource
+    public function getShow(Request $request, Level $level): ProgressResource
     {
         $progress = LevelProgress::findOrNew(
             $level, $request->user(), $request->input('id'), [
@@ -39,7 +39,7 @@ class ProgressController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Level $level
      */
-    public function run(Request $request, Level $level)
+    public function postRun(Request $request, Level $level)
     {
         // TODO: Combine show and run methods
         $progress = LevelProgress::findOrNew(
