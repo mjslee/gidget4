@@ -1,5 +1,4 @@
 <?php
-
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -137,7 +136,11 @@ class LevelProgressTest extends TestCase
         self::assertNotEquals($progress2->id, $progress3->id);
     }
 
-
+    /**
+     * Test that adding code is possible.
+     *
+     * @return void
+     */
     public function testAddsCode()
     {
         $level = factory(Level::class)->create();
@@ -148,18 +151,25 @@ class LevelProgressTest extends TestCase
 
         $code = $progress->addCode([
             'code'       => $codeStr,
-            'step_count' => 2
+            'step_count' => 2,
+            'data'     => json_encode(['error' => null]),
         ]);
 
         $progress->addCode(['code' => 'false;' ]);
         self::assertGreaterThan(1, LevelCode::count());
 
+        self::assertJson($code->data);
         self::assertEquals($hashShouldBe, $code->hash);
         self::assertIsObject($code);
         self::assertGreaterThan(0, $code->step_count);
     }
 
 
+    /**
+     * Test if a duplicate row is made or if step_count is incremented.
+     *
+     * @return void
+     */
     public function testIncrementsEvalCount()
     {
         $level = factory(Level::class)->create();
@@ -181,6 +191,11 @@ class LevelProgressTest extends TestCase
     }
 
 
+    /**
+     * Test that submitting an empty code value will not pass.
+     *
+     * @return void
+     */
     public function testDoesntAddEmptyCode()
     {
         $level = factory(Level::class)->create();
