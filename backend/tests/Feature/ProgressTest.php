@@ -101,6 +101,11 @@ class ProgressTest extends TestCase
     }
 
 
+    /**
+     * Test route of level progress completion as a guest.
+     *
+     * @return
+     */
     public function testProgressCompletionGuest()
     {
         //

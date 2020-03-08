@@ -11,10 +11,13 @@ class LevelCode extends Model
 {
 
     /**
-     * @var Table name of LevelCode model.
+     * @var String Table name of LevelCode model.
      */
     protected $table = 'level_code';
 
+    /**
+     * @var array Fields that can be mass-assigned.
+     */
     protected $fillable = [
         'code',
         'hash',
