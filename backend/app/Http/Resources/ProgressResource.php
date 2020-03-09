@@ -14,6 +14,9 @@ class ProgressResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->string_id,
+            "level_id" => $this->level_id,
+        ];
     }
 }

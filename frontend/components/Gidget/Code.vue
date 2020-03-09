@@ -1,10 +1,6 @@
 <template>
   <div>
-    <codemirror
-      ref="code"
-      v-model="code"
-      :options="codemirrorOptions"
-    />
+    <codemirror ref="code" v-model="code" :options="codemirrorOptions" />
   </div>
 </template>
 
@@ -30,7 +26,13 @@ export default {
 
 
   props: {
-    value: String
+    value: String,
+
+    activeLine:         Number,
+    previousActiveLine: Number,
+
+    errorLine:          Number,
+    previousErrorLine:  Number
   },
 
 
@@ -38,8 +40,30 @@ export default {
     /**
      * Update code on value change.
      */
-    value(newVal) {
-      this.code = newVal;
+    activeLine(ln) {
+      this.setLineClass(ln, this.previousActiveLine, this.activeLineClass);
+    },
+
+
+    /**
+     *
+     */
+    errorLine(ln) {
+      this.setLineClass(ln, this.previousErrorLine, this.errorLineClass);
+    },
+  },
+
+  computed: {
+    /**
+     *
+     */
+    code: {
+      get() {
+        return this.value;
+      },
+      set(value) {
+        return this.$emit('input', value);
+      }
     }
   },
 
@@ -47,21 +71,16 @@ export default {
   data() {
     return {
       // Editor
-      code: this.value,
       codemirrorOptions: {
-        tabSize: 2,
-        line: true,
+        tabSize:     2,
+        line:        true,
         lineNumbers: true,
       },
 
       // Classes for lines
       activeLineClass: 'CodeMirror-activeline-background',
-      errorLineClass: 'CodeMirror-errorline-background',
-
-      // Line number cache
-      prevLn: -1,
-      prevErrorLn: -1
-    }
+      errorLineClass:  'CodeMirror-errorline-background',
+    };
   },
 
 
@@ -72,67 +91,22 @@ export default {
 
   methods: {
     /**
-     * Update component's code property.
-     *
-     * @return {void}
-     */
-    onInput(value) {
-      this.code = value;
-    },
-
-
-    /**
-     * Reset all line classes.
-     *
-     * @return {void}
-     */
-    reset() {
-      this.setActiveLine(-1);
-      this.setErrorLine(-1);
-    },
-
-
-    /**
      * Set class of a line by its number.
      *
      * @param {number} ln -- Line number.
      * @param {number} prevLn -- Previous line number.
-     * @param {string} type -- Can be: 'text', 'background', or 'wrap'
      * @param {string} className -- Name of class to add or remove.
+     * @param {string} type -- Can be: 'text', 'background', or 'wrap'
      * @return {void}
      */
-    setLineClass(ln, prevLn, type, className) {
+    setLineClass(ln, prevLn, className, type='background') {
       // Remove previous line's indicator
       if (prevLn > -1)
-        this.codemirror.removeLineClass(prevLn, type, className)
+        this.codemirror.removeLineClass(prevLn, type, className);
 
       // Add class to indicate line
       if (ln > -1)
-        this.codemirror.addLineClass(ln, type, className)
-    },
-
-
-    /**
-     * Set the active line's visual indicator.
-     *
-     * @param {number} ln -- Line number.
-     * @return {void}
-     */
-    setActiveLine(ln) {
-      this.setLineClass(ln, this.prevLn, 'background', this.activeLineClass)
-      this.prevLn = ln;
-    },
-
-
-    /**
-     * Set line indicator for an error.
-     *
-     * @param {number} ln -- Line number.
-     * @return {void}
-     */
-    setErrorLine(ln) {
-      this.setLineClass(ln, this.prevErrorLn, 'background', this.errorLineClass)
-      this.prevErrorLn = ln;
+        this.codemirror.addLineClass(ln, type, className);
     },
   }
 }

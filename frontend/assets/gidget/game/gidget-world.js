@@ -17,7 +17,7 @@ export default {
    *
    * @param {dictionary} kwargs Default properties.
    */
-  create( attributes) {
+  create(attributes) {
     const self = _.cloneDeep(this);
     Object.assign(self, _.cloneDeep(attributes));
     return self;
@@ -451,7 +451,7 @@ export default {
     }
 
     else {
-      this.dialogue.push(message)
+      // this.dialogue.push(message)
     }
   }
 }

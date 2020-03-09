@@ -1,18 +1,26 @@
 <template>
-  <div id="app" class="columns">
+  <div id="app" class="columns" v-if="game && game.world">
     <!-- Code and Goals -->
     <div class="column is-one-third">
       <div class="card">
-        <Code ref="code"
-          :value="code"
+        <Code v-model="code"
+          :activeLine="gameStore.activeLine"
+          :errorLine="gameStore.errorLine"
+          :previousActiveLine="gameStore.previousActiveLine"
+          :previousErrorLine="gameStore.previousErrorLine"
+          :isRunning="gameStore.isRunning"
         />
+
         <div class="card-footer"></div>
         <div class="card-content">
-          <Goals ref="goals" :goals="goals" />
+          <Goals ref="goals" :goals="gameStore.goals" @validate="$store.dispatch('game/validateGoals')" />
           <Controls ref="controls"
-            @change:step="setStep"
-            @click:run="runSteps"
-            @click:stop="stopScript"
+            :stepCount="gameStore.stepCount"
+            :activeStep="gameStore.activeStep"
+            @step="setStep"
+            @run="runSteps"
+            @stop="stopScript"
+            @reset="resetScript"
           />
         </div>
       </div>
@@ -22,18 +30,18 @@
     <div class="column">
       <div class="world">
         <World ref="world"
-          :size="game.world.size"
-          :objects="game.world.objects"
-          :tiles="game.world.tiles"
+          :size="worldSize"
+          :objects="gameObjects"
+          :tiles="gameTiles"
           @selected="selected = arguments[0]"
         />
       </div>
 
       <template v-if="editorMode">
-        <Dialogue ref="dialogue" :messages="game.world.dialogue" />
+        <Dialogue ref="dialogue" :messages="gameDialogue" />
       </template>
       <template v-else>
-        <Dialogue ref="dialogue" :messages="game.world.dialogue" />
+        <Dialogue ref="dialogue" :messages="gameDialogue" />
       </template>
     </div>
 
@@ -41,7 +49,7 @@
     <div class="column">
       <template v-if="editorMode">
         <ObjectEditor :object="selected" />
-        <WorldSizeEditor v-model="game.world.size" />
+        <WorldSizeEditor v-model="worldSize" />
       </template>
       <template v-else>
         <Inspector :object="player" />
@@ -104,41 +112,69 @@ export default {
 
 
   props: {
-    editorMode:  { type: Boolean, default: false },
-    initialData: { type: Object, default: () => {} },
+    editorMode: { type: Boolean, default: false },
   },
 
-
-  watch: {
+  computed: {
     /**
-     * Update game world size on 'size' prop update.
      *
-     * @param {number} value -- New world size.
      */
-    size(value) {
-      this.game.world.size = value;
+    gameStore() {
+      return this.$store.state.game;
     },
 
     /**
-     * Update initial state on mode change.
+     *
      */
-    editorMode() {
-      this.game.updateInitialState();
-    }
+    code: {
+      get() {
+        return this.gameStore.code;
+      },
+      set(value) {
+        return this.$store.commit('game/setCode', value);
+      }
+    },
+
+    /**
+     *
+     */
+    worldSize: {
+      get() {
+        return this.game.world.size;
+      },
+      set(value) {
+        return this.$store.commit('game/setWorldSize', value);
+      }
+    },
+
+    /**
+     *
+     */
+    gameObjects() {
+      return this.game.world.objects;
+    },
+
+    /**
+     *
+     */
+    gameTiles() {
+      return this.game.world.tiles;
+    },
+
+    /**
+     *
+     */
+    gameDialogue() {
+      return this.game.world.dialogue
+    },
 
   },
 
 
   data() {
-    const { code, size, tiles, objects, imports, goals, dialogue }
-      = this.initialData;
-
     return {
-      // Game Data
-      code, goals,
-
       // Game World
-      game: Game.create({ size, tiles, objects, imports, dialogue }),
+      game: undefined,
 
       // World Objects
       player:   undefined,
@@ -146,101 +182,54 @@ export default {
     }
   },
 
-
-  mounted() {
-    window.stepWait = 100;
-    window.stepDuration = 500;
-    window.game = this.game;
-
-    // Get important objects
-    this.player = this.game.world.getObject('Gidget');
-
-    // Set game objects in code so components like Dialogue and Goals can
-    // access these objects before any code is ran
-    this.resetScript();
+  created() {
+    this.$store.dispatch('game/createGame');
   },
 
 
-  beforeDestroy() {
-    this.resetScript();
+  mounted() {
+    window.stepWait     = 100;
+    window.stepDuration = 500;
+
+    this.game = this.$store.state.game.gameState();
   },
 
 
   methods: {
     /**
-     * Resets the script, game, and its components.
-     *
-     * @return {void}
-     */
-    resetScript() {
-      // Reset game to defaults
-      const step = this.game.reset();
-      if (step)
-        this.onStep(step);
-
-      // Reset Vue components
-      this.$refs.code.reset();
-      this.$refs.controls.reset();
-      this.$refs.goals.reset();
-      this.$refs.dialogue.reset();
-
-      this.$store.commit('game/setEvalData',
-        this.game.world.getObjectsSanitized());
-
-      this.$emit('reset');
-    },
-
-
-    /**
-     * Runs the user's code.
+     * Runs the player's code.
      *
      * @return {boolean} True if runner is successful.
      */
-    runScript() {
-      // Update initial game state in editor mode
-      if (this.editorMode)
-        this.game.updateInitialState();
-
-      // Reset game
-      this.resetScript();
-
-      // Evaluate user code
-      const runner = this.game.run(this.$refs.code.code);
-
-      // Set up the controls
-      if (typeof runner.steps == 'object') {
-        if (runner.steps.length < 1)
-          return false;
-
-        this.$refs.controls.setup(runner.steps.length);
-      }
-
-      // Highlight errored line, if it exists
-      if (typeof this.game.error == 'object')
-        this.onError();
-
-      this.$emit('run', {
-        code: this.$refs.code.code,
-        data: JSON.stringify(this.$store.state.game.evalData)
-      });
-
-      return true;
+    async runScript() {
+      await this.$store.dispatch('game/resetGame');
+      await this.$store.dispatch('game/runCode');
+      this.$emit('run');
     },
 
+    /**
+     * Resets the script and game.
+     *
+     * @return {void}
+     */
+    async resetScript() {
+      await this.$store.dispatch('game/resetGame');
+      this.$emit('reset');
+    },
 
     /**
      * Stop/reset game script.
      *
      * @return {void}
      */
-    stopScript() {
-      this.resetScript();
+    async stopScript() {
+      await this.$store.dispatch('game/resetGame');
       this.$refs.dialogue.append({
         text:      GIDGET_MESSAGES.STARTING_OVER,
         leftImage: GIDGET_SPRITES.STARTING_OVER
       });
+      this.$emit('stop');
     },
-
 
     /**
      * Sequentially runs all steps.
@@ -248,22 +237,13 @@ export default {
      * @return {void}
      */
     async runSteps() {
-      const $controls = this.$refs.controls;
-
-      // Run the script so we have access to the steps
-      if (!$controls.isRunning)
-        this.runScript();
-
-      // TODO: Find a cleaner way to do this
-      // Advance steps until isRunning is flagged to false or when a
-      // step has an error.
-      let index = 0;
-      while ($controls.isRunning && !$controls.isComplete) {
-        await this.setStep(++index);
+      // Advance steps until isRunning is flagged to false or when a step
+      // has an error.
+      while (!this.$store.getters['game/isComplete']) {
+        await this.setStep(this.gameStore.activeStep + 1);
         await wait(window.stepWait);
       }
     },
-
 
     /**
      * Set step index.
@@ -272,47 +252,11 @@ export default {
      * @return {boolean} True if a next step exists.
      */
     async setStep(index) {
-      const $controls = this.$refs.controls;
-      $controls.stepIndex = index;
-
-      // If the script has not been ran/evaluated, we should evaluate it so
-      // that we have access to its steps
-      if (!$controls.isRunning)
+      if (!this.gameStore.isRunning)
         this.runScript();
 
-      if ($controls.isComplete)
-        this.onFinish();
-
-      // Set the world state
-      const step = await this.game.set(index);
-      if (!step)
-        return false;
-
-      // Handle the resulting step
-      this.onStep(step);
+      await this.$store.dispatch('game/setStepState', index);
     },
-
-
-    /**
-     * Set line markers on step.
-     *
-     * @return {void}
-     */
-    onStep(step) {
-      // Probably an error, remove active line
-      if (typeof this.$refs.code == 'undefined' || typeof step == 'undefined') {
-        this.$refs.code.setActiveLine(-1);
-        return;
-      }
-
-      // Set code editor line
-      this.$refs.code.setActiveLine(step.ln - 1);
-
-      // Store data collected from game evaluation
-      if (typeof step.gameData == 'object')
-        this.$store.commit('game/setEvalData', step.gameData);
-    },
-
 
     /**
      * Handle last step of stepper.
@@ -335,7 +279,6 @@ export default {
       });
     },
 
-
     /**
      * Handle game error.
      *
@@ -348,7 +291,6 @@ export default {
       const error = this.game.error;
 
       if (typeof error.ln == 'number') {
-        this.$refs.code.reset();
         this.$refs.code.setErrorLine(error.ln - 1);
       }
 
@@ -359,7 +301,6 @@ export default {
         });
       }
     },
-
 
     /**
      * Handle completion of goals.
@@ -376,7 +317,6 @@ export default {
         leftImage: this.player.image
       });
     },
-
 
     /**
      * Handle non-completion of goals.

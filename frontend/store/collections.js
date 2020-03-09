@@ -17,11 +17,18 @@ export const mutations = {
 
 
 export const actions = {
+  
+  /**
+   * Fetch for a list of level collections.
+   */
   fetchCollections({ commit }) {
     return this.$axios.$get(url);
   },
 
-  async fetchCollection({ commit }, { id }) {
+  /**
+   * Fetch an individual level collection.
+   */
+  fetchCollection({ commit }, { id }) {
     return this.$axios.$get(url + id);
   }
 };

@@ -3,37 +3,56 @@ import { Levels as url } from '@/constants/endpoints';
 
 
 export const state = () => ({
-  progressId:  undefined,
   levelId:     undefined,
   progressIds: {}
 });
 
 
 export const getters = {
+  /**
+   * Get the session's progress ID by the level ID.
+   *
+   * @param {[TODO:type]} state - [TODO:description]
+   * @return {[TODO:type]} [TODO:description]
+   */
+  getProgressId(state) {
+    return state.progressIds[`level-${state.levelId}`];
+  }
 };
 
 
 export const mutations = {
-  setProgressId(state, { levelId, progressId }) {
-    state.levelId = levelId;
-    state.progressId = progressId;
-    Vue.set(state.progressIds, levelId, progressId);
+  /**
+   *
+   */
+  setLevelProgressId(state, { levelId, progressId }) {
+    Vue.set(state, 'levelId', levelId);
+    Vue.set(state.progressIds, `level-${levelId}`, progressId);
   },
 };
 
 
 export const actions = {
+  /**
+   *
+   */
   async fetchProgress({ commit }, { levelId }) {
     const { data } = await this.$axios.$get(`${url}/${levelId}/progress`);
-    commit('setProgressId', { levelId, progressId: data.string_id });
+    commit('setLevelProgressId', { levelId, progressId: data.id });
   },
 
-  async updateProgress({ state, commit }, { code, data }) {
-    return await this.$axios.$post(`${url}/${state.levelId}/progress`, {
+  /**
+   *
+   */
+  updateProgress({ state, commit }, { code, data }) {
+    this.$axios.$post(`${url}/${state.levelId}/progress`, {
       id: state.progressId, code, data
     });
   },
 
+  /**
+   *
+   */
   async fetchCollection({ commit }, { id }) {
     return this.$axios.$get(url + id);
   }

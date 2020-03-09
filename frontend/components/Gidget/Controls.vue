@@ -4,11 +4,11 @@
     <input
       type="range"
       min="0" :max="stepCount"
-      v-model.number="stepIndex"
-      v-on:change="$emit('change:step', stepIndex)"
+      v-on:change="$emit('step', activeStep)"
     />
+      <!-- v&#45;model.number="activeStep" -->
 
-    <span>{{ stepIndex }}/{{ stepCount }}</span>
+    <span>{{ activeStep }}/{{ stepCount }}</span>
 
     <div class="buttons has-addons">
 
@@ -16,22 +16,22 @@
       <b-button
         icon-left="chevron-left"
         :disabled="!hasPrev"
-        @click="$emit('change:step', --stepIndex)"
+        @click="$emit('step', activeStep - 1)"
       />
 
       <!-- Next Step -->
       <b-button
         icon-left="chevron-right"
-        :disabled="isComplete"
-        @click="$emit('change:step', ++stepIndex)"
+        :disabled="!hasNext"
+        @click="$emit('step', activeStep + 1)"
       />
 
       <!-- Run -->
       <b-button
         icon-left="play"
         class="is-success"
-        @click="$emit('click:run')"
-        v-if="!isRunning"
+        @click="$emit('run')"
+        v-if="activeStep == 0"
       >
         Run
       </b-button>
@@ -40,7 +40,7 @@
       <b-button
         icon-left="stop"
         class="is-danger"
-        @click="$emit('click:stop')"
+        @click="$emit('stop')"
         v-else-if="!isComplete"
       >
         Stop
@@ -50,7 +50,7 @@
       <b-button
         icon-left="restart"
         class="is-warning"
-        @click="$emit('click:stop')"
+        @click="$emit('reset')"
         v-else
       >
         Reset
@@ -64,12 +64,10 @@
 <script>
 export default {
 
-  data() {
-    return {
-      isRunning: false,
-      stepCount: 0,
-      stepIndex: 0,
-    }
+  props: {
+    stepCount:  Number,
+    activeStep: Number,
+    isRunning:  Boolean
   },
 
 
@@ -80,7 +78,7 @@ export default {
      * @return {boolean}
      */
     hasPrev() {
-      return this.stepIndex > 0;
+      return this.activeStep > 0;
     },
 
 
@@ -90,7 +88,7 @@ export default {
      * @return {boolean}
      */
     hasNext() {
-      return this.stepIndex - 1 < this.stepCount
+      return this.stepCount == 0 || this.activeStep < this.stepCount;
     },
 
 
@@ -100,34 +98,9 @@ export default {
      * @return {boolean}
      */
     isComplete() {
-      return this.isRunning && this.stepIndex == this.stepCount;
+      return this.activeStep >= this.stepCount;
     },
-  },
-
-
-  methods: {
-    /**
-     * Set up controls for a new script run.
-     *
-     * @return {void}
-     */
-    setup(stepCount) {
-      this.isRunning = true
-      this.stepCount = stepCount
-      this.stepIndex = 1
-    },
-
-
-    /**
-     * Reset buttons to their initial state.
-     *
-     * @return {void}
-     */
-    reset() {
-      this.isRunning = false
-      this.stepCount = 0
-      this.stepIndex = 0
-    }
   }
+
 }
 </script>

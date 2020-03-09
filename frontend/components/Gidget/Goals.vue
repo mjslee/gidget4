@@ -1,17 +1,17 @@
 <template>
   <div>
-    <div class="goals" v-for="(goal, i) in internalGoals" :key="`goal-${i}`">
+    <div class="goals" v-for="(goal, i) in goals" :key="`goal-${i}`">
       <b-icon
         icon="close-circle"
         type="is-danger"
         size="is-small"
-        v-if="reveal && goal.completed === false"
+        v-if="reveal && goal.isComplete === false"
       />
       <b-icon
         icon="check-circle"
         type="is-success"
         size="is-small"
-        v-else-if="reveal && goal.completed"
+        v-else-if="reveal && goal.isComplete"
       />
       <b-icon
         icon="checkbox-blank-circle-outline"
@@ -25,7 +25,8 @@
         <GidgetValue :code="goal.arguments[1]" />
       </span>
     </div>
-    <button @click="validate">Validate</button>
+
+    <button @click="$emit('validate')">Validate</button>
   </div>
 </template>
 
@@ -54,7 +55,6 @@ export default {
 
   data() {
     return {
-      internalGoals: _.cloneDeep(this.goals),
       reveal: true
     };
   },
@@ -69,13 +69,13 @@ export default {
     reset() {
       //this.reveal = false;
 
-      if (typeof this.internalGoals == 'undefined') {
+      if (typeof this.goals == 'undefined') {
         console.debug('goals are undefined.');
         return;
       }
 
-      this.internalGoals.forEach((goal) => {
-        this.$set(goal, 'completed', undefined);
+      this.goals.forEach((goal) => {
+        this.$set(goal, 'isComplete', undefined);
       });
     },
 
@@ -86,8 +86,8 @@ export default {
      * @return {void}
      */
     validate() {
-      this.internalGoals.forEach((goal) => {
-        this.$set(goal, 'completed', this.assert(goal))
+      this.goals.forEach((goal) => {
+        this.$set(goal, 'isComplete', this.assert(goal))
       });
     },
 
@@ -97,8 +97,8 @@ export default {
      *
      * @return {boolean}
      */
-    completed() {
-      return this.internalGoals.every((goal) => goal.completed === true);
+    isComplete() {
+      return this.goals.every((goal) => goal.isComplete === true);
     },
 
 
@@ -109,7 +109,7 @@ export default {
      * @return {string}
      */
     getValueJSON(key) {
-      return JSON.stringify(this.$store.getters['game/getEvalValueDefault'](key));
+      return JSON.stringify(this.$store.getters['game/getValue'](key));
     },
 
 

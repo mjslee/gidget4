@@ -1,14 +1,13 @@
 <template>
   <div id="app">
-    <h1 class="title">{{ game.title }}</h1>
-    <h2 class="subtitle">{{ game.description }}</h2>
+    <!-- <h1 class="title">{{ game.title }}</h1> -->
+    <!-- <h2 class="subtitle">{{ game.description }}</h2> -->
     <b-checkbox v-model="editorMode">Editor Mode</b-checkbox>
 
     <GidgetGame
-      :key="game.key"
+      :key="$store.state.game.key"
       :editorMode="editorMode"
-      :initialData="game.initialData"
-      @run="runCode"
+      :initialData="$store.state.game.initialData"
     />
   </div>
 </template>
@@ -31,16 +30,11 @@ export default {
   data() {
     return {
       editorMode: false,
-      updateKey:  0
     }
   },
 
 
   computed: {
-    game() {
-      return this.$store.state.game;
-    },
-
     id() {
       return this.$route.params.id;
     }
@@ -55,7 +49,7 @@ export default {
 
   methods: {
     runCode({ code, data }) {
-      this.$store.dispatch('progress/updateProgress', { code, data });
+      // this.$store.dispatch('progress/updateProgress', { code, data });
     }
   }
 }
