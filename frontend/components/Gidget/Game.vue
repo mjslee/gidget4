@@ -3,7 +3,8 @@
     <!-- Code and Goals -->
     <div class="column is-one-third">
       <div class="card">
-        <Code v-model="code"
+        <Code
+          v-model="code"
           :activeLine="gameStore.activeLine"
           :errorLine="gameStore.errorLine"
           :previousActiveLine="gameStore.previousActiveLine"
@@ -13,7 +14,10 @@
 
         <div class="card-footer"></div>
         <div class="card-content">
-          <Goals ref="goals" :goals="gameStore.goals" @validate="$store.dispatch('game/validateGoals')" />
+          <Goals
+            :goals="gameStore.goals"
+            @validate="$store.dispatch('game/validateGoals')"
+          />
           <Controls ref="controls"
             :stepCount="gameStore.stepCount"
             :activeStep="gameStore.activeStep"
@@ -81,7 +85,6 @@
 
 
 <script>
-import Game from '@/assets/gidget/game/gidget-game';
 import Code from './Code';
 import World from './World';
 import Goals from './Goals';
@@ -92,9 +95,6 @@ import WorldSizeEditor from './Editor/WorldSizeEditor';
 import ObjectEditor from './Editor/ObjectEditor';
 
 import { wait } from '@/assets/gidget/game/gidget-utility';
-import { GIDGET_SPRITES } from '@/constants/paths';
-import { GIDGET_MESSAGES } from '@/constants/messages';
-import JsException from '@/assets/gidget/lang/js-exception';
 
 
 export default {
@@ -167,7 +167,6 @@ export default {
     gameDialogue() {
       return this.game.world.dialogue
     },
-
   },
 
 
@@ -184,14 +183,16 @@ export default {
 
   created() {
     this.$store.dispatch('game/createGame');
+    this.game = this.$store.state.game.gameState();
   },
 
 
   mounted() {
     window.stepWait     = 100;
     window.stepDuration = 500;
+    //window.$store = this.$store
 
-    this.game = this.$store.state.game.gameState();
+    this.player = this.$store.getters['game/getGidget']();
   },
 
 
@@ -224,10 +225,6 @@ export default {
      */
     async stopScript() {
       await this.$store.dispatch('game/resetGame');
-      this.$refs.dialogue.append({
-        text:      GIDGET_MESSAGES.STARTING_OVER,
-        leftImage: GIDGET_SPRITES.STARTING_OVER
-      });
       this.$emit('stop');
     },
 
@@ -257,82 +254,6 @@ export default {
 
       await this.$store.dispatch('game/setStepState', index);
     },
-
-    /**
-     * Handle last step of stepper.
-     *
-     * @return {void}
-     */
-    onFinish() {
-      if (typeof this.game.error == 'object')
-        return this.onError();
-
-      // Show red Xs on goals component
-      this.$refs.goals.showResults = true;
-      this.$refs.goals.validate();
-
-      // Call success or failure handler
-      this.$nextTick(() => {
-        this.$refs.goals.completed() ?
-          this.onSuccess() :
-          this.onFailure();
-      });
-    },
-
-    /**
-     * Handle game error.
-     *
-     * @return {void}
-     */
-    onError() {
-      if (typeof this.game.error == 'undefined')
-        return;
-
-      const error = this.game.error;
-
-      if (typeof error.ln == 'number') {
-        this.$refs.code.setErrorLine(error.ln - 1);
-      }
-
-      if (typeof error.text == 'string') {
-        this.$nextTick(() => {
-          const text = JsException.translate(error.text) || error.text;
-          this.$refs.dialogue.append({ text });
-        });
-      }
-    },
-
-    /**
-     * Handle completion of goals.
-     *
-     * @return {void}
-     */
-    onSuccess() {
-      if (typeof this.player == 'undefined')
-        return;
-
-      this.player.image = GIDGET_SPRITES.SUCCESS;
-      this.$refs.dialogue.append({
-        text: GIDGET_MESSAGES.SUCCESS,
-        leftImage: this.player.image
-      });
-    },
-
-    /**
-     * Handle non-completion of goals.
-     *
-     * @return {void}
-     */
-    onFailure() {
-      if (typeof this.player == 'undefined')
-        return;
-
-      this.player.image = GIDGET_SPRITES.FAILURE;
-      this.$refs.dialogue.append({
-        text: GIDGET_MESSAGES.FAILURE,
-        leftImage: this.player.image
-      });
-    }
   }
 }
 </script>
