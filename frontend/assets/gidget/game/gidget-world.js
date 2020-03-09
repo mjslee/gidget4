@@ -86,7 +86,6 @@ export default {
    * @return {object} A world state object
    */
   getState() {
-    // TODO: Rip state management out of engine and put it into its own module
     // Create an object to restore important world properties
     const state = {
       // Primitives

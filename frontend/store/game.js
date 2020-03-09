@@ -353,5 +353,17 @@ export const getters = {
 
     return __gameState.world.objects.find(obj => obj.name === 'Gidget');
   },
+
+  /**
+   * [TODO:description]
+   *
+   * @return {[TODO:type]} [TODO:description]
+   */
+  getState({ isReady }) {
+    if (!isReady)
+      return;
+
+    return __gameState.world.getState();
+  },
   
 };

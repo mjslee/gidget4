@@ -7,7 +7,7 @@
     <GidgetGame
       :key="$store.state.game.key"
       :editorMode="editorMode"
-      :initialData="$store.state.game.initialData"
+      @run="onRun"
     />
   </div>
 </template>
@@ -46,10 +46,13 @@ export default {
     this.$store.dispatch('progress/fetchProgress', { levelId: this.id });
   },
 
-
   methods: {
-    runCode({ code, data }) {
-      // this.$store.dispatch('progress/updateProgress', { code, data });
+    onRun() {
+      this.$store.dispatch('progress/updateProgress', {
+        code: this.$store.state.game.code,
+        data: JSON.stringify(this.$store.getters['game/getState']),
+        stepCount: this.$store.state.game.stepCount
+      });
     }
   }
 }
