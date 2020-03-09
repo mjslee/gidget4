@@ -30,6 +30,7 @@ export default {
   data() {
     return {
       editorMode: false,
+      interval: undefined
     }
   },
 
@@ -44,11 +45,23 @@ export default {
   mounted() {
     this.$store.dispatch('game/fetchAndLoad', { id: this.id });
     this.$store.dispatch('progress/fetchProgress', { levelId: this.id });
+
+    this.interval = setInterval(() => {
+      if (!document.hasFocus()) {
+        this.$store.commit('game/setActivity', {
+          key: 'inactiveSeconds', value: 5
+        });
+      }
+    }, 5000);
+  },
+
+  destroyed() {
+    clearInterval(this.interval);
   },
 
   methods: {
     onRun() {
-      this.$store.dispatch('progress/updateProgress', {
+      console.log('progress/updateProgress', {
         code: this.$store.state.game.code,
         data: JSON.stringify(this.$store.getters['game/getState']),
         stepCount: this.$store.state.game.stepCount

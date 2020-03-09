@@ -171,6 +171,13 @@ export const mutations = {
   setGoalStatus(state, { goal, status }) {
     Vue.set(goal, 'isComplete', status);
   },
+
+  /**
+   *
+   */
+  setActivity(state, { key, value }) {
+    state.activity[key] += value;
+  }
 };
 
 

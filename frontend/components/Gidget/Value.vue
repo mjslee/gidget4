@@ -1,5 +1,10 @@
 <template>
-  <v-popover class="popover" @click.native="updateValue">
+  <v-popover
+    class="popover"
+    @show="startTimer"
+    @hide="stopTimer"
+    @click.native="updateValue"
+  >
     <template v-if="inTemplate && !isIdentifier">
       <span v-if="type === 'GameObject'">
         <img class="image is-24x24 is-inline-block" :src="image" />
@@ -63,7 +68,9 @@ export default {
 
   data() {
     return {
+      seconds: 0,
       inTemplate: false,
+      interval: undefined,
       type: 'undefined',
       value: 'undefined'
     };
@@ -143,6 +150,21 @@ export default {
 
 
   methods: {
+    startTimer() {
+      this.interval = setInterval(() => {
+        this.seconds += 1;
+      }, 1000);
+    },
+
+    stopTimer() {
+      clearInterval(this.interval);
+      this.$store.commit('game/setActivity', {
+        key: 'popupSeconds',
+        value: this.seconds
+      });
+      this.seconds = 0;
+    },
+
     /**
      * Update value prop.
      *
