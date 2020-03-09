@@ -29,6 +29,16 @@ export const state = () => ({
   activeStep: 0,
   stepCount:  0,
 
+  activity: {
+    activeSeconds:   0,
+    inactiveSeconds: 0,
+    codeSeconds:     0,
+    popupSeconds:    0,
+
+    validations: 0,
+    arrowKeys:   0,
+  },
+
   initialData: {
     size: 3,
     tiles:    [],
@@ -214,7 +224,7 @@ export const actions = {
     commit('setRunning', false);
     commit('resetLines');
     commit('resetSteps');
-    commit('resetGoals');
+    //commit('resetGoals');
 
     if (state.isReady)
       return __gameState.reset();
@@ -348,10 +358,12 @@ export const getters = {
    * @return {[TODO:type]} [TODO:description]
    */
   getGidget({ isReady }) {
-    if (!isReady)
-      return;
+    return () => {
+      if (!isReady)
+        return;
 
-    return __gameState.world.objects.find(obj => obj.name === 'Gidget');
+      return __gameState.world.objects.find(obj => obj.name === 'Gidget');
+    };
   },
 
   /**
