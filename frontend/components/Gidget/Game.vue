@@ -195,6 +195,10 @@ export default {
     this.player = this.$store.getters['game/getGidget']();
   },
 
+  destroyed() {
+    this.$store.dispatch('game/resetGame');
+  },
+
 
   methods: {
     /**
