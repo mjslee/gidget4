@@ -49,17 +49,13 @@ Route::group(['prefix' => 'levels'], function () {
 
     Route::get('/{level}', 'Levels\LevelController@show')
         ->name('level.show');
-
-    Route::get('/{level}/progress', 'Levels\ProgressController@getShow')
-        ->name('progress.show');
-
-    Route::post('/{level}/progress', 'Levels\ProgressController@postRun')
-        ->name('progress.run');
-
-    Route::post('/{level}/progress/complete', 'Levels\ProgressController@complete')
-        ->name('progress.complete');
 });
 
+
+Route::apiResource('levels.progress', 'Levels\ProgressController', );
+Route::group(['prefix' => '/{level}/progress/{progress}'], function() {
+    Route::post('/run', 'Levels\ProgressController@run')->name('levels.progress.run');
+});
 
 /**
  * Level Collections
