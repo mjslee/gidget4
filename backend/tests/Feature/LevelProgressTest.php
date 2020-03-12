@@ -74,15 +74,16 @@ class LevelProgressTest extends TestCase
         // unauthorized because the progress belongs to a user
         $response = $this->get(route('levels.progress.show', [
             'level'    => $level->id,
-            'progress' => $userProgress->id
+            'progress' => $userProgress->string_id
         ]));
-        $response->assertSuccessful();
-        $response->assertJson(['data' => ['level_id' => $level->id]]);
+
+        //dd($response->json());
+        $response->assertForbidden();
 
         // by id
         $response = $this->get(route('levels.progress.show', [
             'level'    => $level->id,
-            'progress' => $guestProgress->id
+            'progress' => $guestProgress->string_id
         ]));
         $response->assertSuccessful();
         $response->assertJson(['data' => ['level_id' => $level->id]]);
@@ -105,7 +106,7 @@ class LevelProgressTest extends TestCase
 
         $response = $this->actingAs($user)->get(route('levels.progress.show', [
             'level'    => $level->id,
-            'progress' => $userProgress->id
+            'progress' => $userProgress->string_id
         ]));
         $response->assertSuccessful();
         $response->assertJson(['data' => ['level_id' => $level->id]]);
@@ -114,7 +115,7 @@ class LevelProgressTest extends TestCase
         $otherUser = factory(User::class)->create();
         $response = $this->actingAs($otherUser)->get(route('levels.progress.show', [
             'level'    => $level->id,
-            'progress' => $userProgress->id
+            'progress' => $userProgress->string_id
         ]));
         $response->assertForbidden();
     }
@@ -165,32 +166,35 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testProgressRunAsGuest()
+    public function testProgressControllerRunAsGuest()
     {
         // step 1: get string id
         $level = factory(Level::class)->create();
-        $response = $this->get(route('progress.show', [
-            'level' => $level->id
-        ]));
+        $response = $this->post(
+            route('levels.progress.store', ['level' => $level->id]), []
+        );
 
-        $stringId = $response->json('data')['string_id'];
-        self::assertEquals(64, strlen($stringId));
+        $stringId = $response->json('data')['id'];
+        $this->assertEquals(strlen($stringId), 128);
 
-        // step 2: run using the string id
         $data = '{"test": 1}';
-        $response = $this->post(route('progress.run', [
+        $route = route('levels.progress.run', [
+            'level' => $level->id,
+            'progress' => $stringId
+        ]);
+        $response = $this->post($route, [
             'id'    => $stringId,
             'level' => $level->id,
             'code'  => 'true;',
             'data'  => $data
-        ]));
+        ]);
 
 
-        $progress = LevelProgress::first();
-        self::assertEquals($progress->user_agent, 'Symfony');
-        self::assertEquals($progress->ip_address, '127.0.0.1');
-        self::assertEquals($progress->code->first()->code, 'true;');
-        self::assertEquals($progress->code->first()->data, $data);
+        $progress = LevelProgress::query()->where('string_id', $stringId)->first();
+        $this->assertEquals($progress->user_agent, 'Symfony');
+        $this->assertEquals($progress->ip_address, '127.0.0.1');
+        $this->assertEquals($progress->code->first()->code, 'true;');
+        $this->assertEquals($progress->code->first()->data, $data);
     }
 
 

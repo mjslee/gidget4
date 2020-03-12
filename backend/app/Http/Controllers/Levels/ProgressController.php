@@ -43,7 +43,7 @@ class ProgressController extends Controller
      */
     public function show(Request $request, Level $level, LevelProgress $progress)
     {
-        if (!$progress->user->is($request->user()))
+        if (!is_null($progress->user) && !$progress->user->is($request->user()))
             return abort(403);
 
         return new ProgressResource($progress);
@@ -72,42 +72,16 @@ class ProgressController extends Controller
         return new ProgressResource($progress->fresh());
     }
 
-
-    /**
-     * Show a user's progress of a level.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Level $level
-     * @return ProgressResource
-     */
-    public function getShow(Request $request, Level $level): ProgressResource
-    {
-        $progress = LevelProgress::findOrNew(
-            $level, $request->user(), $request->input('id'), [
-                'user_agent' => $request->header('User-Agent'),
-                'ip_address' => $request->ip()
-            ]
-        );
-        $progress->incrementLoads();
-
-        return new ProgressResource($progress);
-    }
-
     /**
      * Receive a player's code submission and evaluation feedback.
      *
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Level $level
      */
-    public function postRun(Request $request, Level $level)
+    public function run(Request $request, Level $level, LevelProgress $progress)
     {
-        // TODO: Combine show and run methods
-        $progress = LevelProgress::findOrNew(
-            $level, $request->user(), $request->input('id'), [
-                'user_agent' => $request->header('User-Agent'),
-                'ip_address' => $request->ip()
-            ]
-        );
+        if (!is_null($progress->user) && !$progress->user->is($request->user()))
+            return abort(403);
 
         $data = CodeHelper::isValidJSON($request->input('data'))
             ? $request->input('data') : '{}';
@@ -119,16 +93,17 @@ class ProgressController extends Controller
             'data'       => $data
         ]);
 
-        return ':)';
+        return new ProgressResource($progress);
     }
 
     /**
      * Player has completed the level.
+     * TODO: Protect from cheating with client calculations.
      *
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Level $level
      */
-    public function complete(Request $request, Level $level)
+    public function complete(Request $request, Level $level, LevelProgress $progress)
     {
         $progress = LevelProgress::findIncomplete(
             $level, $request->user(), $request->input('id')
