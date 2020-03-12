@@ -15,7 +15,7 @@ class CreateLevelProgressTable extends Migration
     {
         Schema::create('level_progress', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('string_id', 128)->nullable(true);
+            $table->string('string_id', 128)->unique();
             $table->unsignedBigInteger('user_id')->nullable(true);
             $table->unsignedBigInteger('level_id')->nullable(true);
 

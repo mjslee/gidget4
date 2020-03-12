@@ -27,6 +27,22 @@ class LevelProgress extends Model
     ];
 
     /**
+     * The "boot" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (LevelProgress $progress) {
+            do {
+                $progress->string_id = Str::random(128);
+            } while (self::where('string_id', $progress->string_id)->exists());
+        });
+    }
+
+    /**
      * Make a new progression session.
      *
      * @param \App\Models\Level $level A level object.
