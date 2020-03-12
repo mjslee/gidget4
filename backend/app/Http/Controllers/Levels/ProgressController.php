@@ -16,7 +16,7 @@ class ProgressController extends Controller
 {
     /**
      * 
-     * This view shows all progress instances owned by a level and user.
+     * This view displays all progress instances owned by a level and user.
      *
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Level $level
@@ -24,15 +24,33 @@ class ProgressController extends Controller
      */
     public function index(Request $request, Level $level)
     {
-        $user = $request->user();
-
-        if (is_null($user))
+        if (!Auth::check())
             abort(401);
 
+        $user = $request->user();
         $result = $level->progress()->where('user_id', $user->id)->paginate(10);
         return ProgressResource::collection($result);
     }
 
+
+    /**
+     * Show an individual ProgressResource instance.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Level $level
+     * @param \App\Models\LevelProgress $progress
+     * @return ProgressResource
+     */
+    public function show(Request $request, Level $level, LevelProgress $progress)
+    {
+        if (!$progress->user->is($request->user()))
+            return abort(403);
+
+        return new ProgressResource($progress);
+    }
+
+
+    /**
      * Show a user's progress of a level.
      *
      * @param \Illuminate\Http\Request $request

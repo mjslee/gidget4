@@ -42,7 +42,7 @@ class LevelProgressTest extends TestCase
         $level = factory(Level::class)->create();
         factory(LevelProgress::class)->create([
             'level_id' => $level->id,
-            'user_id' => $user->id
+            'user_id'  => $user->id
         ]);
 
         $response = $this->actingAs($user)->get(route('levels.progress.index', [
@@ -50,6 +50,70 @@ class LevelProgressTest extends TestCase
         ]));
 
         $response->assertSuccessful();
+    }
+
+
+    /**
+     * Ensure guests are shown the proper individual progress instance.
+     *
+     * @return void
+     */
+    public function testProgressControllerShowAsGuest() {
+        $user = factory(User::class)->create();
+        $level = factory(Level::class)->create();
+        $userProgress = factory(LevelProgress::class)->create([
+            'level_id' => $level->id,
+            'user_id' => $user->id
+        ]);
+        $guestProgress = factory(LevelProgress::class)->create([
+            'level_id' => $level->id
+        ]);
+
+        // unauthorized because the progress belongs to a user
+        $response = $this->get(route('levels.progress.show', [
+            'level'    => $level->id,
+            'progress' => $userProgress->id
+        ]));
+        $response->assertSuccessful();
+        $response->assertJson(['data' => ['level_id' => $level->id]]);
+
+        // by id
+        $response = $this->get(route('levels.progress.show', [
+            'level'    => $level->id,
+            'progress' => $guestProgress->id
+        ]));
+        $response->assertSuccessful();
+        $response->assertJson(['data' => ['level_id' => $level->id]]);
+    }
+
+
+    /**
+     * Ensure guests are shown the proper individual progress instance.
+     *
+     * @return void
+     */
+    public function testProgressControllerShowAsUser() {
+        $level = factory(Level::class)->create();
+        $user = factory(User::class)->create();
+        $userProgress = factory(LevelProgress::class)->create([
+            'level_id' => $level->id,
+            'user_id' => $user->id
+        ]);
+
+        $response = $this->actingAs($user)->get(route('levels.progress.show', [
+            'level'    => $level->id,
+            'progress' => $userProgress->id
+        ]));
+        $response->assertSuccessful();
+        $response->assertJson(['data' => ['level_id' => $level->id]]);
+
+        // another user should not be able to access our progress
+        $otherUser = factory(User::class)->create();
+        $response = $this->actingAs($otherUser)->get(route('levels.progress.show', [
+            'level'    => $level->id,
+            'progress' => $userProgress->id
+        ]));
+        $response->assertForbidden();
     }
 
 
