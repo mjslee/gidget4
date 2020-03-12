@@ -41,7 +41,7 @@ class LevelProgress extends Model
 
         if (is_null($user)) {
             do {
-                $obj->string_id = Str::random(64);
+                $obj->string_id = Str::random(128);
             } while (self::where('string_id', $obj->string_id)->exists());
         }
 
