@@ -15,6 +15,24 @@ use App\Http\Controllers\Controller;
 class ProgressController extends Controller
 {
     /**
+     * 
+     * This view shows all progress instances owned by a level and user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Level $level
+     * @return ProgressResource
+     */
+    public function index(Request $request, Level $level)
+    {
+        $user = $request->user();
+
+        if (is_null($user))
+            abort(401);
+
+        $result = $level->progress()->where('user_id', $user->id)->paginate(10);
+        return ProgressResource::collection($result);
+    }
+
      * Show a user's progress of a level.
      *
      * @param \Illuminate\Http\Request $request

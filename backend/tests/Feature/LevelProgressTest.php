@@ -5,15 +5,53 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 
+use App\Models\User;
 use App\Models\Level;
+use App\Models\LevelCode;
 use App\Models\LevelProgress;
 
 use Tests\TestCase;
 
 
-class ProgressTest extends TestCase
+class LevelProgressTest extends TestCase
 {
     use RefreshDatabase;
+
+
+    /**
+     * Ensure guests are unauthorized to view the progress index.
+     *
+     * @return void
+     */
+    public function testProgressControllerIndexAsGuest() {
+        $level = factory(Level::class)->create();
+        $response = $this->get(route('levels.progress.index', [
+            'level' => $level->id
+        ]));
+
+        $response->assertUnauthorized();
+    }
+
+    /**
+     * Ensure users are shown their progress for the levels they've played.
+     *
+     * @return void
+     */
+    public function testProgressControllerIndexAsUser() {
+        $user = factory(User::class)->create();
+        $level = factory(Level::class)->create();
+        factory(LevelProgress::class)->create([
+            'level_id' => $level->id,
+            'user_id' => $user->id
+        ]);
+
+        $response = $this->actingAs($user)->get(route('levels.progress.index', [
+            'level' => $level->id
+        ]));
+
+        $response->assertSuccessful();
+    }
+
 
     /**
      * Test creating new level progress as a guest.
