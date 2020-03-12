@@ -16,15 +16,28 @@ use App\Helpers\CodeHelper;
 class LevelProgress extends Model
 {
     /**
-     * Table name for LevelProgress.
-     * @var String
+     * @var String - Table name for LevelProgress.
      */
     protected $table = 'level_progress';
 
+
+    /**
+     * @var string - Fields that are mass-assignable.
+     */
     protected $fillable = [
         'ip_address',
         'user_agent',
     ];
+
+    /**
+     * Use string_id rather than id for URL casting.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'string_id';
+    } 
 
     /**
      * The "boot" method of the model.
@@ -67,49 +80,6 @@ class LevelProgress extends Model
     }
 
     /**
-     * Get latest incomplete progress of user for a level.
-     *
-     * @param \App\Models\Level $level
-     * @param \App\Models\User $user (optional)
-     * @param String $strId (optional) String ID of progress.
-     * @return LevelProgress
-     */
-    public static function findIncomplete(Level $level, User $user = null, String $strId = null): ?LevelProgress
-    {
-        if (is_null($level))
-            return null;
-
-        return self::query()
-            ->where(function ($query) use ($user, $strId) {
-                if (!is_null($user))
-                    $query->where('user_id', $user->id);
-                else
-                    $query->where('string_id', $strId);
-            })
-            ->firstWhere('level_id', $level->id);
-    }
-
-    /**
-     * Find current progress or create a new progress session.
-     *
-     * @param \App\Models\Level $level
-     * @param \App\Models\User $user (optional)
-     * @param String $strId (optional)
-     * @return LevelProgress
-     */
-    public static function findOrNew(Level $level, User $user = null, String $strId = null, array $attributes = [])
-    {
-        $progress = self::findIncomplete($level, $user, $strId);
-
-        if (is_null($progress)) {
-            $progress = self::makeInstance($level, $user, $attributes);
-            $progress->save();
-        }
-
-        return $progress;
-    }
-
-    /**
      * Set Progress as completed.
      * TODO: Compare against solution result.
      *
@@ -143,7 +113,7 @@ class LevelProgress extends Model
 
         $hash = CodeHelper::hashCode($code);
         $levelCode = $this->code()->firstOrNew(
-            [ 'hash' => $hash ], $attributes
+            ['hash' => $hash], $attributes
         );
 
         // code eval already exists, user ran the same code again
