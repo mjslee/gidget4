@@ -23,7 +23,8 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testProgressControllerIndexAsGuest() {
+    public function testProgressControllerIndexAsGuest()
+    {
         $level = factory(Level::class)->create();
         $response = $this->get(route('levels.progress.index', [
             'level' => $level->id
@@ -58,7 +59,8 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testProgressControllerShowAsGuest() {
+    public function testProgressControllerShowAsGuest()
+    {
         $user = factory(User::class)->create();
         $level = factory(Level::class)->create();
         $userProgress = factory(LevelProgress::class)->create([
@@ -92,7 +94,8 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testProgressControllerShowAsUser() {
+    public function testProgressControllerShowAsUser()
+    {
         $level = factory(Level::class)->create();
         $user = factory(User::class)->create();
         $userProgress = factory(LevelProgress::class)->create([
@@ -118,56 +121,44 @@ class LevelProgressTest extends TestCase
 
 
     /**
-     * Test creating new level progress as a guest.
+     * Ensure that a Progress can be created by a guest.
      *
      * @return void
      */
-    public function testNewProgressAsGuest()
+    public function testProgressControllerStoreAsGuest()
     {
         $level = factory(Level::class)->create();
-        $response = $this->get(route('progress.show', [
-            'level' => $level->id
-        ]));
+        $response = $this->post(
+            route('levels.progress.store', ['level' => $level->id]), []
+        );
 
-        $response->assertSuccessful();
-        $json = $response->json('data');
-
-        $this->assertEquals($json['level_id'], $level->id);
-        $this->assertEquals($json['user_id'], null);
-        $this->assertEquals($json['load_count'], 1);
-        $this->assertNotNull($json['string_id']);
+        $this->assertEquals(strlen($response->json('data')['id']), 128);
+        $this->assertEquals(strlen($response->json('data')['level_id']), $level->id);
     }
 
 
     /**
-     * Test that showing progress with an ID increments the load account.
+     * Ensure that a Progress can be created by a guest.
      *
      * @return void
      */
-    public function testShowProgressAsGuest()
+    public function testProgressControllerStoreAsUser()
     {
-        // first GET creates the progress
         $level = factory(Level::class)->create();
-        $response = $this->get(route('progress.show', [
-            'level' => $level->id
-        ]));
+        $user = factory(User::class)->create();
+        $response = $this->actingAs($user)->post(
+            route('levels.progress.store', ['level' => $level->id]), []
+        );
 
-        $this->assertEquals($response['data']['load_count'], '1');
+        $data = $response->json('data');
+        $progress = LevelProgress::query()->where('string_id', $data['id'])->firstOrFail();
 
-        // using the string_id of the progress response, check that the load
-        // count is incremented
-        $stringId = $response->json('data')['string_id'];
-        $response = $this->get(route('progress.show', [
-            'level' => $level->id, 'id' => $stringId
-        ]));
-
-        $progress = LevelProgress::query()->where([
-            'string_id' => $stringId
-        ])->first();
-
-        $this->assertEquals($progress->load_count, '2');
+        $this->assertEquals(strlen($data['id']), 128);
+        $this->assertEquals(strlen($data['level_id']), $level->id);
+        $this->assertTrue($progress->user->is($user));
+        $this->assertNotEmpty($progress->user_agent, 'Symfony');
+        $this->assertEquals($progress->ip_address, '127.0.0.1');
     }
-
 
     /**
      * Test progress code update.

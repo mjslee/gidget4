@@ -34,7 +34,7 @@ class ProgressController extends Controller
 
 
     /**
-     * Show an individual ProgressResource instance.
+     * Show an individual Progress Resource instance.
      *
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Level $level
@@ -47,6 +47,29 @@ class ProgressController extends Controller
             return abort(403);
 
         return new ProgressResource($progress);
+    }
+
+
+    /**
+     * Store a new Level Progress instance.
+     *
+     * @param \Illuminate\Http\Request $request [TODO:description]
+     * @param \App\Models\Level $level [TODO:description]
+     * @return [TODO:type] [TODO:description]
+     */
+    public function store(Request $request, Level $level)
+    {
+        $progress = $level->progress()->make([
+            'user_agent' => $request->header('User-Agent'),
+            'ip_address' => $request->ip()
+        ]);
+
+        if (Auth::check())
+            $progress->user()->associate($request->user());
+
+        $progress->save();
+
+        return new ProgressResource($progress->fresh());
     }
 
 
