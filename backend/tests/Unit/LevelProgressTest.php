@@ -17,43 +17,36 @@ class LevelProgressTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Test creating LevelProgress instance with user.
+     * Test creating LevelProgress instance as a guest.
      *
      * @return void
      */
-    public function testCreateProgress()
+    public function testCreateProgressAsGuest()
     {
         $level = factory(Level::class)->create();
-        $user = factory(User::class)->create();
+        $progress = $level->progress()->create();
 
-        $session = LevelProgress::createInstance($level, $user);
-        $session->save();
-
-        $freshSession = $session->fresh();
-        $this->assertNotNull($freshSession);
-        $this->assertEquals($freshSession->level->id, $level->id);
-        $this->assertEquals($freshSession->user->id, $user->id);
-        $this->assertNull($freshSession->string_id);
+        $this->assertNotNull($progress);
+        $this->assertTrue($progress->level->is($level));
+        $this->assertEquals($progress->user, null);
     }
 
     /**
-     * Test creating LevelProgress instance with null user.
+     * Test creating LevelProgress as a logged in user.
      *
      * @return void
      */
-    public function testCreateProgressGuest()
+    public function testCreateProgressAsUser()
     {
         $level = factory(Level::class)->create();
-        $user = null;
+        $progress = $level->progress()->create();
 
-        $session = LevelProgress::createInstance($level, $user);
-        $session->save();
+        $user = factory(User::class)->create();
+        $progress->user()->associate($user);
 
-        $freshSession = $session->fresh();
-        $this->assertNotNull($freshSession);
-        $this->assertEquals($freshSession->level->id, $level->id);
-        $this->assertNull($freshSession->user);
-        $this->assertNotNull($freshSession->string_id);
+        $this->assertNotNull($progress);
+        $this->assertTrue($progress->level->is($level));
+        $this->assertTrue($progress->user->is($user));
     }
 
     /**

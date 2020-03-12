@@ -43,28 +43,6 @@ class LevelProgress extends Model
     }
 
     /**
-     * Make a new progression session.
-     *
-     * @param \App\Models\Level $level A level object.
-     * @param \App\Models\User $user (optional) A user object.
-     * @return LevelProgress Instance of LevelProgress.
-     */
-    public static function makeInstance(Level $level, User $user = null, Array $attributes): LevelProgress
-    {
-        $obj = new LevelProgress($attributes);
-        $obj->level()->associate($level);
-        $obj->user()->associate($user);
-
-        if (is_null($user)) {
-            do {
-                $obj->string_id = Str::random(128);
-            } while (self::where('string_id', $obj->string_id)->exists());
-        }
-
-        return $obj;
-    }
-
-    /**
      * Get user that created level progress.
      */
     public function user()

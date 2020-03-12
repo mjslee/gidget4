@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\LevelProgress;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Level extends Model
 {
@@ -113,6 +114,17 @@ class Level extends Model
     public function collection(): BelongsToMany
     {
         return $this->belongsToMany(LevelCollection::class);
+    }
+
+
+    /**
+     * Many progress instances can belong to a level.
+     *
+     * @return HasMany
+     */
+    public function progress(): HasMany
+    {
+        return $this->hasMany(LevelProgress::class);
     }
 
 
