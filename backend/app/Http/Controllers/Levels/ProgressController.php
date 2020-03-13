@@ -32,7 +32,6 @@ class ProgressController extends Controller
         return ProgressResource::collection($result);
     }
 
-
     /**
      * Show an individual Progress Resource instance.
      *
@@ -48,7 +47,6 @@ class ProgressController extends Controller
 
         return new ProgressResource($progress);
     }
-
 
     /**
      * Store a new Level Progress instance.
@@ -105,10 +103,10 @@ class ProgressController extends Controller
      */
     public function complete(Request $request, Level $level, LevelProgress $progress)
     {
-        $progress = LevelProgress::findIncomplete(
-            $level, $request->user(), $request->input('id')
-        );
-        $progress->setComplete();
-    }
+        if (!is_null($progress->user) && !$progress->user->is($request->user()))
+            return abort(403);
 
+        $progress->setComplete();
+        return new ProgressResource($progress);
+    }
 }

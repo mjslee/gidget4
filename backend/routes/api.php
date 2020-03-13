@@ -55,6 +55,7 @@ Route::group(['prefix' => 'levels'], function () {
 Route::apiResource('levels.progress', 'Levels\ProgressController', );
 Route::group(['prefix' => '/{level}/progress/{progress}'], function() {
     Route::post('/run', 'Levels\ProgressController@run')->name('levels.progress.run');
+    Route::post('/complete', 'Levels\ProgressController@complete')->name('levels.progress.complete');
 });
 
 /**

@@ -87,7 +87,8 @@ class LevelProgress extends Model
      */
     public function setComplete(): void
     {
-        $this->update(['completed_at' => Carbon::now()]);
+        $this->completed_at = Carbon::now();
+        $this->save();
     }
 
     /**

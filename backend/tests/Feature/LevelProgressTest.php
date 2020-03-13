@@ -38,7 +38,8 @@ class LevelProgressTest extends TestCase
      *
      * @return void
      */
-    public function testProgressControllerIndexAsUser() {
+    public function testProgressControllerIndexAsUser()
+    {
         $user = factory(User::class)->create();
         $level = factory(Level::class)->create();
         factory(LevelProgress::class)->create([
@@ -179,7 +180,7 @@ class LevelProgressTest extends TestCase
 
         $data = '{"test": 1}';
         $route = route('levels.progress.run', [
-            'level' => $level->id,
+            'level'    => $level->id,
             'progress' => $stringId
         ]);
         $response = $this->post($route, [
@@ -188,7 +189,6 @@ class LevelProgressTest extends TestCase
             'code'  => 'true;',
             'data'  => $data
         ]);
-
 
         $progress = LevelProgress::query()->where('string_id', $stringId)->first();
         $this->assertEquals($progress->user_agent, 'Symfony');
@@ -203,8 +203,19 @@ class LevelProgressTest extends TestCase
      *
      * @return
      */
-    public function testProgressCompletionGuest()
+    public function testProgressControllerCompleteAsGuest()
     {
-        //
+        $level = factory(Level::class)->create();
+        $progress = factory(LevelProgress::class)->create();
+
+        $response = $this->post(
+            route('levels.progress.complete', [
+                'level' => $level->id,
+                'progress' => $progress->string_id
+            ]), []
+        );
+
+        $progress = $progress->refresh();
+        $this->assertNotNull($progress->completed_at);
     }
 }
