@@ -31,28 +31,15 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function () {
     Route::patch('/', 'Users\UserController@update')->name('user.update');
 });
 
-
 /**
  * Levels
  */
-Route::group(['prefix' => 'levels'], function () {
-    Route::get('/', 'Levels\LevelController@index')
-        ->name('level.index');
+Route::apiResource('levels', 'Levels\LevelController');
 
-    Route::post('/', 'Levels\LevelController@store')
-        ->middleware('auth:api')
-        ->name('level.store');
-
-    Route::post('/', 'Levels\LevelController@store')
-        ->middleware('auth:api')
-        ->name('level.store');
-
-    Route::get('/{level}', 'Levels\LevelController@show')
-        ->name('level.show');
-});
-
-
-Route::apiResource('levels.progress', 'Levels\ProgressController', );
+/**
+ * Level Progress
+ */
+Route::apiResource('levels.progress', 'Levels\ProgressController');
 Route::group(['prefix' => '/{level}/progress/{progress}'], function() {
     Route::post('/run', 'Levels\ProgressController@run')->name('levels.progress.run');
     Route::post('/complete', 'Levels\ProgressController@complete')->name('levels.progress.complete');

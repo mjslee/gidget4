@@ -23,7 +23,6 @@ class LevelTest extends TestCase
     {
         $obj = factory(Level::class)->create();
 
-        dd($obj);
         $obj = $obj->fresh();
 
         $this->assertIsArray($obj->level);

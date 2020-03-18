@@ -28,7 +28,7 @@ class LevelController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    function index(Request $request)
+    public function index(Request $request)
     {
         $levels = Level::all();
         return LevelIndexResource::collection($levels);

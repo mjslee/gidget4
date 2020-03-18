@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Feature;
 
+use App\Http\Resources\LevelResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -34,10 +35,10 @@ class LevelTest extends TestCase
 
         $response = $this
             ->actingAs($user, 'api')
-            ->json('post', route('level.store'), $data);
+            ->json('post', route('levels.store'), $data);
 
         $response
-            ->assertStatus(200);
+            ->assertStatus(201);
 
         $level = Level::first();
         $this->assertNotNull($level);
@@ -69,7 +70,7 @@ class LevelTest extends TestCase
 
         $response = $this
             ->actingAs($user, 'api')
-            ->json('post', route('level.store'), $data);
+            ->json('post', route('levels.store'), $data);
 
         $response
             ->assertStatus(422);
@@ -85,16 +86,20 @@ class LevelTest extends TestCase
     {
         $level = factory(Level::class)->create();
 
-        $response = $this->json('GET', route('level.show', [$level->id]));
-        $response
-            ->assertJson([
-                'data' => [
-                    'id'          => $level->id,
-                    'title'       => $level->title,
-                    'description' => $level->description,
-                    'type'        => $level->type,
-                    'level'       => $level->level,
-                ]
+        $response = $this
+            ->json('GET', route('levels.show', [$level->id]))
+            ->assertJsonFragment([
+                'id'          => $level->id,
+                'title'       => $level->title,
+                'description' => $level->description,
+                'type'        => $level->level['type'],
+                'size'        => $level->level['size'],
+                'code'        => $level->level['code'],
+                'tiles'       => $level->level['tiles'],
+                'objects'     => $level->level['objects'],
+                'goals'       => $level->level['goals'],
+                'dialogue'    => $level->level['dialogue'],
+                'imports'     => $level->level['imports']
             ]);
     }
 
