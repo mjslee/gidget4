@@ -240,7 +240,7 @@ export default {
     async runSteps() {
       // Advance steps until isRunning is flagged to false or when a step
       // has an error.
-      while (!this.$store.getters['game/isComplete']) {
+      while (!this.$store.getters['game/isEvalComplete']) {
         await this.setStep(this.gameStore.activeStep + 1);
         await wait(window.stepWait);
       }

@@ -215,7 +215,11 @@ export const actions = {
 
 
   /**
+   * Create game object and set up initial data in store.
    *
+   * @param {object} state
+   * @param {object} commit
+   * @return {void}
    */
   createGame({ state, commit }) {
     __gameState = Game.create(state.initialData);
@@ -225,7 +229,11 @@ export const actions = {
   },
 
   /**
+   * Reset the game state and game store.
    *
+   * @param {object} state
+   * @param {object} commit
+   * @return {void}
    */
   resetGame({ state, commit }) {
     commit('setRunning', false);
@@ -234,11 +242,17 @@ export const actions = {
     //commit('resetGoals');
 
     if (state.isReady)
-      return __gameState.reset();
+      __gameState.reset();
   },
 
   /**
+   * Restore a previous game state by its index.
    *
+   * @async
+   * @param {object} state
+   * @param {object} commit
+   * @param {number} index - Index of saved game state to restore.
+   * @return {void}
    */
   async setStepState({ state, commit }, index) {
     if (!state.isReady || !state.isRunning)
@@ -257,7 +271,13 @@ export const actions = {
   },
 
   /**
-   * 
+   * Evaluate player's code and update store with results.
+   *
+   * @async
+   * @param {object} state
+   * @param {object} commit
+   * @param {string} code - Code to be evaluated.
+   * @return {void}
    */
   async runCode({ state, commit }, code) {
     if (!state.isReady || state.isRunning)
@@ -282,7 +302,9 @@ export const actions = {
   },
 
   /**
+   * Set all goals to incomplete.
    *
+   * @return {void}
    */
   resetGoals({}) {
     state.goals.forEach((goal) => {
@@ -291,7 +313,12 @@ export const actions = {
   },
 
   /**
+   * Test if goals were all successfully completed.
    *
+   * @param {object} state
+   * @param {object} commit
+   * @param {object} dispatch
+   * @return {void}
    */
   validateGoals({ state, commit, dispatch }) {
     state.goals.forEach((goal) => {
@@ -300,7 +327,11 @@ export const actions = {
   },
 
   /**
+   * Assert a goal is completed.
    *
+   * @param {object} getters
+   * @param {array} assertion
+   * @return {void}
    */
   assertGoal({ getters }, assertion) {
     switch (assertion.assert) {
@@ -315,34 +346,49 @@ export const actions = {
       default:
         return false;
     }
-  }
+  },
+
+  updateObject() {
+
+  },
 };
 
 
 export const getters = {
   /**
+   * Test if stepper has a next step.
    *
+   * @param {number} activeStep - Current active step index.
+   * @param {number} stepCount - Amount of steps in the stepper.
+   * @return {boolean} Is there a next step in the stepper?
    */
   hasNextStep({ activeStep, stepCount }) {
     return stepCount == 0 || activeStep < stepCount;
   },
 
   /**
+   * Test if stepper has a previous step.
    *
+   * @param {number} activeStep - Current active step index.
+   * @return {boolean} Is there a previous step in the stepper?
    */
   hasPreviousStep({ activeStep }) {
     return activeStep > 0;
   },
 
   /**
+   * 
    *
+   * @param {number} activeStep - Index of the active step.
+   * @param {number} stepCount - Total amount of steps in the stepper.
+   * @return {boolean} Test if stepper has finished stepping all steps.
    */
-  isComplete({ activeStep, stepCount }) {
+  isEvalComplete({ activeStep, stepCount }) {
     return stepCount != 0 && activeStep >= stepCount;
   },
 
   /**
-   * Get 
+   * Get value of a symbol from the evaluated result.
    *
    * @param {string} key - Key of eval data object.
    * @param {any} defaultValue - Default value if data does not have the key.
@@ -360,9 +406,10 @@ export const getters = {
   },
 
   /**
-   * [TODO:description]
+   * Find and return the Gidget game object. DO NOT MUTATE.
    *
-   * @return {[TODO:type]} [TODO:description]
+   * @param {boolean} isReady - If game is ready (from store state).
+   * @return {object} - Gidget GameObject if Gidget exists.
    */
   getGidget({ isReady }) {
     return () => {
@@ -374,9 +421,10 @@ export const getters = {
   },
 
   /**
-   * [TODO:description]
+   * Get the game state directly from the game engine. DO NOT MUTATE.
    *
-   * @return {[TODO:type]} [TODO:description]
+   * @param {boolean} isReady - If game is ready (from store state).
+   * @return {object} Game state if game is ready.
    */
   getState({ isReady }) {
     if (!isReady)
