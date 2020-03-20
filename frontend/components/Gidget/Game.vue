@@ -52,6 +52,7 @@
     <!-- Inspectors -->
     <div class="column">
       <template v-if="editorMode">
+        <AddObjectButton />
         <ObjectEditor :object="selected" />
         <WorldSizeEditor v-model="worldSize" />
       </template>
@@ -91,8 +92,10 @@ import Goals from './Goals';
 import Controls from './Controls';
 import Dialogue from './Dialogue';
 import Inspector from './Inspector';
+
 import WorldSizeEditor from './Editor/WorldSizeEditor';
 import ObjectEditor from './Editor/ObjectEditor';
+import AddObjectButton from './Editor/AddObjectButton';
 
 import { wait } from '@/assets/gidget/game/gidget-utility';
 
@@ -108,6 +111,7 @@ export default {
 
     WorldSizeEditor,
     ObjectEditor,
+    AddObjectButton
   },
 
 
@@ -140,7 +144,7 @@ export default {
      */
     worldSize: {
       get() {
-        return this.game.world.size;
+        return this.$store.getters['game/getWorldSize'];
       },
       set(value) {
         return this.$store.commit('game/setWorldSize', value);
