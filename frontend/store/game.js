@@ -177,7 +177,16 @@ export const mutations = {
    */
   setActivity(state, { key, value }) {
     state.activity[key] += value;
-  }
+  },
+
+  /**
+   * Safely update game object properties.
+   *
+   * @return {void}
+   */
+  updateObject(state, { object, key, value, defaultValue }) {
+    _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
+  },
 };
 
 
@@ -241,7 +250,7 @@ export const actions = {
     commit('resetSteps');
     //commit('resetGoals');
 
-    if (state.isReady)
+    if (typeof __gameState != 'undefined' && state.isReady)
       __gameState.reset();
   },
 
