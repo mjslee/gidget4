@@ -16,6 +16,10 @@
         <b-input v-model="name" :placeholder="object.type" />
       </b-field>
 
+      <b-field>
+        <b-checkbox v-model="object.blocking">Blocking</b-checkbox>
+      </b-field>
+
       <b-field label="X" label-position="on-border">
         <b-numberinput min="0" :max="maxPos" v-model="x" controls-position="compact" />
       </b-field>
@@ -36,7 +40,6 @@
         <b-numberinput v-model="object.layer" controls-position="compact" />
       </b-field>
 
-      <b-checkbox v-model="object.blocking">Blocking</b-checkbox>
     </div>
   </div>
 </template>
@@ -189,7 +192,7 @@ export default {
      * @return {void}
      */
     updateObject(key, value, defaultValue) {
-      this.$store.commit('game/updateObject', {
+      this.$store.dispatch('game/updateObject', {
         object: this.object, key, value, defaultValue
       });
     }

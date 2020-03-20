@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import Vue from 'vue';
-import Game from '@/assets/gidget/game/gidget-game';
 import { Levels as LevelsEndpoint } from '@/constants/endpoints';
 
+import GidgetGame from '@/assets/gidget/game/gidget-game';
 let __gameState;
 
 /**
@@ -179,15 +179,6 @@ export const mutations = {
   setActivity(state, { key, value }) {
     state.activity[key] += value;
   },
-
-  /**
-   * Safely update game object properties.
-   *
-   * @return {void}
-   */
-  updateObject(state, { object, key, value, defaultValue }) {
-    _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
-  },
 };
 
 
@@ -232,7 +223,7 @@ export const actions = {
    * @return {void}
    */
   createGame({ state, commit }) {
-    __gameState = Game.create(state.initialData);
+    __gameState = GidgetGame.create(state.initialData);
     commit('setReady', true);
     commit('setRunning', false);
     commit('setData', __gameState.world.getObjectsSanitized());
@@ -358,8 +349,13 @@ export const actions = {
     }
   },
 
-  updateObject() {
-
+  /**
+   * Safely update game object properties.
+   *
+   * @return {void}
+   */
+  updateObject(state, { object, key, value, defaultValue }) {
+    _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
   },
 };
 
