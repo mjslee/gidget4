@@ -15,11 +15,12 @@ let __gameState;
  */
 export const state = () => ({
   gameState: () => __gameState,
+
+  key:  0,
+  code: '',
   
   isReady:   false,
   isRunning: false,
-  key:     0,
-  code:    '',
 
   activeLine:         -1,
   previousActiveLine: -1,
@@ -412,6 +413,15 @@ export const getters = {
 
       return typeof value == 'undefined' ? (defaultValue || key) : value;
     }
+  },
+
+  /**
+   * Get size of world.
+   *
+   * @return {number}
+   */
+  getWorldSize() {
+    return __gameState.world.size;
   },
 
   /**

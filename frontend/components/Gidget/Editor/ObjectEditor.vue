@@ -88,7 +88,7 @@ export default {
      * Maximum possible position for a square world.
      */
     maxPos() {
-      return this.$store.state.game.size - 1;
+      return this.$store.getters['game/getWorldSize'] - 1;
     },
 
     /**
