@@ -196,7 +196,7 @@ export default {
      */
     async setStep(index) {
       if (!this.$store.state.game.isRunning)
-        this.runScript();
+        await this.runScript();
 
       return await this.$store.dispatch('game/setStep', index);
     },
