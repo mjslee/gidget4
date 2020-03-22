@@ -152,7 +152,10 @@ export const actions = {
    * @param {number} index - Index of saved game state to restore.
    * @return {void}
    */
-  async setStepState({ state, commit }, index) {
+  async setStep({ state, commit }, index) {
+    if (!state.isRunning)
+      return;
+
     commit('setActiveStep', index);
     const step = await __game.set(index);
 
@@ -181,7 +184,6 @@ export const actions = {
       if (runner.steps.length < 1)
         return false;
 
-      commit('setActiveStep', 0);
       commit('setStepCount', runner.steps.length);
     }
 

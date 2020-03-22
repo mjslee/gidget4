@@ -120,6 +120,7 @@ export default {
     }
   },
 
+
   data() {
     return {
       game: undefined,
@@ -127,12 +128,14 @@ export default {
     }
   },
 
+
   mounted() {
     window.stepWait     = 100;
     window.stepDuration = 500;
 
     this.game = this.$store.getters['game/getGame']();
   },
+
 
   methods: {
     /**
@@ -172,10 +175,15 @@ export default {
      * @return {void}
      */
     async runSteps() {
+      if (!this.$store.state.game.isRunning)
+        this.runScript();
+
       // Advance steps until isRunning is flagged to false or when a step
       // has an error.
       while (!this.$store.getters['game/isEvalComplete']) {
-        await this.setStep(this.$store.state.game.activeStep + 1);
+        await this.$store.dispatch('game/setStep',
+          this.$store.state.game.activeStep + 1);
+
         await wait(window.stepWait);
       }
     },
@@ -190,8 +198,9 @@ export default {
       if (!this.$store.state.game.isRunning)
         this.runScript();
 
-      await this.$store.dispatch('game/setStepState', index);
+      return await this.$store.dispatch('game/setStep', index);
     },
   }
+
 }
 </script>
