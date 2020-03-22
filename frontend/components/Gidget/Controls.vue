@@ -4,9 +4,9 @@
     <input
       type="range"
       min="0" :max="stepCount"
-      v-on:change="$emit('step', activeStep)"
+      :model.number="activeStep"
+      v-on:change="$emit('step', $event.target.value)"
     />
-      <!-- v&#45;model.number="activeStep" -->
 
     <span>{{ activeStep }}/{{ stepCount }}</span>
 
@@ -111,7 +111,7 @@ export default {
     activeStep() {
       return this.$store.state.game.activeStep;
     }
-  }
+  },
 
 }
 </script>
