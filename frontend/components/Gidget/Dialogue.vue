@@ -1,17 +1,11 @@
 <template>
-  <div style="position:relative">
-    <img class="left head image is-64x64" :src="leftImage" v-if="leftImage">
-    <img class="right head image is-64x64" :src="rightImage" v-if="rightImage">
+  <div class="container" v-if="message">
+    <img class="left head image is-64x64" :src="sprite" v-if="sprite">
 
     <div class="box">
       <template v-if="message">
         <!-- Markdown -->
-        <GidgetText :text="message.text" />
-
-        <!-- Message Repeats -->
-        <span class="tag is-info is-rounded is-small" v-if="message.repeats">
-          {{ message.repeats }}
-        </span>
+        <gidget-text :text="message.text" />
       </template>
 
       <div class="buttons has-addons is-centered">
@@ -19,7 +13,7 @@
         <b-button
           icon-left="chevron-left"
           :disabled="!hasPrev"
-          @click="prev"
+          @click="index--"
         >
           Prev
         </b-button>
@@ -29,12 +23,12 @@
           type="is-primary"
           icon-right="chevron-right"
           :disabled="!hasNext"
-          @click="next"
+          @click="index++"
         >
           Next
         </b-button>
 
-        <span>&nbsp;{{ messageIndex }}/{{ internalMessages.length - 1 }}</span>
+        <span>&nbsp;{{ index }}/{{ messages.length - 1 }}</span>
       </div>
     </div>
   </div>
@@ -42,6 +36,10 @@
 
 
 <style scoped>
+.container {
+  position: relative;
+}
+
 .buttons {
   margin-top: 1rem;
 }
@@ -67,26 +65,19 @@
 .left.head {
   transform: rotate(-5deg);
 }
-
-.right.head {
-  right: 0;
-  transform: rotate(5deg);
-  animation-duration: 750ms;
-}
 </style>
 
 
 <script>
-import GidgetValue from './Value'
-import GidgetText from './Text'
-import { SPRITE_PATH } from '@/constants/paths'
+import GidgetValue from './Value';
+import GidgetText from './Text';
+import { SPRITE_PATH } from '@/constants/paths';
 
 
 export default {
   props: {
     messages: {
-      type: Array,
-      default: () => []
+      type: Array
     }
   },
 
@@ -99,139 +90,50 @@ export default {
 
   data() {
     return {
-      messageIndex: 0,
-      internalMessages: _.cloneDeep(this.messages),
-
-      isSuccess: false,
-      isFailure: false
+      index: 0
     }
   },
 
 
   computed: {
     /**
-     *
+     * Active message.
      */
     message() {
-      return this.internalMessages[this.messageIndex]
-    },
-
-    /**
-     *
-     */
-    hasPrev() {
-      return this.messageIndex > 0
-    },
-
-    /**
-     *
-     */
-    hasNext() {
-      return this.messageIndex < this.internalMessages.length - 1
-    },
-
-    /**
-     *
-     */
-    rightImage() {
-      if (typeof this.message != 'undefined' && this.message.rightImage)
-        return SPRITE_PATH + this.message.rightImage
-    },
-
-    /**
-     *
-     */
-    leftImage() {
-      if (typeof this.message != 'undefined' && this.message.leftImage)
-        return SPRITE_PATH + this.message.leftImage
-    }
-  },
-
-
-  watch: {
-    /**
-     *
-     */
-    messages(newVal, oldVal) {
-      if (!Array.isArray(newVal))
-        return
-
-      this.internalMessages = _.cloneDeep(newVal)
-      this.messageIndex = _.isEmpty(oldVal) ? 0 : newVal.length - 1
-    }
-  },
-
-
-  methods: {
-    /**
-     * Reset dialogue to initial messages.
-     */
-    reset() {
-      this.messageIndex = 0
-    },
-
-    /**
-     * Set dialogue box content and style.
-     *
-     * @param {array[object]} messages
-     * @return {void}
-     *
-     * @example
-     *   set([{ text: 'First message.' }, { text: 'Second message.' }])
-     */
-    set(messages, index=-1) {
-      this.internalMessages = messages
-      this.messageIndex = index >= 0 ? index : messages.length - 1
-    },
-
-
-    /**
-     * Appends as message to the end of the messages list.
-     *
-     * @param {object} message
-     * @return {void}
-     *
-     * @example
-     *   append({ text: 'Example text.' })
-     */
-    append(message) {
-      // Validate message input
-      if (!(typeof message == 'object' && typeof message.text == 'string'))
-        return
-
-      // Block duplicate appends
-      if (this.internalMessages.length > 0) {
-        const lastMessage = this.internalMessages[this.internalMessages.length - 1]
-        if (message.text === lastMessage.text)
-          return
+      if (typeof this.index != 'number') {
+        this.index = 0;
+        return;
       }
 
-      // Append message to internal message list
-      this.internalMessages.push(message)
-      this.messageIndex = this.internalMessages.length - 1
-    },
+      if (this.index < 0) {
+        this.index = 0;
+        return;
+      }
 
+      return this.messages[this.index];
+    },
 
     /**
-     * Load next message by incrementing index.
-     *
-     * @return {void}
+     * Does a previous message exist?
      */
-    next() {
-      if (this.hasNext)
-        this.messageIndex += 1
+    hasPrev() {
+      return this.index > 0;
     },
-
 
     /**
-     * Load previous message by decrementing index.
-     *
-     * @return {void}
+     * Does a next message exist?
      */
-    prev() {
-      if (this.hasPrev)
-        this.messageIndex -= 1
+    hasNext() {
+      return this.index < this.messages.length - 1;
     },
-  },
+
+    /**
+     * Get url to left-side sprite if applicable.
+     */
+    sprite() {
+      if (this.message && this.message.sprite)
+        return SPRITE_PATH + this.message.sprite + '.png';
+    }
+  }
 }
 </script>
