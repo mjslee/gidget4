@@ -3,14 +3,7 @@
     <!-- Code and Goals -->
     <div class="column is-one-third">
       <div class="card">
-        <Code
-          v-model="code"
-          :activeLine="gameStore.activeLine"
-          :errorLine="gameStore.errorLine"
-          :previousActiveLine="gameStore.previousActiveLine"
-          :previousErrorLine="gameStore.previousErrorLine"
-          :isRunning="gameStore.isRunning"
-        />
+        <Code v-model="code" />
 
         <div class="card-footer"></div>
         <div class="card-content">

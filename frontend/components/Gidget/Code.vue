@@ -1,6 +1,6 @@
 <template>
   <div>
-    <codemirror ref="code" v-model="code" :options="codemirrorOptions" />
+    <codemirror ref="code" v-model="code" :options="options" />
   </div>
 </template>
 
@@ -27,12 +27,6 @@ export default {
 
   props: {
     value: String,
-
-    activeLine:         Number,
-    previousActiveLine: Number,
-
-    errorLine:          Number,
-    previousErrorLine:  Number
   },
 
 
@@ -64,14 +58,50 @@ export default {
       set(value) {
         return this.$emit('input', value);
       }
-    }
+    },
+
+    /**
+     * Active line number.
+     *
+     * @return {number}
+     */
+    activeLine() {
+      return this.$store.state.game.activeLine;
+    },
+
+    /**
+     * Line number of previously active line.
+     *
+     * @return {number}
+     */
+    previousActiveLine() {
+      return this.$store.state.game.previousActiveLine;
+    },
+
+    /**
+     * Line number with error.
+     *
+     * @return {number}
+     */
+    errorLine() {
+      return this.$store.state.game.errorLine;
+    },
+
+    /**
+     * Line number of the previous error line.
+     *
+     * @return {number}
+     */
+    previousErrorLine() {
+      return this.$store.state.game.previousErrorLine;
+    },
   },
 
 
   data() {
     return {
       // Editor
-      codemirrorOptions: {
+      options: {
         tabSize:     2,
         line:        true,
         lineNumbers: true,
