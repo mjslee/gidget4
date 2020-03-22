@@ -12,8 +12,6 @@
             @validate="$store.dispatch('game/validateGoals')"
           />
           <Controls ref="controls"
-            :stepCount="gameStore.stepCount"
-            :activeStep="gameStore.activeStep"
             @step="setStep"
             @run="runSteps"
             @stop="stopScript"

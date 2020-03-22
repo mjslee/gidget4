@@ -64,13 +64,6 @@
 <script>
 export default {
 
-  props: {
-    stepCount:  Number,
-    activeStep: Number,
-    isRunning:  Boolean
-  },
-
-
   computed: {
     /**
      * Is there a previous step?
@@ -100,6 +93,24 @@ export default {
     isComplete() {
       return this.activeStep >= this.stepCount;
     },
+
+    /**
+     * Amount of steps.
+     *
+     * @return {number}
+     */
+    stepCount() {
+      return this.$store.state.game.stepCount;
+    },
+
+    /**
+     * Index of active step.
+     *
+     * @return {number}
+     */
+    activeStep() {
+      return this.$store.state.game.activeStep;
+    }
   }
 
 }
