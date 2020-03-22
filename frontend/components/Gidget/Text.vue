@@ -50,7 +50,7 @@ export default {
       if (typeof this.text !== 'string')
         return '[error]';
 
-      return DOMPurify.sanitize(Marked(this.text.replace(/```/g, '\n```')))
+      return DOMPurify.sanitize(Marked(this.text.replace(/```/g, '\n```')));
     },
 
     /**

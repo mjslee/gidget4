@@ -30,15 +30,8 @@ export const state = () => ({
   activeStep: 0,
   stepCount:  0,
 
-  activity: {
-    activeSeconds:   0,
-    inactiveSeconds: 0,
-    codeSeconds:     0,
-    popupSeconds:    0,
-
-    validations: 0,
-    arrowKeys:   0,
-  },
+  goals: [],
+  evalData: {},
 
   initialData: {
     size: 3,
@@ -48,9 +41,6 @@ export const state = () => ({
     dialogue: [],
     imports:  []
   },
-
-  goals: [],
-  evalData: {},
 });
 
 
@@ -171,13 +161,6 @@ export const mutations = {
    */
   setGoalStatus(state, { goal, status }) {
     Vue.set(goal, 'isComplete', status);
-  },
-
-  /**
-   *
-   */
-  setActivity(state, { key, value }) {
-    state.activity[key] += value;
   },
 };
 
