@@ -3,7 +3,7 @@
     <!-- Code and Goals -->
     <div class="column is-one-third">
       <div class="card">
-        <Code v-model="code" />
+        <Code />
 
         <div class="card-footer"></div>
         <div class="card-content">
@@ -23,31 +23,19 @@
       <div class="world">
         <World
           :size="worldSize"
-          :objects="gameObjects"
-          :tiles="gameTiles"
+          :objects="objects"
+          :tiles="tiles"
           @selected="selected = arguments[0]"
         />
       </div>
 
-      <template v-if="editorMode">
-        <Dialogue ref="dialogue" :messages="gameDialogue" />
-      </template>
-      <template v-else>
-        <Dialogue ref="dialogue" :messages="gameDialogue" />
-      </template>
+      <Dialogue :messages="dialogue" />
     </div>
 
     <!-- Inspectors -->
     <div class="column">
-      <template v-if="editorMode">
-        <AddObjectButton />
-        <ObjectEditor :object="selected" />
-        <WorldSizeEditor v-model="worldSize" />
-      </template>
-      <template v-else>
-        <Inspector :object="player" />
-        <Inspector :object="selected" />
-      </template>
+      <Inspector :object="player" />
+      <Inspector :object="selected" />
     </div>
   </div>
 </template>
@@ -81,10 +69,6 @@ import Controls from './Controls';
 import Dialogue from './Dialogue';
 import Inspector from './Inspector';
 
-import WorldSizeEditor from './Editor/WorldSizeEditor';
-import ObjectEditor from './Editor/ObjectEditor';
-import AddObjectButton from './Editor/AddObjectButton';
-
 import { wait } from '@/assets/gidget/game/gidget-utility';
 
 
@@ -95,102 +79,60 @@ export default {
     Inspector,
     Dialogue,
     Goals,
-    Controls,
-
-    WorldSizeEditor,
-    ObjectEditor,
-    AddObjectButton
+    Controls
   },
 
-
-  props: {
-    editorMode: { type: Boolean, default: false },
-  },
 
   computed: {
     /**
      *
      */
-    gameStore() {
-      return this.$store.state.game;
+    worldSize() {
+      return this.$store.getters['game/getWorldSize'];
     },
 
     /**
      *
      */
-    code: {
-      get() {
-        return this.gameStore.code;
-      },
-      set(value) {
-        return this.$store.commit('game/setCode', value);
-      }
-    },
-
-    /**
-     *
-     */
-    worldSize: {
-      get() {
-        return this.$store.getters['game/getWorldSize'];
-      },
-      set(value) {
-        return this.$store.commit('game/setWorldSize', value);
-      }
-    },
-
-    /**
-     *
-     */
-    gameObjects() {
+    objects() {
       return this.game.world.objects;
     },
 
     /**
      *
      */
-    gameTiles() {
+    tiles() {
       return this.game.world.tiles;
     },
 
     /**
      *
      */
-    gameDialogue() {
-      return this.game.world.dialogue
+    dialogue() {
+      return this.game.world.dialogue;
     },
-  },
 
+    /**
+     *
+     */
+    player() {
+      return this.$store.getters['game/getGidget']();
+    }
+  },
 
   data() {
     return {
-      // Game World
       game: undefined,
-
-      // World Objects
-      player:   undefined,
       selected: undefined,
     }
   },
 
-  created() {
-    this.$store.dispatch('game/createGame');
-    this.game = this.$store.state.game.gameState();
-  },
-
-
   mounted() {
     window.stepWait     = 100;
     window.stepDuration = 500;
-    //window.$store = this.$store
 
-    this.player = this.$store.getters['game/getGidget']();
+    this.game = this.$store.getters['game/getGame']();
   },
-
-  destroyed() {
-    this.$store.dispatch('game/resetGame');
-  },
-
 
   methods: {
     /**
@@ -200,7 +142,7 @@ export default {
      */
     async runScript() {
       await this.$store.dispatch('game/resetGame');
-      await this.$store.dispatch('game/runCode');
+      await this.$store.dispatch('game/runCode', this.$store.state.code.value);
       this.$emit('run');
     },
 
@@ -230,10 +172,12 @@ export default {
      * @return {void}
      */
     async runSteps() {
+      this.runScript();
+
       // Advance steps until isRunning is flagged to false or when a step
       // has an error.
       while (!this.$store.getters['game/isEvalComplete']) {
-        await this.setStep(this.gameStore.activeStep + 1);
+        await this.setStep(this.$store.state.game.activeStep + 1);
         await wait(window.stepWait);
       }
     },
@@ -245,9 +189,6 @@ export default {
      * @return {boolean} True if a next step exists.
      */
     async setStep(index) {
-      if (!this.gameStore.isRunning)
-        this.runScript();
-
       await this.$store.dispatch('game/setStepState', index);
     },
   }

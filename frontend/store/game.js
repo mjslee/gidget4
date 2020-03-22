@@ -1,94 +1,30 @@
-import _ from 'lodash';
 import Vue from 'vue';
+import GidgetGame from '@/assets/gidget/game/gidget-game';
 import { Levels as LevelsEndpoint } from '@/constants/endpoints';
 
-import GidgetGame from '@/assets/gidget/game/gidget-game';
-let __gameState;
+let __game;
 
-/**
- * State of the `level` store.
- * This is the INITIAL game state created from a level object.
- * Mutating this object will have no effect on the running game.
- *
- * @function state
- * @return object
- */
+
 export const state = () => ({
-  gameState: () => __gameState,
-
   key:  0,
-  code: '',
   
   isReady:   false,
   isRunning: false,
 
-  activeLine:         -1,
-  previousActiveLine: -1,
-  errorLine:          -1,
-  previousErrorLine:  -1,
-
   activeStep: 0,
   stepCount:  0,
 
-  goals: [],
   evalData: {},
-
-  initialData: {
-    size: 3,
-    tiles:    [],
-    objects:  [],
-    goals:    [],
-    dialogue: [],
-    imports:  []
-  },
+  initialData: { size: 3, tiles: [], objects: [], dialogue: [], imports: [] },
 });
 
 
 export const mutations = {
   /**
-   * Load a level object's keys into the state.
-   *
-   * @param {object} state - Vuex state.
-   * @param {object} level - Level object.
-   * @return {void}
-   */
-  load(state, data) {
-    Object.assign(state.initialData, data);
-    state.code = data.code;
-    state.key += 1;
-    Vue.set(state, 'goals', _.cloneDeep(data.goals));
-    console.debug("Level Loaded:", data, state.key);
-  },
-
-  /**
-   * Reload game by updating the key to update attached components.
-   *
-   * @param {object} state
-   * @return {void}
-   */
-  reload(state) {
-    state.key += 1;
-  },
-
-  /**
    *
    */
-  setData(state, data) {
-    Vue.set(state, 'evalData', data);
-  },
-
-  /**
-   *
-   */
-  setWorldSize(state, value) {
-    __gameState.world.size = value;
-  },
-
-  /**
-   *
-   */
-  setCode(state, value) {
-    state.code = value;
+  setRunning(state, value) {
+    state.isRunning = value;
   },
 
   /**
@@ -101,42 +37,30 @@ export const mutations = {
   /**
    *
    */
-  setRunning(state, value) {
-    state.isRunning = value;
+  reloadGame(state) {
+    state.key += 1;
   },
 
   /**
    *
    */
-  resetLines(state) {
-    state.activeLine         = -1;
-    state.previousActiveLine = -1;
-    state.errorLine          = -1;
-    state.previousErrorLine  = -1;
+  setInitialData(state, data) {
+    Object.assign(state.initialData, data);
+    //state.initialData = data;
   },
 
   /**
    *
    */
-  resetSteps(state) {
-    state.activeStep = 0;
-    state.stepCount  = 0;
+  setEvalData(state, data) {
+    Vue.set(state, 'evalData', data);
   },
 
   /**
    *
    */
-  setActiveLine(state, ln) {
-    state.previousActiveLine = state.activeLine;
-    state.activeLine = ln;
-  },
-
-  /**
-   *
-   */
-  setErrorLine(state, ln) {
-    state.previousErrorLine = state.errorLine;
-    state.errorLine = ln;
+  setWorldSize(state, value) {
+    __game.world.size = value;
   },
 
   /**
@@ -154,13 +78,6 @@ export const mutations = {
    */
   setStepCount(state, value) {
     state.stepCount = value;
-  },
-
-  /**
-   *
-   */
-  setGoalStatus(state, { goal, status }) {
-    Vue.set(goal, 'isComplete', status);
   },
 };
 
@@ -184,19 +101,18 @@ export const actions = {
   },
 
   /**
-   * Fetch level from API and load it.
+   * Load a level object's keys into the state.
    *
-   * @async
-   * @param {object} commit
-   * @param {object} dispatch
-   * @param {number|string} id
+   * @param {object} state - Vuex state.
+   * @param {object} data - Level data.
    * @return {void}
    */
-  async fetchAndLoad({ commit, dispatch }, { id }) {
-    const data = await dispatch('fetchLevel', { id });
-    commit('load', data);
+  loadLevel({ state, commit, dispatch }, data) {
+    commit('setInitialData', data);
+    commit('code/setValue', data.code, { root: true });
+    dispatch('createGame');
+    console.debug('Level Loaded:', data, state.key);
   },
-
 
   /**
    * Create game object and set up initial data in store.
@@ -205,11 +121,10 @@ export const actions = {
    * @param {object} commit
    * @return {void}
    */
-  createGame({ state, commit }) {
-    __gameState = GidgetGame.create(state.initialData);
-    commit('setReady', true);
-    commit('setRunning', false);
-    commit('setData', __gameState.world.getObjectsSanitized());
+  createGame({ state, commit }, data) {
+    __game = GidgetGame.create(data || state.initialData);
+    commit('setEvalData', __game.world.getObjectsSanitized());
+    commit('reloadGame');
   },
 
   /**
@@ -220,13 +135,10 @@ export const actions = {
    * @return {void}
    */
   resetGame({ state, commit }) {
-    commit('setRunning', false);
-    commit('resetLines');
-    commit('resetSteps');
-    //commit('resetGoals');
+    commit('code/resetLines', null, { root: true });
 
-    if (typeof __gameState != 'undefined' && state.isReady)
-      __gameState.reset();
+    if (typeof __game != 'undefined')
+      __game.reset();
   },
 
   /**
@@ -239,16 +151,13 @@ export const actions = {
    * @return {void}
    */
   async setStepState({ state, commit }, index) {
-    if (!state.isReady || !state.isRunning)
-      return;
-
     commit('setActiveStep', index);
-    const step = await __gameState.set(index);
+    const step = await __game.set(index);
 
     if (typeof step != 'undefined') {
-      commit('setActiveLine', step.ln - 1);
+      commit('code/setActiveLine', step.ln - 1, { root: true });
       if (typeof step.gameData == 'object')
-        commit('setData', step.gameData);
+        commit('setEvalData', step.gameData);
     }
 
     return step;
@@ -264,72 +173,21 @@ export const actions = {
    * @return {void}
    */
   async runCode({ state, commit }, code) {
-    if (!state.isReady || state.isRunning)
-      return;
-
-    const runner = await __gameState.run(code || state.code);
+    const runner = await __game.run(code);
 
     if (typeof runner.steps == 'object') {
       if (runner.steps.length < 1)
         return false;
 
-      commit('setRunning', true);
       commit('setStepCount', runner.steps.length);
     }
 
     // Set error line 
-    if (typeof __gameState.error == 'object') {
+    if (typeof __game.error == 'object') {
       //
     }
 
     return runner;
-  },
-
-  /**
-   * Set all goals to incomplete.
-   *
-   * @return {void}
-   */
-  resetGoals({}) {
-    state.goals.forEach((goal) => {
-      Vue.set(goal, 'isComplete', undefined);
-    });
-  },
-
-  /**
-   * Test if goals were all successfully completed.
-   *
-   * @param {object} state
-   * @param {object} commit
-   * @param {object} dispatch
-   * @return {void}
-   */
-  validateGoals({ state, commit, dispatch }) {
-    state.goals.forEach((goal) => {
-      commit('setGoalStatus', { goal, status: dispatch('assertGoal', goal) });
-    });
-  },
-
-  /**
-   * Assert a goal is completed.
-   *
-   * @param {object} getters
-   * @param {array} assertion
-   * @return {void}
-   */
-  assertGoal({ getters }, assertion) {
-    switch (assertion.assert) {
-        // Equality assertion
-      case 'equal':
-        const a = getters['getValue'](assertion.arguments[0]);
-        const b = getters['getValue'](assertion.arguments[1]);
-        console.debug(assertion, a, b);
-        return a == b;
-
-        // Default assertion
-      default:
-        return false;
-    }
   },
 
   /**
@@ -344,27 +202,6 @@ export const actions = {
 
 
 export const getters = {
-  /**
-   * Test if stepper has a next step.
-   *
-   * @param {number} activeStep - Current active step index.
-   * @param {number} stepCount - Amount of steps in the stepper.
-   * @return {boolean} Is there a next step in the stepper?
-   */
-  hasNextStep({ activeStep, stepCount }) {
-    return stepCount == 0 || activeStep < stepCount;
-  },
-
-  /**
-   * Test if stepper has a previous step.
-   *
-   * @param {number} activeStep - Current active step index.
-   * @return {boolean} Is there a previous step in the stepper?
-   */
-  hasPreviousStep({ activeStep }) {
-    return activeStep > 0;
-  },
-
   /**
    * 
    *
@@ -399,8 +236,8 @@ export const getters = {
    *
    * @return {number}
    */
-  getWorldSize() {
-    return __gameState.world.size;
+  getWorldSize(state, getters) {
+    return __game.world.size;
   },
 
   /**
@@ -411,10 +248,7 @@ export const getters = {
    */
   getGidget({ isReady }) {
     return () => {
-      if (!isReady)
-        return;
-
-      return __gameState.world.objects.find(obj => obj.name === 'Gidget');
+      return __game.world.objects.find(obj => obj.name === 'Gidget');
     };
   },
 
@@ -424,11 +258,15 @@ export const getters = {
    * @param {boolean} isReady - If game is ready (from store state).
    * @return {object} Game state if game is ready.
    */
-  getState({ isReady }) {
-    if (!isReady)
-      return;
-
-    return __gameState.world.getState();
+  getWorldState({ isReady }) {
+    return __game.world.getState();
   },
+
+  /**
+   *
+   */
+  getGame() {
+    return () => __game;
+  }
   
 };
