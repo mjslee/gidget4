@@ -11,7 +11,7 @@
             :goals="gameStore.goals"
             @validate="$store.dispatch('game/validateGoals')"
           />
-          <Controls ref="controls"
+          <Controls
             @step="setStep"
             @run="runSteps"
             @stop="stopScript"
@@ -24,7 +24,7 @@
     <!-- World and Dialogue -->
     <div class="column">
       <div class="world">
-        <World ref="world"
+        <World
           :size="worldSize"
           :objects="gameObjects"
           :tiles="gameTiles"
