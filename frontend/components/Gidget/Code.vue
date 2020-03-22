@@ -53,10 +53,10 @@ export default {
      */
     code: {
       get() {
-        return this.value;
+        return this.$store.state.code.value;
       },
       set(value) {
-        return this.$emit('input', value);
+        this.$store.commit('code/setValue', value);
       }
     },
 
