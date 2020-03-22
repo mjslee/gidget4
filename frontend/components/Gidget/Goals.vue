@@ -48,15 +48,17 @@ export default {
   },
 
 
-  props: {
-    goals: Array[Object]
-  },
-
-
   data() {
     return {
       reveal: true
     };
+  },
+
+
+  computed: {
+    goals() {
+      return this.$store.state.game.goals;
+    }
   },
 
 

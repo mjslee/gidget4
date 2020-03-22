@@ -7,10 +7,7 @@
 
         <div class="card-footer"></div>
         <div class="card-content">
-          <Goals
-            :goals="gameStore.goals"
-            @validate="$store.dispatch('game/validateGoals')"
-          />
+          <Goals />
           <Controls
             @step="setStep"
             @run="runSteps"
