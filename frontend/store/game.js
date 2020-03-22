@@ -136,9 +136,11 @@ export const actions = {
    */
   resetGame({ state, commit }) {
     commit('code/resetLines', null, { root: true });
+    commit('setActiveStep', 0);
+    commit('setStepCount', 0);
+    commit('setRunning', false);
 
-    if (typeof __game != 'undefined')
-      __game.reset();
+    __game.reset();
   },
 
   /**
@@ -179,6 +181,7 @@ export const actions = {
       if (runner.steps.length < 1)
         return false;
 
+      commit('setActiveStep', 0);
       commit('setStepCount', runner.steps.length);
     }
 
@@ -187,6 +190,7 @@ export const actions = {
       //
     }
 
+    commit('setRunning', true);
     return runner;
   },
 

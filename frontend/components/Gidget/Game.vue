@@ -172,8 +172,6 @@ export default {
      * @return {void}
      */
     async runSteps() {
-      this.runScript();
-
       // Advance steps until isRunning is flagged to false or when a step
       // has an error.
       while (!this.$store.getters['game/isEvalComplete']) {
@@ -189,6 +187,9 @@ export default {
      * @return {boolean} True if a next step exists.
      */
     async setStep(index) {
+      if (!this.$store.state.game.isRunning)
+        this.runScript();
+
       await this.$store.dispatch('game/setStepState', index);
     },
   }
