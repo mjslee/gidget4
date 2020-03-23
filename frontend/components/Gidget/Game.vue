@@ -7,8 +7,8 @@
 
         <div class="card-footer"></div>
         <div class="card-content">
-          <Goals />
-          <Controls
+          <goals />
+          <controls
             @step="setStep"
             @run="runSteps"
             @stop="stopScript"
@@ -21,7 +21,7 @@
     <!-- World and Dialogue -->
     <div class="column">
       <div class="world">
-        <World
+        <world
           :size="worldSize"
           :objects="objects"
           :tiles="tiles"
@@ -33,8 +33,8 @@
 
     <!-- Inspectors -->
     <div class="column">
-      <Inspector :object="player" />
-      <Inspector :object="selected" />
+      <object-inspector v-bind.sync="playerObject" />
+      <object-inspector v-bind.sync="selectedObject" />
     </div>
   </div>
 </template>
@@ -66,7 +66,7 @@ import World from './World';
 import Goals from './Goals';
 import Controls from './Controls';
 import Dialogue from './Dialogue';
-import Inspector from './Inspector';
+import ObjectInspector from './ObjectInspector';
 
 import { wait } from '@/assets/gidget/game/gidget-utility';
 
@@ -75,7 +75,7 @@ export default {
   components: {
     Code,
     World,
-    Inspector,
+    ObjectInspector,
     Dialogue,
     Goals,
     Controls
@@ -114,14 +114,14 @@ export default {
     /**
      *
      */
-    player() {
+    playerObject() {
       return this.$store.getters['game/getGidget']();
     },
 
     /**
      *
      */
-    selected() {
+    selectedObject() {
       return this.$store.getters['game/getSelectedObject']();
     }
   },

@@ -1,5 +1,5 @@
 <template>
-  <div :id="`tile-${x}-${y}`" :class="tileClass" :style="tileStyle" />
+  <div :id="`tile-${id}`" :class="tileClass" :style="tileStyle" @click="select"></div>
 </template>
 
 
@@ -8,7 +8,7 @@
 .dirt        { background-image: url("/gidget/sprites/dirt.png"); }
 .cobblestone { background-image: url("/gidget/sprites/cobblestone.png"); }
 
-div {
+.tile {
   display: inline-block;
   background-size: contain;
   border-radius: 0.25rem;
@@ -25,27 +25,49 @@ div {
 <script>
 export default {
   props: {
-    type: String,
-    size: Number,
-    margin: Number,
-    selected: Boolean,
-    x: Number,
-    y: Number
+    type: {
+      type: String,
+      default: 'grass'
+    },
+    size: {
+      type: Number,
+      default: 5
+    },
+    margin: {
+      type: Number,
+      default: .1
+    },
+    position: Object
   },
 
   computed: {
     /**
      *
      */
+    id() {
+      return `${this.position.x}-${this.position.y}`;
+    },
+
+    /**
+     *
+     */
+    isSelected() {
+      return this.$store.state.game.selectedTile == this.id;
+    },
+
+    /**
+     *
+     */
+    tileType() {
+      const tile = this.$store.getters['game/getTile'](this.position);
+      return (typeof tile == 'object') ? (tile.type || this.type) : (this.type);
+    },
+
+    /**
+     *
+     */
     tileClass() {
-      let result = this.selected ? 'selected ' : '';
-      try {
-        result += this.type.toString().toLowerCase();
-      }
-      catch {
-        result += 'grass';
-      }
-      return result;
+      return `${this.tileType} tile${this.isSelected ? ' selected' : ''}`;
     },
 
     /**
@@ -57,6 +79,15 @@ export default {
         height: this.size + 'rem',
         width: this.size + 'rem'
       };
+    }
+  },
+
+  methods: {
+    /**
+     *
+     */
+    select() {
+      this.$store.commit('game/setSelectedTile', this.id);
     }
   }
 }
