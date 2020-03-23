@@ -281,6 +281,15 @@ export const getters = {
   /**
    *
    */
+  getTile() {
+    return ({ x, y }) => __game.world.tiles.find((tile) => {
+      return tile.position.x === x && tile.position.y === y
+    });
+  },
+
+  /**
+   *
+   */
   getObject() {
     return (callback) => __game.world.objects.find(callback);
   },
