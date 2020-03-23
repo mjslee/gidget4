@@ -1,34 +1,34 @@
 <template>
-  <div class="box is-paddingless" v-if="object">
-    <div class="title" v-if="object.name">
-      {{ object.name }}
-      <img :src="image" class="image is-32x32" />
+  <div class="box is-paddingless">
+    <div class="title" v-if="name">
+      {{ name }}
+      <img :src="sprite" class="image is-32x32" />
     </div>
     <table class="table is-striped is-fullwidth">
       <tbody>
         <tr>
           <th>ID</th>
-          <td><GidgetValue identifier="ID" :code="object.id" /></td>
+          <td><GidgetValue identifier="ID" :code="id" /></td>
         </tr>
         <tr>
           <th>Name</th>
-          <td><GidgetValue identifier="Name" :code="`'${object.name}'`" /></td>
+          <td><GidgetValue identifier="Name" :code="`'${name}'`" /></td>
         </tr>
         <tr>
           <th>Energy</th>
-          <td><GidgetValue identifier="Energy" :code="object.energy" /></td>
+          <td><GidgetValue identifier="Energy" :code="energy" /></td>
         </tr>
         <tr>
           <th>Layer</th>
-          <td><GidgetValue identifier="Layer" :code="object.layer" /></td>
+          <td><GidgetValue identifier="Layer" :code="layer" /></td>
         </tr>
         <tr>
           <th>Blocking</th>
-          <td><GidgetValue identifier="Blocking" :code="object.blocking" /></td>
+          <td><GidgetValue identifier="Blocking" :code="blocking" /></td>
         </tr>
         <tr>
           <th>Position</th>
-          <td><GidgetValue identifier="Position" :code="object.position" /></td>
+          <td><GidgetValue identifier="Position" :code="position" /></td>
         </tr>
         <tr>
           <th>Grabbed</th>
@@ -76,7 +76,13 @@ export default {
   },
 
   props: {
-    object: Object
+    id: Number,
+    name: String,
+    image: String,
+    energy: Number,
+    layer: Number,
+    blocking: Boolean,
+    position: Object
   },
 
   computed: {
@@ -85,8 +91,8 @@ export default {
      *
      * @return {string}
      */
-    image() {
-      return SPRITE_PATH + this.object.image
+    sprite() {
+      return SPRITE_PATH + this.image
     },
 
     /**
@@ -98,9 +104,9 @@ export default {
      * @return {string}
      */
     grabbed() {
-      return this.object.world.objects.filter(obj => {
-        return obj.grabber === this.object.id
-      })
+      return this.$store.getters['game/getObjects'](
+        (obj) => obj.grabber === this.id
+      );
     }
   },
 }
