@@ -1,17 +1,8 @@
 <template>
   <div>
-    <!-- <div -->
-    <!--   :style="popupPosition" -->
-    <!--   v&#45;text="`[${hoveredTile.x}, ${hoveredTile.y}]`" -->
-    <!--   class="position&#45;popup" -->
-    <!--   @mouseenter="popupPosition.display = 'block'" -->
-    <!--   @mouseleave="popupPosition.display = 'none'" -->
-    <!--   @mousemove="movePopupPosition" -->
-    <!-- /> -->
-
     <main ref="world" id="world">
       <!-- Gidget Game Objects -->
-      <GidgetObject
+      <gidget-object
         @mouseenter.native="hoverTile(object.position.x, object.position.y)"
         :object="object"
         :size="tileSize"
@@ -38,11 +29,10 @@
         <!-- Gidget Game Tiles -->
         <GidgetTile
           @mouseenter.native="hoverTile(x, y)"
-          :x="x" :y="y"
-          :type="tileTypes[x + ',' + y]"
+          :position="{ x, y }"
           :size="tileSize"
           :margin="tileMargin"
-          :key="'x-' + x + '-y-' + y"
+          :key="`${x},${y}`"
           v-for="(i, x) in size"
           ref="tiles"
         />
@@ -118,12 +108,8 @@ export default {
 
   data() {
     return {
-      popupPosition: { top: 0, left: 0, display: 'none' },
-
       hovered: { x: 0, y: 0 },
-
-      tileTypes: {},
-      tileMargin: .1,
+      tileMargin: 0.1
     }
   },
 
@@ -139,24 +125,6 @@ export default {
         });
       }
     },
-
-    /**
-     *
-     *
-     */
-    tiles: {
-      immediate: true,
-      handler(val) {
-        // Generate tile classes
-        this.tiles.forEach((tile) => {
-          if (typeof tile != 'object')
-            return;
-
-          const pos = tile.position;
-          this.tileTypes[pos.x + ',' + pos.y] = tile.type;
-        });
-      }
-    }
   },
 
 
@@ -180,34 +148,6 @@ export default {
 
 
   methods: {
-    /**
-     * Get tile type at position.
-     *
-     * @param {number} x
-     * @param {number} y
-     * @return {void}
-     */
-    getTileType(x, y) {
-      const tile = this.tiles.find((tile) => {
-        return x == tile.position.x && y == tile.position.y;
-      });
-
-      // Return tile type or default to grass
-      return tile ? tile.type : 'grass';
-    },
-
-    /**
-     *
-     * @param {number} x
-     * @param {number} y
-     * @return {void}
-     */
-    clickTile(x, y) {
-      this.selected.x = x;
-      this.selected.y = y;
-      this.selected.id = undefined;
-    },
-
     /*
      * Set floating coordinates tile position.
      *
@@ -219,14 +159,6 @@ export default {
       this.hovered.x = x;
       this.hovered.y = y;
     },
-
-
-    clickObject(object) {
-      this.selected.x = undefined;
-      this.selected.y = undefined;
-      this.selected.id = object.id;
-      this.$emit('selected', object);
-    }
   }
 }
 </script>
