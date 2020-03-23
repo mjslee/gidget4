@@ -25,7 +25,6 @@
           :size="worldSize"
           :objects="objects"
           :tiles="tiles"
-          @selected="selected = arguments[0]"
         />
       </div>
 
@@ -117,14 +116,20 @@ export default {
      */
     player() {
       return this.$store.getters['game/getGidget']();
+    },
+
+    /**
+     *
+     */
+    selected() {
+      return this.$store.getters['game/getSelectedObject']();
     }
   },
 
 
   data() {
     return {
-      game: undefined,
-      selected: undefined,
+      game: this.$store.getters['game/getGame'](),
     }
   },
 
@@ -132,8 +137,6 @@ export default {
   mounted() {
     window.stepWait     = 100;
     window.stepDuration = 500;
-
-    this.game = this.$store.getters['game/getGame']();
   },
 
 

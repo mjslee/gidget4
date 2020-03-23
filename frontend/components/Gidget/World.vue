@@ -12,10 +12,8 @@
     <main ref="world" id="world">
       <!-- Gidget Game Objects -->
       <GidgetObject
-        @click.native="clickObject(object)"
         @mouseenter.native="hoverTile(object.position.x, object.position.y)"
         :object="object"
-        :selected="selected.id === object.id"
         :size="tileSize"
         :margin="tileMargin"
         :key="'obj-' + object.id"
@@ -39,11 +37,9 @@
 
         <!-- Gidget Game Tiles -->
         <GidgetTile
-          @click.native="clickTile(x, y)"
           @mouseenter.native="hoverTile(x, y)"
           :x="x" :y="y"
           :type="tileTypes[x + ',' + y]"
-          :selected="selected.x == x && selected.y == y"
           :size="tileSize"
           :margin="tileMargin"
           :key="'x-' + x + '-y-' + y"
@@ -124,13 +120,10 @@ export default {
     return {
       popupPosition: { top: 0, left: 0, display: 'none' },
 
-      selected: { x: 0, y: 0 },
       hovered: { x: 0, y: 0 },
 
       tileTypes: {},
       tileMargin: .1,
-
-      selectedObject: undefined,
     }
   },
 

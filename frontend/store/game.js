@@ -14,6 +14,9 @@ export const state = () => ({
   activeStep: 0,
   stepCount:  0,
 
+  selectedObject: undefined,
+  selectedTile:   undefined,
+
   evalData: {},
   initialData: { size: 3, tiles: [], objects: [], dialogue: [], imports: [] },
 });
@@ -79,6 +82,22 @@ export const mutations = {
   setStepCount(state, value) {
     state.stepCount = value;
   },
+
+  /**
+   *
+   */
+  setSelectedTile(state, value) {
+    state.selectedTile = value;
+    state.selectedObject = undefined;
+  },
+
+  /**
+   *
+   */
+  setSelectedObject(state, value) {
+    state.selectedTile = undefined;
+    state.selectedObject = value;
+  }
 };
 
 
@@ -204,10 +223,32 @@ export const actions = {
   updateObject(state, { object, key, value, defaultValue }) {
     _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
   },
+
+
+  updateTile(state, { }) {
+
+  }
 };
 
 
 export const getters = {
+  /**
+   *
+   */
+  getGame() {
+    return () => __game;
+  },
+
+  /**
+   * Get size of world.
+   *
+   * @return {number}
+   */
+  getWorldSize(state, getters) {
+    return __game.world.size;
+  },
+
+
   /**
    * 
    *
@@ -238,23 +279,23 @@ export const getters = {
   },
 
   /**
-   * Get size of world.
-   *
-   * @return {number}
-   */
-  getWorldSize(state, getters) {
-    return __game.world.size;
-  },
-
-  /**
    * Find and return the Gidget game object. DO NOT MUTATE.
    *
    * @param {boolean} isReady - If game is ready (from store state).
    * @return {object} - Gidget GameObject if Gidget exists.
    */
-  getGidget({ isReady }) {
+  getGidget() {
     return () => {
       return __game.world.objects.find(obj => obj.name === 'Gidget');
+    };
+  },
+
+  /**
+   *
+   */
+  getSelectedObject({ selectedObject }) {
+    return () => {
+      return __game.world.objects.find(obj => obj.id === selectedObject);
     };
   },
 
@@ -264,15 +305,8 @@ export const getters = {
    * @param {boolean} isReady - If game is ready (from store state).
    * @return {object} Game state if game is ready.
    */
-  getWorldState({ isReady }) {
+  getWorldState() {
     return __game.world.getState();
   },
-
-  /**
-   *
-   */
-  getGame() {
-    return () => __game;
-  }
   
 };

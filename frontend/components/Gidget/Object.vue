@@ -2,8 +2,9 @@
   <div
     :style="style"
     :id="elementId"
-    :class="selected ? 'selected' : ''"
+    :class="isSelected ? 'selected' : ''"
     v-show="isGrabbed"
+    @click="select"
   >
     <!-- Message -->
     <span class="gidget-message" ref="message" :class="message ? 'new-message' : ''">
@@ -93,7 +94,7 @@ export default {
     size:     Number,
     margin:   Number,
     object:   Object,
-    selected: Boolean
+    selected: Boolean,
   },
 
 
@@ -140,10 +141,16 @@ export default {
       }
     },
 
+    /**
+     *
+     */
     index() {
       return this.object.index
     },
 
+    /**
+     *
+     */
     scale() {
       return this.object.scale;
     },
@@ -170,6 +177,13 @@ export default {
      */
     isGrabbed() {
       return typeof this.object.grabber == 'undefined'
+    },
+
+    /**
+     *
+     */
+    isSelected() {
+      return this.$store.state.game.selectedObject == this.object.id;
     }
   },
 
@@ -182,6 +196,13 @@ export default {
      */
     updatePosition() {
       this.$nextTick(() => moveElementToTile(this.$el, this.object.position));
+    },
+
+    /**
+     *
+     */
+    select() {
+      this.$store.commit('game/setSelectedObject', this.object.id);
     }
   },
 
@@ -233,7 +254,8 @@ export default {
      * Watch object's position to visually move in world.
      */
     'object.position': {
-      handler() {
+      handler(value) {
+        console.log('moved', this.object.name, value);
         this.updatePosition();
       },
       deep: true
