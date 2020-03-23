@@ -279,24 +279,35 @@ export const getters = {
   },
 
   /**
+   *
+   */
+  getObject() {
+    return (callback) => __game.world.objects.find(callback);
+  },
+
+
+  /**
+   *
+   */
+  getObjects() {
+    return (callback) => __game.world.objects.filter(callback);
+  },
+
+  /**
    * Find and return the Gidget game object. DO NOT MUTATE.
    *
    * @param {boolean} isReady - If game is ready (from store state).
    * @return {object} - Gidget GameObject if Gidget exists.
    */
   getGidget() {
-    return () => {
-      return __game.world.objects.find(obj => obj.name === 'Gidget');
-    };
+    return () => __game.world.objects.find(obj => obj.name === 'Gidget');
   },
 
   /**
    *
    */
   getSelectedObject({ selectedObject }) {
-    return () => {
-      return __game.world.objects.find(obj => obj.id === selectedObject);
-    };
+    return () => __game.world.objects.find(obj => obj.id === selectedObject);
   },
 
   /**
