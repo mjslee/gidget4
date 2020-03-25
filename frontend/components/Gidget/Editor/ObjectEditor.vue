@@ -24,7 +24,7 @@
       <nav class="level">
         <div class="level-right">
           <div class="level-item">
-            <b-button>Remove Object</b-button>
+            <b-button @click="remove">Remove Object</b-button>
           </div>
         </div>
       </nav>
@@ -40,6 +40,7 @@ import { SPRITE_PATH } from '@/constants/paths'
 
 export default {
   props: {
+    id: Number,
     name: String,
     type: String,
     energy: Number,
@@ -244,7 +245,9 @@ export default {
   },
 
   methods: {
-
+    remove() {
+      this.$store.dispatch('game/removeObject', { id: this.id });
+    }
   }
 }
 </script>

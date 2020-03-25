@@ -216,6 +216,21 @@ export const actions = {
   },
 
   /**
+   * Safely remove game object from object array.
+   *
+   * @param {object} state
+   * @param {number} id
+   * @return {boolean}
+   */
+  removeObject(state, { id }) {
+    const index = __game.world.objects.findIndex((obj) => obj.id === id);
+    if (typeof index == 'undefined')
+      return false;
+    Vue.delete(__game.world.objects, index);
+    return true;
+  },
+
+  /**
    * Safely update game object properties.
    *
    * @return {void}
