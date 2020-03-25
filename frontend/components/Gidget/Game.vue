@@ -33,8 +33,8 @@
 
     <!-- Inspectors -->
     <div class="column">
-      <object-inspector v-bind.sync="playerObject" />
-      <object-inspector v-bind.sync="selectedObject" />
+      <object-inspector v-bind.sync="playerObject" v-if="playerObject" />
+      <object-inspector v-bind.sync="selectedObject" v-if="selectedObject" />
     </div>
   </div>
 </template>
