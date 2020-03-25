@@ -71,19 +71,22 @@ import GidgetValue from './Value'
 
 
 export default {
+
   components: {
     GidgetValue
   },
 
+
   props: {
-    id: Number,
-    name: String,
-    image: String,
-    energy: Number,
-    layer: Number,
+    id:       Number,
+    name:     String,
+    image:    String,
+    energy:   Number,
+    layer:    Number,
     blocking: Boolean,
     position: Object
   },
+
 
   computed: {
     /**
@@ -92,7 +95,7 @@ export default {
      * @return {string}
      */
     sprite() {
-      return SPRITE_PATH + this.image
+      return SPRITE_PATH + this.image;
     },
 
     /**
@@ -108,6 +111,7 @@ export default {
         (obj) => obj.grabber === this.id
       );
     }
-  },
+  }
+
 }
 </script>
