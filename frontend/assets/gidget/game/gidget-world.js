@@ -145,6 +145,28 @@ export default {
 
 
   /**
+   * Set index numbers for game objects.
+   *
+   * @param {function} callback
+   * @return {void}
+   */
+  indexObjects(callback) {
+    const objects = typeof callback == 'function' ?
+      this.objects.filter(callback) : this.objects;
+
+    const groups = _.groupBy(objects, 'name');
+
+    Object.values(groups).forEach((group) => {
+      if (!(Array.isArray(group) && group.length > 1))
+        return;
+
+      let index = 0;
+      group.forEach((obj) => obj.index = index++);
+    });
+  },
+
+
+  /**
    * Gets a map object of all the world's game objects.
    * Objects with the same name will be grouped into an array.
    *
@@ -250,23 +272,17 @@ export default {
    */
   addObject(gameObject) {
     if (typeof gameObject != 'object')
-      return false
+      return false;
 
     // Set GameObject props
-    gameObject.world = this
-    gameObject.id = this.nextId++
+    gameObject.world = this;
+    gameObject.id = this.nextId++;
 
     // Add to world objects
-    this.objects.push(gameObject)
+    this.objects.push(gameObject);
+    this.indexObjects((obj) => obj.name === gameObject.name);
 
-    // Set game object indexes
-    const gameObjects = this.objects.filter(obj => obj.name === gameObject.name)
-    if (gameObjects.length > 1) {
-      let index = 0
-      gameObjects.forEach(obj => obj.index = index++)
-    }
-
-    return true
+    return true;
   },
 
 
