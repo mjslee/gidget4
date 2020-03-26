@@ -157,11 +157,20 @@ export default {
     const groups = _.groupBy(objects, 'name');
 
     Object.values(groups).forEach((group) => {
-      if (!(Array.isArray(group) && group.length > 1))
+      console.log(group);
+      // Don't set indexes if group is not an array or has no elements
+      if (!(Array.isArray(group) && group.length))
         return;
 
-      let index = 0;
-      group.forEach((obj) => obj.index = index++);
+      // Unset index for groups with only one element
+      if (group.length == 1)
+        group[0].index = undefined;
+
+      // Set index for all elements in the group
+      else {
+        let index = 0;
+        group.forEach((obj) => obj.index = index++);
+      }
     });
   },
 
@@ -282,6 +291,22 @@ export default {
     this.objects.push(gameObject);
     this.indexObjects((obj) => obj.name === gameObject.name);
 
+    return true;
+  },
+
+
+  /**
+   * Set removed property on a game object and re-index objects with same name.
+   *
+   * @param {object} gameObject
+   * @return {boolean}
+   */
+  removeObject(gameObject) {
+    if (typeof gameObject != 'object')
+      return false;
+
+    gameObject.removed = true;
+    this.indexObjects((obj) => !obj.removed && obj.name === gameObject.name);
     return true;
   },
 
