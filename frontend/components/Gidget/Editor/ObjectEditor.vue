@@ -49,7 +49,7 @@
             <b-button>
               Change Sprite
             </b-button>
-            <b-button type="is-success" :disabled="canApply" @click="apply">
+            <b-button type="is-success" :disabled="!canApply" @click="apply">
               Apply Changes
             </b-button>
           </section>
@@ -121,7 +121,7 @@ export default {
      * @return {boolean}
      */
     canApply() {
-      return _.isEmpty(this.updateProps);
+      return !_.isEmpty(this.updateProps);
     }
   },
 
