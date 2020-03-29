@@ -13,7 +13,7 @@
       <section>
         <!-- Name -->
         <b-field label="Name">
-          <b-input ref="name" :value="name"></b-input>
+          <b-input ref="name" :value="name" @input="updateName"></b-input>
         </b-field>
 
         <!-- Mixins -->
@@ -23,8 +23,10 @@
             :value="mixins"
             :data="filteredMixins"
             @typing="filterMixins"
+            @input="updateMixins"
             autocomplete
-          />
+          >
+          </b-taginput>
         </b-field>
 
         <!-- Energy -->
@@ -47,7 +49,7 @@
             <b-button>
               Change Sprite
             </b-button>
-            <b-button type="is-success" :disabled="!canApply" @click="apply">
+            <b-button type="is-success" :disabled="canApply" @click="apply">
               Apply Changes
             </b-button>
           </section>
@@ -55,11 +57,10 @@
 
         <!-- Remove -->
         <div class="level-right">
-          <b-switch type="is-danger" v-model="canRemove">
-            <b-button type="is-danger" :disabled="!canRemove" @click="remove">
-              Remove Object
-            </b-button>
-          </b-switch>
+          <b-switch type="is-danger" v-model="canRemove"></b-switch>
+          <b-button type="is-danger" :disabled="!canRemove" @click="remove">
+            Remove Object
+          </b-button>
         </div>
       </nav>
     </div>
@@ -76,11 +77,13 @@
 
 <script>
 import _ from 'lodash';
+import Vue from 'vue';
 import Mixins from '@/assets/gidget/game/mixins';
 import { SpriteBaseURL, ObjectSprites } from '@/constants/sprites';
 
 
 export default {
+
   props: {
     id:       Number,
     name:     String,
@@ -88,16 +91,16 @@ export default {
     energy:   Number,
     mixins:   Array[String],
     position: Object,
-    image:    String
+    image:    String,
+    blocking: Boolean
   },
 
-  components: {
-
-  },
 
   computed: {
     /**
      * Get sprite of object with sprite path prefix.
+     *
+     * @return {string}
      */
     spriteURL() {
       return SpriteBaseURL + this.image;
@@ -105,39 +108,83 @@ export default {
 
     /**
      * Array of available mixins.
+     *
+     * @return {array}
      */
     availableMixins() {
       return Object.keys(Mixins);
+    },
+
+    /**
+     * Updates can be applied when updateProps has keys.
+     *
+     * @return {boolean}
+     */
+    canApply() {
+      return _.isEmpty(this.updateProps);
     }
   },
 
 
   data() {
     return {
-      canApply: false,
       canRemove: false,
 
       filteredMixins: [],
-      updateProps: ['name', 'energy', 'mixins'],
+      updateProps: {},
     };
   },
 
 
   methods: {
     /**
+     * Update name field.
      *
+     * @param {string} value
+     * @return {void}
      */
-    updateProp(propName) {
-      const input = this.$refs[propName];
-      if (!_.isEqual(input.value, input.newValue))
-        this.$emit(`update:${propName}`, input.newValue);
+    updateProp(prop, value) {
+      if (value && !_.isEqual(value, this[prop]))
+        Vue.set(this.updateProps, prop, value);
+      else
+        Vue.delete(this.updateProps, prop);
     },
 
     /**
-     * Apply updates
+     * Update name field.
+     *
+     * @param {string} value
+     * @return {void}
+     */
+    updateName(value) {
+      this.updateProp('name', value);
+    },
+
+    /**
+     * Update name field.
+     *
+     * @param {string} value
+     * @return {void}
+     */
+    updateMixins(value) {
+      this.updateProp('mixins', value);
+    },
+
+    /**
+     * Apply the prop updates.
+     *
+     * @return {void}
      */
     apply() {
-      this.updateProps.forEach((prop) => this.updateProp(prop));
+      // Emit updates for all keys in updateProps
+      Object.keys(this.updateProps).forEach((key) => {
+        const value = this.updateProps[key];
+        if (typeof value != 'undefined')
+          this.$emit(`update:${key}`, value);
+      });
+
+      // Reset updateProps
+      Vue.set(this, 'updateProps', {});
     },
 
     /**
@@ -151,10 +198,11 @@ export default {
      * Set the filteredMixins with filter.
      */
     filterMixins(value) {
-      this.filteredMixins = this.availableMixins.filter((mixin) => {
-        return mixin.toLowerCase().indexOf(value.toLowerCase()) >= 0
-      });
-    },
+      this.filteredMixins = this.availableMixins.filter((mixin) =>
+        mixin.toLowerCase().indexOf(value.toLowerCase()) >= 0
+      );
+    }
   }
+
 }
 </script>
