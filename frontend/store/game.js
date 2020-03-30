@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import GidgetGame from '@/assets/gidget/game/gidget-game';
+import GidgetObject from '@/assets/gidget/game/gidget-object';
 import { Levels as LevelsEndpoint } from '@/constants/endpoints';
 
 let __game;
@@ -7,7 +8,7 @@ let __game;
 
 export const state = () => ({
   key:  0,
-  
+
   isReady:   false,
   isRunning: false,
 
@@ -206,7 +207,7 @@ export const actions = {
       commit('setStepCount', runner.steps.length);
     }
 
-    // Set error line 
+    // Set error line
     if (typeof __game.error == 'object') {
       //
     }
@@ -223,11 +224,32 @@ export const actions = {
    * @return {boolean}
    */
   removeObject(state, { id }) {
-    const index = __game.world.objects.findIndex((obj) => obj.id === id);
+    let index;
+    const obj = __game.world.objects.find((obj, i) => {
+      const found = obj.id === id;
+
+      if (found)
+        index = i;
+
+      return found;
+    });
+
     if (typeof index == 'undefined')
       return false;
+
+    __game.world.removeObject(obj);
     Vue.delete(__game.world.objects, index);
     return true;
+  },
+
+  /**
+   * Safely add game object to world.
+   *
+   * @return {void}
+   */
+  addObject({}, { type, position }) {
+    const gameObject = GidgetObject.create({ type, position });
+    return __game.world.addObject(gameObject);
   },
 
   /**
@@ -238,7 +260,6 @@ export const actions = {
   updateObject(state, { object, key, value, defaultValue }) {
     _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
   },
-
 
   updateTile(state, { }) {
 
@@ -265,7 +286,7 @@ export const getters = {
 
 
   /**
-   * 
+   *
    *
    * @param {number} activeStep - Index of the active step.
    * @param {number} stepCount - Total amount of steps in the stepper.
@@ -343,5 +364,5 @@ export const getters = {
   getWorldState() {
     return __game.world.getState();
   },
-  
+
 };
