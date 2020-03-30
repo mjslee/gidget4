@@ -95,23 +95,14 @@ export default {
   },
 
 
-  props: {
-    objects: Array,
-    tiles: Array[Object],
-    size: Number,
-    editMode: {
-      type: Boolean,
-      default: false
-    }
-  },
-
-
   data() {
     return {
+      game: this.$store.getters['game/getGame'](),
       hovered: { x: 0, y: 0 },
       tileMargin: 0.1
     }
   },
+
 
   watch: {
     /**
@@ -143,6 +134,27 @@ export default {
       return {
         width: this.tileSize + (this.tileMargin * 2) + 'rem'
       };
+    },
+
+    /**
+     *
+     */
+    size() {
+      return this.$store.getters['game/getWorldSize'];
+    },
+
+    /**
+     *
+     */
+    objects() {
+      return this.game.world.objects;
+    },
+
+    /**
+     *
+     */
+    tiles() {
+      return this.game.world.tiles;
     },
   },
 

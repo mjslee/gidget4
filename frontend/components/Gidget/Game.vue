@@ -21,11 +21,7 @@
     <!-- World and Dialogue -->
     <div class="column">
       <div class="world">
-        <world
-          :size="worldSize"
-          :objects="objects"
-          :tiles="tiles"
-        />
+        <world />
       </div>
 
       <Dialogue :messages="dialogue" />
@@ -83,26 +79,6 @@ export default {
 
 
   computed: {
-    /**
-     *
-     */
-    worldSize() {
-      return this.$store.getters['game/getWorldSize'];
-    },
-
-    /**
-     *
-     */
-    objects() {
-      return this.game.world.objects;
-    },
-
-    /**
-     *
-     */
-    tiles() {
-      return this.game.world.tiles;
-    },
 
     /**
      *
