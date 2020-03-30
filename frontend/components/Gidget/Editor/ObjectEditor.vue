@@ -18,15 +18,7 @@
 
         <!-- Mixins -->
         <b-field label="Mixins">
-          <b-taginput
-            ref="mixins"
-            :value="mixins"
-            :data="filteredMixins"
-            @typing="filterMixins"
-            @input="updateMixins"
-            autocomplete
-          >
-          </b-taginput>
+          <mixin-input v-model="internalMixins" />
         </b-field>
 
         <!-- Energy -->
@@ -78,11 +70,14 @@
 <script>
 import _ from 'lodash';
 import Vue from 'vue';
-import Mixins from '@/assets/gidget/game/mixins';
 import { SpriteBaseURL, ObjectSprites } from '@/constants/sprites';
+import MixinInput from '@/components/Gidget/Utilities/MixinInput';
 
 
 export default {
+  components: {
+    MixinInput
+  },
 
   props: {
     id:       Number,
@@ -98,6 +93,21 @@ export default {
 
   computed: {
     /**
+     * Internal value for mixins prop.
+     *
+     * @param {value}
+     * @return {array[string]}
+     */
+    internalMixins: {
+      get() {
+        return this.mixins;
+      },
+      set(value) {
+        this.updateProp('mixins', value);
+      }
+    },
+
+    /**
      * Get sprite of object with sprite path prefix.
      *
      * @return {string}
@@ -107,22 +117,13 @@ export default {
     },
 
     /**
-     * Array of available mixins.
-     *
-     * @return {array}
-     */
-    availableMixins() {
-      return Object.keys(Mixins);
-    },
-
-    /**
      * Updates can be applied when updateProps has keys.
      *
      * @return {boolean}
      */
     canApply() {
       return !_.isEmpty(this.updateProps);
-    }
+    },
   },
 
 
@@ -130,7 +131,6 @@ export default {
     return {
       canRemove: false,
 
-      filteredMixins: [],
       updateProps: {},
     };
   },
@@ -161,16 +161,6 @@ export default {
     },
 
     /**
-     * Update name field.
-     *
-     * @param {string} value
-     * @return {void}
-     */
-    updateMixins(value) {
-      this.updateProp('mixins', value);
-    },
-
-    /**
      * Apply the prop updates.
      *
      * @return {void}
@@ -193,15 +183,6 @@ export default {
     remove() {
       this.$store.dispatch('game/removeObject', { id: this.id });
     },
-
-    /**
-     * Set the filteredMixins with filter.
-     */
-    filterMixins(value) {
-      this.filteredMixins = this.availableMixins.filter((mixin) =>
-        mixin.toLowerCase().indexOf(value.toLowerCase()) >= 0
-      );
-    }
   }
 
 }
