@@ -1,6 +1,9 @@
 <template>
   <div>
     <b-tabs v-model="activeTab">
+      <b-tab-item label="World">
+        <world-editor />
+      </b-tab-item>
       <b-tab-item label="Objects">
         <object-list />
       </b-tab-item>
@@ -21,11 +24,13 @@
 
 
 <script>
-import ObjectList from '@/components/Gidget/Editor/ObjectList';
+import WorldEditor from './WorldEditor';
+import ObjectList from './ObjectList';
 
 
 export default {
   components: {
+    WorldEditor,
     ObjectList
   },
 

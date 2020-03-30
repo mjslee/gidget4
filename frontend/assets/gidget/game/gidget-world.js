@@ -1,6 +1,4 @@
 import _ from 'lodash';
-import GidgetObject from './gidget-object';
-
 
 
 export default {
@@ -157,7 +155,6 @@ export default {
     const groups = _.groupBy(objects, 'name');
 
     Object.values(groups).forEach((group) => {
-      console.log(group);
       // Don't set indexes if group is not an array or has no elements
       if (!(Array.isArray(group) && group.length))
         return;
