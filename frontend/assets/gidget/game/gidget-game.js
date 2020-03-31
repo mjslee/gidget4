@@ -5,6 +5,11 @@ import GidgetImports from './imports'
 
 
 export default class {
+  /**
+   * GidgetGame constructor.
+   *
+   * @return {void}
+   */
   constructor({ size, tiles, objects, imports, dialogue }) {
     this.index  = 0;
     this.key    = 0;
@@ -27,13 +32,14 @@ export default class {
 
     // Set up the javascript stepper, set the onStep callback so the world
     // states can be saved on each step
-    this.stepper = new JsStepper();
-    this.stepper.onStep = () => this.save();
+    this.stepper = new JsStepper({
+      onStep: () => this.save()
+    });
 
     // Create game objects, then save the initial game state that we can
     // restore on reset
     objects.forEach((gameObjectData) => {
-      const gameObject = GidgetObject.create(gameObjectData);
+      const gameObject = new GidgetObject(gameObjectData);
       this.world.addObject(gameObject);
     });
 
@@ -105,11 +111,11 @@ export default class {
       return;
 
     // Determine if step is going in a positive, forward direction
-    const isPositive = index > this.index;
+    const isAdvancing = index > this.index;
     this.index = index;
 
     // Run pre-restore hooks
-    if (runHooks && isPositive) {
+    if (runHooks && isAdvancing) {
       await this.runHooks(state, hook => hook.when == 'before');
 
       // Increment update key so any hook callbacks that are running can
@@ -121,7 +127,7 @@ export default class {
     this.world.restoreState(state);
 
     // Run post-restore hooks
-    if (runHooks && isPositive)
+    if (runHooks && isAdvancing)
       await this.runHooks(state, hook => hook.when == 'after');
 
     // Get the current step and assign 'gameData' property to store a

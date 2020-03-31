@@ -5,82 +5,93 @@ import { walkAnimation, poscmp } from './gidget-utility'
 
 
 
-export default {
-  // Parents
-  world: undefined,
-  grabber: undefined,
-
-  // Object Data
-  id: -1,
-  type: undefined,
-  name: undefined,
-  image: undefined,
-  message: undefined,
-
-  // World Data
-  energy: 100,
-  position: { x: 0, y: 0 },
-  layer: 0,
-  scale: 1,
-  path: [],
-
-  // Boundaries
-  blocking: false,
-  scaleBoundaries: true,
-
-
+export default class {
   /**
    * Creates object.
    *
    * @param {number} id Unique identification number.
    * @return {object}
    */
-  create(attrs) {
+  constructor(options) {
     // Get base type of game object
-    const type = typeof attrs == 'object' ? attrs.type : undefined
-    if (typeof type == 'undefined') {
-      console.debug('type: Missing property.')
-      return
-    }
+    const type = typeof options == 'object' ? options.type : undefined;
+    if (typeof type == 'undefined') return;
 
     // Create a deep clone of 'this' (GidgetObject), so we don't mutate
     // any of the base module's properties
-    const self = _.cloneDeep(this)
+    const self = _.cloneDeep(this);
+    self.setDefaults();
 
     // Get base type of game object
-    let base = GidgetObjects[attrs.type]
-    if (!base) {
-      console.debug(attrs.type + ': Base object not found.')
-      return
-    }
+    let base = GidgetObjects[options.type];
+    if (!base) return;
 
     // Merge in base and extra attributes
-    _.merge(self, _.cloneDeep(base))
-    _.merge(self, _.cloneDeep(attrs))
+    _.merge(self, _.cloneDeep(base));
+    _.merge(self, _.cloneDeep(options));
 
-    // Merge in mixins
-    if (typeof attrs.mixins == 'object') {
-      attrs.mixins.forEach(mixin => {
-        if (typeof GidgetMixins[mixin] == 'undefined')
-          console.debug(mixin + ': Mixin does not exist.')
-        else
-          _.merge(self, _.cloneDeep(GidgetMixins[mixin]))
-      })
-    }
+    // Merge mixins
+    if (typeof options.mixins == 'object')
+      options.mixins.forEach((mixin) => self.mergeMixin(mixin));
 
     // Update exposed 'get' properties
-    self.updateProps()
+    self.updateProps();
 
-    // If no name was provided in attrs we'll use its type as its name
+    // If no name was provided in options we'll use its type as its name
     if (typeof self.name == 'undefined')
-      self.name = self.type
+      self.name = self.type;
 
     // Call onCreate callback
     if (typeof self.onCreate == 'function')
-      self.onCreate()
+      self.onCreate();
 
-    return self
-  },
+    return self;
+  }
+
+
+  /**
+   * Sets default properties.
+   *
+   * @return {void}
+   */
+  setDefaults() {
+    this.grabber = undefined;
+
+    // World Data
+    this.position = { x: 0, y: 0 };
+    this.energy = 100;
+    this.layer = 0;
+    this.scale = 1;
+    this.path = [];
+
+    this.exposed =  {
+      'get id'() {
+        return this.id;
+      },
+
+      'get position'() {
+        return JSON.stringify(this.position);
+      }
+    };
+
+    // Boundaries
+    this.blocking = false;
+    this.scaleBoundaries = true;
+  }
+
+
+  /**
+   * Merges mixin properties into the game object.
+   *
+   * @return {boolean}
+   */
+  mergeMixin(mixin) {
+    if (typeof GidgetMixins[mixin] == 'undefined')
+      return false;
+
+    _.merge(this, _.cloneDeep(GidgetMixins[mixin]));
+    return true;
+  }
 
 
   /**
@@ -110,7 +121,7 @@ export default {
         this.exposed[prop].isEnclosed = true
       }
     }
-  },
+  }
 
 
   /**
@@ -162,7 +173,7 @@ export default {
     }
 
     return true
-  },
+  }
 
 
   /**
@@ -206,7 +217,7 @@ export default {
       gameObject.onDropped(this).call(gameObject)
 
     return true
-  },
+  }
 
 
   /**
@@ -234,7 +245,7 @@ export default {
       this.onSay(message);
 
     return true;
-  },
+  }
 
 
   /**
@@ -265,7 +276,7 @@ export default {
       this.onMove(position)
 
     return true
-  },
+  }
 
 
   /**
@@ -303,7 +314,7 @@ export default {
       this.onWalk(validPath, invalidPosition)
 
     return validPath.length >= path.length
-  },
+  }
 
 
   /**
@@ -315,21 +326,5 @@ export default {
    */
   onWalk(path) {
     walkAnimation(this, path)
-  },
-
-
-  /**
-   * Gets a stringified position.
-   *
-   * @return {string} - Stringified position.
-   */
-  exposed: {
-    'get id'() {
-      return this.id
-    },
-
-    'get position'() {
-      return JSON.stringify(this.position)
-    },
   }
 }
