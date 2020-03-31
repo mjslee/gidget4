@@ -91,14 +91,14 @@ export default {
      *
      */
     playerObject() {
-      return this.$store.getters['game/getGidget']();
+      return this.$store.getters['game/getGidget'];
     },
 
     /**
      *
      */
     selectedObject() {
-      return this.$store.getters['game/getSelectedObject']();
+      return this.$store.getters['game/getSelectedObject'];
     }
   },
 

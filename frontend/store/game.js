@@ -344,11 +344,10 @@ export const getters = {
   /**
    * Find and return the Gidget game object. DO NOT MUTATE.
    *
-   * @param {boolean} isReady - If game is ready (from store state).
    * @return {object} - Gidget GameObject if Gidget exists.
    */
-  getGidget({}, { getObjects }) {
-    return () => getObjects.find((obj) => obj.name === 'Gidget');
+  getGidget({}, { getObject }) {
+    return getObject((obj) => obj.name === 'Gidget');
   },
 
   /**
@@ -357,7 +356,7 @@ export const getters = {
    * @return {object}
    */
   getSelectedObject({ selectedObject }, { getObjects }) {
-    return () => getObjects.find((obj) => obj.id === selectedObject);
+    return getObjects.find((obj) => obj.id === selectedObject);
   },
 
   /**
