@@ -97,7 +97,6 @@ export default {
 
   data() {
     return {
-      game: this.$store.getters['game/getGame'],
       hovered: { x: 0, y: 0 },
       tileMargin: 0.1
     }
@@ -147,14 +146,14 @@ export default {
      *
      */
     objects() {
-      return this.game.world.objects;
+      return this.$store.getters['game/getObjects'];
     },
 
     /**
      *
      */
     tiles() {
-      return this.game.world.tiles;
+      return this.$store.getters['game/getTiles'];
     },
   },
 

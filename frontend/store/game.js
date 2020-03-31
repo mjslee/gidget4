@@ -52,7 +52,6 @@ export const mutations = {
    */
   setInitialData(state, data) {
     Object.assign(state.initialData, data);
-    //state.initialData = data;
   },
 
   /**
@@ -65,7 +64,7 @@ export const mutations = {
   /**
    *
    */
-  setWorldSize(state, value) {
+  setWorldSize({}, value) {
     __game.world.size = value;
   },
 
@@ -210,7 +209,7 @@ export const actions = {
    * @param {string} code - Code to be evaluated.
    * @return {void}
    */
-  async runCode({ state, commit }, code) {
+  async runCode({ commit }, code) {
     const runner = await __game.run(code);
 
     if (typeof runner.steps == 'object') {
@@ -236,7 +235,7 @@ export const actions = {
    * @param {number} id
    * @return {boolean}
    */
-  removeObject(state, { id }) {
+  removeObject({}, { id }) {
     let index;
     const obj = __game.world.objects.find((obj, i) => {
       const found = obj.id === id;
@@ -270,11 +269,11 @@ export const actions = {
    *
    * @return {void}
    */
-  updateObject(state, { object, key, value, defaultValue }) {
+  updateObject({}, { object, key, value, defaultValue }) {
     _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
   },
 
-  updateTile(state, { }) {
+  updateTile({}, {}) {
 
   }
 };
@@ -282,9 +281,13 @@ export const actions = {
 
 export const getters = {
   /**
+   * Retrieve the game instance.
    *
+   * @return {object}
    */
-  getGame({ initialData, key }) {
+  getGame({ key }) {
+    key;  // Reactivity
+    console.log('ee');
     return __game;
   },
 
@@ -293,7 +296,7 @@ export const getters = {
    *
    * @return {number}
    */
-  getWorldSize(state, getters) {
+  getWorldSize({}, getters) {
     const game = getters['getGame'];
     return game.world.size;
   },
@@ -315,7 +318,7 @@ export const getters = {
    *
    * @param {string} key - Key of eval data object.
    * @param {any} defaultValue - Default value if data does not have the key.
-   * @return any
+   * @return {any}
    */
   getValue({ data }) {
     return (key, defaultValue=undefined) => {
@@ -329,7 +332,21 @@ export const getters = {
   },
 
   /**
+   * Get a game object based on conditions.
    *
+   * @param {function} callback - Conditions for find.
+   * @return {object}
+   */
+  getObject({}, { getGame }) {
+    return (callback) => getGame.world.objects.find(callback);
+  },
+
+  /**
+   * Get a game tile from an x and y coordination.
+   *
+   * @param {number} x
+   * @param {number} y
+   * @return {object}
    */
   getTile({}, { getGame }) {
     return ({ x, y }) => getGame.world.tiles.find((tile) => {
@@ -338,18 +355,21 @@ export const getters = {
   },
 
   /**
+   * Get all game objects from game world.
    *
-   */
-  getObject({}, { getGame }) {
-    return (callback) => getGame.world.objects.find(callback);
-  },
-
-
-  /**
-   *
+   * @return {array}
    */
   getObjects({}, { getGame }) {
-    return (callback) => getGame.world.objects.filter(callback);
+    return getGame.world.objects;
+  },
+
+  /**
+   * Get all game tiles from game world.
+   *
+   * @return {array}
+   */
+  getTiles({}, { getGame }) {
+    return getGame.world.tiles;
   },
 
   /**
@@ -359,14 +379,16 @@ export const getters = {
    * @return {object} - Gidget GameObject if Gidget exists.
    */
   getGidget({}, { getGame }) {
-    return () => getGame.world.objects.find(obj => obj.name === 'Gidget');
+    return () => getGame.world.objects.find((obj) => obj.name === 'Gidget');
   },
 
   /**
+   * Get the selected game object.
    *
+   * @return {object}
    */
   getSelectedObject({ selectedObject }, { getGame }) {
-    return () => getGame.world.objects.find(obj => obj.id === selectedObject);
+    return () => getGame.world.objects.find((obj) => obj.id === selectedObject);
   },
 
   /**

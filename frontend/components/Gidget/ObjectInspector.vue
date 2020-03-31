@@ -107,7 +107,7 @@ export default {
      * @return {string}
      */
     grabbed() {
-      return this.$store.getters['game/getObjects'](
+      return this.$store.getters['game/getObjects'].filter(
         (obj) => obj.grabber === this.id
       );
     }
