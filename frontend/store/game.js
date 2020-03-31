@@ -287,7 +287,6 @@ export const getters = {
    */
   getGame({ key }) {
     key;  // Reactivity
-    console.log('ee');
     return __game;
   },
 
@@ -301,6 +300,75 @@ export const getters = {
     return game.world.size;
   },
 
+  /**
+   * Get all game objects from game world.
+   *
+   * @return {array}
+   */
+  getObjects({}, { getGame }) {
+    return getGame.world.objects;
+  },
+
+  /**
+   * Get all game tiles from game world.
+   *
+   * @return {array}
+   */
+  getTiles({}, { getGame }) {
+    return getGame.world.tiles;
+  },
+
+  /**
+   * Get a game object based on conditions.
+   *
+   * @param {function} callback - Conditions for find.
+   * @return {object}
+   */
+  getObject({}, { getObjects }) {
+    return (callback) => getObjects.find(callback);
+  },
+
+  /**
+   * Get a game tile from an x and y coordination.
+   *
+   * @param {number} x
+   * @param {number} y
+   * @return {object}
+   */
+  getTile({}, { getTiles }) {
+    return ({ x, y }) => getTiles.find(({ position }) =>
+      position.x === x && position.y === y
+    );
+  },
+
+  /**
+   * Find and return the Gidget game object. DO NOT MUTATE.
+   *
+   * @param {boolean} isReady - If game is ready (from store state).
+   * @return {object} - Gidget GameObject if Gidget exists.
+   */
+  getGidget({}, { getObjects }) {
+    return () => getObjects.find((obj) => obj.name === 'Gidget');
+  },
+
+  /**
+   * Get the selected game object.
+   *
+   * @return {object}
+   */
+  getSelectedObject({ selectedObject }, { getObjects }) {
+    return () => getObjects.find((obj) => obj.id === selectedObject);
+  },
+
+  /**
+   * Get the game state directly from the game engine. DO NOT MUTATE.
+   *
+   * @param {boolean} isReady - If game is ready (from store state).
+   * @return {object} Game state if game is ready.
+   */
+  getWorldState({}, { getGame }) {
+    return getGame.world.getState();
+  },
 
   /**
    *
@@ -329,76 +397,6 @@ export const getters = {
 
       return typeof value == 'undefined' ? (defaultValue || key) : value;
     }
-  },
-
-  /**
-   * Get a game object based on conditions.
-   *
-   * @param {function} callback - Conditions for find.
-   * @return {object}
-   */
-  getObject({}, { getGame }) {
-    return (callback) => getGame.world.objects.find(callback);
-  },
-
-  /**
-   * Get a game tile from an x and y coordination.
-   *
-   * @param {number} x
-   * @param {number} y
-   * @return {object}
-   */
-  getTile({}, { getGame }) {
-    return ({ x, y }) => getGame.world.tiles.find((tile) => {
-      return tile.position.x === x && tile.position.y === y
-    });
-  },
-
-  /**
-   * Get all game objects from game world.
-   *
-   * @return {array}
-   */
-  getObjects({}, { getGame }) {
-    return getGame.world.objects;
-  },
-
-  /**
-   * Get all game tiles from game world.
-   *
-   * @return {array}
-   */
-  getTiles({}, { getGame }) {
-    return getGame.world.tiles;
-  },
-
-  /**
-   * Find and return the Gidget game object. DO NOT MUTATE.
-   *
-   * @param {boolean} isReady - If game is ready (from store state).
-   * @return {object} - Gidget GameObject if Gidget exists.
-   */
-  getGidget({}, { getGame }) {
-    return () => getGame.world.objects.find((obj) => obj.name === 'Gidget');
-  },
-
-  /**
-   * Get the selected game object.
-   *
-   * @return {object}
-   */
-  getSelectedObject({ selectedObject }, { getGame }) {
-    return () => getGame.world.objects.find((obj) => obj.id === selectedObject);
-  },
-
-  /**
-   * Get the game state directly from the game engine. DO NOT MUTATE.
-   *
-   * @param {boolean} isReady - If game is ready (from store state).
-   * @return {object} Game state if game is ready.
-   */
-  getWorldState({}, { getGame }) {
-    return getGame.world.getState();
   },
 
 };
