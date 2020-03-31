@@ -8,9 +8,10 @@ export default class {
    *
    * @return {void}
    */
-  constructor(maxSteps=100) {
+  constructor({ onStep, maxSteps }) {
     this.steps = [];
-    this.maxSteps = maxSteps;
+    this.maxSteps = maxSteps || 100;
+    this.onStep = onStep;
   }
 
 
