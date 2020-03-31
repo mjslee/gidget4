@@ -20,22 +20,7 @@ export default class {
     // Create a deep clone of 'this' (GidgetObject), so we don't mutate
     // any of the base module's properties
     const self = _.cloneDeep(this);
-    self.setDefaults();
-
-    // Get base type of game object
-    let base = GidgetObjects[options.type];
-    if (!base) return;
-
-    // Merge in base and extra attributes
-    _.merge(self, _.cloneDeep(base));
-    _.merge(self, _.cloneDeep(options));
-
-    // Merge mixins
-    if (typeof options.mixins == 'object')
-      options.mixins.forEach((mixin) => self.mergeMixin(mixin));
-
-    // Update exposed 'get' properties
-    self.updateProps();
+    self.setup(options, true);
 
     // If no name was provided in options we'll use its type as its name
     if (typeof self.name == 'undefined')
@@ -50,20 +35,21 @@ export default class {
 
 
   /**
-   * Sets default properties.
+   * Sets-up object by merging game object base and mixins.
    *
-   * @return {void}
+   * @param {object} options
+   * @param {boolean} setDefaults
    */
-  setDefaults() {
-    this.grabber = undefined;
+  setup(options, setDefaults=false) {
+    // Should we set defaults or not? This is needed on first creation.
+    if (setDefaults)
+      this.setDefaults();
 
-    // World Data
-    this.position = { x: 0, y: 0 };
-    this.energy = 100;
-    this.layer = 0;
-    this.scale = 1;
-    this.path = [];
+    // Get base type of game object
+    let base = GidgetObjects[options.type];
+    if (!base) return;
 
+    // Set default exposed getter methods
     this.exposed =  {
       'get id'() {
         return this.id;
@@ -74,6 +60,34 @@ export default class {
       }
     };
 
+    // Merge base object and options
+    _.merge(this, _.cloneDeep(base), _.cloneDeep(options));
+
+    // Merge mixins
+    if (typeof options.mixins == 'object')
+      options.mixins.forEach((mixin) => this.mergeMixin(mixin));
+
+    // Update exposed 'get' properties
+    this.updateProps();
+    this.initialOptions = options;
+  }
+
+
+  /**
+   * Sets default properties.
+   *
+   * @return {void}
+   */
+  setDefaults() {
+    this.grabber = undefined;
+
+    // World Data
+    this.position = { x: 0, y: 0 };
+    this.energy   = 100;
+    this.layer    = 0;
+    this.scale    = 1;
+    this.path     = [];
+
     // Boundaries
     this.blocking = false;
     this.scaleBoundaries = true;
@@ -83,6 +97,7 @@ export default class {
   /**
    * Merges mixin properties into the game object.
    *
+   * @param {string} mixin
    * @return {boolean}
    */
   mergeMixin(mixin) {
@@ -125,6 +140,16 @@ export default class {
 
 
   /**
+   * Gets game world that game object is a part of.
+   *
+   * @return {object}
+   */
+  getWorld() {
+    return this.world;
+  }
+
+
+  /**
    * Grabs a game object into this game object's grabbed array.
    *
    * @param {object|number|string} - A game object, id, or name.
@@ -136,25 +161,26 @@ export default class {
    *   grab(1)         // Object ID
    */
   grab(gameObjectId) {
+    const world = this.getWorld();
     // Ensure world object is set
-    if (typeof this.world == 'undefined')
-      return false
+    if (typeof world == 'undefined')
+      return false;
 
-    const gameObject = this.world.getObject(gameObjectId, (gameObject) => {
+    const gameObject = world.getObject(gameObjectId, (gameObject) => {
       // Game object must be able to be grabbed
       if (gameObject.grabbable === false)
-        return
+        return;
 
       // Game object must not have a grabber
       if (typeof gameObject.grabber != 'undefined')
-        return
+        return;
 
       // Game object must have the same position as grabber game object
       if (!poscmp(gameObject.position, this.position))
-        return
+        return;
 
-      return true
-    })
+      return true;
+    });
 
     // Ensure filtered object exists
     if (typeof gameObject == 'undefined')
@@ -168,9 +194,8 @@ export default class {
       this.onGrab(gameObject)
 
     // Call onGrabbed for the found object
-    if (typeof gameObject.onGrabbed == 'function') {
+    if (typeof gameObject.onGrabbed == 'function')
       gameObject.onGrabbed.call(gameObject, this)
-    }
 
     return true
   }
@@ -189,34 +214,35 @@ export default class {
    */
   drop(gameObjectId) {
     // Ensure world object is set
-    if (typeof this.world == 'undefined')
-      return false
+    const world = this.getWorld();
+    if (typeof world == 'undefined')
+      return false;
 
     // Find grabbed object to drop
-    const gameObject = this.world.getObject(gameObjectId, (gameObject) => {
-      return gameObject.grabber == this.id
-    })
+    const gameObject = world.getObject(gameObjectId, (gameObject) =>
+      gameObject.grabber == this.id
+    );
 
     // Return false when game object does not exist
     if (typeof gameObject == 'undefined')
-      return false
+      return false;
 
     // Save object before deleting it
-    gameObject.position.x = this.position.x
-    gameObject.position.y = this.position.y
+    gameObject.position.x = this.position.x;
+    gameObject.position.y = this.position.y;
 
     // Remove grabber
-    gameObject.grabber = undefined
+    gameObject.grabber = undefined;
 
     // Call onDrop for our object
     if (typeof this.onDrop == 'function')
-      this.onDrop(gameObject)
+      this.onDrop(gameObject);
 
     // Call onDropped for the found object
     if (typeof gameObject.onDropped == 'function')
-      gameObject.onDropped(this).call(gameObject)
+      gameObject.onDropped(this).call(gameObject);
 
-    return true
+    return true;
   }
 
 
@@ -233,8 +259,11 @@ export default class {
       return false;
 
     // Dialogue message?
-    if (message.type === 'dialogue')
-      this.world.say(message);
+    if (message.type === 'dialogue') {
+      const world = this.getWorld();
+      if (typeof world != 'undefined')
+        world.say(message);
+    }
 
     // Overhead message?
     else
@@ -256,26 +285,27 @@ export default class {
    */
   move(position, collisions=true) {
     // Ensure world object is set
-    if (typeof this.world == 'undefined')
-      return false
+    const world = this.getWorld();
+    if (typeof world == 'undefined')
+      return false;
 
     // Validate new position
-    if (!this.world.validatePosition(position))
-      return false
+    if (!world.validatePosition(position))
+      return false;
 
     // Individually set these as to not change references
-    this.position.x = position.x
-    this.position.y = position.y
+    this.position.x = position.x;
+    this.position.y = position.y;
 
     // Detect object collisions
     if (collisions)
-      this.world.getCollisions(this)
+      world.getCollisions(this);
 
     // Call onMove
     if (typeof this.onMove == 'function')
-      this.onMove(position)
+      this.onMove(position);
 
-    return true
+    return true;
   }
 
 
@@ -286,34 +316,39 @@ export default class {
    * @return {boolean}
    */
   walk(position) {
+    // Ensure world object is set
+    const world = this.getWorld();
+    if (typeof world == 'undefined')
+      return false;
+
     // Get path from current position to specified position
-    const path = this.world.getPath(this.position, position)
-    const validPath = []
+    const path = world.getPath(this.position, position);
+    const validPath = [];
 
     // Path length is 0? We're already here!
     if (!path.length)
-      return true
+      return true;
 
     // Save invalid position so an animator can do a bump effect
-    let invalidPosition
+    let invalidPosition;
 
     // Step by step...
     for (let i = 0, len = path.length; i < len; i++) {
       // Attempt to move
       if (!this.move(path[i])) {
-        invalidPosition = path[i]
-        break
+        invalidPosition = path[i];
+        break;
       }
 
       // Store valid path for the UI to interpret
-      validPath.push(path[i])
+      validPath.push(path[i]);
     }
 
     // Call onWalk callback
     if (typeof this.onWalk == 'function')
-      this.onWalk(validPath, invalidPosition)
+      this.onWalk(validPath, invalidPosition);
 
-    return validPath.length >= path.length
+    return validPath.length >= path.length;
   }
 
 
@@ -325,6 +360,6 @@ export default class {
    * @return {void}
    */
   onWalk(path) {
-    walkAnimation(this, path)
+    walkAnimation(this, path);
   }
 }
