@@ -1,25 +1,25 @@
 import _ from 'lodash';
 
 
-export default {
-  nextId:   0,
-  size:     3,
-  tiles:    [],
-  objects:  [],
-  dialogue: [],
-  hooks:    [],
+export default class {
 
 
   /**
    * Creates a new GidgetWorld instance.
    *
-   * @param {dictionary} kwargs Default properties.
+   * @param {dictionary} options Default properties.
+   * @return {void}
    */
-  create(attributes) {
-    const self = _.cloneDeep(this);
-    Object.assign(self, _.cloneDeep(attributes));
-    return self;
-  },
+  constructor(options) {
+    this.nextId   = 0;
+    this.size     = 3;
+    this.tiles    = [];
+    this.objects  = [];
+    this.dialogue = [];
+    this.hooks    = [];
+
+    Object.assign(this, _.cloneDeep(options));
+  }
 
 
   /**
@@ -44,7 +44,7 @@ export default {
     // Position should be the only object that needs to be saved
     objectState.position = gameObject.position;
     return objectState;
-  },
+  }
 
 
   /**
@@ -75,7 +75,7 @@ export default {
     // TODO: Find out if this is still necessary with the new engine
     gameObject.position.x = objectState.position.x
     gameObject.position.y = objectState.position.y
-  },
+  }
 
 
   /**
@@ -104,7 +104,7 @@ export default {
 
     // Deep clone the state to accidental prevent mutation
     return _.cloneDeep(state);
-  },
+  }
 
 
   /**
@@ -139,7 +139,7 @@ export default {
       this.restoreObjectState(state.objects[i]);
 
     return true;
-  },
+  }
 
 
   /**
@@ -169,7 +169,7 @@ export default {
         group.forEach((obj) => obj.index = index++);
       }
     });
-  },
+  }
 
 
   /**
@@ -204,7 +204,7 @@ export default {
     })
 
     return objectsMap
-  },
+  }
 
 
   /**
@@ -218,7 +218,7 @@ export default {
     return _.cloneDeep(
       _.omit(_.omitBy(this.getObjectsMap(), _.isFunction), ['world', 'object'])
     )
-  },
+  }
 
 
   /**
@@ -266,7 +266,7 @@ export default {
       foundObject.onGet().call(foundObject)
 
     return foundObject
-  },
+  }
 
 
   /**
@@ -289,7 +289,7 @@ export default {
     this.indexObjects((obj) => obj.name === gameObject.name);
 
     return true;
-  },
+  }
 
 
   /**
@@ -305,7 +305,7 @@ export default {
     gameObject.removed = true;
     this.indexObjects((obj) => !obj.removed && obj.name === gameObject.name);
     return true;
-  },
+  }
 
 
   /**
@@ -341,7 +341,7 @@ export default {
       else if (typeof obj2.onCollision === 'function')
         obj2.onCollision.call(obj2, obj);
     });
-  },
+  }
 
 
   /**
@@ -360,7 +360,7 @@ export default {
       toX: obj.position.x + (obj.position.x - fromX),
       toY: obj.position.y
     }
-  },
+  }
 
 
   /**
@@ -384,7 +384,7 @@ export default {
       position.x >= bounds.fromX && position.x <= bounds.toX &&
       position.y >= bounds.fromY && position.y <= bounds.toY
     );
-  },
+  }
 
 
   /**
@@ -427,7 +427,7 @@ export default {
     }
 
     return result;
-  },
+  }
 
 
 
@@ -446,7 +446,7 @@ export default {
     ) && !this.getObject(
       obj => obj.blocking && this.insideObjectBoundaries(obj, position)
     )
-  },
+  }
 
 
   /**
@@ -467,7 +467,7 @@ export default {
       if (typeof object.onTick == 'function')
         object.onTick.call(object)
     })
-  },
+  }
 
 
   /**

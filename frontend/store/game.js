@@ -142,7 +142,7 @@ export const actions = {
    * @return {void}
    */
   createGame({ state, commit }, data) {
-    __game = GidgetGame.create(data || state.initialData);
+    __game = new GidgetGame(data || state.initialData);
     commit('setEvalData', __game.world.getObjectsSanitized());
     commit('reloadGame');
   },

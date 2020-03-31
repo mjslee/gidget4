@@ -1,23 +1,17 @@
-import _ from 'lodash';
 import Injector from './js-injector';
 
 
-/*
- * Pre-ran step-by-step lookback.
- */
-export default {
-  // Steps
-  steps: [],
-  maxSteps: 100,
-
+export default class {
 
   /**
    * Create a new stepper instance.
-   * @return {object} Stepper instance.
+   *
+   * @return {void}
    */
-  create() {
-    return _.cloneDeep(this)
-  },
+  constructor(maxSteps=100) {
+    this.steps = [];
+    this.maxSteps = maxSteps;
+  }
 
 
   /*
@@ -26,7 +20,7 @@ export default {
   reset() {
     this.steps = []
     this.debugInput = undefined
-  },
+  }
 
 
   /*
@@ -48,7 +42,7 @@ export default {
 
     //else
     //  this.steps.push({ ln, range, scope: { type: scope, inside }});
-  },
+  }
 
 
   /*
@@ -72,7 +66,7 @@ export default {
 
     if (typeof this.onStep == 'function')
       this.onStep.call();
-  },
+  }
 
 
   /*
@@ -97,7 +91,7 @@ export default {
 
     // Set the step data
     step.data = data;
-  },
+  }
 
 
   /*

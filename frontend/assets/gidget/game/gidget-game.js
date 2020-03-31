@@ -4,66 +4,47 @@ import GidgetObject from './gidget-object'
 import GidgetImports from './imports'
 
 
+export default class {
+  constructor({ size, tiles, objects, imports, dialogue }) {
+    this.index  = 0;
+    this.key    = 0;
+    this.states = [];
 
-export default {
-  index: 0,
-  key: 0,
-  error: undefined,
-  world: undefined,
-  states: [],
-
-  initialState: undefined,
-  initialData: undefined,
-
-
-  /**
-   * Creates an instance of GidgetGame.
-   *
-   * @param {array[object]} objects - GameObjects to insert on creation.
-   * @param {array[string]} imports - Global imports to insert.
-   * @param {object} attributes - Attributes to merge into world.
-   * @return {object} An instance of GidgetGame.
-   */
-  create({ size, tiles, objects, imports, dialogue }) {
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
-    const self = _.cloneDeep(this);
     const data = _.cloneDeep({ size, tiles, imports, dialogue });
     objects = _.cloneDeep(objects);
 
     // Create and assign a GidgetWorld object to our game. Our attributes will
     // be merged into the new world
-    self.world = GidgetWorld.create(data);
+    this.world = new GidgetWorld(data);
 
     // Merge in global imports
-    self.imports = {};
+    this.imports = {};
     if (Array.isArray(imports))
       for (let i = 0, len = imports.length; i < len; i++)
-        Object.assign(self.imports, _.cloneDeep(GidgetImports[imports[i]]));
+        Object.assign(this.imports, _.cloneDeep(GidgetImports[imports[i]]));
 
     // Set up the javascript stepper, set the onStep callback so the world
     // states can be saved on each step
-    self.stepper = JsStepper.create();
-    self.stepper.onStep = () => self.save();
+    this.stepper = new JsStepper();
+    this.stepper.onStep = () => this.save();
 
     // Create game objects, then save the initial game state that we can
     // restore on reset
     objects.forEach((gameObjectData) => {
       const gameObject = GidgetObject.create(gameObjectData);
-      self.world.addObject(gameObject);
-    })
+      this.world.addObject(gameObject);
+    });
 
     // Restore tiles
     if (Array.isArray(tiles))
-      self.world.tiles = _.cloneDeep(tiles);
+      this.world.tiles = _.cloneDeep(tiles);
 
     // Save initial world state and data so it can be restored on reset
-    self.initialState = self.world.getState();
-    self.initialData = self.world.getObjectsSanitized();
-
-    return self;
-  },
-
+    this.initialState = this.world.getState();
+    this.initialData = this.world.getObjectsSanitized();
+  }
 
   /**
    * Resets the game by resetting the stepper and restoring the intial game
@@ -79,7 +60,7 @@ export default {
     // Clear states and restore the world to its initial state
     this.states = [];
     return this.set(-1, false);
-  },
+  }
 
 
   /**
@@ -90,7 +71,7 @@ export default {
   save() {
     this.states.push(this.world.getState());
     this.world.gameTick();
-  },
+  }
 
 
   /**
@@ -100,7 +81,7 @@ export default {
    */
   updateInitialState() {
     this.initialState = this.world.getState();
-  },
+  }
 
 
   /**
@@ -160,14 +141,14 @@ export default {
 
     // Return the step for further processing
     return step;
-  },
+  }
 
 
   /**
    * Runs hooks from the a world state depending on conditions.
    *
    * @param {object} state - World state object that contains hooks.
-   * @param {conditions} state - World state object that contains hooks.
+   * @param {conditions} conditions - World state object that contains hooks.
    * @return {boolean} Hooks ran.
    */
   async runHooks(state, conditions) {
@@ -184,9 +165,10 @@ export default {
     // incremented but keyCopy will keep the same value. If these two variables
     // are not equal then we know the state has changed we shouldn't run any
     // further hooks from this state
-    const keyCopy = this.key, wasInterrupted = () => keyCopy != this.key;
+    const keyCopy = this.key;
+    const wasInterrupted = () => keyCopy != this.key;
 
-    // Run each callback if it's a function then collect the results.
+    // Run each callback, if it's a function then collect the results.
     // Hooks callback functions retain their 'this' but are also passed the
     // 'wasInterrupted' function so the hook can determine if it needs to stop.
     const results = [];
@@ -200,7 +182,7 @@ export default {
         await results[i].call();
 
     return true;
-  },
+  }
 
 
   /**
@@ -238,7 +220,7 @@ export default {
 
     // Return the collection
     return exposed;
-  },
+  }
 
 
   /**
