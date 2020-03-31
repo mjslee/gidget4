@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="columns" v-if="game && game.world">
+  <div id="app" class="columns" v-if="game">
     <!-- Code and Goals -->
     <div class="column is-one-third">
       <div class="card">
@@ -79,12 +79,11 @@ export default {
 
 
   computed: {
-
     /**
      *
      */
     dialogue() {
-      return this.game.world.dialogue;
+      return this.$store.getters['game/getDialogue']
     },
 
     /**

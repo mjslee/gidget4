@@ -152,13 +152,6 @@ export const actions = {
   },
 
   /**
-   *
-   */
-  getOrCreateGame({ dispatch }) {
-    dispatch('createGame')
-  },
-
-  /**
    * Reset the game state and game store.
    *
    * @param {object} state
@@ -281,7 +274,7 @@ export const actions = {
 
 export const getters = {
   /**
-   * Retrieve the game instance.
+   * Get the game instance.
    *
    * @return {object}
    */
@@ -290,14 +283,40 @@ export const getters = {
     return __game;
   },
 
+  /*
+   * Get game world instance.
+   *
+   * @return {object}
+   */
+  getWorld({}, { getGame }) {
+    return getGame.world;
+  },
+
+  /**
+   * Get the game world state.
+   *
+   * @return {object}
+   */
+  getWorldState({}, { getWorld }) {
+    return getWorld.getState();
+  },
+
   /**
    * Get size of world.
    *
    * @return {number}
    */
-  getWorldSize({}, getters) {
-    const game = getters['getGame'];
-    return game.world.size;
+  getWorldSize({}, { getWorld }) {
+    return getWorld.size;
+  },
+
+  /**
+   * Get all game dialogue from game world.
+   *
+   * @return {array}
+   */
+  getDialogue({}, { getWorld }) {
+    return getWorld.dialogue;
   },
 
   /**
@@ -305,8 +324,8 @@ export const getters = {
    *
    * @return {array}
    */
-  getObjects({}, { getGame }) {
-    return getGame.world.objects;
+  getObjects({}, { getWorld }) {
+    return getWorld.objects;
   },
 
   /**
@@ -314,8 +333,8 @@ export const getters = {
    *
    * @return {array}
    */
-  getTiles({}, { getGame }) {
-    return getGame.world.tiles;
+  getTiles({}, { getWorld }) {
+    return getWorld.tiles;
   },
 
   /**
@@ -357,16 +376,6 @@ export const getters = {
    */
   getSelectedObject({ selectedObject }, { getObjects }) {
     return getObjects.find((obj) => obj.id === selectedObject);
-  },
-
-  /**
-   * Get the game state directly from the game engine. DO NOT MUTATE.
-   *
-   * @param {boolean} isReady - If game is ready (from store state).
-   * @return {object} Game state if game is ready.
-   */
-  getWorldState({}, { getGame }) {
-    return getGame.world.getState();
   },
 
   /**
