@@ -69,7 +69,17 @@ export default class {
 
     // Update exposed 'get' properties
     this.updateProps();
-    this.initialOptions = options;
+    this.initialOptions = _.cloneDeep(options);
+  }
+
+
+  /**
+   * Reset and rebuild game object.
+   *
+   * @return {void}
+   */
+  reset() {
+    this.reset(this.initialOptions);
   }
 
 
