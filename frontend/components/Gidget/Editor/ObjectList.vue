@@ -44,7 +44,7 @@ export default {
 
   data() {
     return {
-      game: this.$store.getters['game/getGame'](),
+      game: this.$store.getters['game/getGame'],
 
       defaultOpenedDetails: [1],
       showDetailIcon: true,

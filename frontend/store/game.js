@@ -4,6 +4,8 @@ import GidgetObject from '@/assets/gidget/game/gidget-object';
 import { Levels as LevelsEndpoint } from '@/constants/endpoints';
 
 let __game;
+if (module.hot && typeof window.__game != 'undefined')
+  __game = window.__game;
 
 
 export const state = () => ({
@@ -145,6 +147,16 @@ export const actions = {
     __game = new GidgetGame(data || state.initialData);
     commit('setEvalData', __game.world.getObjectsSanitized());
     commit('reloadGame');
+
+    if (module.hot)
+      window.__game = __game;
+  },
+
+  /**
+   *
+   */
+  getOrCreateGame({ dispatch }) {
+    dispatch('createGame')
   },
 
   /**
@@ -154,13 +166,14 @@ export const actions = {
    * @param {object} commit
    * @return {void}
    */
-  resetGame({ state, commit }) {
+  resetGame({ commit, getters }) {
     commit('code/resetLines', null, { root: true });
     commit('setActiveStep', 0);
     commit('setStepCount', 0);
     commit('setRunning', false);
 
-    __game.reset();
+    getters['getGame'].reset();
+    console.debug('reset');
   },
 
   /**
@@ -271,8 +284,8 @@ export const getters = {
   /**
    *
    */
-  getGame() {
-    return () => __game;
+  getGame({ initialData, key }) {
+    return __game;
   },
 
   /**
@@ -281,7 +294,8 @@ export const getters = {
    * @return {number}
    */
   getWorldSize(state, getters) {
-    return __game.world.size;
+    const game = getters['getGame'];
+    return game.world.size;
   },
 
 
@@ -317,8 +331,8 @@ export const getters = {
   /**
    *
    */
-  getTile() {
-    return ({ x, y }) => __game.world.tiles.find((tile) => {
+  getTile({}, { getGame }) {
+    return ({ x, y }) => getGame.world.tiles.find((tile) => {
       return tile.position.x === x && tile.position.y === y
     });
   },
@@ -326,16 +340,16 @@ export const getters = {
   /**
    *
    */
-  getObject() {
-    return (callback) => __game.world.objects.find(callback);
+  getObject({}, { getGame }) {
+    return (callback) => getGame.world.objects.find(callback);
   },
 
 
   /**
    *
    */
-  getObjects() {
-    return (callback) => __game.world.objects.filter(callback);
+  getObjects({}, { getGame }) {
+    return (callback) => getGame.world.objects.filter(callback);
   },
 
   /**
@@ -344,15 +358,15 @@ export const getters = {
    * @param {boolean} isReady - If game is ready (from store state).
    * @return {object} - Gidget GameObject if Gidget exists.
    */
-  getGidget() {
-    return () => __game.world.objects.find(obj => obj.name === 'Gidget');
+  getGidget({}, { getGame }) {
+    return () => getGame.world.objects.find(obj => obj.name === 'Gidget');
   },
 
   /**
    *
    */
-  getSelectedObject({ selectedObject }) {
-    return () => __game.world.objects.find(obj => obj.id === selectedObject);
+  getSelectedObject({ selectedObject }, { getGame }) {
+    return () => getGame.world.objects.find(obj => obj.id === selectedObject);
   },
 
   /**
@@ -361,8 +375,8 @@ export const getters = {
    * @param {boolean} isReady - If game is ready (from store state).
    * @return {object} Game state if game is ready.
    */
-  getWorldState() {
-    return __game.world.getState();
+  getWorldState({}, { getGame }) {
+    return getGame.world.getState();
   },
 
 };

@@ -97,7 +97,7 @@ export default {
 
   data() {
     return {
-      game: this.$store.getters['game/getGame'](),
+      game: this.$store.getters['game/getGame'],
       hovered: { x: 0, y: 0 },
       tileMargin: 0.1
     }
