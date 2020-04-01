@@ -255,7 +255,6 @@ export default {
      */
     'object.position': {
       handler(value) {
-        console.log('moved', this.object.name, value);
         this.updatePosition();
       },
       deep: true

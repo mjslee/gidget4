@@ -1,19 +1,17 @@
 <template>
-  <div class="container" v-if="message">
+  <div class="container" v-if="dialogue">
     <img class="left head image is-64x64" :src="sprite" v-if="sprite">
 
     <div class="box">
-      <template v-if="message">
-        <!-- Markdown -->
-        <gidget-text :text="message.text" />
-      </template>
+      <!-- Markdown -->
+      <gidget-text :text="text" />
 
       <div class="buttons has-addons is-centered">
         <!-- Previous Message -->
         <b-button
           icon-left="chevron-left"
-          :disabled="!hasPrev"
-          @click="index--"
+          :disabled="!hasPrevious"
+          @click="previous"
         >
           Prev
         </b-button>
@@ -23,12 +21,12 @@
           type="is-primary"
           icon-right="chevron-right"
           :disabled="!hasNext"
-          @click="index++"
+          @click="next"
         >
           Next
         </b-button>
+        {{ index }}/{{ length }}
 
-        <span>&nbsp;{{ index }}/{{ messages.length - 1 }}</span>
       </div>
     </div>
   </div>
@@ -75,12 +73,6 @@ import { SPRITE_PATH } from '@/constants/paths';
 
 
 export default {
-  props: {
-    messages: {
-      type: Array
-    }
-  },
-
 
   components: {
     GidgetValue,
@@ -88,51 +80,89 @@ export default {
   },
 
 
-  data() {
-    return {
-      index: 0
+  computed: {
+    /*
+     * Get active dialogue index.
+     *
+     * @return {number}
+     */
+    index() {
+      return this.$store.state.dialogue.activeIndex;
+    },
+
+    /*
+     * Get active dialogue message.
+     *
+     * @return {object}
+     */
+    dialogue() {
+      return this.$store.getters['dialogue/getActiveDialogue'];
+    },
+
+    /*
+     * Get text from dialogue message.
+     *
+     * @return {string}
+     */
+    text() {
+      return this.dialogue.text;
+    },
+
+    /*
+     * Get length of dialogue messages array.
+     *
+     * @return {number}
+     */
+    length() {
+      return this.$store.getters['dialogue/getLength'];
+    },
+
+    /*
+     * Does a next dialogue message exist?
+     *
+     * @return {boolean}
+     */
+    hasNext() {
+      return this.$store.getters['dialogue/hasNext'];
+    },
+
+    /*
+     * Does a previous dialogue message exist?
+     *
+     * @return {boolean}
+     */
+    hasPrevious() {
+      return this.$store.getters['dialogue/hasPrevious'];
+    },
+
+    /**
+     * Get URL to sprite when applicable.
+     *
+     * @return {string}
+     */
+    sprite() {
+      if (this.dialogue.sprite)
+        return SPRITE_PATH + this.dialogue.sprite + '.png';
     }
   },
 
-
-  computed: {
-    /**
-     * Active message.
+  methods: {
+    /*
+     * Set next message.
+     *
+     * @return {void}
      */
-    message() {
-      if (typeof this.index != 'number') {
-        this.index = 0;
-        return;
-      }
-
-      if (this.index < 0) {
-        this.index = 0;
-        return;
-      }
-
-      return this.messages[this.index];
+    next() {
+      this.$store.dispatch('dialogue/next');
     },
 
-    /**
-     * Does a previous message exist?
+    /*
+     * Set previous message.
+     *
+     * @return {void}
      */
-    hasPrev() {
-      return this.index > 0;
-    },
-
-    /**
-     * Does a next message exist?
-     */
-    hasNext() {
-      return this.index < this.messages.length - 1;
-    },
-
-    /**
-     * Get url to left-side sprite if applicable.
-     */
-    sprite() {
-      if (this.message && this.message.sprite)
-        return SPRITE_PATH + this.message.sprite + '.png';
+    previous() {
+      this.$store.dispatch('dialogue/previous');
     }
   }
 }
