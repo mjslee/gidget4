@@ -222,6 +222,16 @@ export const actions = {
   },
 
   /**
+   * Safely add game object to world.
+   *
+   * @return {void}
+   */
+  addObject({}, { type, position }) {
+    const gameObject = GidgetObject.create({ type, position });
+    return __game.world.addObject(gameObject);
+  },
+
+  /**
    * Safely remove game object from object array.
    *
    * @param {object} state
@@ -245,16 +255,6 @@ export const actions = {
     __game.world.removeObject(obj);
     Vue.delete(__game.world.objects, index);
     return true;
-  },
-
-  /**
-   * Safely add game object to world.
-   *
-   * @return {void}
-   */
-  addObject({}, { type, position }) {
-    const gameObject = GidgetObject.create({ type, position });
-    return __game.world.addObject(gameObject);
   },
 
   /**
@@ -308,15 +308,6 @@ export const getters = {
    */
   getWorldSize({}, { getWorld }) {
     return getWorld.size;
-  },
-
-  /**
-   * Get all game dialogue from game world.
-   *
-   * @return {array}
-   */
-  getDialogue({}, { getWorld }) {
-    return getWorld.dialogue;
   },
 
   /**

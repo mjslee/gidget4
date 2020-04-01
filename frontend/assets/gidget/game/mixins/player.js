@@ -28,7 +28,6 @@ export default {
     }
   },
 
-
   exposed: {
     /**
      * Move object one space to the left.
