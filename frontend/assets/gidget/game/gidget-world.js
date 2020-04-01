@@ -439,13 +439,12 @@ export default class {
    * @param {function} conditions
    */
   validatePosition(position) {
-    // TODO: Move this into a helper function
     return (
       position.x >= 0 && position.x <= this.size - 1 &&
       position.y >= 0 && position.y <= this.size - 1
-    ) && !this.getObject(
-      obj => obj.blocking && this.insideObjectBoundaries(obj, position)
-    )
+    ) && !this.getObject((obj) =>
+      obj.blocking && this.insideObjectBoundaries(obj, position)
+    );
   }
 
 
@@ -477,18 +476,7 @@ export default class {
    * @param {number} dialogue -- Object array of dialogue.
    * @return {void}
    */
-  say(message) {
-    const lastElement = this.dialogue[this.dialogue.length - 1]
-
-    if (lastElement && message.text === lastElement.text) {
-      if (typeof lastElement.repeats != 'number')
-        lastElement.repeats = 2
-      else
-        lastElement.repeats += 1
-    }
-
-    else {
-      // this.dialogue.push(message)
-    }
+  addDialogue(message) {
+    this.dialogue.push(message);
   }
 }

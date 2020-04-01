@@ -272,7 +272,7 @@ export default class {
     if (message.type === 'dialogue') {
       const world = this.getWorld();
       if (typeof world != 'undefined')
-        world.say(message);
+        world.addDialogue(message);
     }
 
     // Overhead message?
