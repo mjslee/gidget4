@@ -91,7 +91,7 @@ export default class {
       size:     this.size,
 
       // Arrays / Objects
-      tiles:    [],
+      tiles:    this.tiles,
       objects:  [],
       dialogue: this.dialogue,
       hooks:    this.hooks
@@ -124,7 +124,7 @@ export default class {
     this.hooks = state.hooks;
 
     // Restore tiles if existing
-    if (Array.isArray(state.tiles))
+    if (Array.isArray(state.tiles) && (this.tiles.length != state.tiles.length))
       this.tiles = state.tiles;
 
     // Restore properties of primitive types (number, string, boolean)
