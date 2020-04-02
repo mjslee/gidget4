@@ -302,8 +302,8 @@ export default class {
     if (typeof gameObject != 'object')
       return false;
 
-    gameObject.removed = true;
-    this.indexObjects((obj) => !obj.removed && obj.name === gameObject.name);
+    gameObject.isRemoved = true;
+    this.indexObjects((obj) => !obj.isRemoved && obj.name === gameObject.name);
     return true;
   }
 
@@ -470,7 +470,7 @@ export default class {
 
 
   /**
-   * Run onObjectSay() callback to pass to a UI.
+   *
    *
    * @param {number} object -- Object to send to callback.
    * @param {number} dialogue -- Object array of dialogue.
