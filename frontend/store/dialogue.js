@@ -1,3 +1,6 @@
+import Vue from 'vue';
+
+
 export const state = () => ({
   activeIndex: 0
 });
@@ -30,8 +33,38 @@ export const actions = {
    *
    * @return {boolean}
    */
-  addDialogue({}, {}, {}, { 'game/getWorld': getWorld }) {
-    return false;
+  addDialogue({ rootGetters: { 'game/getWorld': getWorld } }, dialogue) {
+    if (!getWorld)
+      return false;
+
+    getWorld.addDialogue(dialogue);
+    return true;
+  },
+
+  removeDialogue({ getters: { getDialogue } }, { id }) {
+    const index = getDialogue.findIndex((dialogue) => dialogue.id === id);
+    Vue.delete(getDialogue, index);
+  },
+
+  /**
+   *
+   */
+  swapDialogue({ getters: { getDialogue } }, { from, to }) {
+    const len = getDialogue.length;
+    if (!getDialogue || from >= len || to >= len || to < 0 || from < 0)
+      return false;
+
+    const toRow   = getDialogue[to];
+    const fromRow = getDialogue[from];
+    const fromId = fromRow.id;
+
+    Vue.set(getDialogue[from], 'id', toRow.id);
+    Vue.set(getDialogue[to], 'id', fromId);
+
+    Vue.set(getDialogue, from, toRow);
+    Vue.set(getDialogue, to, fromRow);
+
+    return true;
   },
 
   /*
@@ -63,7 +96,10 @@ export const getters = {
    * @return {array}
    */
   getDialogue({}, {}, {}, { 'game/getWorld': getWorld }) {
-    return getWorld.dialogue;
+    if (!getWorld)
+      return [];
+
+    return getWorld.dialogue.map((dialogue, id) => ({ id, ...dialogue }));
   },
 
   /**

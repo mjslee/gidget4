@@ -67,8 +67,8 @@
 
 
 <script>
-import GidgetValue from './Value';
-import GidgetText from './Text';
+import GidgetValue from '../Value';
+import GidgetText from '../Text';
 import { SPRITE_PATH } from '@/constants/paths';
 
 
