@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { swapElements } from '@/helpers/array';
 
 
 export const state = () => ({
@@ -47,24 +48,16 @@ export const actions = {
   },
 
   /**
+   * Swap two dialogue messages by indexes.
    *
+   * @param {number} fromIndex
+   * @param {number} toIndex
+   * @return {void}
    */
-  swapDialogue({ getters: { getDialogue } }, { from, to }) {
-    const len = getDialogue.length;
-    if (!getDialogue || from >= len || to >= len || to < 0 || from < 0)
-      return false;
-
-    const toRow   = getDialogue[to];
-    const fromRow = getDialogue[from];
-    const fromId = fromRow.id;
-
-    Vue.set(getDialogue[from], 'id', toRow.id);
-    Vue.set(getDialogue[to], 'id', fromId);
-
-    Vue.set(getDialogue, from, toRow);
-    Vue.set(getDialogue, to, fromRow);
-
-    return true;
+  swapDialogue({ getters: { getDialogue } }, { fromIndex, toIndex }) {
+    const rows = swapElements(getDialogue, fromIndex, toIndex);
+    if (rows)
+      [rows.from.id, rows.to.id] = [rows.to.id, rows.from.id];
   },
 
   /*

@@ -85,19 +85,19 @@ export default {
       if (!this.selectedRow)
         return;
 
-      // in this case, ID is the index
+      const index = this.dialogue.indexOf(this.selectedRow);
       this.$store.dispatch('dialogue/swapDialogue', {
-        from: this.selectedRow.id,
-        to: this.selectedRow.id + direction
+        fromIndex: index,
+        toIndex:   index + direction
       });
     },
 
     swapUp() {
-      
+      this.swap(-1);
     },
 
     swapDown() {
-      
+      this.swap(1);
     },
 
     remove(row) {
