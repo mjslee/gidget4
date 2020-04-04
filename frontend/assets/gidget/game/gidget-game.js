@@ -1,7 +1,8 @@
-import JsStepper from '@/assets/gidget/lang/js-stepper'
-import GidgetWorld from './gidget-world'
-import GidgetObject from './gidget-object'
-import GidgetImports from './imports'
+import JsStepper from '@/assets/gidget/lang/js-stepper';
+import GidgetWorld from './gidget-world';
+import GidgetObject from './gidget-object';
+import GidgetGoal from './gidget-goal';
+import GidgetImports from './imports';
 
 
 export default class {
@@ -10,10 +11,14 @@ export default class {
    *
    * @return {void}
    */
-  constructor({ size, tiles, objects, imports, dialogue }) {
-    this.index  = 0;
+  constructor({ size, tiles, objects, imports, dialogue, goals }) {
     this.key    = 0;
+    this.index  = 0;
     this.states = [];
+    this.goals  = goals.map((goal) => new GidgetGoal({
+      assertion: goal.assertion || goal.assert,
+      args:      goal.arguments || goal.args
+    }));
 
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
@@ -43,7 +48,7 @@ export default class {
       this.world.addObject(gameObject);
     });
 
-    // Restore tiles
+    // Set world tiles
     if (Array.isArray(tiles))
       this.world.tiles = _.cloneDeep(tiles);
 
