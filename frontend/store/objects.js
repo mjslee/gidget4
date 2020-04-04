@@ -95,5 +95,4 @@ export const getters = {
   getSelected({ selectedObject }, {}, {}, { 'game/getWorld': getWorld }) {
     return getWorld.objects.find((obj) => obj.id === selectedObject);
   },
-
 };

@@ -52,14 +52,14 @@ export default {
      *
      */
     isSelected() {
-      return this.$store.state.game.selectedTile == this.id;
+      return this.$store.state.tiles.selectedTile == this.id;
     },
 
     /**
      *
      */
     tileType() {
-      const tile = this.$store.getters['game/getTile'](this.position);
+      const tile = this.$store.getters['tiles/getTile'](this.position);
       return (typeof tile == 'object') ? (tile.type || this.type) : (this.type);
     },
 
@@ -87,7 +87,7 @@ export default {
      *
      */
     select() {
-      this.$store.commit('game/setSelectedTile', this.id);
+      this.$store.commit('tiles/setSelected', this.id);
     }
   }
 }

@@ -15,8 +15,6 @@ export const state = () => ({
   activeStep: 0,
   stepCount:  0,
 
-  selectedTile:   undefined,
-
   evalData: { },
   initialData: { size: 3, tiles: [], objects: [], dialogue: [], imports: [] },
 });
@@ -96,14 +94,6 @@ export const mutations = {
    */
   setStepCount(state, value) {
     state.stepCount = value;
-  },
-
-  /**
-   *
-   */
-  setSelectedTile(state, value) {
-    state.selectedTile = value;
-    state.selectedObject = undefined;
   },
 };
 
@@ -264,28 +254,6 @@ export const getters = {
    */
   getWorldSize({}, { getWorld }) {
     return getWorld.size;
-  },
-
-  /**
-   * Get all game tiles from game world.
-   *
-   * @return {array}
-   */
-  getTiles({}, { getWorld }) {
-    return getWorld.tiles;
-  },
-
-  /**
-   * Get a game tile from an x and y coordination.
-   *
-   * @param {number} x
-   * @param {number} y
-   * @return {object}
-   */
-  getTile({}, { getTiles }) {
-    return ({ x, y }) => getTiles.find(({ position }) =>
-      position.x === x && position.y === y
-    );
   },
 
   /**
