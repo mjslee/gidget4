@@ -71,7 +71,7 @@
 import _ from 'lodash';
 import Vue from 'vue';
 import { SpriteBaseURL, ObjectSprites } from '@/constants/sprites';
-import MixinInput from '@/components/Gidget/Utilities/MixinInput';
+import MixinInput from '../Utilities/MixinInput';
 
 
 export default {

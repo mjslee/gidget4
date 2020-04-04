@@ -4,7 +4,7 @@
       :columns="columns"
       :data="objects"
       :show-detail-icon="true"
-      :opened-detailed="defaultOpenedDetails"
+      :opened-detailed="openedRows"
       detailed
       detail-key="id"
     >
@@ -22,7 +22,7 @@
 
 
 <script>
-import ObjectEditor from '@/components/Gidget/Editor/ObjectEditor';
+import ObjectEditor from '../Editor/ObjectEditor';
 
 
 export default {
@@ -46,16 +46,11 @@ export default {
     return {
       game: this.$store.getters['game/getGame'],
 
-      defaultOpenedDetails: [1],
+      openedRows: [1],
       showDetailIcon: true,
 
       columns: [
-        {
-          field: 'id',
-          label: 'ID',
-          width: '40',
-          numeric: true
-        },
+        { field: 'id', label: 'ID', width: '40', numeric: true },
         { field: 'image', label: 'Sprite' },
         { field: 'name',  label: 'Name' },
         { field: 'index', label: 'Index' },

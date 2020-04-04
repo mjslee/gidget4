@@ -9,7 +9,7 @@
 
 
 <script>
-import GidgetValue from '../Value'
+import GidgetValue from '../Content/Value'
 
 export default {
   components: {

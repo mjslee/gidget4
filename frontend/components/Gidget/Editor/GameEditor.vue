@@ -8,7 +8,7 @@
         <object-list />
       </b-tab-item>
       <b-tab-item label="Dialogue">
-        Lorem ipsum dolor sit amet.
+        <dialogue-list />
       </b-tab-item>
       <b-tab-item label="Goals">
         Lorem ipsum dolor sit amet.
@@ -26,17 +26,20 @@
 <script>
 import WorldEditor from './WorldEditor';
 import ObjectList from './ObjectList';
+import DialogueList from '@/components/Gidget/Dialogue/DialogueList';
 
 
 export default {
   components: {
     WorldEditor,
-    ObjectList
+
+    ObjectList,
+    DialogueList
   },
 
   data() {
     return {
-      activeTab: 0
+      activeTab: 2
     }
   }
 }

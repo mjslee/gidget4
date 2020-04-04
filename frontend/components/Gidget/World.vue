@@ -84,8 +84,8 @@ label.active {
 
 
 <script>
-import GidgetTile from './Tile'
-import GidgetObject from './Object'
+import GidgetTile from './Tiles/Tile'
+import GidgetObject from './Objects/Object'
 
 
 export default {

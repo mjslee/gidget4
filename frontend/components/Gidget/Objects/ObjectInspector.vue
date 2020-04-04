@@ -67,7 +67,7 @@ th {
 
 <script>
 import { SPRITE_PATH } from '@/constants/paths'
-import GidgetValue from './Value'
+import GidgetValue from '../Content/Value'
 
 
 export default {

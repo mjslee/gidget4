@@ -57,12 +57,12 @@
 
 
 <script>
-import Code from './Code';
+import Code from './Code/Code';
 import World from './World';
-import Goals from './Goals';
-import Controls from './Controls';
-import Dialogue from './Dialogue';
-import ObjectInspector from './ObjectInspector';
+import Goals from './Goals/Goals';
+import Controls from './Controls/Controls';
+import Dialogue from './Dialogue/Dialogue';
+import ObjectInspector from './Objects/ObjectInspector';
 
 import { wait } from '@/assets/gidget/game/gidget-utility';
 
