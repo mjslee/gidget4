@@ -18,7 +18,7 @@
         &#93;
       </span>
     </template>
-    <span v-html="highlightedHtml" v-else></span>
+    <span v-html="highlightedHTML" v-else></span>
 
     <!-- Popover -->
     <Popover
@@ -81,21 +81,24 @@ export default {
     this.updateValue();
   },
 
-
-  watch: {
-    code: {
-      /**
-       * Update value when code is updated.
-       */
-      handler(newVal) {
-        this.updateValue();
-      },
-      deep: true
-    }
-  },
-
+  // watch: {
+  //   code: {
+  //     /**
+  //      * Update value when code is updated.
+  //      */
+  //     handler(newVal) {
+  //       this.updateValue();
+  //     },
+  //     deep: true
+  //   }
+  // },
+  //
 
   computed: {
+    value: {
+
+    },
+
     /**
      * Determine if code is an identifier.
      *
@@ -103,7 +106,7 @@ export default {
      */
     isIdentifier() {
       // Non-strings can never be identifiers
-      if (typeof this.code !== 'string')
+      if (typeof this.code != 'string')
         return false;
 
       // Avoid non-identifiers
@@ -121,7 +124,7 @@ export default {
      *
      * return {string}
      */
-    highlightedHtml() {
+    highlightedHTML() {
       let result = this.isIdentifier ? this.code : this.value || this.code;
 
       if (typeof result != 'string') {
@@ -206,8 +209,8 @@ export default {
      * @return {array}
      */
     isPosition() {
-      if (typeof this.value.x === 'undefined' ||
-          typeof this.value.y === 'undefined')
+      if (typeof this.value.x == 'undefined' ||
+          typeof this.value.y == 'undefined')
         return false;
 
       this.type = 'Position';
