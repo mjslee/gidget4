@@ -146,7 +146,7 @@ export default {
      *
      */
     objects() {
-      return this.$store.getters['game/getObjects'];
+      return this.$store.getters['objects/getObjects'];
     },
 
     /**

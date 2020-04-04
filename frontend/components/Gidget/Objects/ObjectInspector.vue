@@ -71,11 +71,9 @@ import GidgetValue from '../Content/Value'
 
 
 export default {
-
   components: {
     GidgetValue
   },
-
 
   props: {
     id:       Number,
@@ -107,11 +105,10 @@ export default {
      * @return {string}
      */
     grabbed() {
-      return this.$store.getters['game/getObjects'].filter(
+      return this.$store.getters['objects/getObjects'].filter(
         (obj) => obj.grabber === this.id
       );
     }
   }
-
 }
 </script>

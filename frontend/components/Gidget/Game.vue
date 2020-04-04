@@ -90,14 +90,16 @@ export default {
      *
      */
     playerObject() {
-      return this.$store.getters['game/getGidget'];
+      return this.$store.getters['objects/getObject'](
+        (obj) => obj.name == 'Gidget'
+      );
     },
 
     /**
      *
      */
     selectedObject() {
-      return this.$store.getters['game/getSelectedObject'];
+      return this.$store.getters['objects/getSelected'];
     }
   },
 

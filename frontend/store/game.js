@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import GidgetGame from '@/assets/gidget/game/gidget-game';
-import GidgetObject from '@/assets/gidget/game/gidget-object';
 import { Levels as LevelsEndpoint } from '@/constants/endpoints';
 
 let __game;
@@ -11,65 +10,76 @@ if (module.hot && typeof window.__game != 'undefined')
 export const state = () => ({
   key:  0,
 
-  isReady:   false,
   isRunning: false,
 
   activeStep: 0,
   stepCount:  0,
 
-  selectedObject: undefined,
   selectedTile:   undefined,
 
-  evalData: {},
+  evalData: { },
   initialData: { size: 3, tiles: [], objects: [], dialogue: [], imports: [] },
 });
 
 
 export const mutations = {
   /**
+   * Set isRunning state value.
    *
+   * @param {boolean} value
+   * @return {void}
    */
   setRunning(state, value) {
     state.isRunning = value;
   },
 
   /**
+   * Reload game by updating the key, forcing a component refresh.
    *
-   */
-  setReady(state, value) {
-    state.isReady = value;
-  },
-
-  /**
-   *
+   * @return {void}
    */
   reloadGame(state) {
     state.key += 1;
   },
 
   /**
+   * Set the initial game data.
    *
+   * @return {object} data
+   * @return {void}
    */
   setInitialData(state, data) {
     Object.assign(state.initialData, data);
   },
 
   /**
+   * Set evaluation data from stepper.
    *
+   * TODO: Go through data and only update data that has changed to prevent
+   *       unnecessary component updates.
+   *
+   * @return {object} data
+   * @return {void}
    */
   setEvalData(state, data) {
     Vue.set(state, 'evalData', data);
   },
 
   /**
+   * Update size of world.
    *
+   * @param {value}
+   * @return {void}
    */
   setWorldSize({}, value) {
     __game.world.size = value;
   },
 
   /**
+   * Set active step number.
    *
+   * @param {number} index - Index of step to set active.
+   * @return {void}
    */
   setActiveStep(state, index) {
     if (state.activeStep > state.stepCount)
@@ -79,7 +89,10 @@ export const mutations = {
   },
 
   /**
+   * Set total number of steps in stepper.
    *
+   * @param {number} value
+   * @return {void}
    */
   setStepCount(state, value) {
     state.stepCount = value;
@@ -92,14 +105,6 @@ export const mutations = {
     state.selectedTile = value;
     state.selectedObject = undefined;
   },
-
-  /**
-   *
-   */
-  setSelectedObject(state, value) {
-    state.selectedTile = undefined;
-    state.selectedObject = value;
-  }
 };
 
 
@@ -107,9 +112,9 @@ export const actions = {
   /**
    * Fetch level from API.
    *
-   * @param object commit
-   * @param object data
-   * @return object|void
+   * @param {object} commit
+   * @param {object} data
+   * @return {void|object}
    */
   async fetchLevel({ commit }, { id }) {
     if (typeof id == 'undefined') {
@@ -220,55 +225,6 @@ export const actions = {
     commit('setRunning', true);
     return runner;
   },
-
-  /**
-   * Safely add game object to world.
-   *
-   * @return {void}
-   */
-  addObject({}, { type, position }) {
-    const gameObject = GidgetObject.create({ type, position });
-    return __game.world.addObject(gameObject);
-  },
-
-  /**
-   * Safely remove game object from object array.
-   *
-   * @param {object} state
-   * @param {number} id
-   * @return {boolean}
-   */
-  removeObject({}, { id }) {
-    let index;
-    const obj = __game.world.objects.find((obj, i) => {
-      const found = obj.id === id;
-
-      if (found)
-        index = i;
-
-      return found;
-    });
-
-    if (typeof index == 'undefined')
-      return false;
-
-    __game.world.removeObject(obj);
-    Vue.delete(__game.world.objects, index);
-    return true;
-  },
-
-  /**
-   * Safely update game object properties.
-   *
-   * @return {void}
-   */
-  updateObject({}, { object, key, value, defaultValue }) {
-    _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
-  },
-
-  updateTile({}, {}) {
-
-  }
 };
 
 
@@ -311,31 +267,12 @@ export const getters = {
   },
 
   /**
-   * Get all game objects from game world.
-   *
-   * @return {array}
-   */
-  getObjects({}, { getWorld }) {
-    return getWorld.objects;
-  },
-
-  /**
    * Get all game tiles from game world.
    *
    * @return {array}
    */
   getTiles({}, { getWorld }) {
     return getWorld.tiles;
-  },
-
-  /**
-   * Get a game object based on conditions.
-   *
-   * @param {function} callback - Conditions for find.
-   * @return {object}
-   */
-  getObject({}, { getObjects }) {
-    return (callback) => getObjects.find(callback);
   },
 
   /**
@@ -352,25 +289,7 @@ export const getters = {
   },
 
   /**
-   * Find and return the Gidget game object. DO NOT MUTATE.
-   *
-   * @return {object} - Gidget GameObject if Gidget exists.
-   */
-  getGidget({}, { getObject }) {
-    return getObject((obj) => obj.name === 'Gidget');
-  },
-
-  /**
-   * Get the selected game object.
-   *
-   * @return {object}
-   */
-  getSelectedObject({ selectedObject }, { getObjects }) {
-    return getObjects.find((obj) => obj.id === selectedObject);
-  },
-
-  /**
-   *
+   * Determine if stepper evaluation is complete.
    *
    * @param {number} activeStep - Index of the active step.
    * @param {number} stepCount - Total amount of steps in the stepper.
@@ -387,9 +306,9 @@ export const getters = {
    * @param {any} defaultValue - Default value if data does not have the key.
    * @return {any}
    */
-  getValue({ data }) {
+  getValue({ evalData }) {
     return (key, defaultValue=undefined) => {
-      const value = _.get(data, key);
+      const value = _.get(evalData, key);
 
       if (typeof defaultValue == 'undefined')
         return value;
@@ -397,5 +316,4 @@ export const getters = {
       return typeof value == 'undefined' ? (defaultValue || key) : value;
     }
   },
-
 };

@@ -183,7 +183,7 @@ export default {
      *
      */
     isSelected() {
-      return this.$store.state.game.selectedObject == this.object.id;
+      return this.$store.state.objects.selectedObject == this.object.id;
     }
   },
 
@@ -202,7 +202,7 @@ export default {
      *
      */
     select() {
-      this.$store.commit('game/setSelectedObject', this.object.id);
+      this.$store.commit('objects/setSelected', this.object.id);
     }
   },
 

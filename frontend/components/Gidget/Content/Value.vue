@@ -81,24 +81,20 @@ export default {
     this.updateValue();
   },
 
-  // watch: {
-  //   code: {
-  //     /**
-  //      * Update value when code is updated.
-  //      */
-  //     handler(newVal) {
-  //       this.updateValue();
-  //     },
-  //     deep: true
-  //   }
-  // },
-  //
+  watch: {
+    code: {
+      /**
+       * Update value when code is updated.
+       */
+      handler(newVal) {
+        this.updateValue();
+      },
+      deep: true
+    }
+  },
+
 
   computed: {
-    value: {
-
-    },
-
     /**
      * Determine if code is an identifier.
      *
