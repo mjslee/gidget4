@@ -1,20 +1,18 @@
 <template>
-  <div>
-    <b-tabs v-model="activeTab">
-      <b-tab-item label="World">
-        <world-editor />
-      </b-tab-item>
-      <b-tab-item label="Objects">
-        <object-list />
-      </b-tab-item>
-      <b-tab-item label="Dialogue">
-        <dialogue-list />
-      </b-tab-item>
-      <b-tab-item label="Goals">
-        Lorem ipsum dolor sit amet.
-      </b-tab-item>
-    </b-tabs>
-  </div>
+  <b-tabs v-model="activeTab">
+    <b-tab-item label="World">
+      <world-editor />
+    </b-tab-item>
+    <b-tab-item label="Objects">
+      <object-list />
+    </b-tab-item>
+    <b-tab-item label="Dialogue">
+      <dialogue-list />
+    </b-tab-item>
+    <b-tab-item label="Goals">
+      <goal-list />
+    </b-tab-item>
+  </b-tabs>
 </template>
 
 
@@ -27,6 +25,7 @@
 import WorldEditor from './WorldEditor';
 import ObjectList from './ObjectList';
 import DialogueList from '@/components/Gidget/Dialogue/DialogueList';
+import GoalList from '@/components/Gidget/Goals/GoalList';
 
 
 export default {
@@ -34,12 +33,13 @@ export default {
     WorldEditor,
 
     ObjectList,
-    DialogueList
+    DialogueList,
+    GoalList
   },
 
   data() {
     return {
-      activeTab: 2
+      activeTab: 3
     }
   }
 }

@@ -31,7 +31,7 @@ export default {
 
   data() {
     return {
-      isModalActive: true,
+      isModalActive: false,
       goal: {
         assert: 'equals',
         args: ['true', 'false']
