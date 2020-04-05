@@ -1,0 +1,20 @@
+.hljs-literal, .hljs-number, .hljs-string, .is-keyword, .is-operator {
+  font-family: monospace !important;
+}
+
+.hljs-literal {
+  color: $primary !important;
+}
+
+.hljs-number {
+  color: $primary !important;
+}
+
+.hljs-string {
+  color: $info !important;
+}
+
+.is-keyword, .is-operator {
+  text-shadow: 0 0 0.01rem #000;
+  color: $primary !important;
+}
