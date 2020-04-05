@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Modals -->
-    <portal-target name="modal"></portal-target>
+    <portal-target name="modal" multiple />
 
     <!-- Header Bar -->
     <nav class="navbar header has-shadow is-primary">
