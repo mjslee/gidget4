@@ -16,8 +16,8 @@ export default class {
     this.index  = 0;
     this.states = [];
     this.goals  = goals.map((goal) => new GidgetGoal({
-      assertion: goal.assertion || goal.assert,
-      args:      goal.arguments || goal.args
+      assert: goal.assert,
+      args:   goal.args
     }));
 
     // Create a deep clone of this object so we won't mutate this one

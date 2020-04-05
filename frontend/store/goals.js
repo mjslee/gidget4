@@ -84,6 +84,6 @@ export const getters = {
     if (!getGame)
       return [];
 
-    return getGame.goals;
+    return getGame.goals.map((dialogue, id) => ({ id, ...dialogue }));
   },
 };
