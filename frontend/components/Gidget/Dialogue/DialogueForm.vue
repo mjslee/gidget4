@@ -4,7 +4,7 @@
       <img :src="spriteUrl" />
     </div>
     <div class="media-content">
-      <codemirror v-model="internalProps.text" @input="canComplete = true" />
+      <codemirror v-model="internalProps.text" :options="options"  @input="canComplete = true" />
 
       <section class="level">
         <!-- Completion -->
@@ -70,6 +70,14 @@ export default {
 
       canComplete: false,
       canReset: false,
+
+      // Editor
+      options: {
+        tabSize:     2,
+        line:        true,
+        lineNumbers: true,
+        lineWrapping: true
+      },
     };
   },
 
