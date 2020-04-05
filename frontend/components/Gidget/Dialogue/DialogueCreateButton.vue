@@ -1,16 +1,19 @@
 <template>
-  <article>
+  <div>
     <b-button type="is-primary" @click="isModalActive = true">
       New Dialogue
     </b-button>
-    <b-modal :active.sync="isModalActive" :width="640">
-      <div class="card">
-        <dialogue-form class="card-content" v-bind.sync="dialogue" @done="done">
-          <template slot="complete-button-text">Create</template>
-        </dialogue-form>
-      </div>
-    </b-modal>
-  </article>
+
+    <portal to="modal">
+      <b-modal :active.sync="isModalActive" :width="640">
+        <div class="card">
+          <dialogue-form class="card-content" v-bind.sync="dialogue" @done="done">
+            <template slot="complete-button-text">Create</template>
+          </dialogue-form>
+        </div>
+      </b-modal>
+    </portal>
+  </div>
 </template>
 
 

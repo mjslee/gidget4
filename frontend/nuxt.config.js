@@ -33,7 +33,6 @@ export default {
   ** Global CSS
   */
   css: [
-    'highlight.js/styles/default.css',
     '@/assets/scss/main.scss'
   ],
 
@@ -52,6 +51,7 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/auth',
+    'portal-vue/nuxt',
 
     // Doc: https://buefy.github.io/#/documentation
     'nuxt-buefy',

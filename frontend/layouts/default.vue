@@ -1,5 +1,9 @@
 <template>
   <div>
+    <!-- Modals -->
+    <portal-target name="modal"></portal-target>
+
+    <!-- Header Bar -->
     <nav class="navbar header has-shadow is-primary">
 
       <div class="navbar-brand">
@@ -31,6 +35,7 @@
 
     </nav>
 
+    <!-- Content -->
     <section class="main-content">
 
       <div class="container column is-12">
