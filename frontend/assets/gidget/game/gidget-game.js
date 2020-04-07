@@ -15,10 +15,7 @@ export default class {
     this.key    = 0;
     this.index  = 0;
     this.states = [];
-    this.goals  = goals.map((goal) => new GidgetGoal({
-      assert: goal.assert,
-      args:   goal.args
-    }));
+    this.goals  = [];
 
     // Create a deep clone of this object so we won't mutate this one
     // and then we'll use self to set up our GidgetGame clone
@@ -34,6 +31,9 @@ export default class {
     if (Array.isArray(imports))
       for (let i = 0, len = imports.length; i < len; i++)
         Object.assign(this.imports, _.cloneDeep(GidgetImports[imports[i]]));
+
+    // Add goals
+    goals.forEach((goal) => this.addGoal(goal));
 
     // Set up the javascript stepper, set the onStep callback so the world
     // states can be saved on each step
@@ -92,6 +92,10 @@ export default class {
    */
   updateInitialState() {
     this.initialState = this.world.getState();
+  }
+
+  addGoal({ assert, args }) {
+    this.goals.push(new GidgetGoal({ assert, args }));
   }
 
 

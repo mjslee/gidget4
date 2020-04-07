@@ -4,7 +4,7 @@
       <img :src="spriteUrl" />
     </div>
     <div class="media-content">
-      <codemirror v-model="internalProps.text" :options="options"  @input="canComplete = true" />
+      <codemirror v-model="internalProps.text" :options="options" @input="canComplete = true" />
 
       <section class="level">
         <!-- Completion -->
