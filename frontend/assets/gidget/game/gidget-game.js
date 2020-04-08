@@ -53,8 +53,7 @@ export default class {
       this.world.tiles = _.cloneDeep(tiles);
 
     // Save initial world state and data so it can be restored on reset
-    this.initialState = this.world.getState();
-    this.initialData = this.world.getObjectsSanitized();
+    this.updateInitialState();
   }
 
   /**
@@ -73,7 +72,6 @@ export default class {
     return this.set(-1, false);
   }
 
-
   /**
    * Saves world state and causes a game tick.
    *
@@ -84,7 +82,6 @@ export default class {
     this.world.gameTick();
   }
 
-
   /**
    * Saves the current state as the new initial game state.
    *
@@ -92,12 +89,8 @@ export default class {
    */
   updateInitialState() {
     this.initialState = this.world.getState();
+    this.initialData = this.world.getObjectsSanitized();
   }
-
-  addGoal({ assert, args }) {
-    this.goals.push(new GidgetGoal({ assert, args }));
-  }
-
 
   /**
    * Sets the game to a state.
@@ -158,7 +151,6 @@ export default class {
     return step;
   }
 
-
   /**
    * Runs hooks from the a world state depending on conditions.
    *
@@ -199,7 +191,6 @@ export default class {
     return true;
   }
 
-
   /**
    * Returns an object of objects that have been exposed.
    *
@@ -237,7 +228,6 @@ export default class {
     return exposed;
   }
 
-
   /**
    * Runs code.
    *
@@ -258,5 +248,40 @@ export default class {
       this.set(0, false);
 
     return result;
+  }
+
+  /**
+   * Set incremental IDs for all goals.
+   * All previous IDs will be overwritten.
+   *
+   * @return {void}
+   */
+  enumerateGoals() {
+    this.goals.filter((g) => !g.isRemoved).forEach((g, i) => g.id = i);
+  }
+
+  /**
+   * Add a new gidget goal to the game.
+   *
+   * @return {void}
+   */
+  addGoal({ assert, args }) {
+    this.goals.push(new GidgetGoal({ assert, args }));
+    this.enumerateGoals();
+  }
+
+  /**
+   * Remove goal from game by its ID.
+   *
+   * @return {void}
+   */
+  removeGoal(id, remove=true) {
+    const goal = this.goals.find((obj) => obj.id === id);
+    if (typeof goal != 'object')
+      return false;
+
+    goal.isRemoved = remove;
+    this.enumerateGoals();
+    return true;
   }
 }

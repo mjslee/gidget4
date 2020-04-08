@@ -26,30 +26,41 @@ export const actions = {
    *
    * @return {boolean}
    */
-  addDialogue({ rootGetters: { 'game/getWorld': getWorld } }, dialogue) {
-    if (!getWorld)
+  addGoal({ rootGetters: { 'game/getGame': getGame } }, { assert, args }) {
+    if (!getGame)
       return false;
 
-    getWorld.addDialogue(dialogue);
+    getGame.addGoal({ assert, args });
     return true;
   },
 
-  removeDialogue({ getters: { getDialogue } }, { id }) {
-    const index = getDialogue.findIndex((dialogue) => dialogue.id === id);
-    Vue.delete(getDialogue, index);
+  /**
+   * Remove a goal from game goals by its ID.
+   */
+  removeGoal({ rootGetters: { 'game/getGame': getGame } }, { id }) {
+    if (!getGame)
+      return false;
+
+    return getGame.removeGoal(id);
   },
 
   /**
-   * Swap two dialogue messages by indexes.
+   * Swap two goals by indexes.
    *
    * @param {number} fromIndex
    * @param {number} toIndex
    * @return {void}
    */
-  swapDialogue({ getters: { getDialogue } }, { fromIndex, toIndex }) {
-    const rows = swapElements(getDialogue, fromIndex, toIndex);
-    if (rows)
-      [rows.from.id, rows.to.id] = [rows.to.id, rows.from.id];
+  swapGoal({ getters: { getGoals } }, { fromId, toId }) {
+    const fromGoal = getGoals.find((g) => g.id === fromId);
+    const toGoal   = getGoals.find((g) => g.id === toId);
+
+    if (!fromGoal || !toGoal)
+      return false;
+
+    Vue.set(fromGoal, 'id', toId);
+    Vue.set(toGoal,   'id', fromId);
+    return true;
   },
 
   /*
@@ -84,6 +95,6 @@ export const getters = {
     if (!getGame)
       return [];
 
-    return getGame.goals.map((dialogue, id) => ({ id, ...dialogue }));
+    return getGame.goals.filter((goal) => !goal.isRemoved);
   },
 };
