@@ -1,43 +1,44 @@
 <template>
   <article>
-    <div class="level">
+    <!-- Above Table -->
+    <section class="level">
+      <!-- Top Left Content -->
       <div class="level-left">
-        <slot name="top-left-content">
-          <strong>Instructions:&nbsp;</strong> Do something.
-        </slot>
+        <slot name="top-left-content"></slot>
       </div>
 
-      <!-- Buttons -->
+      <!-- Top Right Content -->
       <div class="level-right">
-        <div class="level-item">
-          <order-buttons @up="$emit('up')" @down="$emit('down')" />
+        <div class="level-item" v-if="swapDispatch">
+          <order-buttons @up="swapRow(-1)" @down="swapRow(1)" />
         </div>
-        <div class="level-item">
-          <slot name="top-right-content">
-            <!-- <dialogue-create-button /> -->
-          </slot>
-        </div>
+        <slot name="top-right-content"></slot>
       </div>
-    </div>
+    </section>
 
+    <!-- Table -->
     <b-table
-      :columns="columns"
-      :data="data"
-      :show-detail-icon="true"
+      :columns="columns" :data="data"
+      :selected.sync="internalSelected"
       :opened-detailed="openedRows"
-      detailed
+      :show-detail-icon="true"
+      @click="toggleRow"
+      hoverable striped
+      detailed detail-key="id"
     >
-      <template slot="detail" slot-scope="props">
-        <slot name="row-details" v-bind:props="props">
-          <!-- Details -->
-        </slot>
-      </template>
+      <slot slot-scope="props" v-bind="props"></slot>
+      <slot slot="detail" name="detail" slot-scope="props" v-bind="props"></slot>
     </b-table>
+
+    <!-- Below Table Below Table -->
+
+
   </article>
 </template>
 
 
 <script>
+import Vue from 'vue';
 import OrderButtons from './OrderButtons';
 
 
@@ -48,13 +49,84 @@ export default {
 
   props: {
     columns: Array[Object],
-    data: Array[Object]
+    data: Array[Object],
+    selected: Object,
+    swapDispatch: String
+  },
+
+  computed: {
+    /**
+     *
+     */
+    internalSelected: {
+      get() {
+        return this.selected;
+      },
+      set(value) {
+        this.$emit('update:selected', value);
+      }
+    },
   },
 
   data() {
     return {
       openedRows: []
     };
+  },
+
+  methods: {
+    /**
+     * Swap row in direction.
+     *
+     * @param {number} direction
+     *    -1 to move up.
+     *     1 to move down.
+     * @return {void}
+     */
+    swapRow(direction) {
+      if (!this.internalSelected)
+        return;
+
+      const id = this.internalSelected.id;
+      this.$store.dispatch(this.swapDispatch, {
+        fromId: id, toId: id + direction
+      });
+    },
+
+    /**
+     * Toggle row opened or closed.
+     *
+     * @return {void}
+     */
+    toggleRow(row) {
+      if (this.openedRows.includes(row.id))
+        this.closeRow(row.id);
+      else
+        this.openRow(row.id);
+    },
+
+    /**
+     * Add row ID to opened rows.
+     *
+     * @param {number} id
+     * @return {void}
+     */
+    openRow(id) {
+      this.openedRows.push(id);
+    },
+
+    /**
+     * Add row ID to opened rows.
+     *
+     * @param {number} id
+     * @return {void}
+     */
+    closeRow(id) {
+      const index = this.openedRows.indexOf(id);
+      if (typeof index == 'number')
+        Vue.delete(this.openedRows, index);
+    }
+
   }
 }
 </script>
