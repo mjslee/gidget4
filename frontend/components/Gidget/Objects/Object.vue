@@ -183,7 +183,7 @@ export default {
      *
      */
     isSelected() {
-      return this.$store.state.objects.selectedObject == this.object.id;
+      return this.$store.state.objects.selected == this.object.id;
     }
   },
 

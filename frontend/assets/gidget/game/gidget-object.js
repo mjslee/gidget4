@@ -60,6 +60,9 @@ export default class {
       }
     };
 
+    // Removal status
+    this.isRemoved = false;
+
     // Merge base object and options
     _.merge(this, _.cloneDeep(base), _.cloneDeep(options));
 
