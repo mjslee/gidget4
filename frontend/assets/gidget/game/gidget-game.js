@@ -1,30 +1,31 @@
-import JsStepper from '@/assets/gidget/lang/js-stepper';
-import GidgetWorld from './gidget-world';
-import GidgetObject from './gidget-object';
-import GidgetGoal from './gidget-goal';
+import JsStepper     from '@/assets/gidget/lang/js-stepper';
+import GidgetWorld   from './gidget-world';
 import GidgetImports from './imports';
+import GidgetGoal    from './gidget-goal';
 
 
 export default class {
   /**
    * GidgetGame constructor.
    *
-   * @return {void}
+   * @param {number} size
+   * @param {array[object]} tiles
+   * @param {array[object]} objects
+   * @param {array[object]} dialogue
+   * @param {array[object]} goals
+   * @param {array[object]} imports
+   * @return {GidgetGame}
    */
-  constructor({ size, tiles, objects, imports, dialogue, goals }) {
+  constructor({ size, tiles, objects, dialogue, goals, imports }) {
     this.key    = 0;
     this.index  = 0;
     this.states = [];
     this.goals  = [];
 
-    // Create a deep clone of this object so we won't mutate this one
-    // and then we'll use self to set up our GidgetGame clone
-    const data = _.cloneDeep({ size, tiles, imports, dialogue });
-    objects = _.cloneDeep(objects);
-
-    // Create and assign a GidgetWorld object to our game. Our attributes will
-    // be merged into the new world
-    this.world = new GidgetWorld(data);
+    // Create and assign a GidgetWorld object to our game.
+    this.world = new GidgetWorld(
+      _.cloneDeep({ size, tiles, objects, dialogue })
+    );
 
     // Merge in global imports
     this.imports = {};
@@ -41,19 +42,9 @@ export default class {
       onStep: () => this.save()
     });
 
-    // Create game objects, then save the initial game state that we can
-    // restore on reset
-    objects.forEach((gameObjectData) => {
-      const gameObject = new GidgetObject(gameObjectData);
-      this.world.addObject(gameObject);
-    });
-
-    // Set world tiles
-    if (Array.isArray(tiles))
-      this.world.tiles = _.cloneDeep(tiles);
-
     // Save initial world state and data so it can be restored on reset
     this.updateInitialState();
+    return this;
   }
 
   /**
@@ -273,6 +264,8 @@ export default class {
   /**
    * Remove goal from game by its ID.
    *
+   * @param {number} id
+   * @param {boolean} remove
    * @return {void}
    */
   removeGoal(id, remove=true) {

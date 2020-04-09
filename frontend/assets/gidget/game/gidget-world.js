@@ -1,26 +1,30 @@
 import _ from 'lodash';
+import GidgetObject from './gidget-object';
 
 
 export default class {
-
-
   /**
    * Creates a new GidgetWorld instance.
+   * All parameters should be initialization data.
    *
-   * @param {dictionary} options Default properties.
-   * @return {void}
+   * @param {number} size
+   * @param {array[object]} tiles
+   * @param {array[object]} objects
+   * @param {array[object]} dialogue
+   * @return {GidgetWorld}
    */
-  constructor(options) {
-    this.nextId   = 0;
-    this.size     = 3;
-    this.tiles    = [];
-    this.objects  = [];
-    this.dialogue = [];
-    this.hooks    = [];
+  constructor({ size, tiles, objects, dialogue }) {
+    this.nextId    = 0;
+    this.size      = size || 3;
+    this.hooks     = [];
+    this.objects   = [];
+    this.dialogue  = [];
+    this.tiles     = Array.isArray(tiles) ? tiles : [];
 
-    Object.assign(this, _.cloneDeep(options));
+    objects.forEach((objData)  => this.addObject(new GidgetObject(objData)));
+    dialogue.forEach((objData) => this.addDialogue(objData));
+    return this;
   }
-
 
   /**
    * Creates a restorable game object state object.
@@ -45,7 +49,6 @@ export default class {
     objectState.position = gameObject.position;
     return objectState;
   }
-
 
   /**
    * Restores a game object to a state using a game object state object.
@@ -77,7 +80,6 @@ export default class {
     gameObject.position.y = objectState.position.y
   }
 
-
   /**
    * Creates a restorable world state object.
    *
@@ -105,7 +107,6 @@ export default class {
     // Deep clone the state to accidental prevent mutation
     return _.cloneDeep(state);
   }
-
 
   /**
    * Restores the world state using a world state object.
@@ -141,7 +142,6 @@ export default class {
     return true;
   }
 
-
   /**
    * Set index numbers for game objects.
    *
@@ -170,7 +170,6 @@ export default class {
       }
     });
   }
-
 
   /**
    * Gets a map object of all the world's game objects.
@@ -206,7 +205,6 @@ export default class {
     return objectsMap
   }
 
-
   /**
    * Gets a cloned map object of game objects without functions and without
    * objects that will cause a loop.
@@ -219,7 +217,6 @@ export default class {
       _.omit(_.omitBy(this.getObjectsMap(), _.isFunction), ['world', 'object'])
     )
   }
-
 
   /**
    * Gets a game object based on specified conditions.
@@ -268,7 +265,6 @@ export default class {
     return foundObject
   }
 
-
   /**
    * Adds a game object to world.
    * Create a gameObject using `GidgetObject.create()`.
@@ -291,7 +287,6 @@ export default class {
     return true;
   }
 
-
   /**
    * Set removed property on a game object and re-index objects with same name.
    *
@@ -306,7 +301,6 @@ export default class {
     this.indexObjects((obj) => !obj.isRemoved && obj.name === gameObject.name);
     return true;
   }
-
 
   /**
    * Detect an object collision based on position. Run 'onCollision' for each
@@ -343,7 +337,6 @@ export default class {
     });
   }
 
-
   /**
    * Get an object's boundaries.
    * (There's probably a more efficient way to do this)
@@ -361,7 +354,6 @@ export default class {
       toY: obj.position.y
     }
   }
-
 
   /**
    * Determine if x and y are inside an object's boundaries.
@@ -385,7 +377,6 @@ export default class {
       position.y >= bounds.fromY && position.y <= bounds.toY
     );
   }
-
 
   /**
    * Get point path array between two points.
@@ -429,8 +420,6 @@ export default class {
     return result;
   }
 
-
-
   /**
    * Determine if position is valid.
    * Checks tile position exists.
@@ -446,7 +435,6 @@ export default class {
       obj.blocking && this.insideObjectBoundaries(obj, position)
     );
   }
-
 
   /**
    * Call for each game tick.
@@ -468,6 +456,15 @@ export default class {
     })
   }
 
+  /**
+   * Set incremental IDs for all dialogue.
+   * All previous IDs will be overwritten.
+   *
+   * @return {void}
+   */
+  enumerateDialogue() {
+    this.dialogue.filter((d) => !d.isRemoved).forEach((d, i) => d.id = i);
+  }
 
   /**
    *
@@ -477,6 +474,25 @@ export default class {
    * @return {void}
    */
   addDialogue(message) {
-    this.dialogue.push(message);
+    console.log({ isRemoved: false, ...message });
+    this.dialogue.push({ isRemoved: false, ...message });
+    this.enumerateDialogue();
+  }
+
+  /**
+   * Remove dialogue from game by its ID.
+   *
+   * @param {number} id
+   * @param {boolean} remove
+   * @return {void}
+   */
+  removeDialogue(id, remove=true) {
+    const dialogue = this.dialogue.find((obj) => obj.id === id);
+    if (typeof dialogue != 'object')
+      return false;
+
+    dialogue.isRemoved = remove;
+    this.enumerateDialogue();
+    return true;
   }
 }
