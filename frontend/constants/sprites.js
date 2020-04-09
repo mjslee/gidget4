@@ -1,4 +1,4 @@
-export const SpriteBaseURL = '/gidget/sprites/';
+export const SpriteBaseUrl = '/gidget/sprites/';
 
 
 export const ObjectSprites = [

@@ -32,7 +32,7 @@ export default {
     },
 
     /**
-     * Current value of the tag input.
+     * Array from the tag input.
      *
      * @return {array}
      */
@@ -53,6 +53,7 @@ export default {
     /**
      * Set the filteredMixins with a filter.
      *
+     * @param {string} value
      * @return {void}
      */
     filterMixins(value) {

@@ -85,8 +85,8 @@ div {
 
 
 <script>
-import { SPRITE_PATH } from '@/constants/paths'
-import { getObjectElementId, moveElementToTile } from '@/assets/gidget/game/gidget-utility'
+import { SpriteBaseUrl } from '@/constants/sprites';
+import { getObjectElementId, moveElementToTile } from '@/assets/gidget/game/gidget-utility';
 
 
 export default {
@@ -169,7 +169,7 @@ export default {
      * Get URL of game sprite.
      */
     spriteUrl() {
-      return SPRITE_PATH + this.object.sprite + '.png';
+      return SpriteBaseUrl + this.object.sprite + '.png';
     },
 
     /**

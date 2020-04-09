@@ -22,10 +22,10 @@
 
 
 <script>
-import WorldEditor from './WorldEditor';
-import ObjectList from './ObjectList';
-import DialogueList from '@/components/Gidget/Dialogue/DialogueList';
-import GoalList from '@/components/Gidget/Goals/GoalList';
+import WorldEditor  from './WorldEditor';
+import ObjectList   from '../Objects/ObjectList';
+import DialogueList from '../Dialogue/DialogueList';
+import GoalList     from '../Goals/GoalList';
 
 
 export default {
@@ -39,7 +39,7 @@ export default {
 
   data() {
     return {
-      activeTab: 3
+      activeTab: 1
     }
   }
 }
