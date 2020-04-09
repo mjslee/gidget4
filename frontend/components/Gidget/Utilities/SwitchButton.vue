@@ -1,8 +1,8 @@
 <template>
   <article class="level-item">
     <b-switch :type="type" v-model="canClick"></b-switch>
-    <b-button :type="type" @click="$emit('click')" :disabled="!canClick">
-      <slot>Remove</slot>
+    <b-button :type="type" @click="click" :disabled="!canClick">
+      <slot></slot>
     </b-button>
   </article>
 </template>
@@ -18,6 +18,13 @@ export default {
     return {
       canClick: false
     };
+  },
+
+  methods: {
+    click() {
+      this.canClick = false;
+      this.$emit('click');
+    }
   }
 }
 </script>
