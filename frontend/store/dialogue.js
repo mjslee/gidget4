@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { swapElements } from '@/helpers/array';
 
 
 export const state = () => ({
@@ -28,60 +27,6 @@ export const mutations = {
 };
 
 
-export const actions = {
-  /*
-   * Add a dialogue message to the game world's dialogue array.
-   *
-   * @return {boolean}
-   */
-  addDialogue({ rootGetters: { 'game/getWorld': getWorld } }, dialogue) {
-    if (!getWorld)
-      return false;
-
-    getWorld.addDialogue(dialogue);
-    return true;
-  },
-
-  removeDialogue({ getters: { getDialogue } }, { id }) {
-    const index = getDialogue.findIndex((dialogue) => dialogue.id === id);
-    Vue.delete(getDialogue, index);
-  },
-
-  /**
-   * Swap two dialogue messages by indexes.
-   *
-   * @param {number} fromIndex
-   * @param {number} toIndex
-   * @return {void}
-   */
-  swapDialogue({ getters: { getDialogue } }, { fromIndex, toIndex }) {
-    const rows = swapElements(getDialogue, fromIndex, toIndex);
-    if (rows)
-      [rows.from.id, rows.to.id] = [rows.to.id, rows.from.id];
-  },
-
-  /*
-   * Set next message.
-   *
-   * @return {void}
-   */
-  next({ getters: { hasNext }, commit }) {
-    if (hasNext)
-      commit('increment');
-  },
-
-  /*
-   * Set previous message.
-   *
-   * @return {void}
-   */
-  previous({ getters: { hasPrevious }, commit }) {
-    if (hasPrevious)
-      commit('decrement');
-  }
-};
-
-
 export const getters = {
   /*
    * Get dialogue from the game world in "game" store.
@@ -89,10 +34,7 @@ export const getters = {
    * @return {array}
    */
   getDialogue({}, {}, {}, { 'game/getWorld': getWorld }) {
-    if (!getWorld)
-      return [];
-
-    return getWorld.dialogue.map((dialogue, id) => ({ id, ...dialogue }));
+    return getWorld.dialogue.filter((obj) => !obj.isRemoved);
   },
 
   /**
@@ -139,4 +81,70 @@ export const getters = {
   hasPrevious({ activeIndex }) {
     return activeIndex > 0;
   }
+};
+
+
+export const actions = {
+  /*
+   * Set next message.
+   *
+   * @return {void}
+   */
+  next({ getters: { hasNext }, commit }) {
+    if (hasNext)
+      commit('increment');
+  },
+
+  /*
+   * Set previous message.
+   *
+   * @return {void}
+   */
+  previous({ getters: { hasPrevious }, commit }) {
+    if (hasPrevious)
+      commit('decrement');
+  },
+
+  /*
+   * Add a dialogue message to the game world's dialogue array.
+   *
+   * @return {boolean}
+   */
+  addDialogue({ rootGetters: { 'game/getWorld': getWorld } }, dialogue) {
+    if (!getWorld)
+      return false;
+
+    console.log('dialogue',dialogue);
+    getWorld.addDialogue(dialogue);
+    return true;
+  },
+
+  /**
+   * Remove a dialogue object by its ID.
+   *
+   * @param {number} id
+   * @return {boolean}
+   */
+  removeDialogue({ rootGetters: { 'game/getWorld': getWorld } }, { id }) {
+    return getWorld.removeDialogue(id);
+  },
+
+  /**
+   * Swap two dialogue messages by IDs.
+   *
+   * @param {number} fromId
+   * @param {number} toId
+   * @return {void}
+   */
+  swapDialogue({ getters: { getDialogue } }, { fromId, toId }) {
+    const fromRow = getDialogue.find((row) => row.id === fromId);
+    const toRow   = getDialogue.find((row) => row.id === toId);
+
+    if (!fromRow || !toRow)
+      return false;
+
+    Vue.set(fromRow, 'id', toId);
+    Vue.set(toRow,   'id', fromId);
+    return true;
+  },
 };
