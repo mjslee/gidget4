@@ -22,6 +22,26 @@ export const mutations = {
 
 export const actions = {
   /*
+   * Set next message.
+   *
+   * @return {void}
+   */
+  next({ getters: { hasNext }, commit }) {
+    if (hasNext)
+      commit('increment');
+  },
+
+  /*
+   * Set previous message.
+   *
+   * @return {void}
+   */
+  previous({ getters: { hasPrevious }, commit }) {
+    if (hasPrevious)
+      commit('decrement');
+  }
+
+  /*
    * Add a dialogue message to the game world's dialogue array.
    *
    * @return {boolean}
@@ -62,26 +82,6 @@ export const actions = {
     Vue.set(toGoal,   'id', fromId);
     return true;
   },
-
-  /*
-   * Set next message.
-   *
-   * @return {void}
-   */
-  next({ getters: { hasNext }, commit }) {
-    if (hasNext)
-      commit('increment');
-  },
-
-  /*
-   * Set previous message.
-   *
-   * @return {void}
-   */
-  previous({ getters: { hasPrevious }, commit }) {
-    if (hasPrevious)
-      commit('decrement');
-  }
 };
 
 

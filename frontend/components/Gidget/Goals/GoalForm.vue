@@ -9,13 +9,12 @@
             :value="assertion.name"
             :key="assertion.name"
           >
-            {{ assertion.label }}
+            {{ assertion.label }} ({{ assertion.symbol }})
           </option>
         </b-select>
       </b-field>
 
-      <assert-equals-input v-if="assert == 'equals'" />
-
+      <assert-equals-input v-model="internalArgs" v-if="assert == 'equals'" />
     </section>
 
     <section class="level">
@@ -25,8 +24,8 @@
           <b-button type="is-success" :disabled="!canComplete" @click="complete">
             <slot name="complete-button-text">Apply Changes</slot>
           </b-button>
-          <slot name="bottom-left"></slot>
         </div>
+        <slot name="bottom-left"></slot>
       </div>
 
       <!-- Actions -->
@@ -45,10 +44,11 @@
 
 
 <script>
+import _ from 'lodash';
 import Vue from 'vue';
 import { assertions } from '@/assets/gidget/game/gidget-goal';
 
-import AssertEqualsInput from '../Utilities/AssertEqualsInput';
+import AssertEqualsInput from '../Inputs/AssertEqualsInput';
 
 
 export default {
@@ -62,15 +62,43 @@ export default {
   },
 
   computed: {
-    internalAssert: {
+    /**
+     * Internal counterpart to args prop.
+     *
+     * @param {Array[String]} value
+     * @return {Array[String]}
+     */
+    internalArgs: {
       get() {
-        return this.assert;
+        return this.internalArgsValue;
       },
       set(value) {
-        this.$emit('update:assert', value);
+        this.internalArgsValue = value;
+        this.canComplete       = true;
       }
     },
 
+    /**
+     * Internal counterpart to assert prop.
+     *
+     * @param {String} value
+     * @return {String}
+     */
+    internalAssert: {
+      get() {
+        return this.internalAssertValue;
+      },
+      set(value) {
+        this.internalAssertValue = value;
+        this.canComplete         = true;
+      }
+    },
+
+    /**
+     * Array of all available assertion types.
+     *
+     * @return {string}
+     */
     availableAssertions() {
       return assertions;
     },
@@ -78,47 +106,38 @@ export default {
 
   data() {
     return {
-      internalProps: {},
+      internalAssertValue: _.clone(this.$props.assert),
+      internalArgsValue:   _.clone(this.$props.args),
 
       canComplete: false,
-      canReset: false,
+      canReset:    false,
     };
   },
 
-  mounted() {
-    // Set internal props
-    for (let prop in this.$props) {
-      if (typeof prop == 'undefined')
-        continue;
-      Vue.set(this.internalProps, prop, this.$props[prop]);
-    }
-  },
-
   methods: {
-    /*
+    /**
      * Complete changes to dialogue props.
      * Emits @done.
      *
      * @return {void}
      */
     complete() {
-      // Emit prop updates from internal props
-      for (let prop in this.internalProps)
-        this.$emit(`update:${prop}`, this.internalProps[prop]);
+      this.$emit('update:assert', this.internalAssert);
+      this.$emit('update:args',   this.internalArgs);
 
       this.canComplete = false;
       this.$emit('done');
     },
 
-    /*
+    /**
      * Reset internalProps to values of props.
      * Emits @reset.
      *
      * @return {void}
      */
     reset() {
-      for (let prop in this.internalProps)
-        Vue.set(this.internalProps, prop, this.$props[prop]);
+      this.internalAssert = _.clone(this.$props.assert);
+      this.internalArgs   = _.clone(this.$props.args);
 
       this.$nextTick(() => {
         this.canReset = false;

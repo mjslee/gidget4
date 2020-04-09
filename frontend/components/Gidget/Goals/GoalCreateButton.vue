@@ -20,13 +20,11 @@
 
 <script>
 import GoalForm from './GoalForm';
-import GoalArgumentInput from './GoalArgumentInput';
 
 
 export default {
   components: {
-    GoalForm,
-    GoalArgumentInput
+    GoalForm
   },
 
   data() {
