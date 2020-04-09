@@ -369,11 +369,11 @@ export default class {
   insideObjectBoundaries(obj, position) {
     // TODO: Move this into GidgetObject or make a helper function for this
     // Do not scale boundaries up with object's 'scale' property
-    if (!obj.scaleBoundaries)
+    if (!obj.scaleBounds)
       return obj.position.x == position.x && obj.position.y == position.y;
 
     // Scale boundaries up with object scale
-    // Less efficient than above, so use this only with scaleBoundaries
+    // Less efficient than above, so use this only with scaleBounds
     const bounds = this.getObjectBoundaries(obj);
     return (
       position.x >= bounds.fromX && position.x <= bounds.toX &&

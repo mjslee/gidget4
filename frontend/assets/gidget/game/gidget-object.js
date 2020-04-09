@@ -99,8 +99,8 @@ export default class {
     this.layer    = 0;
     this.scale    = 1;
 
-    this.blocking = false;
-    this.scaleBoundaries = true;
+    this.blocking    = false;
+    this.scaleBounds = true;
   }
 
 
