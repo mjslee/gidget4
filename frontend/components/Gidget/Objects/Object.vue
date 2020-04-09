@@ -17,12 +17,7 @@
     </span>
 
     <!-- Sprite -->
-    <img
-      ref="sprite"
-      class="gidget-sprite"
-      :src="spriteUrl"
-      :style="spriteStyle"
-    />
+    <img class="gidget-sprite" :src="spriteUrl" :style="spriteStyle" />
   </div>
 </template>
 
