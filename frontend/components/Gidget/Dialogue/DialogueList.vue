@@ -1,64 +1,57 @@
 <template>
-  <section>
-    <!-- Meta -->
-    <div class="level">
-      <!-- Instructions -->
-      <div class="level-left">
-        Instructions: text text text
-      </div>
+  <order-table
+    :data="dialogue" :selected.sync="selected"
+    swapDispatch="dialogue/swapDialogue"
+  >
 
-      <!-- Buttons -->
-      <div class="level-right">
-        <div class="level-item">
-          <order-buttons @up="swapUp" @down="swapDown" />
-        </div>
-        <div class="level-item">
-          <dialogue-create-button />
-        </div>
-      </div>
-    </div>
+    <!-- Action Button -->
+    <section class="level-item" slot="top-right-content">
+      <dialogue-create-button />
+    </section>
 
-    <!-- Table -->
-    <b-table
-      :columns="columns"
-      :data="dialogue"
-      :show-detail-icon="true"
-      :opened-detailed="openedRows"
-      :selected.sync="selectedRow"
-      hoverable
-      striped
-      detailed
-      detail-key="id"
-    >
-      <template slot="detail" slot-scope="props">
-        <dialogue-form class="card-content" v-bind.sync="props.row">
-          <template slot="complete-button-text">
-            Apply Changes
-          </template>
-          <template slot="bottom-right">
-            <dialogue-remove-button @click="remove(props.row)" />
-          </template>
-        </dialogue-form>
-      </template>
-    </b-table>
-  </section>
+    <!-- Column Templates -->
+    <template slot-scope="props">
+      <!-- ID Column -->
+      <b-table-column field="id" label="#" sortable>
+        {{ props.row.id }}
+      </b-table-column>
+
+      <!-- Text Column -->
+      <b-table-column field="message" label="Message" sortable>
+        {{ props.row.text }}
+      </b-table-column>
+    </template>
+
+    <!-- Row Detail -->
+    <section slot="detail" slot-scope="props">
+      <dialogue-form class="card-content" v-bind.sync="props.row">
+        <switch-button
+          slot="bottom-right"
+          type="is-danger"
+          @click="remove(props.row.id)"
+        >
+          Remove
+        </switch-button>
+      </dialogue-form>
+    </section>
+
+  </order-table>
 </template>
 
 
 <script>
-import Vue from 'vue';
-import DialogueForm from './DialogueForm';
+import OrderTable from '../Utilities/OrderTable';
+import SwitchButton from '../Utilities/SwitchButton';
 import DialogueCreateButton from './DialogueCreateButton';
-import DialogueRemoveButton from './DialogueRemoveButton';
-import OrderButtons from '@/components/Gidget/Utilities/OrderButtons';
+import DialogueForm from './DialogueForm';
 
 
 export default {
   components: {
-    OrderButtons,
-    DialogueForm,
+    OrderTable,
+    SwitchButton,
     DialogueCreateButton,
-    DialogueRemoveButton
+    DialogueForm
   },
 
   computed: {
@@ -68,42 +61,19 @@ export default {
   },
 
   data() {
-    return {
-      canDelete: false,
-
-      selectedRow: undefined,
-      openedRows: [],
-      columns: [
-        { field: 'id', label: 'ID', width: '40', numeric: true },
-        { field: 'text', label: 'Text' },
-      ],
-    };
+    return { selected: undefined };
   },
 
   methods: {
-    swap(direction) {
-      if (!this.selectedRow)
-        return;
-
-      const index = this.dialogue.indexOf(this.selectedRow);
-      this.$store.dispatch('dialogue/swapDialogue', {
-        fromIndex: index,
-        toIndex:   index + direction
-      });
-    },
-
-    swapUp() {
-      this.swap(-1);
-    },
-
-    swapDown() {
-      this.swap(1);
-    },
-
-    remove(row) {
-      if (row)
-        this.$store.dispatch('dialogue/removeDialogue', row);
+    /**
+     * Dispatch a dialogue removal by its ID.
+     *
+     * @param {number} id
+     * @return {void}
+     */
+    remove(id) {
+      this.$store.dispatch('dialogue/removeDialogue', { id });
     }
   }
-};
+}
 </script>
