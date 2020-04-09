@@ -1,5 +1,6 @@
 <template>
   <b-taginput
+    ref="input"
     :value="value"
     :data="filteredMixins"
     @typing="filterMixins"
@@ -29,6 +30,15 @@ export default {
     availableMixins() {
       return Object.keys(Mixins);
     },
+
+    /**
+     * Current value of the tag input.
+     *
+     * @return {array}
+     */
+    newValue() {
+      return this.$refs.input.tags;
+    }
   },
 
 
