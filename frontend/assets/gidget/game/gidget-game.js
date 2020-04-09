@@ -8,7 +8,7 @@ export default class {
   /**
    * GidgetGame constructor.
    *
-   * @param {number} size
+   * @param {number|object[width,height]} size
    * @param {array[object]} tiles
    * @param {array[object]} objects
    * @param {array[object]} dialogue
@@ -21,6 +21,10 @@ export default class {
     this.index  = 0;
     this.states = [];
     this.goals  = [];
+
+    // Number size must be converted into object
+    if (typeof size == 'number')
+      size = { width: size, height: size };
 
     // Create and assign a GidgetWorld object to our game.
     this.world = new GidgetWorld(

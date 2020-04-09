@@ -7,7 +7,7 @@ export default class {
    * Creates a new GidgetWorld instance.
    * All parameters should be initialization data.
    *
-   * @param {number} size
+   * @param {object} size
    * @param {array[object]} tiles
    * @param {array[object]} objects
    * @param {array[object]} dialogue
@@ -15,7 +15,7 @@ export default class {
    */
   constructor({ size, tiles, objects, dialogue }) {
     this.nextId    = 0;
-    this.size      = size || 3;
+    this.size      = size || { width: 3, height: 3 };
     this.hooks     = [];
     this.objects   = [];
     this.dialogue  = [];
@@ -90,13 +90,13 @@ export default class {
     const state = {
       // Primitives
       nextId:   this.nextId,
-      size:     this.size,
 
       // Arrays / Objects
+      size:     this.size,
       tiles:    this.tiles,
-      objects:  [],
       dialogue: this.dialogue,
-      hooks:    this.hooks
+      hooks:    this.hooks,
+      objects:  []
     };
 
     // TODO: Use a map function instead of this loop
@@ -429,8 +429,8 @@ export default class {
    */
   validatePosition(position) {
     return (
-      position.x >= 0 && position.x <= this.size - 1 &&
-      position.y >= 0 && position.y <= this.size - 1
+      position.x >= 0 && position.x <= this.size.width - 1 &&
+      position.y >= 0 && position.y <= this.size.height - 1
     ) && !this.getObject((obj) =>
       obj.blocking && this.insideObjectBoundaries(obj, position)
     );

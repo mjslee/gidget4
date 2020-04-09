@@ -17,12 +17,12 @@
           :style="axisLabelStyle"
           :class="hovered.x == x ? 'active': ''"
           :key="'x-' + x"
-          v-for="(i, x) in size"
+          v-for="(i, x) in size.width"
           v-text="x"
         />
       </div>
 
-      <div class="game-row y-axis" v-for="(i, y) in size" :key="'y-' + y">
+      <div class="game-row y-axis" v-for="(i, y) in size.height" :key="'y-' + y">
         <!-- Vertical Axis Labels (1, 2, 3, etc.) -->
         <label v-text="y" :class="hovered.y === y ? 'active': ''" />
 
@@ -33,7 +33,7 @@
           :size="tileSize"
           :margin="tileMargin"
           :key="`${x},${y}`"
-          v-for="(i, x) in size"
+          v-for="(i, x) in size.width"
           ref="tiles"
         />
       </div>
@@ -123,7 +123,7 @@ export default {
      * Tile size.
      */
     tileSize() {
-      return 26 / this.size;
+      return 26 / Math.max(this.size.width, this.size.height);
     },
 
     /**
