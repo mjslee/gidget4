@@ -21,7 +21,7 @@ export default class {
     this.dialogue  = [];
     this.tiles     = Array.isArray(tiles) ? tiles : [];
 
-    objects.forEach((objData)  => this.addObject(new GidgetObject(objData)));
+    objects.forEach((objData)  => this.addObject(objData));
     dialogue.forEach((objData) => this.addDialogue(objData));
     return this;
   }
@@ -272,17 +272,19 @@ export default class {
    * @param {object} gameObject - A game object.
    * @return {boolean} Success of adding object.
    */
-  addObject(gameObject) {
-    if (typeof gameObject != 'object')
+  addObject(obj) {
+    if (typeof obj != 'object')
       return false;
 
+    const gameObj = new GidgetObject(obj);
+
     // Set GameObject props
-    gameObject.world = this;
-    gameObject.id = this.nextId++;
+    gameObj.world = this;
+    gameObj.id = this.nextId++;
 
     // Add to world objects
-    this.objects.push(gameObject);
-    this.indexObjects((obj) => obj.name === gameObject.name);
+    this.objects.push(gameObj);
+    this.indexObjects((obj) => obj.name === gameObj.name);
 
     return true;
   }
@@ -293,12 +295,13 @@ export default class {
    * @param {object} gameObject
    * @return {boolean}
    */
-  removeObject(gameObject) {
-    if (typeof gameObject != 'object')
+  removeObject(id, remove=true) {
+    const gameObj = this.objects.find((obj) => obj.id === id);
+    if (typeof gameObj != 'object')
       return false;
 
-    gameObject.isRemoved = true;
-    this.indexObjects((obj) => !obj.isRemoved && obj.name === gameObject.name);
+    gameObj.isRemoved = remove;
+    this.indexObjects((obj) => !obj.isRemoved && obj.name === gameObj.name);
     return true;
   }
 
@@ -474,7 +477,6 @@ export default class {
    * @return {void}
    */
   addDialogue(message) {
-    console.log({ isRemoved: false, ...message });
     this.dialogue.push({ isRemoved: false, ...message });
     this.enumerateDialogue();
   }
@@ -491,6 +493,7 @@ export default class {
     if (typeof dialogue != 'object')
       return false;
 
+    dialogue.id = -1;
     dialogue.isRemoved = remove;
     this.enumerateDialogue();
     return true;
