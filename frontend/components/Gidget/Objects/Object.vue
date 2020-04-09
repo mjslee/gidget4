@@ -20,8 +20,8 @@
     <img
       ref="sprite"
       class="gidget-sprite"
-      :src="objectImage"
-      :style="imageStyle"
+      :src="spriteUrl"
+      :style="spriteStyle"
     />
   </div>
 </template>
@@ -158,7 +158,7 @@ export default {
     /**
      * Create object style object.
      */
-    imageStyle() {
+    spriteStyle() {
       return {
         'height': this.tileSize + 'rem',
         'width': this.tileSize + 'rem',
@@ -166,10 +166,10 @@ export default {
     },
 
     /**
-     * Get image of object with sprite path prefix.
+     * Get URL of game sprite.
      */
-    objectImage() {
-      return SPRITE_PATH + this.object.image
+    spriteUrl() {
+      return SPRITE_PATH + this.object.sprite + '.png';
     },
 
     /**

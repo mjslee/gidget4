@@ -2,7 +2,7 @@
   <div class="box is-paddingless">
     <div class="title" v-if="name">
       {{ name }}
-      <img :src="sprite" class="image is-32x32" />
+      <img :src="spriteUrl" class="image is-32x32" />
     </div>
     <table class="table is-striped is-fullwidth">
       <tbody>
@@ -76,13 +76,13 @@ export default {
   },
 
   props: {
-    id:       Number,
-    name:     String,
-    image:    String,
-    energy:   Number,
-    layer:    Number,
-    blocking: Boolean,
-    position: Object
+    id       : Number,
+    name     : String,
+    sprite   : String,
+    energy   : Number,
+    layer    : Number,
+    blocking : Boolean,
+    position : Object
   },
 
 
@@ -92,8 +92,8 @@ export default {
      *
      * @return {string}
      */
-    sprite() {
-      return SPRITE_PATH + this.image;
+    spriteUrl() {
+      return SPRITE_PATH + this.sprite + '.png';
     },
 
     /**
