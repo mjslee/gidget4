@@ -1,3 +1,3 @@
 export default {
-  sprite: 'droid.png'
+  sprite: 'droid'
 }

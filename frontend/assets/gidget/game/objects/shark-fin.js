@@ -1,3 +1,3 @@
 export default {
-  sprite: 'shark-fin.png'
+  sprite: 'shark-fin'
 }

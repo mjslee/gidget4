@@ -1,3 +1,3 @@
 export default {
-  sprite: 'generator.png'
+  sprite: 'generator'
 }

@@ -1,3 +1,3 @@
 export default {
-  sprite: 'car.png'
+  sprite: 'car'
 }

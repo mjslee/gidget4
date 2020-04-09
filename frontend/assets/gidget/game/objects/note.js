@@ -1,3 +1,3 @@
 export default {
-  sprite: 'note.png'
+  sprite: 'note'
 }

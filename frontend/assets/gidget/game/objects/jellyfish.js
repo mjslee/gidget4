@@ -1,5 +1,5 @@
 export default {
-  sprite: 'jellyfish.png',
+  sprite: 'jellyfish',
 
   onCreate() {
     // Bark every 20 seconds

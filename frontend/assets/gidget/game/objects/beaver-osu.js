@@ -1,5 +1,5 @@
 export default {
-  sprite: 'beaver-osu.png',
+  sprite: 'beaver-osu',
 
   onCreate() {
     // Bark every 20 seconds

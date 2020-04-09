@@ -1,5 +1,5 @@
 export default {
-  sprite: 'rabbit.png',
+  sprite: 'rabbit',
 
   onCreate() {
     // Bark every 20 seconds

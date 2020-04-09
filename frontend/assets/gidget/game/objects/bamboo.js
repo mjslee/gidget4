@@ -1,3 +1,3 @@
 export default {
-  sprite: 'bamboo.png'
+  sprite: 'bamboo'
 }

@@ -1,3 +1,3 @@
 export default {
-  sprite: 'camera.png'
+  sprite: 'camera'
 }

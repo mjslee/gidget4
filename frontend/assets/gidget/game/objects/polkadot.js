@@ -1,3 +1,3 @@
 export default {
-  sprite: 'polkadot.png'
+  sprite: 'polkadot'
 }

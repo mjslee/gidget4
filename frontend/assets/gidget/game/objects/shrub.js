@@ -1,3 +1,3 @@
 export default {
-  sprite: 'shrub.png'
+  sprite: 'shrub'
 }

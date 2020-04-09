@@ -60,9 +60,6 @@ export default class {
       }
     };
 
-    // Removal status
-    this.isRemoved = false;
-
     // Merge base object and options
     _.merge(this, _.cloneDeep(base), _.cloneDeep(options));
 
@@ -92,16 +89,16 @@ export default class {
    * @return {void}
    */
   setDefaults() {
-    this.grabber = undefined;
+    this.grabber   = undefined;
+    this.isRemoved = false;
 
-    // World Data
+    this.sprite   = 'unknown';
     this.position = { x: 0, y: 0 };
+    this.path     = [];
     this.energy   = 100;
     this.layer    = 0;
     this.scale    = 1;
-    this.path     = [];
 
-    // Boundaries
     this.blocking = false;
     this.scaleBoundaries = true;
   }

@@ -1,3 +1,3 @@
 export default {
-  sprite: 'pebble.png'
+  sprite: 'pebble'
 }

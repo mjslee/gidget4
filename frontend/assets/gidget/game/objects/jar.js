@@ -1,3 +1,3 @@
 export default {
-  sprite: 'jar.png'
+  sprite: 'jar'
 }

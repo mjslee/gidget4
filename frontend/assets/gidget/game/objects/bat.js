@@ -1,5 +1,5 @@
 export default {
-  sprite: 'bat.png',
+  sprite: 'bat',
 
   onCreate() {
     // Bark every 20 seconds

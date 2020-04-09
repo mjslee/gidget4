@@ -1,3 +1,3 @@
 export default {
-  sprite: 'fridge.png'
+  sprite: 'fridge'
 }

@@ -1,3 +1,3 @@
 export default {
-  sprite: 'meteor.png'
+  sprite: 'meteor'
 }

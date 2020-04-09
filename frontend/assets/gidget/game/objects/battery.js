@@ -1,3 +1,3 @@
 export default {
-  sprite: 'battery.png'
+  sprite: 'battery'
 }

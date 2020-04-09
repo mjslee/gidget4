@@ -1,3 +1,3 @@
 export default {
-  sprite: 'wood.png'
+  sprite: 'wood'
 }

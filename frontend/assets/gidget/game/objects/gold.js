@@ -1,3 +1,3 @@
 export default {
-  sprite: 'gold.png'
+  sprite: 'gold'
 }

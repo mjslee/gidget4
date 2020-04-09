@@ -1,3 +1,3 @@
 export default {
-  sprite: 'robot-big.png'
+  sprite: 'robot-big'
 }

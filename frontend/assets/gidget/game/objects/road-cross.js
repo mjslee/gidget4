@@ -1,3 +1,3 @@
 export default {
-  sprite: 'road-cross.png'
+  sprite: 'road-cross'
 }

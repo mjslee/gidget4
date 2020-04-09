@@ -1,3 +1,3 @@
 export default {
-  sprite: 'plug.png'
+  sprite: 'plug'
 }

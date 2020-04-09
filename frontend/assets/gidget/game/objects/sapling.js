@@ -1,3 +1,3 @@
 export default {
-  sprite: 'sapling.png'
+  sprite: 'sapling'
 }

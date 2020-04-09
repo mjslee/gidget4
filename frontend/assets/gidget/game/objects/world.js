@@ -1,3 +1,3 @@
 export default {
-  sprite: 'world.png'
+  sprite: 'world'
 }

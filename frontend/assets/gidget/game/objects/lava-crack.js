@@ -1,3 +1,3 @@
 export default {
-  sprite: 'lava-crack.png'
+  sprite: 'lava-crack'
 }

@@ -1,3 +1,3 @@
 export default {
-  sprite: 'pipe.png'
+  sprite: 'pipe'
 }

@@ -1,3 +1,3 @@
 export default {
-  sprite: 'umbrella.png'
+  sprite: 'umbrella'
 }

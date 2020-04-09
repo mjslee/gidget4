@@ -1,5 +1,5 @@
 export default {
-  sprite: 'pufferfish.png',
+  sprite: 'pufferfish',
 
   onCreate() {
     // Bark every 20 seconds

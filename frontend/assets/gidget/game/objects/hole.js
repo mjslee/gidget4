@@ -1,3 +1,3 @@
 export default {
-  sprite: 'hole.png'
+  sprite: 'hole'
 }

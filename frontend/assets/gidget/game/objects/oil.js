@@ -1,3 +1,3 @@
 export default {
-  sprite: 'oil.png'
+  sprite: 'oil'
 }

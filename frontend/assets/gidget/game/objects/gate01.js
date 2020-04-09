@@ -1,3 +1,3 @@
 export default {
-  sprite: 'gate01.png'
+  sprite: 'gate01'
 }

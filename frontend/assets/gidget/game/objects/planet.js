@@ -1,3 +1,3 @@
 export default {
-  sprite: 'planet.png'
+  sprite: 'planet'
 }

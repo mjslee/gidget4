@@ -1,3 +1,3 @@
 export default {
-  sprite: 'basket.png'
+  sprite: 'basket'
 }

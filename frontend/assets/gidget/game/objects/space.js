@@ -1,3 +1,3 @@
 export default {
-  sprite: 'space.png'
+  sprite: 'space'
 }

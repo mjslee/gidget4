@@ -1,3 +1,3 @@
 export default {
-  sprite: 'masterswitch.png'
+  sprite: 'masterswitch'
 }

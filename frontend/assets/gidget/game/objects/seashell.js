@@ -1,3 +1,3 @@
 export default {
-  sprite: 'seashell.png'
+  sprite: 'seashell'
 }

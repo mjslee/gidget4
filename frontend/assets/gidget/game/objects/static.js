@@ -1,3 +1,3 @@
 export default {
-  sprite: 'static.png'
+  sprite: 'static'
 }

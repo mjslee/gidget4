@@ -1,3 +1,3 @@
 export default {
-  sprite: 'hidden.png'
+  sprite: 'hidden'
 }

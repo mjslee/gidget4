@@ -1,3 +1,3 @@
 export default {
-  sprite: 'gidget-cry.png'
+  sprite: 'gidget-cry'
 }

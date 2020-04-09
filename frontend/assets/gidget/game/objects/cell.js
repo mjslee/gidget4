@@ -1,3 +1,3 @@
 export default {
-  sprite: 'cell.png'
+  sprite: 'cell'
 }

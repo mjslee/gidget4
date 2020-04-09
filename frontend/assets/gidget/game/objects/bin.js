@@ -1,3 +1,3 @@
 export default {
-  sprite: 'bin.png'
+  sprite: 'bin'
 }

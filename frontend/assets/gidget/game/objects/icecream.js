@@ -1,3 +1,3 @@
 export default {
-  sprite: 'icecream.png'
+  sprite: 'icecream'
 }

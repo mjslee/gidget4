@@ -1,3 +1,3 @@
 export default {
-  sprite: 'blueprint.png'
+  sprite: 'blueprint'
 }

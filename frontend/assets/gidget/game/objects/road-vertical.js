@@ -1,3 +1,3 @@
 export default {
-  sprite: 'road-vertical.png'
+  sprite: 'road-vertical'
 }

@@ -1,3 +1,3 @@
 export default {
-  sprite: 'cobblestone.png'
+  sprite: 'cobblestone'
 }

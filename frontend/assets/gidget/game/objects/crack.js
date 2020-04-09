@@ -1,3 +1,3 @@
 export default {
-  sprite: 'crack.png'
+  sprite: 'crack'
 }

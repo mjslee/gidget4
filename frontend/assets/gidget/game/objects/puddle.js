@@ -1,3 +1,3 @@
 export default {
-  sprite: 'puddle.png'
+  sprite: 'puddle'
 }

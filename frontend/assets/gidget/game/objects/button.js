@@ -1,3 +1,3 @@
 export default {
-  sprite: 'button.png'
+  sprite: 'button'
 }
