@@ -1,9 +1,7 @@
 import Vue from 'vue';
-import { swapElements } from '@/helpers/array';
 
 
 export const state = () => ({
-  goals: [],
   activeIndex: 0
 });
 
@@ -16,6 +14,18 @@ export const mutations = {
    */
   complete(state) {
     state.activeIndex += 1;
+  },
+};
+
+
+export const getters = {
+  /*
+   * Get dialogue from the game world in "game" store.
+   *
+   * @return {array}
+   */
+  getGoals({}, {}, {}, { 'game/getGame': getGame }) {
+    return getGame.goals.filter((goal) => !goal.isRemoved);
   },
 };
 
@@ -39,23 +49,26 @@ export const actions = {
   previous({ getters: { hasPrevious }, commit }) {
     if (hasPrevious)
       commit('decrement');
-  }
+  },
 
   /*
    * Add a dialogue message to the game world's dialogue array.
    *
    * @return {boolean}
    */
-  addGoal({ rootGetters: { 'game/getGame': getGame } }, { assert, args }) {
+  addGoal({ rootGetters: { 'game/getGame': getGame } }, goal) {
     if (!getGame)
       return false;
 
-    getGame.addGoal({ assert, args });
+    getGame.addGoal(goal);
     return true;
   },
 
   /**
    * Remove a goal from game goals by its ID.
+   *
+   * @param {number} id
+   * @return {boolean}
    */
   removeGoal({ rootGetters: { 'game/getGame': getGame } }, { id }) {
     if (!getGame)
@@ -65,36 +78,21 @@ export const actions = {
   },
 
   /**
-   * Swap two goals by indexes.
+   * Swap two goals by IDs.
    *
-   * @param {number} fromIndex
-   * @param {number} toIndex
+   * @param {number} fromId
+   * @param {number} toId
    * @return {void}
    */
   swapGoal({ getters: { getGoals } }, { fromId, toId }) {
-    const fromGoal = getGoals.find((g) => g.id === fromId);
-    const toGoal   = getGoals.find((g) => g.id === toId);
+    const fromRow = getGoals.find((row) => row.id === fromId);
+    const toRow   = getGoals.find((row) => row.id === toId);
 
-    if (!fromGoal || !toGoal)
+    if (!fromRow || !toRow)
       return false;
 
-    Vue.set(fromGoal, 'id', toId);
-    Vue.set(toGoal,   'id', fromId);
+    Vue.set(fromRow, 'id', toId);
+    Vue.set(toRow,   'id', fromId);
     return true;
-  },
-};
-
-
-export const getters = {
-  /*
-   * Get dialogue from the game world in "game" store.
-   *
-   * @return {array}
-   */
-  getGoals({}, {}, {}, { 'game/getGame': getGame }) {
-    if (!getGame)
-      return [];
-
-    return getGame.goals.filter((goal) => !goal.isRemoved);
   },
 };
