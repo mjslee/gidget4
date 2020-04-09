@@ -277,6 +277,7 @@ export default class {
     if (typeof goal != 'object')
       return false;
 
+    goal.id = -1;
     goal.isRemoved = remove;
     this.enumerateGoals();
     return true;
