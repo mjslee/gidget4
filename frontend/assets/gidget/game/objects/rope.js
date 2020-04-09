@@ -1,3 +1,3 @@
 export default {
-  image: 'rope.png'
+  sprite: 'rope.png'
 }

@@ -1,3 +1,3 @@
 export default {
-  image: 'checkerboard.png'
+  sprite: 'checkerboard.png'
 }

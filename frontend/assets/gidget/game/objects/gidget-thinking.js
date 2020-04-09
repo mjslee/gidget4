@@ -1,3 +1,3 @@
 export default {
-  image: 'gidget-thinking.png'
+  sprite: 'gidget-thinking.png'
 }

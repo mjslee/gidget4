@@ -1,3 +1,3 @@
 export default {
-  image: 'unknown-sad.png'
+  sprite: 'unknown-sad.png'
 }

@@ -1,3 +1,3 @@
 export default {
-  image: 'medkit.png'
+  sprite: 'medkit.png'
 }

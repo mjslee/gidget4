@@ -1,3 +1,3 @@
 export default {
-  image: 'bucket.png'
+  sprite: 'bucket.png'
 }

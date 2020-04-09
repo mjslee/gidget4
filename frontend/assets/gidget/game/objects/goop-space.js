@@ -1,3 +1,3 @@
 export default {
-  image: 'goop-space.png'
+  sprite: 'goop-space.png'
 }

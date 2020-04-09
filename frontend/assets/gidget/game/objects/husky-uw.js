@@ -1,5 +1,5 @@
 export default {
-  image: 'husky-uw.png',
+  sprite: 'husky-uw.png',
 
   onCreate() {
     // Bark every 20 seconds

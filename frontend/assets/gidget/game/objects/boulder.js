@@ -1,4 +1,4 @@
 export default {
-  image: 'boulder.png',
+  sprite: 'boulder.png',
   blocking: true
 }

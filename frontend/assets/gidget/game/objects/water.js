@@ -1,3 +1,3 @@
 export default {
-  image: 'water.png'
+  sprite: 'water.png'
 }

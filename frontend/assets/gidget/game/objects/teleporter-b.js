@@ -1,3 +1,3 @@
 export default {
-  image: 'teleporter-b.png'
+  sprite: 'teleporter-b.png'
 }

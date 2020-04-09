@@ -1,3 +1,3 @@
 export default {
-  image: 'cage.png'
+  sprite: 'cage.png'
 }

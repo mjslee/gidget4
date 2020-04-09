@@ -1,3 +1,3 @@
 export default {
-  image: 'soap.png'
+  sprite: 'soap.png'
 }

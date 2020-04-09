@@ -1,3 +1,3 @@
 export default {
-  image: 'map.png'
+  sprite: 'map.png'
 }

@@ -1,3 +1,3 @@
 export default {
-  image: 'gidget-baby.png'
+  sprite: 'gidget-baby.png'
 }

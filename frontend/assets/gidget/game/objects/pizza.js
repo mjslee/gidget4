@@ -1,3 +1,3 @@
 export default {
-  image: 'pizza.png'
+  sprite: 'pizza.png'
 }

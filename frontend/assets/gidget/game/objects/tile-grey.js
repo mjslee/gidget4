@@ -1,3 +1,3 @@
 export default {
-  image: 'tile-grey.png'
+  sprite: 'tile-grey.png'
 }

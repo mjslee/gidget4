@@ -1,3 +1,3 @@
 export default {
-  image: 'chasm.png'
+  sprite: 'chasm.png'
 }

@@ -1,3 +1,3 @@
 export default {
-  image: 'doghouse.png'
+  sprite: 'doghouse.png'
 }

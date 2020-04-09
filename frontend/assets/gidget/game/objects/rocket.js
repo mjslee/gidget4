@@ -1,3 +1,3 @@
 export default {
-  image: 'rocket.png'
+  sprite: 'rocket.png'
 }

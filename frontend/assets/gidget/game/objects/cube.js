@@ -1,3 +1,3 @@
 export default {
-  image: 'cube.png'
+  sprite: 'cube.png'
 }

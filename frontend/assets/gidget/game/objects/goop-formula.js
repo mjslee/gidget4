@@ -1,3 +1,3 @@
 export default {
-  image: 'goop-formula.png'
+  sprite: 'goop-formula.png'
 }

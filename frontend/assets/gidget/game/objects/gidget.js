@@ -1,7 +1,7 @@
 import { animate } from '../gidget-utility'
 
 export default {
-  image: 'gidget.png',
+  sprite: 'gidget.png',
   layer: 5,
 
   onCreate() {

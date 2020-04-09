@@ -1,3 +1,3 @@
 export default {
-  image: 'owl.png'
+  sprite: 'owl.png'
 }

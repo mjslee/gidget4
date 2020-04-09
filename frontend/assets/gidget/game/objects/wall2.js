@@ -1,3 +1,3 @@
 export default {
-  image: 'wall2.js.png'
+  sprite: 'wall2.js.png'
 }

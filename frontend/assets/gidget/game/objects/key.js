@@ -1,3 +1,3 @@
 export default {
-  image: 'key.png'
+  sprite: 'key.png'
 }

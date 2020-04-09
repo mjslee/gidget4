@@ -1,5 +1,5 @@
 export default {
-  image: 'kitten-infected.png',
+  sprite: 'kitten-infected.png',
 
   onCreate() {
     // Bark every 20 seconds
