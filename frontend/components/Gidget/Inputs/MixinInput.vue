@@ -1,10 +1,9 @@
 <template>
   <b-taginput
     ref="input"
-    :value="value"
+    v-model="internalValue"
     :data="filteredMixins"
     @typing="filterMixins"
-    @input="updateMixins"
     autocomplete
   >
   </b-taginput>
@@ -20,15 +19,21 @@ export default {
     value: Array[String]
   },
 
-
   computed: {
     /**
-     * Array of available mixins.
+     * Shallow clone of values prop.
      *
+     * @param {array} value
      * @return {array}
      */
-    availableMixins() {
-      return Object.keys(Mixins);
+    internalValue: {
+      get() {
+        return Object.assign([], this.value);
+      },
+
+      set(value) {
+        this.$emit('input', value);
+      }
     },
 
     /**
@@ -38,9 +43,17 @@ export default {
      */
     newValue() {
       return this.$refs.input.tags;
-    }
-  },
+    },
 
+    /**
+     * Array of available mixins.
+     *
+     * @return {array}
+     */
+    availableMixins() {
+      return Object.keys(Mixins);
+    },
+  },
 
   data() {
     return {
@@ -61,15 +74,6 @@ export default {
         mixin.toLowerCase().indexOf(value.toLowerCase()) >= 0
       );
     },
-
-    /**
-     * Emit update of the mixins array.
-     *
-     * @return {void}
-     */
-    updateMixins(value) {
-      this.$emit('input', value);
-    }
   }
 };
 </script>
