@@ -56,9 +56,8 @@ export const actions = {
    *
    * @return {void}
    */
-  addObject({ rootGetters: { 'game/getWorld': getWorld } }, { type, position }) {
-    const gameObject = GidgetObject.create({ type, position });
-    return getWorld.addObject(gameObject);
+  addObject({ rootGetters: { 'game/getWorld': getWorld } }, gameObj) {
+    return getWorld.addObject(gameObj);
   },
 
   /**
@@ -69,8 +68,7 @@ export const actions = {
    * @return {boolean}
    */
   removeObject({ rootGetters: { 'game/getWorld': getWorld } }, { id }) {
-    const obj = getWorld.objects.find((obj) => obj.id === id);
-    return getWorld.removeObject(obj);
+    return getWorld.removeObject(id);
   },
 
   /**
