@@ -12,7 +12,9 @@ export const assertions = {
 export default class {
   constructor({ assert, args }) {
     this.assert = assert;
-    this.args = args;
+    this.args   = args;
+
+    this.isRemoved = false;
     return this;
   }
 
