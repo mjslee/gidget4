@@ -6,7 +6,7 @@
 
     <!-- Action Button -->
     <section class="level-item" slot="top-right-content">
-      <!-- <dialogue-create-button /> -->
+      <object-create-button />
     </section>
 
     <!-- Column Templates -->
@@ -49,6 +49,7 @@
 import OrderTable from '../Utilities/OrderTable';
 import SwitchButton from '../Utilities/SwitchButton';
 import ObjectForm from './ObjectForm';
+import ObjectCreateButton from './ObjectCreateButton';
 
 
 export default {
@@ -57,6 +58,7 @@ export default {
     OrderTable,
     SwitchButton,
     ObjectForm,
+    ObjectCreateButton
   },
 
 

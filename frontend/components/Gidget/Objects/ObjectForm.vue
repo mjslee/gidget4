@@ -24,7 +24,7 @@
       <!-- Energy -->
       <b-field :addons="false">
         <label class="label">Energy <small>({{ energy }}%)</small></label>
-        <b-slider ref="energy" size="is-large" v-model="energy" rounded />
+        <b-slider ref="energy" size="is-large" :value="energy" @input="input" rounded />
       </b-field>
 
       <!-- Blocking -->
@@ -111,7 +111,7 @@ export default {
 
   data() {
     return {
-      updateKeys: ['name', 'mixins']
+      updateKeys: ['name', 'mixins', 'energy', 'blocking']
     };
   },
 }
