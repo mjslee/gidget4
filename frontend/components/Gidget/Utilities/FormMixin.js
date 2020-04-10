@@ -42,7 +42,11 @@ export default {
      */
     change(key) {
       // Check if value changed
-      let newValue = this.$refs[key].newValue;
+      const ref = this.$refs[key];
+      if (!ref)
+        return false;
+
+      let newValue = ref.newValue || ref.value1;
       if (_.isEqual(newValue, this.$props[key]))
         return false;
 
