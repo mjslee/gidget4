@@ -34,6 +34,9 @@ export const getters = {
    * @return {array}
    */
   getDialogue({}, {}, {}, { 'game/getWorld': getWorld }) {
+    if (!getWorld)
+      return [];
+
     return getWorld.dialogue.filter((obj) => !obj.isRemoved);
   },
 
@@ -114,7 +117,6 @@ export const actions = {
     if (!getWorld)
       return false;
 
-    console.log('dialogue',dialogue);
     getWorld.addDialogue(dialogue);
     return true;
   },

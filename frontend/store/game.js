@@ -16,7 +16,7 @@ export const state = () => ({
   stepCount:  0,
 
   evalData: { },
-  initialData: { size: 3, tiles: [], objects: [], dialogue: [], imports: [] },
+  initialData: { size: 3, tiles: [], objects: [], dialogue: [], imports: [], goals: [] },
 });
 
 
@@ -138,7 +138,7 @@ export const actions = {
    * @return {void}
    */
   createGame({ state, commit }, data) {
-    __game = new GidgetGame(data || state.initialData);
+    __game = Vue.observable(new GidgetGame(data || state.initialData));
     commit('setEvalData', __game.world.getObjectsSanitized());
     commit('reloadGame');
 
@@ -225,7 +225,6 @@ export const getters = {
    * @return {object}
    */
   getGame({ key }) {
-    key;  // Reactivity
     return __game;
   },
 
