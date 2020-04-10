@@ -13,10 +13,6 @@ export default class {
    * @return {object}
    */
   constructor(options) {
-    // Get base type of game object
-    const type = typeof options == 'object' ? options.type : undefined;
-    if (typeof type == 'undefined') return;
-
     // Create a deep clone of 'this' (GidgetObject), so we don't mutate
     // any of the base module's properties
     const self = _.cloneDeep(this);
@@ -46,7 +42,7 @@ export default class {
       this.setDefaults();
 
     // Get base type of game object
-    let base = GidgetObjects[options.type];
+    let base = GidgetObjects[options.type || 'Gidget'];
     if (!base) return;
 
     // Set default exposed getter methods
@@ -54,7 +50,6 @@ export default class {
       'get id'() {
         return this.id;
       },
-
       'get position'() {
         return JSON.stringify(this.position);
       }
@@ -64,7 +59,7 @@ export default class {
     _.merge(this, _.cloneDeep(base), _.cloneDeep(options));
 
     // Merge mixins
-    if (typeof options.mixins == 'object')
+    if (Array.isArray(options.mixins) && options.mixins.length > 0)
       options.mixins.forEach((mixin) => this.mergeMixin(mixin));
 
     // Update exposed 'get' properties

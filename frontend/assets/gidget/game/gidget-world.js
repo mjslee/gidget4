@@ -287,6 +287,8 @@ export default class {
       return false;
 
     const gameObj = new GidgetObject(obj);
+    if (!gameObj)
+      return false;
 
     // Set GameObject props
     gameObj.world = this;
