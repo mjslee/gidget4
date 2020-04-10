@@ -143,6 +143,16 @@ export default class {
   }
 
   /**
+   * Set incremental IDs for all objects.
+   * All previous IDs will be overwritten.
+   *
+   * @return {void}
+   */
+  enumerateObjects() {
+    this.objects.filter((o) => !o.isRemoved).forEach((o, i) => o.id = i);
+  }
+
+  /**
    * Set index numbers for game objects.
    *
    * @param {function} callback
@@ -284,8 +294,8 @@ export default class {
 
     // Add to world objects
     this.objects.push(gameObj);
+    this.enumerateObjects();
     this.indexObjects((obj) => obj.name === gameObj.name);
-
     return true;
   }
 
@@ -300,7 +310,9 @@ export default class {
     if (typeof gameObj != 'object')
       return false;
 
+    gameObj.id = -1;
     gameObj.isRemoved = remove;
+    this.enumerateObjects();
     this.indexObjects((obj) => !obj.isRemoved && obj.name === gameObj.name);
     return true;
   }
