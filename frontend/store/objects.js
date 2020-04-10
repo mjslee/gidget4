@@ -26,6 +26,9 @@ export const getters = {
    * @return {array}
    */
   getObjects({}, {}, {}, { 'game/getWorld': getWorld }) {
+    if (!getWorld)
+      return [];
+
     return getWorld.objects.filter((obj) => !obj.isRemoved);
   },
 
@@ -69,6 +72,23 @@ export const actions = {
    */
   removeObject({ rootGetters: { 'game/getWorld': getWorld } }, { id }) {
     return getWorld.removeObject(id);
+  },
+
+  /**
+   * Setup or re-setup a game object.
+   *
+   * @param {number} id
+   * @param {string} type
+   * @param {array[string]} mixins
+   * @return {boolean}
+   */
+  setupObject({ getters: { getObjects } }, { id, type, mixins }) {
+    const gameObj = getObjects.find((obj) => obj.id === id);
+    if (!gameObj)
+      return false;
+
+    gameObj.setup({ type, mixins });
+    return true;
   },
 
   /**
