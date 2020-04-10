@@ -1,7 +1,7 @@
 <template>
   <order-table
+    ref="table" swapDispatch="goals/swapGoal"
     :data="goals" :selected.sync="selected"
-    swapDispatch="goals/swapGoal"
   >
 
     <!-- Action Button -->
@@ -66,7 +66,9 @@ export default {
   },
 
   data() {
-    return { selected: undefined };
+    return {
+      selected: undefined
+    };
   },
 
   methods: {
@@ -77,6 +79,7 @@ export default {
      * @return {void}
      */
     remove(id) {
+      this.$refs.table.toggleRow({ id });
       this.$store.dispatch('goals/removeGoal', { id });
     }
   }

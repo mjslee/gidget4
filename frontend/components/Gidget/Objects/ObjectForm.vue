@@ -53,7 +53,7 @@
         <!-- Actions -->
         <div class="level-right">
           <div class="level-item">
-            <switch-button type="is-warning">Reset</switch-button>
+            <switch-button type="is-warning" @click="reset">Reset</switch-button>
           </div>
           <slot name="bottom-right"></slot>
         </div>
@@ -114,6 +114,5 @@ export default {
       updateKeys: ['name', 'mixins']
     };
   },
-
 }
 </script>

@@ -1,9 +1,11 @@
 import _ from 'lodash';
+import Vue from 'vue';
 
 
 export default {
   data() {
     return {
+      canReset: false,
       canComplete: false,
       updateKeys: []
     }
@@ -19,22 +21,28 @@ export default {
       this.canComplete = true;
     },
 
+    /**
+     * Restore a component value to its prop value.
+     * Prop and ref keys must be the same.
+     *
+     * @param {string} key
+     * @return {boolean}
+     */
+    restore(key) {
+      Vue.set(this.$refs[key], 'newValue', this.$props[key]);
+      return true;
+    },
 
     /**
      * Emit a prop value update by ref and prop key.
-     * Prop and Ref must be the same.
+     * Prop and ref keys must be the same.
      *
      * @param {string} key
      * @return {boolean}
      */
     change(key) {
-      // Ensure ref exists
-      const ref = this.$refs[key];
-      if (!ref)
-        return false;
-
       // Check if value changed
-      let newValue = ref.newValue;
+      let newValue = this.$refs[key].newValue;
       if (_.isEqual(newValue, this.$props[key]))
         return false;
 
@@ -56,6 +64,18 @@ export default {
 
       this.canComplete = false;
       this.$emit('done');
+    },
+
+    /**
+     *
+     */
+    reset() {
+      this.updateKeys.forEach((key) => {
+        this.restore(key);
+      });
+
+      this.canComplete = false;
+      this.canReset = false;
     }
   }
 };

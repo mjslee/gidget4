@@ -30,19 +30,24 @@ export default {
       get() {
         return Object.assign([], this.value);
       },
-
       set(value) {
         this.$emit('input', value);
       }
     },
 
     /**
-     * Array from the tag input.
+     * Array of values from the tag input.
      *
+     * @param {array} value
      * @return {array}
      */
-    newValue() {
-      return this.$refs.input.tags;
+    newValue: {
+      get() {
+        return this.$refs.input.tags;
+      },
+      set(value) {
+        this.internalValue = value;
+      }
     },
 
     /**
