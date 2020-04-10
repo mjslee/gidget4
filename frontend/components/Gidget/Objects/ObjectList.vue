@@ -1,7 +1,7 @@
 <template>
   <order-table
+    ref="table" swapDispatch="objects/swapObjects"
     :data="objects" :selected.sync="selected"
-    swapDispatch="objects/swapObjects"
   >
 
     <!-- Action Button -->
@@ -75,6 +75,19 @@ export default {
       selected: undefined
     }
   },
+
+  methods: {
+    /**
+     * Dispatch an object removal by its ID.
+     *
+     * @param {number} id
+     * @return {void}
+     */
+    remove(id) {
+      this.$refs.table.toggleRow({ id });
+      this.$store.dispatch('objects/removeObject', { id });
+    }
+  }
 
 }
 </script>

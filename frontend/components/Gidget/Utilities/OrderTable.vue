@@ -48,10 +48,10 @@ export default {
   },
 
   props: {
-    columns: Array[Object],
-    data: Array[Object],
-    selected: Object,
-    swapDispatch: String
+    columns      : Array[Object],
+    data         : Array[Object],
+    selected     : Object,
+    swapDispatch : String
   },
 
   computed: {
@@ -94,15 +94,15 @@ export default {
     },
 
     /**
-     * Toggle row opened or closed.
+     * Toggle row opened or closed by ID.
      *
      * @return {void}
      */
-    toggleRow(row) {
-      if (this.openedRows.includes(row.id))
-        this.closeRow(row.id);
+    toggleRow({ id }) {
+      if (this.openedRows.includes(id))
+        this.closeRow(id);
       else
-        this.openRow(row.id);
+        this.openRow(id);
     },
 
     /**

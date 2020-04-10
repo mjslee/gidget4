@@ -1,7 +1,7 @@
 <template>
   <order-table
+    ref="table" swapDispatch="dialogue/swapDialogue"
     :data="dialogue" :selected.sync="selected"
-    swapDispatch="dialogue/swapDialogue"
   >
 
     <!-- Action Button -->
@@ -61,7 +61,9 @@ export default {
   },
 
   data() {
-    return { selected: undefined };
+    return {
+      selected: undefined
+    };
   },
 
   methods: {
@@ -72,6 +74,7 @@ export default {
      * @return {void}
      */
     remove(id) {
+      this.$refs.table.toggleRow({ id });
       this.$store.dispatch('dialogue/removeDialogue', { id });
     }
   }
