@@ -27,6 +27,8 @@
         <b-slider ref="energy" size="is-large" :value="energy" @input="input" rounded />
       </b-field>
 
+      <object-mover :object="$props" />
+
       <!-- Blocking -->
       <b-field>
         <b-switch ref="blocking" :value="blocking">
@@ -76,12 +78,13 @@ import Vue          from 'vue';
 import MixinInput   from '../Inputs/MixinInput';
 import FormMixin    from '../Utilities/FormMixin';
 import SwitchButton from '../Utilities/SwitchButton'
+import ObjectMover from './ObjectMover';
 
 import { SpriteBaseUrl, ObjectSprites } from '@/constants/sprites';
 
 
 export default {
-  components: { MixinInput, SwitchButton },
+  components: { MixinInput, SwitchButton, ObjectMover },
 
   mixins: [FormMixin],
 

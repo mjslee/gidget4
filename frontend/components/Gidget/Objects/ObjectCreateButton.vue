@@ -29,7 +29,7 @@ export default {
 
   data() {
     return {
-      isModalActive: true,
+      isModalActive: false,
       object: {
         name     : 'Gidget',
         sprite   : 'gidget',
