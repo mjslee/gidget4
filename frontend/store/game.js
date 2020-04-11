@@ -71,6 +71,7 @@ export const mutations = {
    */
   setWorldSize({}, value) {
     Vue.set(__game.world, 'size', value);
+    __game.world.forceInBounds();
   },
 
   /**

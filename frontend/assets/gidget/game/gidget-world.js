@@ -444,13 +444,47 @@ export default class {
    *
    * @param {function} conditions
    */
-  validatePosition(position) {
+  validateWorldPosition(position) {
     return (
       position.x >= 0 && position.x <= this.size.width - 1 &&
       position.y >= 0 && position.y <= this.size.height - 1
-    ) && !this.getObject((obj) =>
+    );
+  }
+
+  /**
+   * Determine if position is valid.
+   * Checks tile position exists.
+   * Checks for blocking objects.
+   *
+   * @param {function} conditions
+   */
+  validatePosition(position) {
+    return this.validateWorldPosition(position) && !this.getObject((obj) =>
       obj.blocking && this.insideObjectBoundaries(obj, position)
     );
+  }
+
+  /**
+   * Ensure that all game objects are within the world bounds.
+   * If not then move those objects into the boundaries.
+   *
+   * @return {void}
+   */
+  forceInBounds() {
+    for (let i = 0, len = this.objects.length; i < len; i++) {
+      const obj = this.objects[i];
+      const { x, y } = obj.position;
+
+      if (x < 0)
+        obj.position.x = 0;
+      else if (x >= this.size.width)
+        obj.position.x = this.size.width - 1;
+
+      if (y < 0)
+        obj.position.y = 0;
+      else if (y >= this.size.height)
+        obj.position.y = this.size.height - 1;
+    }
   }
 
   /**
