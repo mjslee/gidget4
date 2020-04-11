@@ -88,7 +88,8 @@ export default {
      */
     select() {
       this.$store.commit('tiles/setSelected', this.id);
-    }
+      this.$store.commit('objects/setSelected', undefined);
+    },
   }
 }
 </script>
