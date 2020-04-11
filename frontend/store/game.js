@@ -70,7 +70,7 @@ export const mutations = {
    * @return {void}
    */
   setWorldSize({}, value) {
-    __game.world.size = value;
+    Vue.set(__game.world, 'size', value);
   },
 
   /**
