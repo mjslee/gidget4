@@ -1,7 +1,15 @@
 <template>
   <div class="buttons">
-    <b-button icon-right="chevron-up" :disabled="disabled" @click="$emit('up')"></b-button>
-    <b-button icon-right="chevron-down" :disabled="disabled" @click="$emit('down')"></b-button>
+    <b-button
+      icon-right="chevron-up"
+      :disabled="upDisabled"
+      @click="$emit('up')"
+    />
+    <b-button
+      icon-right="chevron-down"
+      :disabled="downDisabled"
+      @click="$emit('down')"
+    />
   </div>
 </template>
 
@@ -9,7 +17,15 @@
 <script>
 export default {
   props: {
-    disabled: Boolean
+    disabled: Boolean,
+    upDisabled: {
+      type: Boolean,
+      default: false
+    },
+    downDisabled: {
+      type: Boolean,
+      default: false
+    }
   }
 }
 </script>

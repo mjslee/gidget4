@@ -10,7 +10,12 @@
       <!-- Top Right Content -->
       <div class="level-right">
         <div class="level-item" v-if="swapDispatch">
-          <order-buttons @up="swapRow(-1)" @down="swapRow(1)" />
+          <order-buttons
+            :upDisabled="upDisabled"
+            :downDisabled="downDisabled"
+            @up="swapRow(-1)"
+            @down="swapRow(1)"
+          />
         </div>
         <slot name="top-right-content"></slot>
       </div>
@@ -22,7 +27,7 @@
       :selected.sync="internalSelected"
       :opened-detailed="openedRows"
       :show-detail-icon="true"
-      @click="toggleRow"
+      @dblclick="toggleRow"
       hoverable striped
       detailed detail-key="id"
     >
@@ -56,7 +61,7 @@ export default {
 
   computed: {
     /**
-     *
+     * Internal selected as to not mutate selected prop.
      */
     internalSelected: {
       get() {
@@ -66,6 +71,33 @@ export default {
         this.$emit('update:selected', value);
       }
     },
+
+    /**
+     * ID of the selected row. If no row is selected then -1.
+     *
+     * @return {number}
+     */
+    selectedId() {
+      return this.internalSelected ? this.internalSelected.id : -1;
+    },
+
+    /**
+     * Is the up button disabled?
+     *
+     * @return {boolean}
+     */
+    upDisabled() {
+      return this.selectedId <= 0;
+    },
+
+    /**
+     * Is the down button disabled?
+     *
+     * @return {boolean}
+     */
+    downDisabled() {
+      return this.data.length && this.selectedId >= this.data.length - 1;
+    }
   },
 
   data() {
