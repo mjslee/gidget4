@@ -1,7 +1,7 @@
 <template>
   <section v-if="object">
     <b-field grouped>
-      <b-field label="Move Object">
+      <b-field label="Move Object" v-if="hasMoveButtons">
         <div class="buttons">
           <b-button @click="x -= 1" :disabled="leftDisabled"  icon-right="chevron-left" />
           <b-button @click="y += 1" :disabled="downDisabled"  icon-right="chevron-down" />
@@ -23,7 +23,11 @@
 <script>
 export default {
   props: {
-    object: Object
+    object: Object,
+    hasMoveButtons: {
+      type: Boolean,
+      default: true
+    }
   },
 
   computed: {

@@ -7,9 +7,12 @@
     <portal to="modal">
       <b-modal :active.sync="isModalActive" :width="640">
         <div class="card">
-          <goal-form class="card-content" v-bind.sync="goal" @done="done">
-            <template slot="complete-button-text">Create</template>
-          </goal-form>
+          <goal-form
+            class="card-content"
+            :is-creating="true"
+            v-bind.sync="goal"
+            @done="done"
+          />
         </div>
       </b-modal>
     </portal>

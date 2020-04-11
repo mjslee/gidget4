@@ -27,7 +27,7 @@
         <b-slider ref="energy" size="is-large" :value="energy" @input="input" rounded />
       </b-field>
 
-      <object-mover :object="$props" />
+      <object-mover :has-move-buttons="!isCreating" :object="$props" />
 
       <!-- Blocking -->
       <b-field>
@@ -45,7 +45,8 @@
                 Change Sprite
               </b-button>
               <b-button type="is-success" :disabled="!canComplete" @click="complete">
-                <slot name="complete-button-text">Apply Changes</slot>
+                <template v-if="isCreating">Create Object</template>
+                <template v-else>Apply Changes</template>
               </b-button>
             </section>
           </div>
@@ -89,6 +90,11 @@ export default {
   mixins: [FormMixin],
 
   props: {
+    isCreating : {
+      type    : Boolean,
+      default : false
+    },
+
     id       : Number,
     name     : String,
     type     : String,

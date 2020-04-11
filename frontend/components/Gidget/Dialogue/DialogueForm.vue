@@ -11,7 +11,8 @@
         <div class="level-left">
           <div class="level-item">
             <b-button type="is-success" :disabled="!canComplete" @click="complete">
-              <slot name="complete-button-text">Apply Changes</slot>
+              <template v-if="isCreating">Create Dialogue</template>
+              <template v-else>Apply Changes</template>
             </b-button>
             <slot name="bottom-left"></slot>
           </div>
@@ -50,8 +51,13 @@ export default {
   },
 
   props: {
-    text: String,
-    sprite: String
+    isCreating : {
+      type    : Boolean,
+      default : false
+    },
+
+    text   : String,
+    sprite : String
   },
 
   computed: {
