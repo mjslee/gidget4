@@ -150,7 +150,7 @@ export default class {
    * @return {object}
    */
   getWorld() {
-    return this.world;
+    return undefined;
   }
 
 

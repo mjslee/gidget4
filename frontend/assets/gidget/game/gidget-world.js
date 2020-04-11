@@ -291,7 +291,7 @@ export default class {
       return false;
 
     // Set GameObject props
-    gameObj.world = this;
+    gameObj.getWorld = () => this;
     gameObj.id = this.nextId++;
 
     // Add to world objects
