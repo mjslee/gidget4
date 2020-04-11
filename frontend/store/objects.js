@@ -79,7 +79,7 @@ export const actions = {
    *
    * @param {number} fromId
    * @param {number} toId
-   * @return {void}
+   * @return {boolean}
    */
   swapObjects({ getters: { getObjects } }, { fromId, toId }) {
     const fromRow = getObjects.find((row) => row.id === fromId);
@@ -113,9 +113,18 @@ export const actions = {
   /**
    * Update game object properties.
    *
-   * @return {void}
+   * @param {number} id
+   * @param {string|array} key
+   * @param {any} value
+   * @param {any} defaultValue
+   * @return {boolean}
    */
-  updateObject({}, { object, key, value, defaultValue }) {
-    _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
+  updateObject({ getters: { getObjects } }, { id, key, value, defaultValue }) {
+    const gameObj = getObjects.find((obj) => obj.id === id);
+    if (!gameObj)
+      return false;
+
+    _.setWith(gameObj, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
+    return true;
   },
 };
