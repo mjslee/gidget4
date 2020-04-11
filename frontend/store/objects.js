@@ -75,6 +75,25 @@ export const actions = {
   },
 
   /**
+   * Swap two goals by IDs.
+   *
+   * @param {number} fromId
+   * @param {number} toId
+   * @return {void}
+   */
+  swapObjects({ getters: { getObjects } }, { fromId, toId }) {
+    const fromRow = getObjects.find((row) => row.id === fromId);
+    const toRow   = getObjects.find((row) => row.id === toId);
+
+    if (!fromRow || !toRow)
+      return false;
+
+    Vue.set(fromRow, 'id', toId);
+    Vue.set(toRow,   'id', fromId);
+    return true;
+  },
+
+  /**
    * Setup or re-setup a game object.
    *
    * @param {number} id
