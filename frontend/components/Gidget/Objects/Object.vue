@@ -1,9 +1,8 @@
 <template>
   <div
-    :style="style"
-    :id="elementId"
-    :class="isSelected ? 'selected' : ''"
-    v-show="isGrabbed"
+    :style="elementStyle"
+    :class="elementClass"
+    v-show="isNotGrabbed"
     @click="select"
   >
     <!-- Message -->
@@ -13,7 +12,7 @@
 
     <!-- Name -->
     <span class="gidget-name">
-      {{ object.name }}{{ typeof index == 'number' ? '[' + index + ']' : '' }}
+      {{ object.name }}{{ indexText }}
     </span>
 
     <!-- Sprite -->
@@ -81,26 +80,30 @@ div {
 
 <script>
 import { SpriteBaseUrl } from '@/constants/sprites';
-import { getObjectElementId, moveElementToTile } from '@/assets/gidget/game/gidget-utility';
+import { getObjectElementId } from '@/assets/gidget/game/gidget-utility';
 
 
 export default {
   props: {
-    size:     Number,
-    margin:   Number,
-    object:   Object,
-    selected: Boolean,
+    size     : Number,
+    margin   : Number,
+    selected : Boolean,
+
+    object   : Object,
   },
 
 
-  data: () => ({
-    message: ''
-  }),
-
+  data() {
+    return {
+      message: '',
+      top: 0,
+      left: 0
+    }
+  },
 
   mounted() {
-    this.updatePosition();
-    window.addEventListener('resize', this.updatePosition);
+    this.object.getElement = () => this.$el;
+    this.$emit('move', this);
   },
 
 
@@ -113,13 +116,6 @@ export default {
 
   computed: {
     /**
-     *
-     */
-    elementId() {
-      return getObjectElementId(this.object)
-    },
-
-    /**
      * Calculate size of object.
      */
     tileSize() {
@@ -127,59 +123,69 @@ export default {
     },
 
     /**
+     * Style properties for parent element.
      *
+     * @return {object}
      */
-    style() {
+    elementStyle() {
       return {
-        'margin': this.margin + 'rem',
-        'z-index': this.object.layer
+        'margin'  : this.margin + 'rem',
+        'z-index' : this.object.layer,
+        'top'     : this.top + 'px',
+        'left'    : this.left + 'px'
       }
     },
 
     /**
+     * Classes for parent element.
      *
+     * @return {string}
      */
-    index() {
-      return this.object.index
+    elementClass() {
+      if (this.$store.state.objects.selected == this.object.id)
+        return 'selected';
     },
 
     /**
+     * Text representation of the object's index.
      *
+     * @return {string}
      */
-    scale() {
-      return this.object.scale;
+    indexText() {
+      if (typeof this.object.index == 'number')
+        return `[${this.object.index}]`;
     },
 
     /**
      * Create object style object.
+     *
+     * @return {object}
      */
     spriteStyle() {
       return {
-        'height': this.tileSize + 'rem',
-        'width': this.tileSize + 'rem',
+        'height' : this.tileSize + 'rem',
+        'width'  : this.tileSize + 'rem',
       }
     },
 
     /**
      * Get URL of game sprite.
+     *
+     * @return {string}
      */
     spriteUrl() {
-      return SpriteBaseUrl + this.object.sprite + '.png';
+      if (typeof this.object.sprite == 'string')
+        return SpriteBaseUrl + this.object.sprite + '.png';
     },
 
     /**
+     * Is the object grabbed by another object?
      *
+     * @return {boolean}
      */
-    isGrabbed() {
-      return typeof this.object.grabber == 'undefined'
+    isNotGrabbed() {
+      return typeof this.object.grabber == 'undefined';
     },
-
-    /**
-     *
-     */
-    isSelected() {
-      return this.$store.state.objects.selected == this.object.id;
-    }
   },
 
 
@@ -187,33 +193,39 @@ export default {
     /**
      * Update GidgetObject's visual position inside page.
      *
-     * @param {object} rect
+     * @return {void}
      */
     updatePosition() {
-      this.$nextTick(() => moveElementToTile(this.$el, this.object.position));
+      this.$nextTick(() => this.$emit('move', this));
     },
 
     /**
+     * Set object as selected and unselect tile.
      *
+     * @return {void}
      */
     select() {
       this.$store.commit('objects/setSelected', this.object.id);
+      this.$store.commit('tiles/setSelected', undefined);
     }
   },
 
 
   watch: {
     /**
-     * Update position on tile size change.
+     * Watch object's position to visually move in world.
      */
-    'size'() {
-      this.updatePosition();
+    'object.position': {
+      handler(value) {
+        this.updatePosition();
+      },
+      deep: true
     },
 
     /**
      * Update position on scale change.
      */
-    'scale'() {
+    'object.scale'() {
       this.updatePosition();
     },
 
@@ -242,17 +254,6 @@ export default {
       $el.style.animation = 'none';
       $el.offsetHeight;  // Reflow, this is the magic
       $el.style.animation = '';
-    },
-
-
-    /**
-     * Watch object's position to visually move in world.
-     */
-    'object.position': {
-      handler(value) {
-        this.updatePosition();
-      },
-      deep: true
     },
   }
 }
