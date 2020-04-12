@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 
 export const state = () => ({
-  selectedTile: undefined
+  selected: undefined,
 });
 
 
@@ -13,55 +13,19 @@ export const mutations = {
    * @return {void}
    */
   setSelected(state, value) {
-    state.selectedTile = value;
+    state.selected = value;
   },
 };
 
 
 export const actions = {
   /**
-   * Add game object to world.
+   * Set game tile sprite.
    *
    * @return {void}
    */
-  addObject({ rootGetters: { 'game/getWorld': getWorld } }, { type, position }) {
-    const gameObject = GidgetObject.create({ type, position });
-    return getWorld.addObject(gameObject);
-  },
-
-  /**
-   * Remove game object from object array.
-   *
-   * @param {object} state
-   * @param {number} id
-   * @return {boolean}
-   */
-  removeObject({ rootGetters: { 'game/getWorld': getWorld } }, { id }) {
-    let index;
-    const obj = getWorld.objects.find((obj, i) => {
-      const found = obj.id === id;
-
-      if (found)
-        index = i;
-
-      return found;
-    });
-
-    if (typeof index == 'undefined')
-      return false;
-
-    getWorld.removeObject(obj);
-    Vue.delete(getWorld.objects, index);
-    return true;
-  },
-
-  /**
-   * Update game object properties.
-   *
-   * @return {void}
-   */
-  updateObject({}, { object, key, value, defaultValue }) {
-    _.setWith(object, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
+  setTile({ rootGetters: { 'game/getWorld': getWorld } }, { position, sprite }) {
+    return getWorld.setTile(position, sprite);
   },
 };
 
@@ -94,7 +58,7 @@ export const getters = {
    *
    * @return {object}
    */
-  getSelected({ selectedTile }, { getTiles }) {
-    return getTiles.find((tile) => tile.id === selectedTile);
+  getSelected({ selected }, { getTiles }) {
+    return selected;
   },
 };
