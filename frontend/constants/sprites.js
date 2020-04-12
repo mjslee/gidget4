@@ -180,8 +180,9 @@ export const ObjectSprites = [
 
 
 export const TileSprites = [
+  { title: 'grass',           src: 'grass.png',          },
+  { title: 'dirt',            src: 'dirt.png',           },
   { title: 'cobblestone',     src: 'cobblestone.png',    },
-  { title: 'hole',            src: 'hole.png'            },
   { title: 'infected-dirt',   src: 'infecteddirt.png'    },
   { title: 'water',           src: 'water.png'           },
   { title: 'lava-crack',      src: 'lava-crack.png'      },
@@ -200,7 +201,7 @@ export const TileSprites = [
   { title: 'tile-light',      src: 'tile-light.png'      },
   { title: 'tile-orange',     src: 'tile-orange.png'     },
   { title: 'tile-pink',       src: 'tile-pink.png'       },
-  { title: 'tile',            src: 'tile.png'            },
+  { title: 'tile-metallic',   src: 'tile.png'            },
   { title: 'tile-purple',     src: 'tile-purple.png'     },
   { title: 'tile-red',        src: 'tile-red.png'        },
   { title: 'tile-white',      src: 'tile-white.png'      },
