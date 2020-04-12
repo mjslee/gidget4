@@ -5,9 +5,9 @@ import Vue from 'vue';
 export default {
   data() {
     return {
-      canReset: false,
-      canComplete: false,
-      updateKeys: []
+      canReset    : false,
+      canComplete : false,
+      updateKeys  : []
     }
   },
 
@@ -22,31 +22,25 @@ export default {
     },
 
     /**
-     * Restore a component value to its prop value.
-     * Prop and ref keys must be the same.
-     *
-     * @param {string} key
-     * @return {boolean}
-     */
-    restore(key) {
-      Vue.set(this.$refs[key], 'newValue', this.$props[key]);
-      return true;
-    },
-
-    /**
      * Emit a prop value update by ref and prop key.
      * Prop and ref keys must be the same.
      *
      * @param {string} key
+     * @param {function} callback
      * @return {boolean}
      */
-    change(key) {
+    change(key, callback) {
       // Check if value changed
       const ref = this.$refs[key];
       if (!ref)
         return false;
 
+      // Get newValue and run it through callback if its a function
       let newValue = ref.newValue || ref.value1;
+      if (typeof callback == 'function')
+        newValue = callback(newValue);
+
+      // Ensure values are not the same
       if (_.isEqual(newValue, this.$props[key]))
         return false;
 
@@ -63,7 +57,10 @@ export default {
      */
     complete() {
       this.updateKeys.forEach((key) => {
-        this.change(key);
+        if (typeof key == 'object')
+          this.change(key.key, key.value);
+        else
+          this.change(key);
       });
 
       this.canComplete = false;
@@ -71,11 +68,16 @@ export default {
     },
 
     /**
+     * Restore component values to their prop values.
      *
+     * @return {void}
      */
     reset() {
       this.updateKeys.forEach((key) => {
-        this.restore(key);
+        if (typeof key == 'object')
+          key = key.key;
+
+        this.$refs[key].newValue = this.$props[key];
       });
 
       this.canComplete = false;
