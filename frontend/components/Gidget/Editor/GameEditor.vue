@@ -1,24 +1,19 @@
 <template>
   <b-tabs v-model="activeTab">
-    <b-tab-item label="World">
+    <b-tab-item label="World" icon="globe-model">
       <world-editor />
     </b-tab-item>
-    <b-tab-item label="Objects">
+    <b-tab-item label="Objects" icon="shape">
       <object-list />
     </b-tab-item>
-    <b-tab-item label="Dialogue">
+    <b-tab-item label="Dialogue" icon="message">
       <dialogue-list />
     </b-tab-item>
-    <b-tab-item label="Goals">
+    <b-tab-item label="Goals" icon="flag">
       <goal-list />
     </b-tab-item>
   </b-tabs>
 </template>
-
-
-<style scoped>
-
-</style>
 
 
 <script>
@@ -39,7 +34,7 @@ export default {
 
   data() {
     return {
-      activeTab: 1
+      activeTab: 0
     }
   }
 }
