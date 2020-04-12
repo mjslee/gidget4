@@ -11,8 +11,12 @@
         <world-settings />
       </div>
       <div class="column" v-if="selectedObject">
-        <h1 class="title">Selected</h1>
+        <h1 class="title">Selected Object</h1>
         <object-mover :object="selectedObject" />
+      </div>
+      <div class="column" v-if="selectedTile">
+        <h1 class="title">Selected Tile</h1>
+        <tile-editor />
       </div>
     </div>
   </div>
@@ -23,7 +27,7 @@
 import World from '../World';
 import WorldSettings from './WorldSettings';
 import ObjectMover from '../Objects/ObjectMover';
-import ObjectForm from '../Objects/ObjectForm';
+import TileEditor from '../Tiles/TileEditor';
 
 
 export default {
@@ -31,12 +35,16 @@ export default {
     World,
     WorldSettings,
     ObjectMover,
-    ObjectForm
+    TileEditor
   },
 
   computed: {
     selectedObject() {
       return this.$store.getters['objects/getSelected'];
+    },
+
+    selectedTile() {
+      return this.$store.getters['tiles/getSelected'];
     }
   }
 };
