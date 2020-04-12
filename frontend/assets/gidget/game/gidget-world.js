@@ -518,7 +518,7 @@ export default class {
   }
 
   /**
-   *
+   * Add game dialogue object.
    *
    * @param {number} object -- Object to send to callback.
    * @param {number} dialogue -- Object array of dialogue.
@@ -534,7 +534,7 @@ export default class {
    *
    * @param {number} id
    * @param {boolean} remove
-   * @return {void}
+   * @return {boolean}
    */
   removeDialogue(id, remove=true) {
     const dialogue = this.dialogue.find((obj) => obj.id === id);
@@ -545,5 +545,20 @@ export default class {
     dialogue.isRemoved = remove;
     this.enumerateDialogue();
     return true;
+  }
+
+  /**
+   * Set game tile sprite.
+   *
+   * @param {object[x,y]} position
+   * @param {string} sprite
+   * @return {void}
+   */
+  setTile(position, sprite) {
+    const tile = this.tiles.find((obj) => _.isEqual(obj.position, position));
+    if (tile)
+      tile.sprite = sprite;
+    else
+      this.tiles.push({ sprite, position });
   }
 }
