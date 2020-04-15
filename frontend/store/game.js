@@ -8,15 +8,21 @@ if (module.hot && typeof window.__game != 'undefined')
 
 
 export const state = () => ({
-  key:  0,
+  key: 0,
 
-  isRunning: false,
+  isRunning  : false,
+  activeStep : 0,
+  stepCount  : 0,
 
-  activeStep: 0,
-  stepCount:  0,
-
-  evalData: { },
-  initialData: { size: 3, tiles: [], objects: [], dialogue: [], imports: [], goals: [] },
+  evalData    : {},
+  initialData : {
+    size     : 3,
+    tiles    : [],
+    objects  : [],
+    dialogue : [],
+    imports  : [],
+    goals    : []
+  },
 });
 
 
@@ -161,7 +167,6 @@ export const actions = {
     commit('setRunning', false);
 
     getters['getGame'].reset();
-    console.debug('reset');
   },
 
   /**
@@ -210,7 +215,7 @@ export const actions = {
 
     // Set error line
     if (typeof __game.error == 'object') {
-      //
+      commit('code/setErrorLine', __game.error.ln - 1, { root: true });
     }
 
     commit('setRunning', true);

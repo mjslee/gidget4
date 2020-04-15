@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <codemirror ref="code" v-model="code" :options="options" />
-  </div>
+  <codemirror ref="code" v-model="code" :options="options" />
 </template>
 
 
@@ -24,32 +22,43 @@ export default {
     codemirror
   },
 
-
-  props: {
-    value: String,
-  },
-
-
   watch: {
     /**
-     * Update code on value change.
+     * Watch activeLine property of code store.
+     *
+     * @return {void}
      */
-    activeLine(ln) {
-      this.setLineClass(ln, this.previousActiveLine, this.activeLineClass);
+    '$store.state.code.activeLine'(ln) {
+      this.setLineClass(ln, this.prevActiveLine, this.activeLineClass);
+      this.prevActiveLine = this.$store.state.code.activeLine;
     },
 
-
     /**
+     * Watch errorLine property of code store.
      *
+     * @return {void}
      */
-    errorLine(ln) {
-      this.setLineClass(ln, this.previousErrorLine, this.errorLineClass);
+    '$store.state.code.errorLine'(ln) {
+      this.setLineClass(ln, this.prevErrorLine, this.errorLineClass);
+      this.prevErrorLine = this.$store.state.code.errorLine;
     },
   },
 
   computed: {
     /**
+     * CodeMirror editor component reference.
      *
+     * @return {object}
+     */
+    editor() {
+      return this.$refs.code.codemirror;
+    },
+
+    /**
+     * Get or set code value in code store.
+     *
+     * @param {string}
+     * @return {string}
      */
     code: {
       get() {
@@ -59,85 +68,41 @@ export default {
         this.$store.commit('code/setValue', value);
       }
     },
-
-    /**
-     * Active line number.
-     *
-     * @return {number}
-     */
-    activeLine() {
-      return this.$store.state.game.activeLine;
-    },
-
-    /**
-     * Line number of previously active line.
-     *
-     * @return {number}
-     */
-    previousActiveLine() {
-      return this.$store.state.game.previousActiveLine;
-    },
-
-    /**
-     * Line number with error.
-     *
-     * @return {number}
-     */
-    errorLine() {
-      return this.$store.state.game.errorLine;
-    },
-
-    /**
-     * Line number of the previous error line.
-     *
-     * @return {number}
-     */
-    previousErrorLine() {
-      return this.$store.state.game.previousErrorLine;
-    },
   },
-
 
   data() {
     return {
       // Editor
       options: {
-        tabSize:     2,
-        line:        true,
-        lineNumbers: true,
+        tabSize     : 2,
+        line        : true,
+        lineNumbers : true,
       },
 
+      // Previous line numbers
+      prevActiveLine : -1,
+      prevErrorLine  : -1,
+
       // Classes for lines
-      activeLineClass: 'CodeMirror-activeline-background',
-      errorLineClass:  'CodeMirror-errorline-background',
+      where: 'background',
+      activeLineClass : 'CodeMirror-activeline-background',
+      errorLineClass  : 'CodeMirror-errorline-background',
     };
   },
-
-
-  mounted() {
-    this.codemirror = this.$refs.code.codemirror;
-  },
-
 
   methods: {
     /**
      * Set class of a line by its number.
      *
-     * @param {number} ln -- Line number.
-     * @param {number} prevLn -- Previous line number.
-     * @param {string} className -- Name of class to add or remove.
-     * @param {string} type -- Can be: 'text', 'background', or 'wrap'
+     * @param {number} ln - Line number.
+     * @param {number} prevLn - Previous line number.
+     * @param {string} className - Name of class to add or remove.
      * @return {void}
      */
-    setLineClass(ln, prevLn, className, type='background') {
-      // Remove previous line's indicator
-      if (prevLn > -1)
-        this.codemirror.removeLineClass(prevLn, type, className);
-
-      // Add class to indicate line
-      if (ln > -1)
-        this.codemirror.addLineClass(ln, type, className);
-    },
+    setLineClass(ln, prevLn, className) {
+      this.editor.removeLineClass(prevLn, this.where, className);
+      this.editor.addLineClass(ln, this.where, className);
+    }
   }
 }
 </script>
