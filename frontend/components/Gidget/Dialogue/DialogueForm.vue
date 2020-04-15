@@ -42,7 +42,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
 
 import { SPRITE_PATH } from '@/constants/paths';
-import SpriteSelector from '@/components/Gidget/Inputs/SpriteSelector';
+import SpriteInput from '../Inputs/SpriteInput';
 
 
 export default {

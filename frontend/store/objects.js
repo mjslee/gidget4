@@ -39,7 +39,8 @@ export const getters = {
    * @return {object}
    */
   getObject({}, { getObjects }) {
-    return (callback) => getObjects.find(callback);
+    if (getObjects)
+      return (callback) => getObjects.find(callback);
   },
 
   /**
@@ -48,7 +49,8 @@ export const getters = {
    * @return {object}
    */
   getSelected({ selected }, { getObjects }) {
-    return getObjects.find((obj) => obj.id === selected);
+    if (getObjects)
+      return getObjects.find((obj) => obj.id === selected);
   },
 };
 
@@ -60,7 +62,8 @@ export const actions = {
    * @return {void}
    */
   addObject({ rootGetters: { 'game/getWorld': getWorld } }, gameObj) {
-    return getWorld.addObject(gameObj);
+    if (getWorld)
+      return getWorld.addObject(gameObj);
   },
 
   /**
@@ -71,7 +74,8 @@ export const actions = {
    * @return {boolean}
    */
   removeObject({ rootGetters: { 'game/getWorld': getWorld } }, { id }) {
-    return getWorld.removeObject(id);
+    if (getWorld)
+      return getWorld.removeObject(id);
   },
 
   /**
@@ -82,6 +86,9 @@ export const actions = {
    * @return {boolean}
    */
   swapObjects({ getters: { getObjects } }, { fromId, toId }) {
+    if (!getObjects)
+      return false;
+
     const fromRow = getObjects.find((row) => row.id === fromId);
     const toRow   = getObjects.find((row) => row.id === toId);
 
@@ -102,6 +109,9 @@ export const actions = {
    * @return {boolean}
    */
   setupObject({ getters: { getObjects } }, { id, type, mixins }) {
+    if (!getObjects)
+      return false;
+
     const gameObj = getObjects.find((obj) => obj.id === id);
     if (!gameObj)
       return false;
@@ -120,6 +130,9 @@ export const actions = {
    * @return {boolean}
    */
   updateObject({ getters: { getObjects } }, { id, key, value, defaultValue }) {
+    if (!getObjects)
+      return false;
+
     const gameObj = getObjects.find((obj) => obj.id === id);
     if (!gameObj)
       return false;

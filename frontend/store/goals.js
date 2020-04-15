@@ -25,7 +25,8 @@ export const getters = {
    * @return {array}
    */
   getGoals({}, {}, {}, { 'game/getGame': getGame }) {
-    return getGame.goals.filter((obj) => !obj.isRemoved);
+    if (getGame)
+      return getGame.goals.filter((obj) => !obj.isRemoved);
   },
 };
 
@@ -57,8 +58,8 @@ export const actions = {
    * @return {boolean}
    */
   addGoal({ rootGetters: { 'game/getGame': getGame } }, goal) {
-    getGame.addGoal(goal);
-    return true;
+    if (getGame)
+      getGame.addGoal(goal);
   },
 
   /**
@@ -68,7 +69,8 @@ export const actions = {
    * @return {boolean}
    */
   removeGoal({ rootGetters: { 'game/getGame': getGame } }, { id }) {
-    return getGame.removeGoal(id);
+    if (getGame)
+      return getGame.removeGoal(id);
   },
 
   /**
@@ -79,6 +81,9 @@ export const actions = {
    * @return {void}
    */
   swapGoal({ getters: { getGoals } }, { fromId, toId }) {
+    if (!getGoals)
+      return false;
+
     const fromRow = getGoals.find((row) => row.id === fromId);
     const toRow   = getGoals.find((row) => row.id === toId);
 

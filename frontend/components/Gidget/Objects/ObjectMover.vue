@@ -1,5 +1,5 @@
 <template>
-  <section v-if="object">
+  <section v-if="worldSize && object">
     <b-field grouped>
       <b-field label="Move Object" v-if="hasMoveButtons">
         <div class="buttons">

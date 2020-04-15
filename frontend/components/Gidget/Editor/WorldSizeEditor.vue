@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-if="worldSize">
     <b-field grouped>
       <b-field label="Height" expanded>
         <b-slider v-model="height" v-bind="sliderAttrs" />

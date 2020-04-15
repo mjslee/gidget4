@@ -1,5 +1,5 @@
 <template>
-  <main ref="world" id="world">
+  <main ref="world" id="world" v-if="size">
     <!-- Horizontal Axis Labels (1, 2, 3, etc.) -->
     <div class="game-row x-axis">
       <label
@@ -127,6 +127,9 @@ export default {
      * @return {number}
      */
     tileSize() {
+      if (!this.size)
+        return -1;
+
       return 26 / Math.max(this.size.width, this.size.height);
     },
 
@@ -204,7 +207,9 @@ export default {
      * @return {void}
      */
     moveObjectElements() {
-      console.log('called');
+      if (!this.$refs.objects)
+        return;
+
       this.$nextTick(() => {
         this.$refs.objects.forEach((obj) => {
           this.moveObjectElement(obj);

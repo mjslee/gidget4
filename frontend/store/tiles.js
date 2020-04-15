@@ -25,7 +25,8 @@ export const actions = {
    * @return {void}
    */
   setTile({ rootGetters: { 'game/getWorld': getWorld } }, { position, sprite }) {
-    return getWorld.setTile(position, sprite);
+    if (getWorld)
+      return getWorld.setTile(position, sprite);
   },
 };
 
@@ -37,7 +38,8 @@ export const getters = {
    * @return {array}
    */
   getTiles({}, {}, {}, { 'game/getWorld': getWorld }) {
-    return getWorld.tiles;
+    if (getWorld)
+      return getWorld.tiles;
   },
 
   /**
@@ -48,6 +50,9 @@ export const getters = {
    * @return {object}
    */
   getTile({}, { getTiles }) {
+    if (!getTiles)
+      return;
+
     return ({ x, y }) => getTiles.find(({ position }) =>
       position.x === x && position.y === y
     );
@@ -59,6 +64,7 @@ export const getters = {
    * @return {object}
    */
   getSelected({ selected }, { getTiles }) {
-    return selected;
+    if (getTiles)
+      return selected;
   },
 };

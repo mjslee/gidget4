@@ -1,5 +1,5 @@
 <template>
-  <article>
+  <article v-if="data">
     <!-- Above Table -->
     <section class="level">
       <!-- Top Left Content -->

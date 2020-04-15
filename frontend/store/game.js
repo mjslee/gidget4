@@ -235,7 +235,8 @@ export const getters = {
    * @return {object}
    */
   getWorld({}, { getGame }) {
-    return getGame.world;
+    if (getGame)
+      return getGame.world;
   },
 
   /**
@@ -244,7 +245,8 @@ export const getters = {
    * @return {object}
    */
   getWorldState({}, { getWorld }) {
-    return getWorld.getState();
+    if (getWorld)
+      return getWorld.getState();
   },
 
   /**
@@ -253,7 +255,8 @@ export const getters = {
    * @return {number}
    */
   getWorldSize({}, { getWorld }) {
-    return getWorld.size;
+    if (getWorld)
+      return getWorld.size;
   },
 
   /**

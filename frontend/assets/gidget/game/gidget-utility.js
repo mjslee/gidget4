@@ -1,4 +1,4 @@
-import { TweenLite, TimelineLite } from 'gsap'
+import { TweenLite, TimelineLite } from 'gsap';
 
 
 /**
@@ -11,7 +11,7 @@ import { TweenLite, TimelineLite } from 'gsap'
  *   async () => await wait(1000)  // Waits for one second
  */
 export async function wait(ms) {
-  await new Promise(resolve => setTimeout(resolve, ms))
+  await new Promise(resolve => setTimeout(resolve, ms));
 }
 
 
@@ -38,8 +38,8 @@ export function poscmp(pos1, pos2) {
  * @param {object} gameObject - A game object.
  * @return {element} DOM element of game object.
  */
-export function getObjectElementId(gameObject) {
-  return 'object-'+gameObject.name+'-'+gameObject.type+'-'+gameObject.id
+export function getObjectElementId({ name, type, id }) {
+  return `object-${name}-${type}-${id}`;
 }
 
 
@@ -50,7 +50,7 @@ export function getObjectElementId(gameObject) {
  * @return {element} DOM element of game object.
  */
 export function getObjectElement(gameObject) {
-  return document.getElementById(getObjectElementId(gameObject))
+  return document.getElementById(getObjectElementId(gameObject));
 }
 
 
@@ -61,7 +61,7 @@ export function getObjectElement(gameObject) {
  * @return {element} DOM element of tile.
  */
 export function getTileElement(position) {
-  return document.getElementById('tile-' + position.x + '-' + position.y)
+  return document.getElementById('tile-' + position.x + '-' + position.y);
 }
 
 
@@ -75,16 +75,16 @@ export function getTileElement(position) {
  */
 export function moveElementToTile($el, position) {
   if (!$el)
-    return false
+    return false;
 
-  const $tile = getTileElement(position)
+  const $tile = getTileElement(position);
   if (!$tile)
-    return false
+    return false;
 
-  $el.style.top = $tile.offsetTop - ($el.scrollHeight - $tile.scrollHeight) + 'px'
-  $el.style.left = $tile.offsetLeft - (($el.scrollWidth - $tile.scrollWidth) / 2) + 'px'
+  $el.style.top = $tile.offsetTop - ($el.scrollHeight - $tile.scrollHeight) + 'px';
+  $el.style.left = $tile.offsetLeft - (($el.scrollWidth - $tile.scrollWidth) / 2) + 'px';
 
-  return true
+  return true;
 }
 
 
@@ -97,28 +97,28 @@ export function moveElementToTile($el, position) {
  * @return {boolean}
  */
 export async function animate(gameObject, callback) {
-  const $el = getObjectElement(gameObject)
+  const $el = getObjectElement(gameObject);
   if ($el == null)
-    return false
+    return false;
 
   // Ensure callback is actually a function
   if (typeof callback != 'function')
-    return false
+    return false;
 
   // Add a hook to be ran on visual step
   const func = async (wasInterrupted) => {
     // If there are any ongoing tweens for our element, well they're gone now
-    TweenLite.killTweensOf($el)
+    TweenLite.killTweensOf($el);
 
-    const timeline = new TimelineLite()
+    const timeline = new TimelineLite();
 
     // Animation helper, will throw an error to stop our animations if our
     // animation is interrupted
     const tween = async (ms, vars, prop='to') => {
-      if (wasInterrupted()) throw 'INTERRUPT'
-      timeline[prop]($el, ms / 1000, vars)
-      if (wasInterrupted()) throw 'INTERRUPT'
-      await wait(ms)
+      if (wasInterrupted()) throw 'INTERRUPT';
+      timeline[prop]($el, ms / 1000, vars);
+      if (wasInterrupted()) throw 'INTERRUPT';
+      await wait(ms);
     }
 
     // Call the callback with 'this' being the gameObject; we'll also pass in
@@ -126,27 +126,27 @@ export async function animate(gameObject, callback) {
     // function to check if a state update has happened and if it needs to
     // cancel.
     try {
-      await callback.call(gameObject, tween, $el, wasInterrupted, timeline)
+      await callback.call(gameObject, tween, $el, wasInterrupted, timeline);
     }
 
     catch (e) {
       // Ignore INTERRUPTs from the animator
       if (e !== 'INTERRUPT')
-        throw e
+        throw e;
     }
 
     finally {
       // Reset timeline
-      timeline.pause(0)
-      timeline.clear()
-      timeline.invalidate()
+      timeline.pause(0);
+      timeline.clear();
+      timeline.invalidate();
     }
   }
 
   if (typeof gameObject.world == 'object')
-    gameObject.world.hooks.push({ callback: func, when: 'before' })
+    gameObject.world.hooks.push({ callback: func, when: 'before' });
 
-  return true
+  return true;
 }
 
 
@@ -159,31 +159,31 @@ export async function animate(gameObject, callback) {
  */
 export async function walkAnimation(gameObject, path) {
   // Ignore zero-length paths
-  const len = path.length
+  const len = path.length;
   if (!len)
-    return false
+    return false;
 
   // Calculate wait time per movement
-  const waitMs = window.stepDuration / len
+  const waitMs = window.stepDuration / len;
 
-  // TODO: Re-write this to not use animate (since timeline isnt't even used
+  // TODO: Re-write this to not use animate (since timeline isn't even used
   // here) or re-write to use timeline
   // This animate helper function fetches the element for us
   animate(gameObject, async (_, $el, wasInterrupted) => {
     // We can't animate a non-element
     if (!$el)
-      return
+      return;
 
     // Get sprite for its 'offsetTop' property
-    const $sprite = $el.getElementsByClassName('gidget-sprite')[0]
+    const $sprite = $el.getElementsByClassName('gidget-sprite')[0];
     if (!$sprite)
-      return
+      return;
 
     // Loop over each position in the path array
     for (let i = 0; i < len; i++) {
       // Ensure operation isn't cancelled (more checks is always better)
       if (wasInterrupted())
-        return
+        return;
 
       // With less than one position to move to, there is no need to wait
       if (len > 1)
@@ -192,9 +192,9 @@ export async function walkAnimation(gameObject, path) {
       // Ensure the operation hasn't been cancelled (a lot can happen during a
       // wait sequence) and then move the element to the specified tile
       if (!wasInterrupted())
-        moveElementToTile($el, path[i], $sprite.offsetTop)
+        moveElementToTile($el, path[i], $sprite.offsetTop);
     }
-  })
+  });
 
-  return true
+  return true;
 }
