@@ -35,6 +35,7 @@
       :object="object"
       :size="tileSize"
       :margin="tileMargin"
+      :transitions="objectTransitions"
       @mouseenter.native="hoverTile(...object.position)"
       @move="moveObjectElement"
     />
@@ -105,8 +106,9 @@ export default {
 
   data() {
     return {
-      hovered: { x: 0, y: 0 },
-      tileMargin: 0.1
+      objectTransitions : false,
+      hovered           : { x: 0, y: 0 },
+      tileMargin        : 0.1,
     }
   },
 
@@ -198,10 +200,12 @@ export default {
       // Set position
       component.top = $tile.offsetTop - ($el.scrollHeight - $tile.scrollHeight);
       component.left = $tile.offsetLeft - (($el.scrollWidth - $tile.scrollWidth) / 2);
+
     },
 
     /**
      * Move all objects to their screen positions.
+     * Disables object transitions
      * Runs on next tick so it happens after everything is done changing.
      *
      * @return {void}
@@ -210,10 +214,17 @@ export default {
       if (!this.$refs.objects)
         return;
 
+      // Disable object transitions
+      this.objectTransitions = false;
+
       this.$nextTick(() => {
+        // Move each object into position
         this.$refs.objects.forEach((obj) => {
           this.moveObjectElement(obj);
         });
+
+        // Restore transitions after movements complete
+        setTimeout(() => this.objectTransitions = true, 50);
       });
     }
   }

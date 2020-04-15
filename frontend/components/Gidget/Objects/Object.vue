@@ -29,7 +29,7 @@ div {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 200ms;
+  transition: all 250ms;
 }
 
 .gidget-name {
@@ -75,6 +75,10 @@ div {
   animation: new-message linear 3s;
   animation-iteration-count: 1;
 }
+
+.no-transitions {
+  transition: none !important;
+}
 </style>
 
 
@@ -85,11 +89,12 @@ import { getObjectElementId } from '@/assets/gidget/game/gidget-utility';
 
 export default {
   props: {
-    size     : Number,
-    margin   : Number,
-    selected : Boolean,
+    size        : Number,
+    margin      : Number,
+    selected    : Boolean,
+    transitions : Boolean,
 
-    object   : Object,
+    object      : Object,
   },
 
 
@@ -142,6 +147,9 @@ export default {
      * @return {string}
      */
     elementClass() {
+      if (!this.transitions)
+        return 'no-transitions';
+
       if (this.$store.state.objects.selected == this.object.id)
         return 'selected';
     },

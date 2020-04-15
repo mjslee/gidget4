@@ -1,15 +1,17 @@
 export const state = () => ({
-  value: '',
+  value: `Gidget.goto(Kitten);
+Gidget.grab(Kitten);
+Gidget.goto(Dog);
+Gidget.left();
+Gidget.drop(Kitten);
+Gidget.right(2);`,
 
-  activeLine:         -1,
-  previousActiveLine: -1,
-  errorLine:          -1,
-  previousErrorLine:  -1,
+  activeLine : -1,
+  errorLine  : -1,
 });
 
 
 export const mutations = {
-
   /**
    *
    */
@@ -21,17 +23,14 @@ export const mutations = {
    *
    */
   resetLines(state) {
-    state.activeLine         = -1;
-    state.previousActiveLine = -1;
-    state.errorLine          = -1;
-    state.previousErrorLine  = -1;
+    state.activeLine = -1;
+    state.errorLine  = -1;
   },
 
   /**
    *
    */
   setActiveLine(state, ln) {
-    state.previousActiveLine = state.activeLine;
     state.activeLine = ln;
   },
 
@@ -39,8 +38,6 @@ export const mutations = {
    *
    */
   setErrorLine(state, ln) {
-    state.previousErrorLine = state.errorLine;
     state.errorLine = ln;
   },
-
 };
