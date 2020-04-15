@@ -24,7 +24,7 @@
         <world />
       </div>
 
-      <Dialogue :messages="dialogue" />
+      <Dialogue />
     </div>
 
     <!-- Inspectors -->
@@ -79,15 +79,11 @@ export default {
 
 
   computed: {
-    game() {
-      return this.$store.getters['game/getGame'];
-    },
-
     /**
      *
      */
-    dialogue() {
-      return this.$store.getters['game/getDialogue']
+    game() {
+      return this.$store.getters['game/getGame'];
     },
 
     /**
