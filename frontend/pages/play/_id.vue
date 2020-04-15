@@ -1,15 +1,16 @@
 <template>
   <div id="app">
-    <!-- <h1 class="title">{{ game.title }}</h1> -->
-    <!-- <h2 class="subtitle">{{ game.description }}</h2> -->
+    <b-switch v-model="editMode">Edit Mode</b-switch>
 
-    <GidgetGame :key="$store.state.game.key" @run="onRun" />
+    <game :key="$store.state.game.key" @run="onRun" v-if="!editMode" />
+    <game-editor :key="$store.state.game.key" v-else />
   </div>
 </template>
 
 
 <script>
-import GidgetGame from '@/components/Gidget/Game'
+import Game from '@/components/Gidget/Game';
+import GameEditor from '@/components/Gidget/Editor/GameEditor';
 import GidgetLevels from '@/assets/gidget/game/levels'
 
 
@@ -18,7 +19,8 @@ export default {
   layout: 'default',
 
   components: {
-    GidgetGame
+    Game,
+    GameEditor
   },
 
   computed: {
@@ -41,6 +43,12 @@ export default {
         data: JSON.stringify(this.$store.getters['game/getWorldState']),
         stepCount: this.$store.state.game.stepCount
       });
+    }
+  },
+
+  data() {
+    return {
+      editMode: false
     }
   }
 }

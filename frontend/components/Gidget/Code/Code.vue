@@ -11,10 +11,16 @@
 
 
 <script>
-import { codemirror } from 'vue-codemirror'
-import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
+import { codemirror } from 'vue-codemirror';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/lib/codemirror.js';
+import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/mode/markdown/markdown.js';
+import 'codemirror/addon/hint/show-hint.css';
+import 'codemirror/addon/hint/show-hint.js';
+// import 'codemirror/addon/hint/anyword-hint.js';
+// import 'codemirror/addon/hint/javascript-hint.js';
+import 'codemirror/theme/monokai.css';
 
 
 export default {
@@ -77,6 +83,8 @@ export default {
         tabSize     : 2,
         line        : true,
         lineNumbers : true,
+        extraKeys   : {'Ctrl-Space': 'autocomplete'},
+        hintOptions : {hint: this.getHints}
       },
 
       // Previous line numbers
@@ -88,6 +96,12 @@ export default {
       activeLineClass : 'CodeMirror-activeline-background',
       errorLineClass  : 'CodeMirror-errorline-background',
     };
+  },
+
+  mounted() {
+    // this.editor.registerHelper("hint", "javascript", (...args) => {
+    //   console.log(args);
+    // });
   },
 
   methods: {
@@ -102,6 +116,27 @@ export default {
     setLineClass(ln, prevLn, className) {
       this.editor.removeLineClass(prevLn, this.where, className);
       this.editor.addLineClass(ln, this.where, className);
+    },
+
+    /**
+     *
+     */
+    getHints(editor, options) {
+      const cur   = editor.getCursor();
+      const token = editor.getTokenAt(cur);
+
+      return {
+        list : ['test', 'hint'],
+        from : { line: cur.line, ch: token.start },
+        to   : { line: cur.line, ch: token.end },
+      };
+    },
+
+    /**
+     *
+     */
+    getCompletions() {
+
     }
   }
 }

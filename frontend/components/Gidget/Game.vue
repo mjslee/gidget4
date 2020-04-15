@@ -79,6 +79,10 @@ export default {
 
 
   computed: {
+    game() {
+      return this.$store.getters['game/getGame'];
+    },
+
     /**
      *
      */
@@ -104,16 +108,9 @@ export default {
   },
 
 
-  data() {
-    return {
-      game: this.$store.getters['game/getGame'],
-    }
-  },
-
-
   mounted() {
-    window.stepWait     = 100;
-    window.stepDuration = 500;
+    window.stepWait     = 250;
+    window.stepDuration = 100;
   },
 
 

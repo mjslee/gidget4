@@ -12,6 +12,9 @@
     <b-tab-item label="Goals" icon="flag">
       <goal-list />
     </b-tab-item>
+    <b-tab-item label="Goals" icon="flag">
+      <goal-list />
+    </b-tab-item>
   </b-tabs>
 </template>
 
@@ -32,9 +35,15 @@ export default {
     GoalList
   },
 
+  computed: {
+    game() {
+      return this.$store.getters['game/getGame'];
+    }
+  },
+
   data() {
     return {
-      activeTab: 0
+      activeTab: 0,
     }
   }
 }
