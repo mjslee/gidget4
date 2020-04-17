@@ -19,8 +19,6 @@ import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/show-hint.js';
-// import 'codemirror/addon/hint/anyword-hint.js';
-// import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/theme/monokai.css';
 
 
@@ -114,11 +112,15 @@ export default {
     },
 
     /**
+     * Get array of game completions from game state for the CodeMirror editor.
      *
+     * @param {function} getCursor
+     * @param {function} getTokenAt
+     * @return {object}
      */
-    getCompletions(editor, options) {
-      const cursor = editor.getCursor();
-      const token  = editor.getTokenAt(cursor);
+    getCompletions({ getCursor, getTokenAt }) {
+      const cursor = getCursor();
+      const token  = getTokenAt(cursor);
 
       // Ignore tokens that are strings or comments
       if (/\b(?:string|comment)\b/.test(token.type))
@@ -130,8 +132,8 @@ export default {
         return;
 
       // Get all preceding tokens until reaching parent variable
-      const tokens = this.getTokens(token, (token) =>
-        editor.getTokenAt({ line: cursor.line, ch: token.start })
+      const tokens = this.getValidTokens(token, (token) =>
+        getTokenAt({ line: cursor.line, ch: token.start })
       );
 
       // Get value from state
@@ -142,20 +144,58 @@ export default {
       return {
         list : Object.keys(value),
         from : { line: cursor.line, ch: token.end },
+        //to : { line: cursor.line, ch: token.end },
       };
     },
 
     /**
+     * Get array of tokens that are primitively valid.
      *
-     *
-     * @return {boolean}
+     * @param {object} token
+     * @param {function} getPrevToken
+     * @return {array[string]}
      */
-    canTokenHaveProp({ string, type }) {
-      return this.isTypePropOrVar(type) || string === ']';
+    getValidTokens(token, getPrevToken) {
+      const result = [];
+
+      // Descend through tokens until a variable is reached
+      // Up to 250 previous tokens are allowed to be processed
+      for (let i = 0; i < 250; i++) {
+        const str = token.string;
+        const prevToken = getPrevToken(token);
+
+        // Ensures syntax is correct...
+        // Ensure that behind a '.' or '[' is a token that can have a property
+        // Ensure that the token behind the index closing bracket is a literal
+        if (
+          ((str === '.' || str === '[') && !this.canTokenHaveProp(prevToken)) ||
+          ((str === ']') && !this.isTypeLiteral(prevToken.type))
+        )
+          return;
+
+        // A variable or a property should be added to result array for lookup
+        else if (this.isTypePropOrVar(token.type)) {
+          result.unshift(token.string);
+
+          // We have reached the parent token: the variable
+          if (token.type === 'variable')
+            break;
+        }
+
+        // This is most likely to be reached when an index is specified
+        else if (this.isTypeLiteral(prevToken.type))
+          result.unshift(prevToken.string);
+
+        // Set the current token to the previous token
+        // On the next iteration we will descend further down the token chain
+        token = prevToken;
+      }
+
+      return result;
     },
 
     /**
-     *
+     * Is a type a literal?
      *
      * @return {boolean}
      */
@@ -164,8 +204,9 @@ export default {
     },
 
     /**
+     * Is type a property or a variable?
      *
-     *
+     * @param {string} type
      * @return {boolean}
      */
     isTypePropOrVar(type) {
@@ -173,37 +214,13 @@ export default {
     },
 
     /**
+     * Can a specified token have a property?
      *
+     * @return {boolean}
      */
-    getTokens(token, getPrevToken) {
-      const result = [];
-
-      for (let i = 0; i < 100; i++) {
-        const prevToken = getPrevToken(token);
-        const str = token.string;
-
-        // Properties can belong to variables, properties, or indicies
-        if (
-          ((str === '.' || str === '[') && !this.canTokenHaveProp(prevToken)) ||
-          (str === ']' && !this.isTypeLiteral(prevToken.type))
-        )
-          return;
-
-        else if (this.isTypePropOrVar(token.type)) {
-          result.unshift(token.string);
-
-          if (token.type === 'variable')
-            break;
-        }
-
-        else if (this.isTypeLiteral(prevToken.type))
-          result.unshift(prevToken.string);
-
-        token = prevToken;
-      }
-
-      return result;
-    }
+    canTokenHaveProp({ string, type }) {
+      return this.isTypePropOrVar(type) || string === ']';
+    },
   }
 }
 </script>
