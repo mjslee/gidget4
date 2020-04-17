@@ -125,7 +125,7 @@ export default class {
 
     // Run post-restore hooks
     if (runHooks && isAdvancing)
-      await this.runHooks(state, hook => hook.when == 'after');
+      await this.runHooks(state, (hook) => hook.when == 'after');
 
     // Get the current step and assign 'gameData' property to store a
     // combination of gameobjects and game data. If 'gameData' is already
@@ -135,6 +135,9 @@ export default class {
     if (step && step.data && !step.gameData) {
       const objects = this.world.getObjectsSanitized();
       step.gameData = Object.assign(_.cloneDeep(step.data), objects);
+
+      const exposed = this.getExposed();
+      step.exposedData = Object.assign(_.cloneDeep(step.data), exposed);
     }
 
     // If there is no step, we should create a fake step that contains the data

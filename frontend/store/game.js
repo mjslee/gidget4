@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import Vue from 'vue';
 import GidgetGame from '@/assets/gidget/game/gidget-game';
 import { Levels as LevelsEndpoint } from '@/constants/endpoints';
@@ -15,6 +16,7 @@ export const state = () => ({
   stepCount  : 0,
 
   evalData    : {},
+  exposedData : {},
   initialData : {
     size     : 3,
     tiles    : [],
@@ -67,6 +69,16 @@ export const mutations = {
    */
   setEvalData(state, data) {
     Vue.set(state, 'evalData', data);
+  },
+
+  /**
+   * Set exposed data from stepper.
+   *
+   * @return {object} data
+   * @return {void}
+   */
+  setExposedData(state, data) {
+    Vue.set(state, 'exposedData', _.cloneDeep(data));
   },
 
   /**
@@ -147,6 +159,7 @@ export const actions = {
   createGame({ state, commit }, data) {
     __game = Vue.observable(new GidgetGame(data || state.initialData));
     commit('setEvalData', __game.world.getObjectsSanitized());
+    commit('setExposedData', __game.getExposed());
     commit('reloadGame');
 
     if (module.hot)
@@ -187,8 +200,12 @@ export const actions = {
 
     if (typeof step != 'undefined') {
       commit('code/setActiveLine', step.ln - 1, { root: true });
+
       if (typeof step.gameData == 'object')
         commit('setEvalData', step.gameData);
+
+      if (typeof step.exposedData == 'object')
+        commit('setExposedData', step.exposedData);
     }
 
     return step;
