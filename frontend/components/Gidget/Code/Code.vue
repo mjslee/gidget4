@@ -114,13 +114,12 @@ export default {
     /**
      * Get array of game completions from game state for the CodeMirror editor.
      *
-     * @param {function} getCursor
-     * @param {function} getTokenAt
+     * @param {object} editor - CodeMirror editor instance.
      * @return {object}
      */
-    getCompletions({ getCursor, getTokenAt }) {
-      const cursor = getCursor();
-      const token  = getTokenAt(cursor);
+    getCompletions(editor, options) {
+      const cursor = editor.getCursor();
+      const token  = editor.getTokenAt(cursor);
 
       // Ignore tokens that are strings or comments
       if (/\b(?:string|comment)\b/.test(token.type))
@@ -133,7 +132,7 @@ export default {
 
       // Get all preceding tokens until reaching parent variable
       const tokens = this.getValidTokens(token, (token) =>
-        getTokenAt({ line: cursor.line, ch: token.start })
+        editor.getTokenAt({ line: cursor.line, ch: token.start })
       );
 
       // Get value from state
