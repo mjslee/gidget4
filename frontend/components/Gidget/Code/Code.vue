@@ -11,6 +11,7 @@
 
 
 <script>
+import _ from 'lodash';
 import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/lib/codemirror.js';
@@ -84,7 +85,7 @@ export default {
         line        : true,
         lineNumbers : true,
         extraKeys   : {'Ctrl-Space': 'autocomplete'},
-        hintOptions : {hint: this.getHints}
+        hintOptions : {hint: this.getCompletions}
       },
 
       // Previous line numbers
@@ -96,12 +97,6 @@ export default {
       activeLineClass : 'CodeMirror-activeline-background',
       errorLineClass  : 'CodeMirror-errorline-background',
     };
-  },
-
-  mounted() {
-    // this.editor.registerHelper("hint", "javascript", (...args) => {
-    //   console.log(args);
-    // });
   },
 
   methods: {
@@ -121,22 +116,93 @@ export default {
     /**
      *
      */
-    getHints(editor, options) {
-      const cur   = editor.getCursor();
-      const token = editor.getTokenAt(cur);
+    getCompletions(editor, options) {
+      const cursor = editor.getCursor();
+      const token  = editor.getTokenAt(cursor);
+
+      // Ignore tokens that are strings or comments
+      if (/\b(?:string|comment)\b/.test(token.type))
+        return;
+
+      // Get evaluated code state
+      const state = this.$store.state.game.evalData;
+      if (!state)
+        return;
+
+      // Get all preceding tokens until reaching parent variable
+      const tokens = this.getTokens(token, (token) =>
+        editor.getTokenAt({ line: cursor.line, ch: token.start })
+      );
+
+      // Get value from state
+      const value = _.get(state, tokens)
+      if (!value)
+        return;
 
       return {
-        list : ['test', 'hint'],
-        from : { line: cur.line, ch: token.start },
-        to   : { line: cur.line, ch: token.end },
+        list : Object.keys(value),
+        from : { line: cursor.line, ch: token.end },
       };
     },
 
     /**
      *
+     *
+     * @return {boolean}
      */
-    getCompletions() {
+    canTokenHaveProp({ string, type }) {
+      return this.isTypePropOrVar(type) || string === ']';
+    },
 
+    /**
+     *
+     *
+     * @return {boolean}
+     */
+    isTypeLiteral(type) {
+      return type === 'number' || type === 'string';
+    },
+
+    /**
+     *
+     *
+     * @return {boolean}
+     */
+    isTypePropOrVar(type) {
+      return type === 'property' || type === 'variable';
+    },
+
+    /**
+     *
+     */
+    getTokens(token, getPrevToken) {
+      const result = [];
+
+      for (let i = 0; i < 100; i++) {
+        const prevToken = getPrevToken(token);
+        const str = token.string;
+
+        // Properties can belong to variables, properties, or indicies
+        if (
+          ((str === '.' || str === '[') && !this.canTokenHaveProp(prevToken)) ||
+          (str === ']' && !this.isTypeLiteral(prevToken.type))
+        )
+          return;
+
+        else if (this.isTypePropOrVar(token.type)) {
+          result.unshift(token.string);
+
+          if (token.type === 'variable')
+            break;
+        }
+
+        else if (this.isTypeLiteral(prevToken.type))
+          result.unshift(prevToken.string);
+
+        token = prevToken;
+      }
+
+      return result;
     }
   }
 }
