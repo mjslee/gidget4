@@ -92,7 +92,10 @@ export default {
         extraKeys   : {
           'Ctrl-Space': 'autocomplete',
         },
-        hintOptions : {hint: this.getCompletions}
+        hintOptions : {
+          hint           : this.getCompletions,
+          completeSingle : false
+        }
       },
 
       // Previous line numbers
@@ -138,61 +141,122 @@ export default {
      * @return {void}
      */
     setLineClass(ln, prevLn, className) {
-      this.editor.removeLineClass(prevLn, this.where, className);
-      this.editor.addLineClass(ln, this.where, className);
+      if (prevLn >= 0)
+        this.editor.removeLineClass(prevLn, this.where, className);
+
+      if (ln >= 0)
+        this.editor.addLineClass(ln, this.where, className);
+    },
+
+    /**
+     * Get active token and cursor from CodeMirror editor.
+     *
+     * @return {object[cursor,token]}
+     */
+    getCursor() {
+      const cursor = this.editor.getCursor();
+      return { cursor, activeToken: this.editor.getTokenAt(cursor) };
     },
 
     /**
      * Get array of game completions from game state for the CodeMirror editor.
      *
-     * @param {object} editor - CodeMirror editor instance.
      * @return {object}
      */
-    getCompletions(editor, options) {
+    getCompletions() {
       // Get evaluated code state
       const state = this.$store.state.game.exposedData;
       if (!state)
         return;
 
-      const cursor = editor.getCursor();
-      const token  = editor.getTokenAt(cursor);
-
       // Ignore tokens that are strings or comments
-      if (/\b(?:string|comment)\b/.test(token.type))
+      const { cursor, activeToken } = this.getCursor();
+      if (activeToken.type === 'string' || activeToken.type === 'comment')
         return;
 
       // Get all preceding tokens until reaching parent variable
-      const tokens = this.getValidTokens(token, (token) =>
-        editor.getTokenAt({ line: cursor.line, ch: token.start })
-      );
+      const tokens = this.getValidTokens();
 
-      // Get value from state
+      if (!tokens.length)  // Show all available objects
+        return this.buildCompletions(state);
+
+      // Get value from state.
       let value = _.get(state, tokens);
-      if (!value) {
-        return;
 
+      // No value? Check for a partial prop.
+      let filteredText;
+      if (!value) {
+        value = _.get(state, _.initial(tokens));
+        filteredText = _.last(tokens);
+      }
+
+      // Build completion list from returned value of variable or property
+      if (typeof value == 'object')
+        return this.buildCompletions(value, filteredText);
+    },
+
+    /**
+     * Build completions from an object's keys./
+     *
+     * @param {object} value
+     * @param {string} filterText
+     * @return {object}
+     */
+    buildCompletions(value, filterText=undefined) {
+      const { cursor, activeToken: token } = this.getCursor();
+
+      // Placement helpers. When we have a full stop it means we need to place
+      // the complteion value one character to the right.
+      let hasFullStop = token.string === '.' || token.string === '';
+      let offset = hasFullStop ? 1 : 0;
+
+      // Build completions array
+      const completions = Object.keys(value).filter((option) => {
+        // Ignore internal properties
+        if (option.startsWith('get ') || option === 'isEnclosed')
+          return false;
+
+        // Partial matching
+        if (filterText)
+          return option.includes(filterText);
+
+        return true;
+      }).map((option) => {
+        if (!isNaN(option))
+          return '[' + option + ']';
+
+        return hasFullStop ? option : '.' + option;
+      });
+
+      const line = cursor.line;
       return {
-        list : Object.keys(value).filter((val) => !val.startsWith('get ')),
-        from : { line: cursor.line, ch: token.end },
-        //to : { line: cursor.line, ch: token.end },
+        list : completions,
+        from : { line, ch: hasFullStop ? token.start + offset : token.end },
+        to   : { line, ch: token.end },
       };
     },
 
     /**
      * Get array of tokens that are primitively valid.
      *
-     * @param {object} token
-     * @param {function} getPrevToken
+     * @param {function} token - (optional) CodeMirror token
      * @return {array[string]}
      */
-    getValidTokens(token, getPrevToken) {
-      const result = [];
+    getValidTokens(token=undefined) {
+      let { cursor, activeToken } = this.getCursor();
+
+      if (!token)
+        token = activeToken;
+
+      const tokens = [];
 
       // Descend through tokens until a variable is reached
       // Up to 250 previous tokens are allowed to be processed
       for (let i = 0; i < 250; i++) {
         const str = token.string;
-        const prevToken = getPrevToken(token);
+        const prevToken = this.editor.getTokenAt({
+          line: cursor.line, ch: token.start
+        });
 
         // Ensures syntax is correct...
         // Ensure that behind a '.' or '[' is a token that can have a property
@@ -205,7 +269,7 @@ export default {
 
         // A variable or a property should be added to result array for lookup
         else if (this.isTypePropOrVar(token.type)) {
-          result.unshift(token.string);
+          tokens.unshift(token.string);
 
           // We have reached the parent token: the variable
           if (token.type === 'variable')
@@ -214,14 +278,14 @@ export default {
 
         // This is most likely to be reached when an index is specified
         else if (this.isTypeLiteral(prevToken.type))
-          result.unshift(prevToken.string);
+          tokens.unshift(prevToken.string);
 
         // Set the current token to the previous token
         // On the next iteration we will descend further down the token chain
         token = prevToken;
       }
 
-      return result;
+      return tokens;
     },
 
     /**
