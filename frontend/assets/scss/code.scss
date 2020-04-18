@@ -2,19 +2,35 @@
   font-family: monospace !important;
 }
 
-.hljs-literal {
+.hljs-literal, .cm-variable, .cm-def {
   color: $primary !important;
 }
 
-.hljs-number {
+.hljs-number, .cm-number {
   color: $primary !important;
 }
 
-.hljs-string {
+.hljs-string, .cm-string {
   color: $info !important;
 }
 
-.is-keyword, .is-operator {
+.is-keyword, .is-operator, .cm-keyword {
   text-shadow: 0 0 0.01rem #000;
   color: $primary !important;
+}
+
+.cm-property {
+  color: #000 !important;
+}
+
+.cm-operator {
+  color: #000 !important;
+}
+
+.cm-variable, .cm-property, .cm-number, .cm-string, .cm-keyword, .cm-operator {
+  &:hover {
+    cursor: pointer;
+    background-color: red;
+    box-shadow: 0 0 0.1px #000;
+  }
 }
