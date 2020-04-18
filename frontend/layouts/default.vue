@@ -3,6 +3,9 @@
     <!-- Modals -->
     <portal-target name="modal" multiple />
 
+    <!-- Popovers -->
+    <portal-target name="popover" multiple />
+
     <!-- Header Bar -->
     <nav class="navbar header has-shadow is-primary">
 
