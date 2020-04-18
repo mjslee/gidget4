@@ -1,7 +1,7 @@
 <template>
-  <portal to="popover" v-if="active && element">
+  <portal to="popover" v-if="active">
     <div class="popover box" :style="style">
-      <gidget-text value="" />
+      {{ variable }}
     </div>
   </portal>
 </template>
@@ -26,36 +26,45 @@ export default {
   },
 
   props: {
-    element: Object | HTMLSpanElement,
+    element: {
+      type: Object | HTMLSpanElement,
+    },
     active: {
-      type    : Boolean,
-      default : false
+      type: Boolean,
     },
     variable: {
       type    : Object,
       default : () => ({
-        identifier : undefined,
-        value      : undefined,
-        type       : undefined,
+        identifier  : undefined,
+        value       : undefined,
+        type        : undefined,
       })
     },
     content: {
-      type    : String,
-      default : undefined
+      type: String
+    }
+  },
+
+  watch: {
+    /**
+     * Update popover position when attached element changes.
+     */
+    element() {
+      if (this.element)
+        this.updatePosition();
     }
   },
 
   computed: {
+    /*
+     * Style attribute for popover element.
+     */
     style() {
       return {
         top  : this.top  + 'px',
         left : this.left + 'px'
       };
     }
-  },
-
-  mounted() {
-    this.setPosition();
   },
 
   data() {
@@ -66,7 +75,13 @@ export default {
   },
 
   methods: {
-    setPosition() {
+    /**
+     * Update position of popover element.
+     *
+     *
+     * @return {void}
+     */
+    updatePosition() {
       if (typeof this.element == 'undefined')
         return;
 
