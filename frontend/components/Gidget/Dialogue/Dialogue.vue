@@ -4,7 +4,7 @@
 
     <div class="box">
       <!-- Markdown -->
-      <gidget-text :text="text" />
+      <gidget-text :value="text" />
 
       <div class="buttons has-addons is-centered">
         <!-- Previous Message -->
