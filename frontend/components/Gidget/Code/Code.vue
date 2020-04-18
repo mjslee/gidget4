@@ -1,5 +1,8 @@
 <template>
-  <codemirror ref="code" v-model="code" :options="options" />
+  <div @click="click">
+    <codemirror ref="code" v-model="code" :options="options" />
+    <popover :active.sync="isPopoverActive" :element="popoverElement" />
+  </div>
 </template>
 
 
@@ -13,18 +16,19 @@
 <script>
 import _ from 'lodash';
 import { codemirror } from 'vue-codemirror';
-import 'codemirror/lib/codemirror.css';
 import 'codemirror/lib/codemirror.js';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/show-hint.js';
-import 'codemirror/theme/monokai.css';
+
+import Popover from '../Content/Popover';
 
 
 export default {
   components: {
-    codemirror
+    codemirror,
+    Popover
   },
 
   watch: {
@@ -47,6 +51,9 @@ export default {
       this.setLineClass(ln, this.prevErrorLine, this.errorLineClass);
       this.prevErrorLine = this.$store.state.code.errorLine;
     },
+  },
+
+  mounted() {
   },
 
   computed: {
@@ -82,7 +89,9 @@ export default {
         tabSize     : 2,
         line        : true,
         lineNumbers : true,
-        extraKeys   : {'Ctrl-Space': 'autocomplete'},
+        extraKeys   : {
+          'Ctrl-Space': 'autocomplete',
+        },
         hintOptions : {hint: this.getCompletions}
       },
 
@@ -94,10 +103,32 @@ export default {
       where: 'background',
       activeLineClass : 'CodeMirror-activeline-background',
       errorLineClass  : 'CodeMirror-errorline-background',
+
+      isPopoverActive : false,
+      popoverElement  : undefined,
     };
   },
 
   methods: {
+    click(event) {
+      if (!(event && event.target && event.target.className))
+        return;
+
+      switch (event.target.className) {
+        case 'cm-property':
+        case 'cm-variable':
+          this.popoverElement  = event.target;
+          this.isPopoverActive = true;
+          break;
+
+        default:
+          this.popoverElement  = undefined;
+          this.isPopoverActive = false;
+          break;
+      }
+    },
+
+
     /**
      * Set class of a line by its number.
      *
@@ -118,16 +149,16 @@ export default {
      * @return {object}
      */
     getCompletions(editor, options) {
+      // Get evaluated code state
+      const state = this.$store.state.game.exposedData;
+      if (!state)
+        return;
+
       const cursor = editor.getCursor();
       const token  = editor.getTokenAt(cursor);
 
       // Ignore tokens that are strings or comments
       if (/\b(?:string|comment)\b/.test(token.type))
-        return;
-
-      // Get evaluated code state
-      const state = this.$store.state.game.evalData;
-      if (!state)
         return;
 
       // Get all preceding tokens until reaching parent variable
@@ -136,12 +167,12 @@ export default {
       );
 
       // Get value from state
-      const value = _.get(state, tokens)
-      if (!value)
+      let value = _.get(state, tokens);
+      if (!value) {
         return;
 
       return {
-        list : Object.keys(value),
+        list : Object.keys(value).filter((val) => !val.startsWith('get ')),
         from : { line: cursor.line, ch: token.end },
         //to : { line: cursor.line, ch: token.end },
       };
