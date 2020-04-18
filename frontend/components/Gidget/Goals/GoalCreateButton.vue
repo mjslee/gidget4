@@ -27,7 +27,7 @@ import GoalForm from './GoalForm';
 
 export default {
   components: {
-    GoalForm
+    GoalForm,
   },
 
   data() {

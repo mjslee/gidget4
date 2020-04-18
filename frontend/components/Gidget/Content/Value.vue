@@ -1,14 +1,13 @@
 <template>
-  <v-popover
-    class="popover"
-    @show="startTimer"
-    @hide="stopTimer"
-    @click.native="updateValue"
-  >
+  <v-popover class="popover">
     <template v-if="inTemplate && !isIdentifier">
+
+      <!-- GameObjects -->
       <span v-if="type === 'GameObject'">
         <img class="image is-24x24 is-inline-block" :src="image" />
       </span>
+
+      <!-- Array -->
       <span v-else-if="type === 'Array'">
         &#91;
         <span v-for="(element, i) in value" :key="i">
@@ -17,18 +16,19 @@
         </span>
         &#93;
       </span>
+
     </template>
     <span v-html="highlightedHTML" v-else></span>
 
     <!-- Popover -->
-    <Popover
-      slot="popover"
-      v-if="type !== 'Array'"
-      :identifier="identifier || (isIdentifier ? code : '')"
-      :value="value"
-      :type="type"
-      v-model="value"
-    />
+    <!-- <Popover
+         slot="popover"
+         v-if="type !== 'Array'"
+         :identifier="identifier || (isIdentifier ? code : '')"
+         :value="value"
+         :type="type"
+         v-model="value"
+         /> -->
   </v-popover>
 </template>
 
@@ -81,19 +81,6 @@ export default {
     this.updateValue();
   },
 
-  watch: {
-    code: {
-      /**
-       * Update value when code is updated.
-       */
-      handler(newVal) {
-        this.updateValue();
-      },
-      deep: true
-    }
-  },
-
-
   computed: {
     /**
      * Determine if code is an identifier.
@@ -111,7 +98,7 @@ export default {
         return false;
 
       // Test against identifier pattern
-      return /^[\w\[\]\.]+$/.test(this.code)
+      return /^[\w\[\]\.]+$/.test(this.code);
     },
 
 
@@ -149,21 +136,6 @@ export default {
 
 
   methods: {
-    startTimer() {
-      this.interval = setInterval(() => {
-        this.seconds += 1;
-      }, 1000);
-    },
-
-    stopTimer() {
-      clearInterval(this.interval);
-      this.$store.commit('game/setActivity', {
-        key: 'popupSeconds',
-        value: this.seconds
-      });
-      this.seconds = 0;
-    },
-
     /**
      * Update value prop.
      *
