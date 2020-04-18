@@ -1,29 +1,24 @@
 <template>
-  <div>
+  <article>
+    <b-slider v-model="activeStep" :min="0" :max="stepCount">
+      <template v-for="val in Array(stepCount + 1).keys()">
+        <b-slider-tick :value="val" :key="val">{{ val }}</b-slider-tick>
+      </template>
+    </b-slider>
 
-    <input
-      type="range"
-      min="0" :max="stepCount"
-      :model.number="activeStep"
-      v-on:change="$emit('step', $event.target.value)"
-    />
-
-    <span>{{ activeStep }}/{{ stepCount }}</span>
-
-    <div class="buttons has-addons">
-
+    <section class="buttons has-addons">
       <!-- Prev Step -->
       <b-button
         icon-left="chevron-left"
         :disabled="!hasPrev"
-        @click="$emit('step', activeStep - 1)"
+        @click="activeStep -= 1"
       />
 
       <!-- Next Step -->
       <b-button
         icon-left="chevron-right"
         :disabled="!hasNext"
-        @click="$emit('step', activeStep + 1)"
+        @click="activeStep += 1"
       />
 
       <!-- Run -->
@@ -55,9 +50,8 @@
       >
         Reset
       </b-button>
-
-    </div>
-  </div>
+    </section>
+  </article>
 </template>
 
 
@@ -108,8 +102,13 @@ export default {
      *
      * @return {number}
      */
-    activeStep() {
-      return this.$store.state.game.activeStep;
+    activeStep: {
+      get() {
+        return this.$store.state.game.activeStep;
+      },
+      set(value) {
+        this.$emit('step', value);
+      }
     }
   },
 
