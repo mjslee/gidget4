@@ -1,22 +1,29 @@
 <template>
-  <span @click="togglePopover">
-    {{ value }}
-
-    <popover :active.sync="isPopoverActive" :element="this" />
+  <span @click="active = !active">
+    <highlight :value="value" />
+    <popover v-if="active" :active.sync="active" :element="this.$el">
+      hello
+    </popover>
   </span>
-
 </template>
 
 
+<style scoped>
+span {
+  cursor: pointer;
+}
+</style>
+
+
 <script>
-import Popover from './Popover'
+import Highlight from './Highlight';
+import Popover from './Popover';
+
 
 export default {
   name: 'Literal',
 
-  components: {
-    Popover
-  },
+  components: { Highlight, Popover },
 
   props: {
     value: Array | Object | String | Boolean | Number
@@ -24,13 +31,7 @@ export default {
 
   data() {
     return {
-      isPopoverActive: false
-    }
-  },
-
-  methods: {
-    togglePopover() {
-      this.isPopoverActive = !this.isPopoverActive;
+      active: false
     }
   }
 }
