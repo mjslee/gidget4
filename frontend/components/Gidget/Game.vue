@@ -2,6 +2,8 @@
   <div id="app" class="columns" v-if="game">
     <!-- Code and Goals -->
     <div class="column is-one-third">
+      <h1 class="title">Code</h1>
+
       <div class="card">
         <Code />
 
@@ -20,6 +22,8 @@
 
     <!-- World and Dialogue -->
     <div class="column">
+      <h1 class="title">World</h1>
+
       <div class="world">
         <world />
       </div>
@@ -96,10 +100,19 @@ export default {
     },
 
     /**
-     *
+     * 
      */
     selectedObject() {
       return this.$store.getters['objects/getSelected'];
+    },
+
+    /**
+     * isRunning value from game state.
+     *
+     * @return {boolean}
+     */
+    isRunning() {
+      return this.$store.state.game.isRunning;
     }
   },
 
@@ -117,7 +130,6 @@ export default {
      * @return {boolean} True if runner is successful.
      */
     async runScript() {
-      await this.$store.dispatch('game/resetGame');
       await this.$store.dispatch('game/runCode', this.$store.state.code.value);
       this.$emit('run');
     },
@@ -127,8 +139,8 @@ export default {
      *
      * @return {void}
      */
-    async resetScript() {
-      await this.$store.dispatch('game/resetGame');
+    resetScript() {
+      this.$store.dispatch('game/resetGame');
       this.$emit('reset');
     },
 
@@ -137,8 +149,8 @@ export default {
      *
      * @return {void}
      */
-    async stopScript() {
-      await this.$store.dispatch('game/resetGame');
+    stopScript() {
+      this.$store.dispatch('game/resetGame');
       this.$emit('stop');
     },
 
@@ -148,15 +160,12 @@ export default {
      * @return {void}
      */
     async runSteps() {
-      if (!this.$store.state.game.isRunning)
-        this.runScript();
+      if (!this.isRunning)
+        await this.runScript();
 
-      // Advance steps until isRunning is flagged to false or when a step
-      // has an error.
-      while (!this.$store.getters['game/isEvalComplete']) {
-        await this.$store.dispatch('game/setStep',
-          this.$store.state.game.activeStep + 1);
-
+      // Advance steps until isEvaluating is false or when a step has an error.
+      while (this.$store.getters['game/isEvaluating']) {
+        await this.$store.dispatch('game/setStep', { relative: 1 });
         await wait(window.stepWait);
       }
     },
@@ -167,11 +176,11 @@ export default {
      * @param {number} index -- Step index to restore.
      * @return {boolean} True if a next step exists.
      */
-    async setStep(index) {
-      if (!this.$store.state.game.isRunning)
-        await this.runScript();
+    setStep(index) {
+      if (!this.isRunning)
+        this.runScript();
 
-      return await this.$store.dispatch('game/setStep', index);
+      return this.$store.dispatch('game/setStep', { index });
     },
   }
 

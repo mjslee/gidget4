@@ -165,21 +165,33 @@ export const actions = {
     if (module.hot)
       window.__game = __game;
   },
+  
+  /**
+   * [TODO:description]
+   *
+   * @return {[TODO:type]} [TODO:description]
+   */
+  updateGame({ commit, getters: { getGame } }) {
+    if (!getGame)
+      return;
+
+    getGame.updateInitialState();
+    getGame.reset();
+  },
 
   /**
    * Reset the game state and game store.
    *
-   * @param {object} state
-   * @param {object} commit
    * @return {void}
    */
-  resetGame({ commit, getters }) {
-    commit('code/resetLines', null, { root: true });
+  resetGame({ commit, getters: { getGame } }) {
+    commit('setRunning', false);
     commit('setActiveStep', 0);
     commit('setStepCount', 0);
-    commit('setRunning', false);
+    commit('code/resetLines', null, { root: true });
 
-    getters['getGame'].reset();
+    if (getGame)
+      getGame.reset();
   },
 
   /**
@@ -189,21 +201,28 @@ export const actions = {
    * @param {object} state
    * @param {object} commit
    * @param {number} index - Index of saved game state to restore.
-   * @return {void}
+   * @param {number} relative - Index of saved game state to restore.
+   * @return {object}
    */
-  async setStep({ state, commit }, index) {
+  async setStep({ state, commit }, { index, relative }) {
     if (!state.isRunning)
       return;
+
+    if (typeof relative == 'number')
+      index = state.activeStep + relative;
 
     commit('setActiveStep', index);
     const step = await __game.set(index);
 
+    // Update state data
     if (typeof step != 'undefined') {
       commit('code/setActiveLine', step.ln - 1, { root: true });
 
+      // Complete evaluation data
       if (typeof step.gameData == 'object')
         commit('setEvalData', step.gameData);
 
+      // Exposed evaluation data
       if (typeof step.exposedData == 'object')
         commit('setExposedData', step.exposedData);
     }
@@ -220,7 +239,8 @@ export const actions = {
    * @param {string} code - Code to be evaluated.
    * @return {void}
    */
-  async runCode({ commit }, code) {
+  async runCode({ commit, dispatch }, code) {
+    dispatch('resetGame');
     const runner = await __game.run(code);
 
     if (typeof runner.steps == 'object') {
@@ -288,8 +308,8 @@ export const getters = {
    * @param {number} stepCount - Total amount of steps in the stepper.
    * @return {boolean} Test if stepper has finished stepping all steps.
    */
-  isEvalComplete({ activeStep, stepCount }) {
-    return stepCount != 0 && activeStep >= stepCount;
+  isEvaluating({ activeStep, stepCount }) {
+    return stepCount != 0 && activeStep < stepCount;
   },
 
   /**
