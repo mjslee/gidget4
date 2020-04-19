@@ -107,7 +107,8 @@ export default {
         return this.$store.state.game.activeStep;
       },
       set(value) {
-        this.$emit('step', value);
+        if (this.activeStep !== value)
+          this.$emit('step', value);
       }
     }
   },
