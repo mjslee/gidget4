@@ -7,6 +7,16 @@ export const state = () => ({
 
 
 export const mutations = {
+  /**
+   * Set the active index.
+   *
+   * @param {number} value
+   * @return {void}
+   */
+  setIndex(state, value) {
+    state.activeIndex = value;
+  },
+
   /*
    * Increment the active index. For next message.
    *

@@ -189,6 +189,7 @@ export const actions = {
     commit('setActiveStep', 0);
     commit('setStepCount', 0);
     commit('code/resetLines', null, { root: true });
+    commit('dialogue/setIndex', 0, { root: true });
 
     if (getGame)
       getGame.reset();
