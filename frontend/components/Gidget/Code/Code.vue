@@ -1,7 +1,9 @@
 <template>
   <div @click="click">
     <codemirror ref="code" v-model="code" :options="options" />
-    <popover :active.sync="isPopoverActive" :element="popoverElement" />
+    <popover :active.sync="isPopoverActive" :element="popoverElement">
+      {{ popoverTokens.join('.') }}
+    </popover>
   </div>
 </template>
 
@@ -22,7 +24,8 @@ import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/show-hint.js';
 
-import Popover from '../Content/Popover';
+import Popover   from '../Content/Popover';
+import Highlight from '../Content/Highlight';
 
 
 export default {
@@ -53,9 +56,6 @@ export default {
     },
   },
 
-  mounted() {
-  },
-
   computed: {
     /**
      * CodeMirror editor component reference.
@@ -64,6 +64,20 @@ export default {
      */
     editor() {
       return this.$refs.code.codemirror;
+    },
+
+    /**
+     *
+     */
+    popoverVariable() {
+      if (!this.popoverElement)
+        return;
+
+      return {
+        identifier : Math.random(),
+        type       : 'str',
+        value      : 'val'
+      };
     },
 
     /**
@@ -107,30 +121,39 @@ export default {
       activeLineClass : 'CodeMirror-activeline-background',
       errorLineClass  : 'CodeMirror-errorline-background',
 
-      isPopoverActive : false,
+      // Popovers
+      popoverClasses  : ['cm-variable', 'cm-property', 'cm-keyword', 'cm-def'],
+      popoverTokens   : [],
       popoverElement  : undefined,
+      isPopoverActive : false,
     };
   },
 
   methods: {
+    /*
+     *
+     */
     click(event) {
+      // Element must exist
       if (!(event && event.target && event.target.className))
         return;
 
-      switch (event.target.className) {
-        case 'cm-property':
-        case 'cm-variable':
-          this.popoverElement  = event.target;
-          this.isPopoverActive = true;
-          break;
-
-        default:
-          this.popoverElement  = undefined;
-          this.isPopoverActive = false;
-          break;
+      // Unset popover
+      if (!this.popoverClasses.includes(event.target.className)) {
+        this.isPopoverActive = false;
+        this.popoverTokens   = [];
+        this.popoverElement  = undefined;
+        return;
       }
-    },
 
+      // Set popover data
+      const { cursor, token } = this.getCursor();
+      this.isPopoverActive = true;
+      this.popoverTokens   = this.getValidTokens(token);
+      this.popoverElement  = event.target;
+
+      console.log(token);
+    },
 
     /**
      * Set class of a line by its number.
@@ -155,7 +178,9 @@ export default {
      */
     getCursor() {
       const cursor = this.editor.getCursor();
-      return { cursor, activeToken: this.editor.getTokenAt(cursor) };
+      if (cursor.ch == 0)
+        cursor.ch = 1;
+      return { cursor, token: this.editor.getTokenAt(cursor) };
     },
 
     /**
@@ -170,8 +195,8 @@ export default {
         return;
 
       // Ignore tokens that are strings or comments
-      const { cursor, activeToken } = this.getCursor();
-      if (activeToken.type === 'string' || activeToken.type === 'comment')
+      const { cursor, token } = this.getCursor();
+      if (token.type === 'string' || token.type === 'comment')
         return;
 
       // Get all preceding tokens until reaching parent variable
@@ -203,7 +228,7 @@ export default {
      * @return {object}
      */
     buildCompletions(value, filterText=undefined) {
-      const { cursor, activeToken: token } = this.getCursor();
+      const { cursor, token } = this.getCursor();
 
       // Placement helpers. When we have a full stop it means we need to place
       // the complteion value one character to the right.
@@ -243,7 +268,7 @@ export default {
      * @return {array[string]}
      */
     getValidTokens(token=undefined) {
-      let { cursor, activeToken } = this.getCursor();
+      let { cursor, token: activeToken } = this.getCursor();
 
       if (!token)
         token = activeToken;
