@@ -2,7 +2,8 @@ import Vue from 'vue';
 
 
 export const state = () => ({
-  activeIndex: 0
+  activeIndex: 0,
+  addonDialogue: [],
 });
 
 
@@ -33,6 +34,25 @@ export const mutations = {
    */
   decrement(state) {
     state.activeIndex -= 1;
+  },
+
+  /**
+   * Add addon dialogue.
+   *
+   * @param {object} dialogue - Dialogue object.
+   */
+  addon(state, dialogue) {
+    state.addonDialogue.push(dialogue);
+  },
+
+  /**
+   * Reset addon dialogue.
+   *
+   * @return {void}
+   */
+  reset(state) {
+    state.setIndex = 0;
+    Vue.set(state, 'addonDialogue', []);
   }
 };
 
@@ -43,7 +63,7 @@ export const getters = {
    *
    * @return {array}
    */
-  getDialogue({}, {}, {}, { 'game/getWorld': getWorld }) {
+  getDialogue({ addonDialogue }, {}, {}, { 'game/getWorld': getWorld }) {
     if (!getWorld)
       return [];
 
@@ -55,14 +75,20 @@ export const getters = {
    *
    * @return {object}
    */
-  getActiveDialogue({ activeIndex }, { getDialogue }) {
-    if (!getDialogue)
+  getActiveDialogue({ activeIndex, addonDialogue }, { getDialogue }) {
+    if (!(getDialogue && Array.isArray(getDialogue)))
       return;
 
-    if (!Array.isArray(getDialogue))
-      return;
+    // Get world dialogue when index is within dialogue length.
+    const dialogueLength = getDialogue.length;
+    if (activeIndex < getDialogue.length)
+      return getDialogue[activeIndex];
 
-    return getDialogue[activeIndex];
+    // But when the index is greater than the amount of world dialogue,
+    // we'll attempt to fetch from the addon dialogue.
+    const newActiveIndex = activeIndex - dialogueLength;
+    if (newActiveIndex < addonDialogue.length)
+      return addonDialogue[newActiveIndex];
   },
 
   /*
@@ -70,11 +96,11 @@ export const getters = {
    *
    * @return {number}
    */
-  getLength({}, { getDialogue }) {
+  getLength({ addonDialogue }, { getDialogue }) {
     if (!getDialogue)
       return 0;
 
-    return getDialogue.length - 1;
+    return getDialogue.length + addonDialogue.length - 1;
   },
 
   /*
@@ -98,6 +124,16 @@ export const getters = {
 
 
 export const actions = {
+  /**
+   * Reset all game goals.
+   *
+   * @return {void}
+   */
+  resetDialogue({ rootGetters: { 'game/getGame': getGame } }) {
+    if (getGame)
+      getGame.resetGoals();
+  },
+
   /*
    * Set next message.
    *
@@ -123,9 +159,14 @@ export const actions = {
    *
    * @return {boolean}
    */
-  addDialogue({ rootGetters: { 'game/getWorld': getWorld } }, dialogue) {
+  addDialogue({ commit, rootGetters: { 'game/getWorld': getWorld } }, dialogue) {
     if (!getWorld)
       return false;
+
+    if (dialogue.addon === true) {
+      commit('addon', dialogue);
+      return true;
+    }
 
     getWorld.addDialogue(dialogue);
     return true;

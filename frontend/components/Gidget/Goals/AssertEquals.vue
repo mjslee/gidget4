@@ -1,19 +1,18 @@
 <template>
-  <div>
-    <span class="is-keyword">assert</span>
-    <GidgetValue :code="args[0]" />
+  <span>
+    <Literal :value="args[0]" />
     <span class="is-operator">==</span>
-    <GidgetValue :code="args[1]" />
-  </div>
+    <Literal :value="args[1]" />
+  </span>
 </template>
 
 
 <script>
-import GidgetValue from '../Content/Value'
+import Literal from '../Content/Literal';
 
 export default {
   components: {
-    GidgetValue
+    Literal
   },
 
   props: {
