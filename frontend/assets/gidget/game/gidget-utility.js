@@ -1,3 +1,4 @@
+import { trim } from 'lodash';
 import { TweenLite, TimelineLite } from 'gsap';
 
 
@@ -30,6 +31,32 @@ export async function wait(ms) {
 export function poscmp(pos1, pos2) {
   return pos1.x === pos2.x && pos1.y === pos2.y
 }
+
+
+/**
+ * Get type of a literal.
+ * Strings that do not start with a quote (") or apostrophe (') are considered
+ * identifiers.
+ *
+ * @param {any} literal
+ * @return {object[literal,type]}
+ */
+export function typeofLiteral(literal) {
+  let type = typeof literal;
+
+  // Non-strings have nothing to worry about
+  if (type != 'string')
+    return { literal, type };
+
+  // Strings, however, can either be a string or an identifier
+  // We determine if a string is a real string if its wrapped in quotes
+  const trimmedLiteral = trim(literal, '\'"`');
+
+  // No change in length means it wasn't wrapped, therefore it's an identifier
+  return (trimmedLiteral.length == literal.length)
+    ? { literal: trimmedLiteral, type: 'identifier' }
+    : { literal, type };
+};
 
 
 /**

@@ -1,31 +1,32 @@
 <template>
   <article>
     <section class="goals" v-for="(goal, i) in goals" :key="`goal-${i}`">
-      <template v-if="(goals.args)">
-        <b-icon
-          icon="close-circle"
-          type="is-danger"
-          size="is-small"
-          v-if="reveal && goal.isComplete === false"
-        />
+      <template v-if="(goal.args)">
+        <!-- Completion -->
         <b-icon
           icon="check-circle"
           type="is-success"
           size="is-small"
-          v-else-if="reveal && goal.isComplete"
+          v-if="goal.isComplete === true"
+        />
+        <b-icon
+          icon="close-circle"
+          type="is-danger"
+          size="is-small"
+          v-else-if="goal.isComplete === false"
         />
         <b-icon
           icon="checkbox-blank-circle-outline"
           size="is-small"
           v-else
         />
-        <span v-if="goal.assert == 'equal'">
+
+        <!-- Equals Assertion -->
+        <span v-if="goal.assert == 'equal' || goal.assert == 'equals'">
           <assert-equals v-bind="goal" />
         </span>
       </template>
     </section>
-
-    <button @click="$emit('validate')">Validate</button>
   </article>
 </template>
 
@@ -49,38 +50,10 @@ export default {
   },
 
 
-  data() {
-    return {
-      reveal: true
-    };
-  },
-
-
   computed: {
     goals() {
       return this.$store.getters['goals/getGoals'];
     }
   },
-
-
-  methods: {
-    /**
-     * Reset goal completed status.
-     *
-     * @return {void}
-     */
-    reset() {
-      //this.reveal = false;
-    },
-
-
-    /**
-     * Validate all given goals.
-     *
-     * @return {void}
-     */
-    validate() {
-    },
-  }
 }
 </script>

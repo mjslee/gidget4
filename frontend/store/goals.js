@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 
 export const state = () => ({
-  activeIndex: 0
+  activeIndex: 0,
 });
 
 
@@ -32,24 +32,24 @@ export const getters = {
 
 
 export const actions = {
-  /*
-   * Set next message.
-   *
-   * @return {void}
+  /**
+   * Run validators on goals in gmae.
+   * 
+   * @return {boolean}
    */
-  next({ getters: { hasNext }, commit }) {
-    if (hasNext)
-      commit('increment');
+  validateGoals({ rootGetters: { 'game/getGame': getGame } }) {
+    if (getGame)
+      return getGame.validateGoals();
   },
 
-  /*
-   * Set previous message.
+  /**
+   * Reset all game goals.
    *
    * @return {void}
    */
-  previous({ getters: { hasPrevious }, commit }) {
-    if (hasPrevious)
-      commit('decrement');
+  resetGoals({ rootGetters: { 'game/getGame': getGame } }) {
+    if (getGame)
+      getGame.resetGoals();
   },
 
   /*
