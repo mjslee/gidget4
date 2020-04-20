@@ -1,36 +1,65 @@
-.hljs-literal, .hljs-number, .hljs-string, .is-keyword, .is-operator {
+$comment  : lighten($info, 15%);
+$keyword  : lighten($primary, 15%);
+$variable : $primary;
+$property : #000;
+$operator : #000;
+$string   : lighten($primary, 15%);
+$number   : lighten($primary, 5%);
+$literal  : darken($primary, 5%);
+
+$codeMirrorSelectors: "
+  .cm-variable,
+  .cm-property,
+  .cm-operator,
+  .cm-def,
+  .cm-number,
+  .cm-string,
+  .cm-atom
+";
+
+$highlightJsSelectors: "
+  .hljs-keyword,
+  .hljs-number,
+  .hljs-string,
+  .hljs-literal
+";
+
+$gidgetSelectors: "
+  .is-keyword,
+  .is-operator
+";
+
+$comments   : ".cm-comment";
+$keywords   : ".cm-keyword, .hljs-keyword, .is-keyword";
+$variables  : ".cm-variable";
+$properties : ".cm-property";
+$operators  : ".cm-operator, .is-operator";
+$strings    : ".cm-string, .hljs-string";
+$numbers    : ".cm-number, .hljs-number";
+$literals   : ".cm-atom, .hljs-literal";
+
+#{$comments}   { color: $comment  !important; }
+#{$keywords}   { color: $keyword  !important; }
+#{$variables}  { color: $variable !important; }
+#{$properties} { color: $property !important; }
+#{$operators}  { color: $operator !important; }
+#{$strings}    { color: $string   !important; }
+#{$numbers}    { color: $number   !important; }
+#{$literals}   { color: $literal  !important; }
+
+#{$codeMirrorSelectors}, #{$highlightJsSelectors} {
   font-family: monospace !important;
 }
 
-.hljs-literal, .cm-variable, .cm-def {
-  color: $primary !important;
-}
-
-.hljs-number, .cm-number {
-  color: $primary !important;
-}
-
-.hljs-string, .cm-string {
-  color: $info !important;
-}
-
-.is-keyword, .is-operator, .cm-keyword {
-  text-shadow: 0 0 0.01rem #000;
-  color: $primary !important;
-}
-
-.cm-property {
-  color: #000 !important;
-}
-
-.cm-operator {
-  color: #000 !important;
-}
-
-.cm-variable, .cm-property, .cm-number, .cm-string, .cm-keyword, .cm-operator {
+#{$keywords},
+#{$variables},
+#{$properties},
+#{$strings},
+#{$numbers},
+#{$literals} {
   &:hover {
     cursor: pointer;
-    background-color: red;
-    box-shadow: 0 0 0.1px #000;
+    text-decoration: underline;
+    font-weight: bold;
   }
 }
