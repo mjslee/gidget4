@@ -16,7 +16,7 @@
   "goals": [
     {
       "assert": "equal",
-      "arguments": ["Gidget.position", "Puppy.position"]
+      "args": ["Gidget.position", "Puppy.position"]
     }
   ],
   "dialogue": [

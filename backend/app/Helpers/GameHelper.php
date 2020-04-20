@@ -63,7 +63,7 @@ class GameHelper
     {
         return [
             'assert' => $assert,
-            'arguments' => $arguments
+            'args' => $arguments
         ];
     }
 

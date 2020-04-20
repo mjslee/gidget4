@@ -41,7 +41,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 body, html, #__nuxt, #__layout {
   height: 100%;
   width: 100%;

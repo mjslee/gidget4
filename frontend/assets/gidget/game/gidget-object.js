@@ -51,7 +51,7 @@ export default class {
         return this.id;
       },
       'get position'() {
-        return JSON.stringify(this.position);
+        return JSON.parse(JSON.stringify(this.position));
       }
     };
 

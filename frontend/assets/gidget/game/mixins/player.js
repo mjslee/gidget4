@@ -14,6 +14,7 @@ export default {
     if (!move) {
       this.say({
         type: 'dialogue',
+        sprite: 'gidget',
         text: GIDGET_MESSAGES.CANNOT_MOVE
       });
     }
@@ -23,6 +24,7 @@ export default {
       const spaces = amount == 1 ? '' : `${amount} spaces` ;
       this.say({
         type: 'dialogue',
+        sprite: 'gidget',
         text: `I'm moving ${spaces} ${direction}!`
       });
     }
