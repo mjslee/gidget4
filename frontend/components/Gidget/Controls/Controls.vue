@@ -1,8 +1,18 @@
 <template>
   <article>
-    <b-slider v-model="activeStep" :min="0" :max="stepCount">
-      <template v-for="val in Array(stepCount + 1).keys()">
-        <b-slider-tick :value="val" :key="val">{{ val }}</b-slider-tick>
+
+    <b-slider
+      size="is-large"
+      v-model="activeStep"
+      :min="0"
+      :max="stepCount"
+      bigger-slider-focus
+      rounded
+    >
+      <template v-if="stepCount > 0">
+        <template v-for="step in stepCount + 1">
+          <b-slider-tick :value="step - 1" :key="step">{{ step - 1 }}</b-slider-tick>
+        </template>
       </template>
     </b-slider>
 
