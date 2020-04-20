@@ -11,6 +11,7 @@ if (module.hot && typeof window.__game != 'undefined')
 export const state = () => ({
   key: 0,
 
+  isComplete : false,
   isRunning  : false,
   activeStep : 0,
   stepCount  : 0,
@@ -37,6 +38,16 @@ export const mutations = {
    */
   setRunning(state, value) {
     state.isRunning = value;
+  },
+
+  /**
+   * Set isComplete state value.
+   *
+   * @param {boolean} value
+   * @return {void}
+   */
+  setComplete(state, value) {
+    state.isComplete = value;
   },
 
   /**
@@ -184,12 +195,17 @@ export const actions = {
    *
    * @return {void}
    */
-  resetGame({ commit, getters: { getGame } }) {
+  resetGame({ commit, dispatch, getters: { getGame } }) {
     commit('setRunning', false);
+    commit('setComplete', false);
     commit('setActiveStep', 0);
     commit('setStepCount', 0);
-    commit('code/resetLines', null, { root: true });
-    commit('dialogue/setIndex', 0, { root: true });
+
+    const root = { root: true };
+
+    commit('code/resetLines', null, root);
+    commit('dialogue/reset', null, root);
+    dispatch('goals/resetGoals', null, root);
 
     if (getGame)
       getGame.reset();
@@ -205,7 +221,7 @@ export const actions = {
    * @param {number} relative - Index of saved game state to restore.
    * @return {object}
    */
-  async setStep({ state, commit }, { index, relative }) {
+  async setStep({ state, commit, dispatch }, { index, relative }) {
     if (!state.isRunning)
       return;
 
@@ -215,18 +231,19 @@ export const actions = {
     commit('setActiveStep', index);
     const step = await __game.set(index);
 
-    // Update state data
-    if (typeof step != 'undefined') {
-      commit('code/setActiveLine', step.ln - 1, { root: true });
+    // No step means we're at the last step. So run completion.
+    if (typeof step == 'undefined')
+      return dispatch('runCompletion');
 
-      // Complete evaluation data
-      if (typeof step.gameData == 'object')
-        commit('setEvalData', step.gameData);
+    commit('code/setActiveLine', step.ln - 1, { root: true });
 
-      // Exposed evaluation data
-      if (typeof step.exposedData == 'object')
-        commit('setExposedData', step.exposedData);
-    }
+    // Complete evaluation data
+    if (typeof step.gameData == 'object')
+      commit('setEvalData', step.gameData);
+
+    // Exposed evaluation data
+    if (typeof step.exposedData == 'object')
+      commit('setExposedData', step.exposedData);
 
     return step;
   },
@@ -259,6 +276,43 @@ export const actions = {
     commit('setRunning', true);
     return runner;
   },
+
+  /**
+   * [TODO:description]
+   *
+   * @param {[TODO:type]} commit - [TODO:description]
+   * @param {[TODO:type]} dispatch - [TODO:description]
+   * @return {[TODO:type]} [TODO:description]
+   */
+  async runCompletion({ state, commit, dispatch }) {
+    // No need to run completions twice.
+    if (state.isComplete)
+      return;
+
+    commit('setComplete', true);
+
+    const root = { root: true };
+    const success = await dispatch('goals/validateGoals', null, root);
+
+    let dialogue;
+    if (success) {
+      dispatch('objects/runSuccess', null, root);
+      dialogue = {
+        type: 'dialogue',
+        text: 'Success!',
+      };
+    }
+    else {
+      dispatch('objects/runFailure', null, root);
+      dialogue = {
+        type: 'dialogue',
+        text: 'Oh no!',
+      };
+    }
+
+    if (dialogue)
+      dispatch('dialogue/addDialogue', { addon: true, ...dialogue }, root);
+  }
 };
 
 

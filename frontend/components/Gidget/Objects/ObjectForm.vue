@@ -31,7 +31,7 @@
               <b-slider ref="energy" size="is-large" :value="energy" @input="input" rounded />
             </b-field>
 
-            <object-mover :has-move-buttons="!isCreating" :object="$props" />
+            <object-mover :has-move-buttons="false" :object="$props" />
 
             <!-- Blocking -->
             <b-field>
@@ -87,7 +87,6 @@
 
 
 <script>
-import _            from 'lodash';
 import Vue          from 'vue';
 import MixinInput   from '../Inputs/MixinInput';
 import SpriteInput  from '../Inputs/SpriteInput';
