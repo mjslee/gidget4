@@ -1,45 +1,58 @@
 <template>
-  <div class="container" v-if="dialogue">
-    <img class="left head image is-64x64" :src="sprite" v-if="sprite">
+  <article class="container" v-if="dialogue">
+    <img class="left head image is-64x64" :src="spriteSrc" v-if="spriteSrc">
 
-    <div class="box">
-      <!-- Markdown -->
-      <gidget-text :value="text" />
+    <section class="box">
+      <!-- Dialogue Progress -->
+      <b-progress
+        type="is-primary"
+        :value="index"
+        :max="length"
+        show-value
+      >
+        Message {{ index }} out of {{ length }}
+      </b-progress>
 
-      <div class="buttons has-addons is-centered">
-        <!-- Previous Message -->
-        <b-button
-          icon-left="chevron-left"
-          :disabled="!hasPrevious"
-          @click="previous"
-        >
-          Prev
-        </b-button>
+      <!-- Dialogue -->
+      <div class="media">
+        <!-- Text -->
+        <div class="media-content">
+          <gidget-text :value="text" />
+        </div>
 
-        <!-- Next Message -->
-        <b-button
-          type="is-primary"
-          icon-right="chevron-right"
-          :disabled="!hasNext"
-          @click="next"
-        >
-          Next
-        </b-button>
-        {{ index }}/{{ length }}
+        <div class="media-right">
+          <div class="buttons has-addons is-centered">
+            <!-- Previous Button -->
+            <b-button
+              icon-left="chevron-left"
+              :disabled="!hasPrevious"
+              @click="previous"
+            />
 
+            <!-- Next Button -->
+            <b-button
+              type="is-primary"
+              icon-right="chevron-right"
+              :disabled="!hasNext"
+              @click="next"
+            />
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+
+      
+      <!-- <div class="buttons has&#45;addons is&#45;centered"> -->
+      <!--   {{ index }}/{{ length }} -->
+      <!--  -->
+      <!-- </div> -->
+    </section>
+  </article>
 </template>
 
 
 <style scoped>
 .container {
   position: relative;
-}
-
-.buttons {
-  margin-top: 1rem;
 }
 
 .box {
@@ -63,6 +76,11 @@
 .left.head {
   transform: rotate(-5deg);
 }
+
+.progress-wrapper {
+  margin: -1rem -1rem 0.5rem -1rem;
+  text-shadow: 0 0 0.1rem #000;
+}
 </style>
 
 
@@ -73,12 +91,16 @@ import { SPRITE_PATH } from '@/constants/paths';
 
 
 export default {
-
   components: {
     GidgetValue,
     GidgetText
   },
 
+  watch: {
+    length(newValue) {
+      this.$store.commit('dialogue/setIndex', newValue);
+    }
+  },
 
   computed: {
     /*
@@ -140,7 +162,7 @@ export default {
      *
      * @return {string}
      */
-    sprite() {
+    spriteSrc() {
       if (this.dialogue.sprite)
         return SPRITE_PATH + this.dialogue.sprite + '.png';
     }
