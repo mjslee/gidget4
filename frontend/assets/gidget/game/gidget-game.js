@@ -285,4 +285,30 @@ export default class {
     this.enumerateGoals();
     return true;
   }
+
+  /**
+   * Run validators on goals.
+   * If data is not set, the game's exposed data will be used for validation.
+   *
+   * @param {object} [data] - (Optional) Game evaluation state.
+   * @return {boolean}
+   */
+  validateGoals(data=undefined) {
+    if (!data) data = this.getExposed();
+    let success = true;
+    this.goals.forEach((goal) => {
+      if (!goal.validate(data))
+        success = false;
+    });
+    return success;
+  }
+
+  /**
+   * Reset completion statuses of all goals.
+   *
+   * @return {void}
+   */
+  resetGoals() {
+    this.goals.forEach((goal) => goal.isComplete = undefined);
+  }
 }
