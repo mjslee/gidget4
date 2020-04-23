@@ -6,4 +6,4 @@ php artisan migrate
 php artisan passport:install
 php artisan ide-helper:generate
 
-echo 'source /var/www/vendor/balping/artisan-bash-completion/artisan' >> /home/laradock/.bashrc
+echo 'source /app/vendor/balping/artisan-bash-completion/artisan' >> ~/.bashrc

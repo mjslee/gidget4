@@ -1,0 +1,45 @@
+version: '3'
+services:
+  frontend:
+    build: ./frontend
+    command: 'npm run dev'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=4000
+    ports:
+      - 4000:4000
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+      - /app/vendor
+
+  nginx:
+    build:
+      context: ./services/nginx
+      args:
+        SERVER: _
+        BACKEND: backend:9000
+        FRONTEND: frontend:4000
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+      - /frontend/.nuxt
+      - ./backend:/backend
+      - /backend/vendor
+    ports:
+      - 5000:80
+
+  postgres:
+    build: ./services/postgres
+    environment:
+      - POSTGRES_DB=gidget
+      - POSTGRES_USER=gidget
+      - POSTGRES_PASSWORD=gidget
+
+  redis:
+    build: ./services/redis

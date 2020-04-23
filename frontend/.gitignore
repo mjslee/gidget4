@@ -77,15 +77,18 @@ dist
 # Serverless directories
 .serverless
 
-# IDE
-.idea
-
 # Service worker
 sw.*
 
-# Vim session
-Session.vim
+# Volumes
+.volumes
 
 # Tags
 .ctags.d/
 tags
+
+# Editors
+~*
+.idea
+.vscode
+Session.vim
