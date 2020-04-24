@@ -284,34 +284,13 @@ export const actions = {
    * @param {[TODO:type]} dispatch - [TODO:description]
    * @return {[TODO:type]} [TODO:description]
    */
-  async runCompletion({ state, commit, dispatch }) {
+  async runCompletion({ state, commit, dispatch, getters: { getGame } }) {
     // No need to run completions twice.
-    if (state.isComplete)
+    if (state.isComplete || !getGame)
       return;
 
     commit('setComplete', true);
-
-    const root = { root: true };
-    const success = await dispatch('goals/validateGoals', null, root);
-
-    let dialogue;
-    if (success) {
-      dispatch('objects/runSuccess', null, root);
-      dialogue = {
-        type: 'dialogue',
-        text: 'Success!',
-      };
-    }
-    else {
-      dispatch('objects/runFailure', null, root);
-      dialogue = {
-        type: 'dialogue',
-        text: 'Oh no!',
-      };
-    }
-
-    if (dialogue)
-      dispatch('dialogue/addDialogue', { addon: true, ...dialogue }, root);
+    getGame.validateGoals();
   }
 };
 
@@ -374,9 +353,9 @@ export const getters = {
    * @param {any} defaultValue - Default value if data does not have the key.
    * @return {any}
    */
-  getValue({ evalData }) {
+  getValue({ exposedData }) {
     return (key, defaultValue=undefined) => {
-      const value = _.get(evalData, key);
+      const value = _.get(exposedData, key);
 
       if (typeof defaultValue == 'undefined')
         return value;
