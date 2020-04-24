@@ -4,7 +4,6 @@ import GidgetMixins from './mixins'
 import { walkAnimation, poscmp } from './gidget-utility'
 
 
-
 export default class {
   /**
    * Creates object.
@@ -28,7 +27,6 @@ export default class {
 
     return self;
   }
-
 
   /**
    * Sets-up object by merging game object base and mixins.
@@ -67,7 +65,6 @@ export default class {
     this.initialOptions = _.cloneDeep(options);
   }
 
-
   /**
    * Reset and rebuild game object.
    *
@@ -76,7 +73,6 @@ export default class {
   reset() {
     this.reset(this.initialOptions);
   }
-
 
   /**
    * Sets default properties.
@@ -98,7 +94,6 @@ export default class {
     this.scaleBounds = true;
   }
 
-
   /**
    * Merges mixin properties into the game object.
    *
@@ -112,7 +107,6 @@ export default class {
     _.merge(this, _.cloneDeep(GidgetMixins[mixin]));
     return true;
   }
-
 
   /**
    * Updates target properties of getter properties.
@@ -133,8 +127,8 @@ export default class {
         this.exposed[prop.slice(4)] = this.exposed[prop].call(this)
 
       // For a method to have the proper scope (this), we'll need to enclose
-      // the function to set the proper scope. We'll assign an 'isEnclosed'
-      // property to the function so we know not to enclose an enclosure.
+      // the function to set the scope. We'll assign an 'isEnclosed' property
+      // to the function so we know not to enclose an enclosure.
       else if (!this.exposed[prop].isEnclosed) {
         const func = this.exposed[prop]
         this.exposed[prop] = (...args) => func.call(this, ...args)
@@ -142,7 +136,6 @@ export default class {
       }
     }
   }
-
 
   /**
    * Gets game world that game object is a part of.
@@ -153,6 +146,24 @@ export default class {
     return undefined;
   }
 
+  /**
+   * Run onComplete or onIncomplete callback.
+   *
+   * @param {boolean} success
+   * @return {void}
+   */
+  runCompletion(success, goals) {
+    if (success) {
+      // Run onComplete callback
+      if (typeof this.onComplete == 'function')
+        this.onComplete(goals);
+    }
+    else {
+      // Run onIncomplete callback
+      if (typeof this.onIncomplete == 'function')
+        this.onIncomplete(goals);
+    }
+  }
 
   /**
    * Grabs a game object into this game object's grabbed array.
@@ -205,7 +216,6 @@ export default class {
     return true
   }
 
-
   /**
    * Drops object from this object's grabbed array.
    *
@@ -250,7 +260,6 @@ export default class {
     return true;
   }
 
-
   /**
    * Says a message.
    *
@@ -280,7 +289,6 @@ export default class {
 
     return true;
   }
-
 
   /**
    * Moves the game object to a position in the world.
@@ -312,7 +320,6 @@ export default class {
 
     return true;
   }
-
 
   /**
    * Walks to position.
@@ -355,7 +362,6 @@ export default class {
 
     return validPath.length >= path.length;
   }
-
 
   /**
    * Walk callback: Default walking animation.

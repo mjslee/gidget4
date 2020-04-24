@@ -548,6 +548,37 @@ export default class {
   }
 
   /**
+   * Run onComplete or onIncomplete callback.
+   *
+   * @param {boolean} success
+   * @return {void}
+   */
+  runCompletion(success, goals) {
+    if (success) {
+      // Run onComplete callback
+      if (typeof this.onComplete == 'function')
+        this.onComplete(goals);
+    }
+    else {
+      // Run onIncomplete callback
+      if (typeof this.onIncomplete == 'function')
+        this.onIncomplete(goals);
+    }
+
+    // Add goal dialogue
+    goals.forEach((goal) => {
+      if (goal.isComplete === true && typeof goal.complete == 'object')
+        this.addDialogue(goal.complete);
+
+      else if (goal.isComplete === false && typeof goal.incomplete == 'object')
+        this.addDialogue(goal.incomplete);
+    });
+
+    // Run completions for all world objects
+    this.objects.forEach((obj) => obj.runCompletion(success, goals));
+  }
+
+  /**
    * Set game tile sprite.
    *
    * @param {object[x,y]} position

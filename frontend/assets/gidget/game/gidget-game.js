@@ -263,8 +263,8 @@ export default class {
    *
    * @return {void}
    */
-  addGoal({ assert, args }) {
-    this.goals.push(new GidgetGoal({ assert, args }));
+  addGoal({ assert, args, complete=undefined, incomplete=undefined }) {
+    this.goals.push(new GidgetGoal({ assert, args, complete, incomplete }));
     this.enumerateGoals();
   }
 
@@ -294,12 +294,13 @@ export default class {
    * @return {boolean}
    */
   validateGoals(data=undefined) {
-    if (!data) data = this.getExposed();
-    let success = true;
-    this.goals.forEach((goal) => {
-      if (!goal.validate(data))
-        success = false;
-    });
+    if (!data)
+      data = this.getExposed();
+
+    const goalValues = this.goals.map((goal) => goal.validate(data));
+    const success = this.goals.every((goal) => goal.isComplete);
+
+    this.world.runCompletion(success, goalValues);
     return success;
   }
 

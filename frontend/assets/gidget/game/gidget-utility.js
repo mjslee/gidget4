@@ -124,7 +124,7 @@ export function moveElementToTile($el, position) {
  * @return {boolean}
  */
 export async function animate(gameObject, callback) {
-  const $el = getObjectElement(gameObject);
+  const $el = gameObject.getElement();
   if ($el == null)
     return false;
 

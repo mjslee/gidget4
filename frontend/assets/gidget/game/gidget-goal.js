@@ -22,19 +22,27 @@ export const getAssertion = (assert) => {
 };
 
 export default class {
-  constructor({ assert, args }) {
-    this.assert = assert;
-    this.args   = args;
+  /**
+   *
+   */
+  constructor({ assert, args, complete=undefined, incomplete=undefined }) {
+    Object.assign(this, { assert, args, complete, incomplete });
 
     this.isComplete = undefined;
-    this.isRemoved = false;
+    this.isRemoved  = false;
     return this;
   }
 
+  /**
+   *
+   */
   reset() {
     this.isCompleted = undefined;
   }
 
+  /**
+   *
+   */
   validate(data) {
     const assertion = getAssertion(this.assert);
     if (!assertion)
@@ -46,6 +54,6 @@ export default class {
     });
 
     this.isComplete = assertion.func(...values);
-    return this.isComplete;
+    return { values, ...this };
   }
 }
