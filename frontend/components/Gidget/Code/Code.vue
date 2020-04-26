@@ -1,9 +1,16 @@
 <template>
   <div @click="click">
+
+    <!-- Editor -->
     <codemirror ref="code" v-model="code" :options="options" />
-    <popover :active.sync="isPopoverActive" :element="popoverElement">
-      {{ popoverTokens.join('.') }}
-    </popover>
+
+    <!-- Code Insight Popover -->
+    <portal to="popover">
+      <popover :active.sync="isPopoverActive" :element="popoverElement">
+        {{ $store.getters['game/getValue'](popoverTokens) }}
+      </popover>
+    </portal>
+
   </div>
 </template>
 
@@ -26,6 +33,7 @@ import 'codemirror/addon/hint/show-hint.js';
 
 import Popover   from '../Content/Popover';
 import Highlight from '../Content/Highlight';
+import Completions from './Completions';
 
 
 export default {
@@ -129,6 +137,10 @@ export default {
     };
   },
 
+  mixins: [
+    Completions
+  ],
+
   methods: {
     /*
      *
@@ -147,12 +159,9 @@ export default {
       }
 
       // Set popover data
-      const { cursor, token } = this.getCursor();
       this.isPopoverActive = true;
       this.popoverTokens   = this.getValidTokens(token);
       this.popoverElement  = event.target;
-
-      console.log(token);
     },
 
     /**
@@ -196,28 +205,38 @@ export default {
 
       // Ignore tokens that are strings or comments
       const { cursor, token } = this.getCursor();
-      if (token.type === 'string' || token.type === 'comment')
+      if (token.type == 'string' || token.type == 'comment')
         return;
 
-      // Get all preceding tokens until reaching parent variable
-      const tokens = this.getValidTokens();
-
-      if (!tokens.length)  // Show all available objects
-        return this.buildCompletions(state);
+      // Get token chain behind the current cursor position
+      // When no tokens, show all top-level state variables
+      const tokens = this.getTokenChain(cursor.line, cursor.ch);
+      if (!tokens)
+        return this.buildCompletions(state, false);
 
       // Get value from state.
-      let value = _.get(state, tokens);
+      let value = _.get(state, tokens.result.join('.'));
+      let needsDot = !tokens.hasDot;
 
-      // No value? Check for a partial prop.
+      // No value? Filter props based on current text
       let filteredText;
       if (!value) {
-        value = _.get(state, _.initial(tokens));
-        filteredText = _.last(tokens);
+        // Set second to last token as value if our text doesn't end with a dot
+        if (needsDot) {
+          value = _.get(state, _.nth(tokens.result, -2));
+          needsDot = false;
+        }
+
+        // Do not get properties for an undefined token value
+        if (!value && (tokens.hasDot || tokens.result.length > 1))
+          return;
+
+        // Last token is the partial text we should filter for
+        filteredText = _.last(tokens.result);
       }
 
       // Build completion list from returned value of variable or property
-      if (typeof value == 'object')
-        return this.buildCompletions(value, filteredText);
+      return this.buildCompletions(value || state, needsDot, filteredText);
     },
 
     /**
@@ -227,13 +246,8 @@ export default {
      * @param {string} filterText
      * @return {object}
      */
-    buildCompletions(value, filterText=undefined) {
+    buildCompletions(value, prependDot=false, filterText=undefined) {
       const { cursor, token } = this.getCursor();
-
-      // Placement helpers. When we have a full stop it means we need to place
-      // the complteion value one character to the right.
-      let hasFullStop = token.string === '.' || token.string === '';
-      let offset = hasFullStop ? 1 : 0;
 
       // Build completions array
       const completions = Object.keys(value).filter((option) => {
@@ -250,95 +264,18 @@ export default {
         if (!isNaN(option))
           return '[' + option + ']';
 
-        return hasFullStop ? option : '.' + option;
+        if (prependDot)
+          option = '.' + option;
+
+        return option;
       });
 
       const line = cursor.line;
       return {
         list : completions,
-        from : { line, ch: hasFullStop ? token.start + offset : token.end },
+        from : { line, ch: filterText ? token.start : token.end },
         to   : { line, ch: token.end },
       };
-    },
-
-    /**
-     * Get array of tokens that are primitively valid.
-     *
-     * @param {function} token - (optional) CodeMirror token
-     * @return {array[string]}
-     */
-    getValidTokens(token=undefined) {
-      let { cursor, token: activeToken } = this.getCursor();
-
-      if (!token)
-        token = activeToken;
-
-      const tokens = [];
-
-      // Descend through tokens until a variable is reached
-      // Up to 250 previous tokens are allowed to be processed
-      for (let i = 0; i < 250; i++) {
-        const str = token.string;
-        const prevToken = this.editor.getTokenAt({
-          line: cursor.line, ch: token.start
-        });
-
-        // Ensures syntax is correct...
-        // Ensure that behind a '.' or '[' is a token that can have a property
-        // Ensure that the token behind the index closing bracket is a literal
-        if (
-          ((str === '.' || str === '[') && !this.canTokenHaveProp(prevToken)) ||
-          ((str === ']') && !this.isTypeLiteral(prevToken.type))
-        )
-          return;
-
-        // A variable or a property should be added to result array for lookup
-        else if (this.isTypePropOrVar(token.type)) {
-          tokens.unshift(token.string);
-
-          // We have reached the parent token: the variable
-          if (token.type === 'variable')
-            break;
-        }
-
-        // This is most likely to be reached when an index is specified
-        else if (this.isTypeLiteral(prevToken.type))
-          tokens.unshift(prevToken.string);
-
-        // Set the current token to the previous token
-        // On the next iteration we will descend further down the token chain
-        token = prevToken;
-      }
-
-      return tokens;
-    },
-
-    /**
-     * Is a type a literal?
-     *
-     * @return {boolean}
-     */
-    isTypeLiteral(type) {
-      return type === 'number' || type === 'string';
-    },
-
-    /**
-     * Is type a property or a variable?
-     *
-     * @param {string} type
-     * @return {boolean}
-     */
-    isTypePropOrVar(type) {
-      return type === 'property' || type === 'variable';
-    },
-
-    /**
-     * Can a specified token have a property?
-     *
-     * @return {boolean}
-     */
-    canTokenHaveProp({ string, type }) {
-      return this.isTypePropOrVar(type) || string === ']';
     },
   }
 }

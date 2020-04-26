@@ -155,9 +155,9 @@ export default {
     this.tree = esprima.parse(input, this.parseOptions);
     this.tokens = esprima.tokenize(input, this.parseOptions);
 
-    // Sort
-    const sortedMods = this.traverseTree().sort((a, b) => b[1] - a[1]);
-    sortedMods.forEach(mod => {
+    // Sort modifications by range
+    const modifications = this.traverseTree().sort((a, b) => b[1] - a[1]);
+    modifications.forEach((mod) => {
       // Insert (string)mod[0] at index of (int)mod[1]
       input = input.substring(0, mod[1]) + mod[0] + input.substring(mod[1]);
     });
