@@ -114,5 +114,132 @@ export default {
 
       return { result, hasDot, start, end };
     },
+
+    /**
+     * Get active token and cursor from CodeMirror editor.
+     *
+     * @return {object[cursor,token]}
+     */
+    getCursor() {
+      const cursor = this.editor.getCursor();
+      if (cursor.ch == 0)
+        cursor.ch = 1;
+
+      return { cursor, token: this.editor.getTokenAt(cursor) };
+    },
+
+    /**
+     * Get array of game completions from game state for the CodeMirror editor.
+     *
+     * @return {object}
+     */
+    getCompletions() {
+      const { cursor, token } = this.getCursor();
+
+      // Disallow completions if cursor is behind the token's end
+      if (cursor.ch < token.end)
+        return;
+
+      // Beginning of line
+      // TODO: Snippets
+      if (token.string == '')
+        return;
+
+      // Variable and property completions
+      if (token.string == '.' || token.type == 'variable' ||
+        token.type == 'property')
+        return this.getValueCompletions(cursor);
+    },
+
+    /**
+     * Get completions based on value of token chain.
+     *
+     * @return {object}
+     */
+    getValueCompletions(cursor) {
+      // Get evaluated code state
+      const state = this.$store.state.game.exposedData;
+      if (!state)
+        return;
+
+      // Get token chain behind the current cursor position
+      // When no tokens, show all top-level state variables
+      const tokens = this.getTokenChain(cursor.line, cursor.ch);
+      if (!tokens)
+        return this.buildCompletions(state, false);
+
+      // Get value from state.
+      let value = _.get(state, tokens.result.join('.'));
+      let needsDot = !tokens.hasDot;
+
+      // No value? Filter props based on current text
+      let filteredText;
+      if (!value) {
+        // Set second to last token as value if our text doesn't end with a dot
+        if (needsDot) {
+          value = _.get(state, _.nth(tokens.result, -2));
+          needsDot = false;
+        }
+
+        // Do not get properties for an undefined token value
+        if (!value && (tokens.hasDot || tokens.result.length > 1))
+          return;
+
+        // Last token is the partial text we should filter for
+        filteredText = _.last(tokens.result);
+      }
+
+      // Build completion list from returned value of variable or property
+      return this.buildCompletions(value || state, needsDot, filteredText);
+    },
+
+    /**
+     * Build completions from an object's keys./
+     *
+     * @param {object} value
+     * @param {string} filterText
+     * @return {object}
+     */
+    buildCompletions(value, prependDot=false, filterText=undefined) {
+      const { cursor, token } = this.getCursor();
+
+      // Build completions array
+      const completions = Object.keys(value).filter((option) => {
+        // Ignore internal properties
+        if (option.startsWith('get ') || option === 'isEnclosed')
+          return false;
+
+        // Partial matching
+        if (filterText)
+          return option.includes(filterText);
+
+        return true;
+      }).map((option) => {
+        if (!isNaN(option))
+          return '[' + option + ']';
+
+        if (prependDot)
+          option = '.' + option;
+
+        return option;
+      });
+
+      const line = cursor.line;
+      return {
+        list : completions,
+        from : { line, ch: filterText ? token.start : token.end },
+        to   : { line, ch: token.end },
+      };
+    },
+
+    /**
+     * Get the active token chain.
+     *
+     * @return {array}
+     */
+    getActiveTokens() {
+      const { cursor } = this.getCursor();
+      return this.getTokenChain(cursor.line, cursor.ch);
+    }
   }
 };

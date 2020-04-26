@@ -1,17 +1,17 @@
 <template>
-  <div @click="click">
+  <article v-on:keyup="keyUp">
 
     <!-- Editor -->
-    <codemirror ref="code" v-model="code" :options="options" />
+    <div @click="showPopover">
+      <codemirror ref="code" v-model="code" :options="options" @input="input" />
+    </div>
 
     <!-- Code Insight Popover -->
-    <portal to="popover">
-      <popover :active.sync="isPopoverActive" :element="popoverElement">
-        {{ $store.getters['game/getValue'](popoverTokens) }}
-      </popover>
-    </portal>
+    <popover v-if="isPopoverActive" :active.sync="isPopoverActive" :element="popoverElement">
+      {{ $store.getters['game/getValue'](popoverTokens) }}
+    </popover>
 
-  </div>
+  </article>
 </template>
 
 
@@ -75,20 +75,6 @@ export default {
     },
 
     /**
-     *
-     */
-    popoverVariable() {
-      if (!this.popoverElement)
-        return;
-
-      return {
-        identifier : Math.random(),
-        type       : 'str',
-        value      : 'val'
-      };
-    },
-
-    /**
      * Get or set code value in code store.
      *
      * @param {string}
@@ -112,13 +98,16 @@ export default {
         line        : true,
         lineNumbers : true,
         extraKeys   : {
-          'Ctrl-Space': 'autocomplete',
+          'Ctrl-Space': 'autocomplete'
         },
         hintOptions : {
-          hint           : this.getCompletions,
-          completeSingle : false
+          completeSingle: false,
+          hint: this.getCompletions
         }
       },
+
+      //
+      idleTimeout : undefined,
 
       // Previous line numbers
       prevActiveLine : -1,
@@ -130,7 +119,10 @@ export default {
       errorLineClass  : 'CodeMirror-errorline-background',
 
       // Popovers
-      popoverClasses  : ['cm-variable', 'cm-property', 'cm-keyword', 'cm-def'],
+      popoverClasses  : [
+        'cm-variable', 'cm-property', 'cm-keyword', 'cm-def',
+        'cm-number', 'cm-atom', 'cm-string'
+      ],
       popoverTokens   : [],
       popoverElement  : undefined,
       isPopoverActive : false,
@@ -141,27 +133,69 @@ export default {
     Completions
   ],
 
+  mounted() {
+    window.completionWait = 500;
+  },
+
   methods: {
-    /*
+    /**
+     * Called when key is released.
      *
+     * @param {string} key - Value of released key.
+     * @return {void}
      */
-    click(event) {
+    keyUp({ key }) {
+      if (key == 'Escape')
+        this.hidePopover();
+    },
+
+    /*
+     * Click on CodeMirror element to show code insight popover.
+     *
+     * @return {void}
+     */
+    showPopover({ target }) {
       // Element must exist
-      if (!(event && event.target && event.target.className))
+      if (!(target && target.className))
         return;
 
-      // Unset popover
-      if (!this.popoverClasses.includes(event.target.className)) {
-        this.isPopoverActive = false;
-        this.popoverTokens   = [];
-        this.popoverElement  = undefined;
-        return;
-      }
+      const isCodeElement = this.popoverClasses.includes(target.className);
 
       // Set popover data
-      this.isPopoverActive = true;
-      this.popoverTokens   = this.getValidTokens(token);
-      this.popoverElement  = event.target;
+      if (target != this.popoverElement && isCodeElement) {
+        this.popoverTokens   = this.getActiveTokens();
+        this.popoverElement  = target;
+        this.isPopoverActive = false;
+        this.$nextTick(() => this.isPopoverActive = true);
+      }
+
+      // Unset popover
+      else
+        this.hidePopover();
+    },
+
+    /**
+     * Hide code insight popover component.
+     *
+     * @return {void}
+     */
+    hidePopover() {
+      this.isPopoverActive = false;
+      this.popoverTokens   = [];
+      this.popoverElement  = undefined;
+    },
+
+    /**
+     * Show popup menu for completion hints.
+     *
+     * @return {void}
+     */
+    input(cmd) {
+      clearTimeout(this.idleTimeout);
+      this.idleTimeout = setTimeout(() => {
+        this.hidePopover();
+        this.editor.showHint();
+      }, window.completionWait);
     },
 
     /**
@@ -178,104 +212,6 @@ export default {
 
       if (ln >= 0)
         this.editor.addLineClass(ln, this.where, className);
-    },
-
-    /**
-     * Get active token and cursor from CodeMirror editor.
-     *
-     * @return {object[cursor,token]}
-     */
-    getCursor() {
-      const cursor = this.editor.getCursor();
-      if (cursor.ch == 0)
-        cursor.ch = 1;
-      return { cursor, token: this.editor.getTokenAt(cursor) };
-    },
-
-    /**
-     * Get array of game completions from game state for the CodeMirror editor.
-     *
-     * @return {object}
-     */
-    getCompletions() {
-      // Get evaluated code state
-      const state = this.$store.state.game.exposedData;
-      if (!state)
-        return;
-
-      // Ignore tokens that are strings or comments
-      const { cursor, token } = this.getCursor();
-      if (token.type == 'string' || token.type == 'comment')
-        return;
-
-      // Get token chain behind the current cursor position
-      // When no tokens, show all top-level state variables
-      const tokens = this.getTokenChain(cursor.line, cursor.ch);
-      if (!tokens)
-        return this.buildCompletions(state, false);
-
-      // Get value from state.
-      let value = _.get(state, tokens.result.join('.'));
-      let needsDot = !tokens.hasDot;
-
-      // No value? Filter props based on current text
-      let filteredText;
-      if (!value) {
-        // Set second to last token as value if our text doesn't end with a dot
-        if (needsDot) {
-          value = _.get(state, _.nth(tokens.result, -2));
-          needsDot = false;
-        }
-
-        // Do not get properties for an undefined token value
-        if (!value && (tokens.hasDot || tokens.result.length > 1))
-          return;
-
-        // Last token is the partial text we should filter for
-        filteredText = _.last(tokens.result);
-      }
-
-      // Build completion list from returned value of variable or property
-      return this.buildCompletions(value || state, needsDot, filteredText);
-    },
-
-    /**
-     * Build completions from an object's keys./
-     *
-     * @param {object} value
-     * @param {string} filterText
-     * @return {object}
-     */
-    buildCompletions(value, prependDot=false, filterText=undefined) {
-      const { cursor, token } = this.getCursor();
-
-      // Build completions array
-      const completions = Object.keys(value).filter((option) => {
-        // Ignore internal properties
-        if (option.startsWith('get ') || option === 'isEnclosed')
-          return false;
-
-        // Partial matching
-        if (filterText)
-          return option.includes(filterText);
-
-        return true;
-      }).map((option) => {
-        if (!isNaN(option))
-          return '[' + option + ']';
-
-        if (prependDot)
-          option = '.' + option;
-
-        return option;
-      });
-
-      const line = cursor.line;
-      return {
-        list : completions,
-        from : { line, ch: filterText ? token.start : token.end },
-        to   : { line, ch: token.end },
-      };
     },
   }
 }
