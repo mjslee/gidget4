@@ -20,7 +20,7 @@
               </b-field>
 
               <!-- Mixins -->
-              <b-field label="Mixins" expanded>
+              <b-field label="Mixins" message="There's no way of finding out what a mixin does yet!" expanded>
                 <mixin-input ref="mixins" :value="mixins" @input="input" />
               </b-field>
             </b-field>

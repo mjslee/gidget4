@@ -5,9 +5,11 @@
   >
 
     <!-- Action Button -->
-    <section class="level-item" slot="top-right-content">
-      <object-create-button />
-    </section>
+    <template slot="top-right-content">
+      <div class="level-item">
+        <object-create-button />
+      </div>
+    </template>
 
     <!-- Column Templates -->
     <template slot-scope="props">
@@ -23,7 +25,9 @@
 
       <!-- Mixins Column -->
       <b-table-column field="mixins" label="Mixins" sortable>
-        {{ props.row.mixins }}
+        <div class="tags" v-if="props.row.mixins">
+          <span class="tag" v-for="mixin in props.row.mixins">{{ mixin }}</span>
+        </div>
       </b-table-column>
     </template>
 
