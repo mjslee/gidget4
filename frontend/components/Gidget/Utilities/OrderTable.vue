@@ -39,7 +39,7 @@
       @dblclick="toggleRow"
       @details-open="openRow"
       @dragstart="dragStart"
-      @drop="dragFinish"
+      @drop="dragEnd"
       @dragover="dragOver"
       @dragleave="dragLeave"
       striped
@@ -251,7 +251,7 @@ export default {
      * @param {object} row
      * @return {void}
      */
-    dragFinish({ event, row }) {
+    dragEnd({ event, row }) {
       if (!this.draggingRow || !row)
         return;
 
