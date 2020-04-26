@@ -31,15 +31,20 @@
       ref="table"
       :columns="columns" :data="data"
       :selected.sync="internalSelected"
-      :opened-detailed="openedRows"
-      :show-detail-icon="true"
       :rowClass="(row) => `row-${row.id}`"
-      @dblclick="toggleRow"
-      @details-open="openRow"
       :sticky-header="stickyHeaders"
       :default-sort="sortColumn"
-      hoverable
+      :opened-detailed="openedRows"
+      :show-detail-icon="true"
+      @dblclick="toggleRow"
+      @details-open="openRow"
+      @dragstart="dragStart"
+      @drop="dragFinish"
+      @dragover="dragOver"
+      @dragleave="dragLeave"
       striped
+      draggable
+      hoverable
       detailed
       detail-key="id"
     >
@@ -133,7 +138,8 @@ export default {
   data() {
     return {
       openedRows: [],
-      sortColumn: 'id'
+      draggingRow: undefined,
+      sortColumn: 'id',
     };
   },
 
@@ -151,12 +157,29 @@ export default {
         return;
 
       const id = this.internalSelected.id;
-      this.$store.dispatch(this.swapDispatch, {
-        fromId: id, toId: id + direction
-      });
+      const fromId = id;
+      const toId = id + direction;
+      this.$store.dispatch(this.swapDispatch, { fromId, toId });
 
+      this.swappedRows(fromId, toId);
+    },
+
+    /**
+     * Shows swapped row notification.
+     * Re-orders table by ID.
+     * Closes all rows.
+     *
+     * @param {number} fromId
+     * @param {number} toId
+     * @return {void}
+     */
+    swappedRows(fromId, toId) {
       this.closeRows();
+      this.sortColumn = 'id';
       this.$refs.table.initSort();
+      this.$buefy.toast.open(
+        `Swapped rows with indexes ${fromId} and ${toId}.`
+      );
     },
 
     /**
@@ -206,7 +229,65 @@ export default {
      */
     closeRows() {
       this.openedRows = [];
-    }
+    },
+
+    /**
+     * Called when row dragging has begun.
+     *
+     * @param {object} event
+     * @param {object} row
+     * @return {void}
+     */
+    dragStart({ event, row }) {
+      this.draggingRow = row;
+      event.dataTransfer.effectAllowed = 'copy';
+      this.closeRows();
+    },
+
+    /**
+     * Called when row has been dropped.
+     *
+     * @param {object} event
+     * @param {object} row
+     * @return {void}
+     */
+    dragFinish({ event, row }) {
+      if (!this.draggingRow || !row)
+        return;
+
+      // Re-order and re-sort
+      this.$store.dispatch(this.swapDispatch, {
+        fromId: this.draggingRow.id, toId: row.id
+      });
+      this.$refs.table.initSort();
+
+      // Visual notification
+      event.target.closest('tr').classList.remove('is-selected');
+      this.swappedRows(this.draggingRow.id, row.id);
+    },
+
+    /**
+     * Called when row is dragged over another row.
+     *
+     * @param {object} event
+     * @return {void}
+     */
+    dragOver({ event }) {
+      event.dataTransfer.dropEffect = 'copy';
+      event.target.closest('tr').classList.add('is-selected');
+      event.preventDefault();
+    },
+
+    /**
+     * Called when row is finished dragging over another row.
+     *
+     * @param {object} event
+     * @return {void}
+     */
+    dragLeave({ event }) {
+      event.target.closest('tr').classList.remove('is-selected');
+      event.preventDefault();
+    },
 
   }
 }
