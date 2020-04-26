@@ -9,6 +9,11 @@
 
       <!-- Top Right Content -->
       <div class="level-right">
+        <div class="level-item">
+          <b-button @click="closeRows" :disabled="closeDisabled">
+            Condense Rows
+          </b-button>
+        </div>
         <div class="level-item" v-if="swapDispatch">
           <order-buttons
             :upDisabled="upDisabled"
@@ -23,13 +28,20 @@
 
     <!-- Table -->
     <b-table
+      ref="table"
       :columns="columns" :data="data"
       :selected.sync="internalSelected"
       :opened-detailed="openedRows"
       :show-detail-icon="true"
+      :rowClass="(row) => `row-${row.id}`"
       @dblclick="toggleRow"
-      hoverable striped
-      detailed detail-key="id"
+      @details-open="openRow"
+      :sticky-header="stickyHeaders"
+      :default-sort="sortColumn"
+      hoverable
+      striped
+      detailed
+      detail-key="id"
     >
       <slot slot-scope="props" v-bind="props"></slot>
       <slot slot="detail" name="detail" slot-scope="props" v-bind="props"></slot>
@@ -41,6 +53,11 @@
   </article>
 </template>
 
+<style scoped>
+body {
+  scroll-behavior: smooth;
+}
+</style>
 
 <script>
 import Vue from 'vue';
@@ -53,10 +70,14 @@ export default {
   },
 
   props: {
-    columns      : Array[Object],
-    data         : Array[Object],
-    selected     : Object,
-    swapDispatch : String
+    columns       : Array[Object],
+    data          : Array[Object],
+    selected      : Object,
+    swapDispatch  : String,
+    stickyHeaders : {
+      type    : Boolean,
+      default : false
+    }
   },
 
   computed: {
@@ -97,12 +118,22 @@ export default {
      */
     downDisabled() {
       return this.data.length && this.selectedId >= this.data.length - 1;
+    },
+
+    /**
+     * Are any rows opened?
+     *
+     * @return {boolean}
+     */
+    closeDisabled() {
+      return this.openedRows.length <= 0;
     }
   },
 
   data() {
     return {
-      openedRows: []
+      openedRows: [],
+      sortColumn: 'id'
     };
   },
 
@@ -123,6 +154,9 @@ export default {
       this.$store.dispatch(this.swapDispatch, {
         fromId: id, toId: id + direction
       });
+
+      this.closeRows();
+      this.$refs.table.initSort();
     },
 
     /**
@@ -130,11 +164,11 @@ export default {
      *
      * @return {void}
      */
-    toggleRow({ id }) {
-      if (this.openedRows.includes(id))
-        this.closeRow(id);
-      else
-        this.openRow(id);
+    toggleRow(row) {
+      if (this.openedRows.includes(row.id))
+        return this.closeRow(row);
+
+      this.openRow(row);
     },
 
     /**
@@ -143,8 +177,14 @@ export default {
      * @param {number} id
      * @return {void}
      */
-    openRow(id) {
-      this.openedRows.push(id);
+    openRow(row) {
+      this.internalSelected = row;
+      this.openedRows.push(row.id);
+
+      this.$nextTick(() => {
+        const $el = document.querySelector(`.row-${row.id}`);
+        $el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     },
 
     /**
@@ -153,10 +193,19 @@ export default {
      * @param {number} id
      * @return {void}
      */
-    closeRow(id) {
+    closeRow({ id }) {
       const index = this.openedRows.indexOf(id);
       if (typeof index == 'number')
         Vue.delete(this.openedRows, index);
+    },
+
+    /**
+     * Close all rows with visible details.
+     *
+     * @return {void}
+     */
+    closeRows() {
+      this.openedRows = [];
     }
 
   }
