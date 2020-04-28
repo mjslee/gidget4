@@ -1,6 +1,6 @@
 <template>
-  <article>
-    <section class="goals" v-for="(goal, i) in goals" :key="`goal-${i}`">
+  <article class="goals">
+    <section class="goal" v-for="(goal, i) in goals" :key="`goal-${i}`">
       <template v-if="(goal.args)">
         <!-- Completion -->
         <b-icon
@@ -22,33 +22,28 @@
         />
 
         <!-- Equals Assertion -->
-        <span v-if="goal.assert == 'equal' || goal.assert == 'equals'">
-          <assert-equals v-bind="goal" />
-        </span>
+        <goal :assert="goal.assert" :args="goal.args" />
       </template>
     </section>
   </article>
 </template>
 
 
-<style>
-.goals {
+<style scoped>
+.goal {
+  font-size: 0.9rem;
   font-family: monospace;
+  white-space: nowrap;
 }
 </style>
 
 
 <script>
-import GidgetValue from '../Content/Value'
-import AssertEquals from './AssertEquals';
+import Goal from './Goal';
 
 
 export default {
-  components: {
-    GidgetValue,
-    AssertEquals
-  },
-
+  components: { Goal },
 
   computed: {
     goals() {

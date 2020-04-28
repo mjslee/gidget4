@@ -16,20 +16,18 @@
         {{ props.row.id }}
       </b-table-column>
 
-      <!-- Assertion Column -->
-      <b-table-column field="assert" label="Assertion" sortable>
-        {{ props.row.assert }}
-      </b-table-column>
-
       <!-- Arguments Column -->
-      <b-table-column field="args" label="Arguments" sortable>
-        {{ props.row.args }}
+      <b-table-column field="id" label="Goal" sortable>
+        <goal :assert="props.row.assert" :args="props.row.args" />
       </b-table-column>
     </template>
 
     <!-- Row Detail -->
-    <section slot="detail" slot-scope="props">
-      <goal-form class="card-content" v-bind.sync="props.row">
+    <template slot="detail" slot-scope="props">
+      <goal-form
+        v-bind:assert="props.row.assert"
+        v-bind:args="props.row.args"
+      >
         <switch-button
           slot="bottom-right"
           type="is-danger"
@@ -38,10 +36,16 @@
           Remove
         </switch-button>
       </goal-form>
-    </section>
+    </template>
 
   </order-table>
 </template>
+
+<style>
+.detail-container .level:last-child {
+  padding: 0;
+}
+</style>
 
 
 <script>
@@ -49,14 +53,16 @@ import OrderTable from '../Utilities/OrderTable';
 import SwitchButton from '../Utilities/SwitchButton';
 import GoalCreateButton from './GoalCreateButton';
 import GoalForm from './GoalForm';
+import Goal from './Goal';
 
 
 export default {
   components: {
     OrderTable,
     SwitchButton,
-    GoalCreateButton,
-    GoalForm
+    Goal,
+    GoalForm,
+    GoalCreateButton
   },
 
   computed: {

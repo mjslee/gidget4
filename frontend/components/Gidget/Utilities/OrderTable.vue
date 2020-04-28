@@ -51,10 +51,6 @@
       <slot slot-scope="props" v-bind="props"></slot>
       <slot slot="detail" name="detail" slot-scope="props" v-bind="props"></slot>
     </b-table>
-
-    <!-- Below Table Below Table -->
-
-
   </article>
 </template>
 

@@ -1,61 +1,23 @@
 <template>
-  <article>
-    <b-field grouped>
-      <b-field label="Assertion Type">
-        <!-- Assertions -->
-        <b-select placeholder="Select an assertion" v-model="internalAssert">
-          <option
-            v-for="assertion in availableAssertions"
-            :value="assertion.name"
-            :key="assertion.name"
-          >
-            {{ assertion.label }} ({{ assertion.symbol }})
-          </option>
-        </b-select>
-      </b-field>
-
-      <b-field label="Arguments">
-        <goal-input v-bind:assert="internalAssert" v-bind:args="internalArgs" />
-      </b-field>
-    </b-field>
-
-    <section class="level">
-      <!-- Completion -->
-      <div class="level-left">
-        <div class="level-item">
-          <b-button type="is-success" :disabled="!canComplete" @click="complete">
-            <template v-if="isCreating">Create Goal</template>
-            <template v-else>Apply Changes</template>
-          </b-button>
-        </div>
-        <slot name="bottom-left"></slot>
-      </div>
-
-      <!-- Actions -->
-      <div class="level-right">
-        <div class="level-item">
-          <b-switch type="is-warning" v-model="canReset"></b-switch>
-          <b-button type="is-warning" :disabled="!canReset" @click="reset">
-            Reset
-          </b-button>
-        </div>
-        <slot name="bottom-right"></slot>
-      </div>
-    </section>
-  </article>
+  <assert-equals-input v-model="internalArgs" v-if="assert == 'equals'" />
 </template>
 
+<style scoped>
+div, article, section, span {
+  font-family: monospace;
+  padding: 0.25rem;
+}
+</style>
 
 <script>
 import _ from 'lodash';
 import Vue from 'vue';
-import { assertions } from '@/assets/gidget/game/gidget-goal';
-import GoalInput from '../Inputs/GoalInput';
+import AssertEqualsInput from './AssertEqualsInput';
 
 
 export default {
   components: {
-    GoalInput
+    AssertEqualsInput
   },
 
   props: {
@@ -106,7 +68,7 @@ export default {
      * @return {string}
      */
     availableAssertions() {
-      return assertions;
+      return Object.values(assertions).filter((a) => typeof a == 'object');
     },
   },
 
