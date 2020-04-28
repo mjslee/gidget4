@@ -45,8 +45,9 @@ export default class {
         objectState[prop] = gameObject[prop];
     }
 
-    // Position should be the only object that needs to be saved
+    // Position and exposed should be the only object that needs to be saved
     objectState.position = gameObject.position;
+    objectState.exposed = gameObject.exposed;
     return objectState;
   }
 
@@ -74,10 +75,9 @@ export default class {
         gameObject[prop] = objectState[prop]
     }
 
-    // Update position's x and y individually to keep the variable reference
-    // TODO: Find out if this is still necessary with the new engine
-    gameObject.position.x = objectState.position.x
-    gameObject.position.y = objectState.position.y
+    // Update position and exposed
+    gameObject.position = objectState.position;
+    gameObject.exposed = objectState.exposed;
   }
 
   /**
@@ -187,15 +187,15 @@ export default class {
    *
    * @return {object} Map object of game objects.
    */
-  getObjectsMap(exposed=false) {
+  getObjectsMap(exposed=true) {
     const objectsMap = {}
 
     this.objects.forEach(obj => {
-      const name = obj.name
+      const name = obj.name;
 
       // If we have an 'exposed' object, we'll expose that object instead of self
       if (exposed && obj.hasOwnProperty('exposed'))
-        obj = obj.exposed
+        obj = obj.exposed;
 
       // Create object in results if it doesn't already exist
       if (typeof objectsMap[name] == 'undefined')
@@ -213,19 +213,6 @@ export default class {
     })
 
     return objectsMap
-  }
-
-  /**
-   * Gets a cloned map object of game objects without functions and without
-   * objects that will cause a loop.
-   *
-   * @return {object} Map object of game objects.
-   */
-  getObjectsSanitized() {
-    // TODO: Find a more native solution. Maybe using 'getObjectState'?
-    return _.cloneDeep(
-      _.omit(_.omitBy(this.getObjectsMap(), _.isFunction), ['world', 'object'])
-    )
   }
 
   /**
@@ -495,16 +482,16 @@ export default class {
    */
   gameTick() {
     // Clear hooks, so they're not re-ran on the next tick
-    this.hooks = []
+    this.hooks = [];
 
     this.objects.forEach((object) => {
       // Update fake getter properties
-      object.updateProps()
+      object.updateProps();
 
       // Call 'onTick' for each object that has it
       if (typeof object.onTick == 'function')
-        object.onTick.call(object)
-    })
+        object.onTick.call(object);
+    });
   }
 
   /**

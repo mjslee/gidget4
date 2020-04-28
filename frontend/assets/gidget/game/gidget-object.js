@@ -45,12 +45,10 @@ export default class {
 
     // Set default exposed getter methods
     this.exposed =  {
-      'get id'() {
-        return this.id;
-      },
-      'get position'() {
-        return JSON.parse(JSON.stringify(this.position));
-      }
+      'get id':       () => this.id,
+      'get energy':   () => this.energy,
+      'get layer':    () => this.layer,
+      'get position': () => JSON.parse(JSON.stringify(this.position))
     };
 
     // Merge base object and options

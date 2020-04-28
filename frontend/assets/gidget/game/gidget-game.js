@@ -84,7 +84,7 @@ export default class {
    */
   updateInitialState() {
     this.initialState = this.world.getState();
-    this.initialData = this.world.getObjectsSanitized();
+    this.initialData = this.world.getObjectsMap();
   }
 
   /**
@@ -133,20 +133,17 @@ export default class {
     let step = this.stepper.steps[index - 1];
 
     if (step && step.data && !step.gameData) {
-      const objects = this.world.getObjectsSanitized();
+      const objects = this.world.getObjectsMap(true);
       step.gameData = Object.assign(_.cloneDeep(step.data), objects);
-
-      const exposed = this.getExposed();
-      step.exposedData = Object.assign(_.cloneDeep(step.data), exposed);
     }
 
     // If there is no step, we should create a fake step that contains the data
     // for a reset
     if (!step)
-      step = { gameData: _.cloneDeep(this.initialData) };
+      step = { gameData: this.initialData };
 
     // Return the step for further processing
-    return step;
+    return _.cloneDeep(step);
   }
 
   /**

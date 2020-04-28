@@ -158,7 +158,7 @@ export default {
      */
     getValueCompletions(cursor) {
       // Get evaluated code state
-      const state = this.$store.state.game.exposedData;
+      const state = this.$store.state.game.evalData;
       if (!state)
         return;
 

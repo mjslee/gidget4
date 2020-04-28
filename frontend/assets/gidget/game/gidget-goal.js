@@ -3,7 +3,6 @@ import { typeofLiteral } from './gidget-utility';
 
 export const assertions = {
   // Equals
-  equal  : 'equals',
   equals : {
     name   : 'equals',
     label  : 'Equals',
@@ -14,11 +13,15 @@ export const assertions = {
   // Greater Than
 };
 
+/**
+ * [TODO:description]
+ *
+ * @function getAssertion
+ * @param {[TODO:type]} assert - [TODO:description]
+ * @return {[TODO:type]} [TODO:description]
+ */
 export const getAssertion = (assert) => {
-  let assertion = assertions[assert];
-  while (typeof assertion == 'string')
-    assertion = assertions[assertion];
-  return assertion;
+  return assertions[assert];
 };
 
 export default class {
