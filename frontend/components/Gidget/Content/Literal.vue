@@ -1,29 +1,27 @@
 <template>
-  <span @click="active = !active">
-    <highlight :value="value" />
-    <popover v-if="active" :active.sync="active" :element="this.$el">
-      hello
+  <span>
+    <a @click="isPopoverActive = !isPopoverActive">
+      <highlight :value="value" />
+    </a>
+
+    <popover :active.sync="isPopoverActive" :element="$el">
+      <markdown :value="definition" />
     </popover>
   </span>
 </template>
 
 
-<style scoped>
-span {
-  cursor: pointer;
-}
-</style>
-
-
 <script>
 import Highlight from './Highlight';
 import Popover from './Popover';
-
+import Explorer from './Explorer';
+import Markdown from './Markdown';
+import StringDefinition from '@/assets/gidget/game/definitions/string.js';
 
 export default {
   name: 'Literal',
 
-  components: { Highlight, Popover },
+  components: { Highlight, Popover, Explorer, Markdown },
 
   props: {
     value: Array | Object | String | Boolean | Number
@@ -31,7 +29,8 @@ export default {
 
   data() {
     return {
-      active: false
+      isPopoverActive: false,
+      definition: StringDefinition
     }
   }
 }

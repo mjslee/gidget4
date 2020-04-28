@@ -17,7 +17,7 @@
       <div class="media">
         <!-- Text -->
         <div class="media-content">
-          <gidget-text :value="text" />
+          <markdown :value="text" />
         </div>
 
         <div class="media-right">
@@ -86,14 +86,14 @@
 
 <script>
 import GidgetValue from '../Content/Value';
-import GidgetText from '../Content/Text';
+import Markdown from '../Content/Markdown';
 import { SPRITE_PATH } from '@/constants/paths';
 
 
 export default {
   components: {
     GidgetValue,
-    GidgetText
+    Markdown
   },
 
   watch: {

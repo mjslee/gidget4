@@ -18,7 +18,7 @@
 
       <!-- Text Column -->
       <b-table-column field="message" label="Message" sortable>
-        {{ props.row.text }}
+        <markdown :value="props.row.text" />
       </b-table-column>
     </template>
 
@@ -44,6 +44,7 @@ import OrderTable from '../Utilities/OrderTable';
 import SwitchButton from '../Utilities/SwitchButton';
 import DialogueCreateButton from './DialogueCreateButton';
 import DialogueForm from './DialogueForm';
+import Markdown from '../Content/Markdown';
 
 
 export default {
@@ -51,7 +52,8 @@ export default {
     OrderTable,
     SwitchButton,
     DialogueCreateButton,
-    DialogueForm
+    DialogueForm,
+    Markdown
   },
 
   computed: {
