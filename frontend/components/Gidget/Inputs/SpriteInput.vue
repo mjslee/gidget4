@@ -2,7 +2,14 @@
   <article>
     <!-- Search -->
     <b-field>
-      <b-input placeholder="Search..." icon="magnify" v-model="searchQuery" />
+      <b-input
+        v-model="query"
+        placeholder="Search..."
+        icon="magnify"
+        :icon-right="query.length ? 'close-circle' : ''"
+        icon-right-clickable
+        @icon-right-click="query = ''"
+      />
     </b-field>
 
     <!-- Sprites -->
@@ -48,14 +55,9 @@ article {
 
 <script>
 export default {
-
   props: {
     value   : String,
     sprites : Array
-  },
-
-  mounted() {
-
   },
 
   computed: {
@@ -65,8 +67,8 @@ export default {
      * @return {array}
      */
     filteredSprites() {
-      if (typeof this.search == 'string' && this.search.length > 0)
-        return this.sprites.filter(s => s.title.includes(this.search));
+      if (typeof this.query == 'string' && this.query.length > 0)
+        return this.sprites.filter(s => s.title.includes(this.query));
       else
         return this.sprites;
     },
@@ -83,9 +85,8 @@ export default {
 
   data() {
     return {
-      searchQuery: '',
+      query: '',
     };
   }
-
 }
 </script>

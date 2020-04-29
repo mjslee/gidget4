@@ -10,8 +10,20 @@
 
     <div class="media-content">
       <b-tabs v-model="activeTab" type="is-toggle" expanded>
+        <!-- Sprite Tab -->
+        <b-tab-item label="Change Sprite" icon="image">
+          <div class="media-content">
+            <sprite-input
+              ref="sprite"
+              v-model="internalSprite"
+              :sprites="availableSprites"
+              @input="input"
+            />
+          </div>
+        </b-tab-item>
 
-        <b-tab-item label="Object Options" icon="settings">
+        <!-- Options Tab -->
+        <b-tab-item label="Object Options" icon="cog">
           <div class="media-content">
             <b-field grouped>
               <!-- Name -->
@@ -20,7 +32,11 @@
               </b-field>
 
               <!-- Mixins -->
-              <b-field label="Mixins" message="There's no way of finding out what a mixin does yet!" expanded>
+              <b-field
+                label="Mixins"
+                message="There's no way of finding out what a mixin does yet!"
+                expanded
+              >
                 <mixin-input ref="mixins" :value="mixins" @input="input" />
               </b-field>
             </b-field>
@@ -39,12 +55,6 @@
                 <strong>Blocking</strong>
               </b-switch>
             </b-field>
-          </div>
-        </b-tab-item>
-
-        <b-tab-item label="Change Sprite" icon="image">
-          <div class="media-content">
-            <sprite-input ref="sprite" v-model="internalSprite" :sprites="availableSprites" @input="input" />
           </div>
         </b-tab-item>
       </b-tabs>
