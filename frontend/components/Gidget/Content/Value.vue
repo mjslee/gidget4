@@ -1,225 +1,79 @@
 <template>
-  <v-popover class="popover">
-    <template v-if="inTemplate && !isIdentifier">
+  <span>
+    <a @click="isActive = !isActive">
+      <highlight :value="value" />
+    </a>
 
-      <!-- GameObjects -->
-      <span v-if="type === 'GameObject'">
-        <img class="image is-24x24 is-inline-block" :src="image" />
-      </span>
-
-      <!-- Array -->
-      <span v-else-if="type === 'Array'">
-        &#91;
-        <span v-for="(element, i) in value" :key="i">
-          <GidgetValue :code="element" />
-          <span v-if="i + 1 < value.length">, </span>
-        </span>
-        &#93;
-      </span>
-
-    </template>
-    <span v-html="highlightedHTML" v-else></span>
-
-    <!-- Popover -->
-    <!-- <Popover
-         slot="popover"
-         v-if="type !== 'Array'"
-         :identifier="identifier || (isIdentifier ? code : '')"
-         :value="value"
-         :type="type"
-         v-model="value"
-         /> -->
-  </v-popover>
+    <popover v-if="isActive" :active.sync="isActive" :element="$el">
+      <insight :identifier="identifier" :value="evalValue || value" />
+      {{ value }}: {{ evalValue }}
+    </popover>
+  </span>
 </template>
 
 
-<style scoped>
-.popover {
-  display: inline-block;
-  cursor: pointer;
-}
-
-span:hover {
-  text-decoration: underline;
-}
-</style>
-
-
 <script>
-import { SPRITE_PATH } from '@/constants/paths'
-import Popover from './Popover'
-import hljs from 'highlight.js'
-
+import _ from 'lodash';
+import Highlight from './Highlight';
+import Popover from './Popover';
+import Insight from './Insight';
 
 export default {
-  name: 'GidgetValue',
+  name: 'Value',
 
+  components: { Highlight, Popover },
 
   props: {
-    identifier: String,
-    code: Array | Object | String | Boolean | Number
-  },
-
-
-  components: {
-    Popover
-  },
-
-
-  data() {
-    return {
-      seconds: 0,
-      inTemplate: false,
-      interval: undefined,
-      type: 'undefined',
-      value: 'undefined'
-    };
-  },
-
-
-  mounted() {
-    this.updateValue();
+    value: Array | Object | String | Boolean | Number
   },
 
   computed: {
     /**
-     * Determine if code is an identifier.
+     * Determine if value is an identifier.
      *
      * @return {boolean}
      */
-    isIdentifier() {
-      // Non-strings can never be identifiers
-      if (typeof this.code != 'string')
-        return false;
+    identifier() {
+      // Non-strings are not identifiers
+      if (typeof this.value != 'string')
+        return undefined;
 
-      // Avoid non-identifiers
-      if (this.code === 'true' || this.code === 'false' ||
-          this.code === 'undefined' || this.code === 'null')
-        return false;
+      // Avoid false-positive identifiers
+      if (
+        this.value == 'true' || this.value == 'false' ||
+        this.value == 'null' || this.value == 'undefined'
+      )
+        return undefined;
 
       // Test against identifier pattern
-      return /^[\w\[\]\.]+$/.test(this.code);
+      if (/^[\w\[\]\.]+$/.test(this.value))
+        return this.value;
     },
 
-
     /**
-     * Use highlight.js for syntax highlighting.
+     * [TODO:description]
      *
-     * return {string}
+     * @return {[TODO:type]} [TODO:description]
      */
-    highlightedHTML() {
-      let result = this.isIdentifier ? this.code : this.value || this.code;
-
-      if (typeof result != 'string') {
-        // Stringify non-strings
-        try {
-          result = JSON.stringify(result);
-        }
-        catch {  // Blocks circular JSON error
-          result = '[circ]';
-        }
-      }
-
-      return hljs.highlight('javascript', result || 'undefined').value;
-    },
-
-
-    /**
-     * Get path of GameObject's sprite.
-     *
-     * @return {string}
-     */
-    image() {
-      return SPRITE_PATH + this.value.image;
-    },
-  },
-
-
-  methods: {
-    /**
-     * Update value prop.
-     *
-     * Do NOT use this as a computed value. Since every time the evaldata store
-     * is updated (and we're talking about ANY value in the code store), the
-     * value will be updated and a bunch of unnecessary work will be done that
-     * will bog down the game fluidity.
-     *
-     * @return {any}
-     */
-    updateValue() {
-      // Identifiers can have evaluated data
-      if (this.isIdentifier)
-        this.value = this.$store.getters['game/getValue'](this.code);
-
-      // Non-identifiers won't have evaluated data
-      else
-        this.value = this.code;
-
-      // Set type of value
-      this.type = typeof this.value;
-
-      // Special cases below
-      if (this.type !== 'object')
+    evalValue() {
+      if (!this.identifier)
         return;
 
-      // Go through each object type
-      return this.isPosition() || this.isGameObject() || this.isArray();
+      return _.get(this.$store.state.game.evalData, this.value);
     },
 
+    insightData() {
+      return {
+        identifier: this.identifier,
+        value: this.evalValue || this.value
+      }
+    }
+  },
 
-    /**
-     * Determine if value is of the pseudo-type: Position.
-     * Set type and value when true.
-     *
-     * this.value -> in  -> { x: 0, y: 1 }
-     * this.value -> out -> [0, 1]
-     *
-     * @return {array}
-     */
-    isPosition() {
-      if (typeof this.value.x == 'undefined' ||
-          typeof this.value.y == 'undefined')
-        return false;
-
-      this.type = 'Position';
-      this.value = '[ ' + this.value.x + ', ' + this.value.y + ' ]';
-      return true;
-    },
-
-
-    /**
-     * Determine if value is of the pseudo-type: GameObject.
-     * Set type and value when true.
-     *
-     * @return {boolean}
-     */
-    isGameObject() {
-      if (typeof this.value.name === 'undefined')
-        return false;
-
-      this.type = 'GameObject';
-      this.inTemplate = true;
-      return true;
-    },
-
-
-    /**
-     * Determine if value is of the pseudo-type: Position.
-     * Set type and value when true.
-     *
-     * this.value -> in  -> { x: 0, y: 1 }
-     * this.value -> out -> [0, 1]
-     *
-     * @return {array}
-     */
-    isArray() {
-      if (!Array.isArray(this.value))
-        return false;
-
-      this.type = 'Array';
-      this.inTemplate = true;
-      return true;
-    },
+  data() {
+    return {
+      isActive: false
+    }
   }
 }
 </script>

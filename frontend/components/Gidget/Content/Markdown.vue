@@ -23,7 +23,7 @@ export default {
   },
 
   beforeCreate: function () {
-    this.literalComponent = require('./Literal').default;
+    this.valueComponent = require('./Value').default;
   },
 
   created() {
@@ -56,17 +56,17 @@ export default {
     },
 
     /**
-     * Create dynamic component of markdown elements and Literal components.
+     * Create dynamic component of markdown elements and Value components.
      *
      * @return {component}
      */
     component() {
-      const template = '<Literal value="$1" />';
+      const template = '<Value value="$1" />';
       const pattern  = /\[\[(.*?)\]\]/gm;  // Captures [[TEXT_HERE]]
       const contents = this.markdownHtml.replace(pattern, template);
 
       return {
-        components: { Literal: this.literalComponent },
+        components: { Value: this.valueComponent },
         template: '<div>' + contents + '</div>'
       };
     }

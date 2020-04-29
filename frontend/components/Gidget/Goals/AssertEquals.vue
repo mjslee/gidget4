@@ -1,18 +1,18 @@
 <template>
   <span>
-    <Literal :value="args[0]" />
+    <Value :value="args[0]" />
     <span class="is-operator">==</span>
-    <Literal :value="args[1]" />
+    <Value :value="args[1]" />
   </span>
 </template>
 
 
 <script>
-import Literal from '../Content/Literal';
+import Value from '../Content/Value';
 
 export default {
   components: {
-    Literal
+    Value
   },
 
   props: {
