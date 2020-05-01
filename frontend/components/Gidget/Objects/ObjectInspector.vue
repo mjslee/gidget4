@@ -8,34 +8,34 @@
       <tbody>
         <tr>
           <th>ID</th>
-          <td><GidgetValue identifier="ID" :code="id" /></td>
+          <td><Value :value="id" /></td>
         </tr>
         <tr>
           <th>Name</th>
-          <td><GidgetValue identifier="Name" :code="`'${name}'`" /></td>
+          <td><Value :value="`'${name}'`" /></td>
         </tr>
         <tr>
           <th>Energy</th>
-          <td><GidgetValue identifier="Energy" :code="energy" /></td>
+          <td><Value :value="energy" /></td>
         </tr>
         <tr>
           <th>Layer</th>
-          <td><GidgetValue identifier="Layer" :code="layer" /></td>
+          <td><Value :value="layer" /></td>
         </tr>
         <tr>
           <th>Blocking</th>
-          <td><GidgetValue identifier="Blocking" :code="blocking" /></td>
+          <td><Value :value="blocking" /></td>
         </tr>
         <tr>
           <th>Position</th>
-          <td><GidgetValue identifier="Position" :code="position" /></td>
+          <td><Value :value="position" /></td>
         </tr>
         <tr>
           <th>Grabbed</th>
           <td>
             &#91;
             <span v-for="(grabbedObj, i) in grabbed" :key="grabbedObj.id">
-              <GidgetValue :code="grabbedObj" />
+              <Value :code="grabbedObj" />
               <span v-if="i + 1 < grabbed.length">, </span>
             </span>
             &#93;
@@ -67,12 +67,12 @@ th {
 
 <script>
 import { SPRITE_PATH } from '@/constants/paths'
-import GidgetValue from '../Content/Value'
+import Value from '../Content/Value'
 
 
 export default {
   components: {
-    GidgetValue
+    Value
   },
 
   props: {

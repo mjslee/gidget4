@@ -1,7 +1,7 @@
 import JsStepper     from '@/assets/gidget/lang/js-stepper';
 import GidgetWorld   from './gidget-world';
 import GidgetImports from './imports';
-import GidgetGoal    from './gidget-goal';
+import GidgetGoal    from './gidget-assert';
 
 
 export default class {
@@ -192,7 +192,7 @@ export default class {
    * @param {object} extraImports - Imports to expose.
    * @return {object} Object of game objects.
    */
-  getExposed() {
+  getExposedData() {
     // Object to collect imports
     const exposed = {};
 
@@ -231,7 +231,7 @@ export default class {
    */
   run(code) {
     // Run stepper with the code and the exposed game objects and imports
-    const result = this.stepper.run(code, this.getExposed());
+    const result = this.stepper.run(code, this.getExposedData());
 
     // Runtime error
     if (typeof result.error == 'object')
@@ -292,7 +292,7 @@ export default class {
    */
   validateGoals(data=undefined) {
     if (!data)
-      data = this.getExposed();
+      data = this.getExposedData();
 
     const goalValues = this.goals.map((goal) => goal.validate(data));
     const success = this.goals.every((goal) => goal.isComplete);

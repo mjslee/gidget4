@@ -7,7 +7,7 @@
     </div>
 
     <!-- Code Insight Popover -->
-    <popover v-if="isPopoverActive" :active.sync="isPopoverActive" :element="popoverElement">
+    <popover v-if="isActive" :active.sync="isActive" :element="popoverElement">
       {{ $store.getters['game/getValue'](popoverTokens) }}
     </popover>
 
@@ -125,7 +125,7 @@ export default {
       ],
       popoverTokens   : [],
       popoverElement  : undefined,
-      isPopoverActive : false,
+      isActive : false,
     };
   },
 
@@ -165,8 +165,8 @@ export default {
       if (target != this.popoverElement && isCodeElement) {
         this.popoverTokens   = this.getActiveTokens();
         this.popoverElement  = target;
-        this.isPopoverActive = false;
-        this.$nextTick(() => this.isPopoverActive = true);
+        this.isActive = false;
+        this.$nextTick(() => this.isActive = true);
       }
 
       // Unset popover
@@ -180,7 +180,7 @@ export default {
      * @return {void}
      */
     hidePopover() {
-      this.isPopoverActive = false;
+      this.isActive = false;
       this.popoverTokens   = [];
       this.popoverElement  = undefined;
     },

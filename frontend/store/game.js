@@ -72,24 +72,11 @@ export const mutations = {
   /**
    * Set evaluation data from stepper.
    *
-   * TODO: Go through data and only update data that has changed to prevent
-   *       unnecessary component updates.
-   *
    * @return {object} data
    * @return {void}
    */
   setEvalData(state, data) {
     Vue.set(state, 'evalData', data);
-  },
-
-  /**
-   * Set exposed data from stepper.
-   *
-   * @return {object} data
-   * @return {void}
-   */
-  setExposedData(state, data) {
-    Vue.set(state, 'exposedData', _.cloneDeep(data));
   },
 
   /**
@@ -169,8 +156,7 @@ export const actions = {
    */
   createGame({ state, commit }, data) {
     __game = Vue.observable(new GidgetGame(data || state.initialData));
-    commit('setEvalData', __game.world.getObjectsSanitized());
-    commit('setExposedData', __game.getExposed());
+    commit('setEvalData', __game.world.getObjectsMap());
     commit('reloadGame');
 
     if (module.hot)
@@ -240,10 +226,6 @@ export const actions = {
     // Complete evaluation data
     if (typeof step.gameData == 'object')
       commit('setEvalData', step.gameData);
-
-    // Exposed evaluation data
-    if (typeof step.exposedData == 'object')
-      commit('setExposedData', step.exposedData);
 
     return step;
   },

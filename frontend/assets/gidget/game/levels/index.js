@@ -1,8 +1,6 @@
-import Gidget3 from './gidget3'
-import Provost from './provost'
+import Level1 from './level1'
 
 
 export default {
-  Gidget3,
-  Provost
+  Level1,
 }

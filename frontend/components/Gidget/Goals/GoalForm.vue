@@ -49,7 +49,7 @@
 <script>
 import _ from 'lodash';
 import Vue from 'vue';
-import { assertions } from '@/assets/gidget/game/gidget-goal';
+import { assertions } from '@/assets/gidget/game/gidget-assert';
 import GoalInput from '../Inputs/GoalInput';
 
 

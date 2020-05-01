@@ -28,14 +28,8 @@
 
 
 <script>
-import Text from './Text';
-
 export default {
   name: 'Popover',
-
-  components: {
-    'gidget-text': Text
-  },
 
   props: {
     element: {
@@ -55,36 +49,16 @@ export default {
     }
   },
 
-  watch: {
-    /**
-     * Update popover position when attached element changes.
-     */
-    active() {
-      this.updatePosition();
-    },
-
-    /**
-     * Update popover position when attached element changes.
-     */
-    element() {
-      this.updatePosition();
-    }
-  },
-
   computed: {
     /*
      * Style attribute for popover element.
      */
     style() {
       return {
-        top  : this.top  + 'px',
-        left : this.left + 'px'
+        top:  this.top  + 'px',
+        left: this.left + 'px'
       };
     }
-  },
-
-  mounted() {
-    this.updatePosition();
   },
 
   data() {
@@ -103,29 +77,6 @@ export default {
     close() {
       this.$emit('update:active', false);
     },
-
-    /**
-     * Update position of popover element.
-     *
-     *
-     * @return {void}
-     */
-    updatePosition() {
-      if (!this.element)
-        return;
-
-      // Boundaries of element that popover is attached to
-      const { left, bottom } = this.element.getBoundingClientRect();
-
-      // Set position
-      this.top  = bottom + 10;
-      this.left = left - 15;
-
-      // Ensure position is within client width
-      // if ((this.left + this.$el.offsetWidth) > this.innerWidth) {
-      //   this.left -= (this.left - this.inner);
-      // }
-    }
   }
 }
 </script>
