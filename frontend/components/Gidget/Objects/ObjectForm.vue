@@ -12,7 +12,7 @@
       <b-tabs v-model="activeTab" type="is-toggle" expanded>
         <!-- Sprite Tab -->
         <b-tab-item label="Change Sprite" icon="image">
-          <div class="media-content">
+          <div class="media-content" v-if="activeTab == 0">
             <sprite-input v-model="props.sprite" :sprites="sprites" />
           </div>
         </b-tab-item>
@@ -151,7 +151,7 @@ export default {
 
   data() {
     return {
-      activeTab: 0
+      activeTab: 1
     };
   },
 }

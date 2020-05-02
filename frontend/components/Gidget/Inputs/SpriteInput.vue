@@ -18,7 +18,7 @@
       <div
         class="column is-one-quarter"
         v-for="[sprite, src] in filteredSprites"
-        :key="name"
+        :key="sprite"
       >
         <b-tooltip :label="sprite">
           <button
