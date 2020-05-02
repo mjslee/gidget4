@@ -13,20 +13,20 @@
     </b-field>
 
     <!-- Sprites -->
-    <!-- TODO: Lazy render sprites -->
+    <!-- TODO: Lazy rendering (maybe with vue-virtual-scroller) -->
     <section class="columns is-multiline is-mobile">
       <div
         class="column is-one-quarter"
-        v-for="sprite in filteredSprites"
+        v-for="[sprite, src] in filteredSprites"
         :key="name"
       >
-        <b-tooltip :label="sprite[0]">
+        <b-tooltip :label="sprite">
           <button
-            @click="newValue = sprite[0]"
-            :class="newValue == sprite[0] ? 'button is-primary is-active' : 'button'"
+            @click="$emit('input', sprite)"
+            :class="value == sprite ? 'button is-primary is-active' : 'button'"
           >
             <figure class="image is-64x64">
-              <img :src="sprite[1]" :alt="sprite[0]" />
+              <img :src="src" :alt="sprite" />
             </figure>
           </button>
         </b-tooltip>
@@ -38,18 +38,15 @@
 
 
 <style scoped>
-article {
-  overflow-x: hidden;
-}
-
 .button {
   height: auto;
 }
 
 .columns {
-  overflow: visible;
+  padding-top: 2rem;
   max-height: 20rem;
   width: 100%;
+  overflow-y: scroll
 }
 
 .column {
