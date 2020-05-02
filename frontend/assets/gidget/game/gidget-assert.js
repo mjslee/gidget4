@@ -2,30 +2,53 @@ import _ from 'lodash';
 import { typeofLiteral } from './gidget-utility';
 
 export const assertions = {
-  // Equals
   equal: {
     name:   'equal',
     label:  'Equal',
     symbol: '==',
     func:   (val1, val2) => _.isEqual(val1, val2),
   },
-};
 
-/**
- * [TODO:description]
- *
- * @function getAssertion
- * @param {[TODO:type]} assert - [TODO:description]
- * @return {[TODO:type]} [TODO:description]
- */
-export const getAssertion = (assert) => {
-  return assertions[assert];
+  notEqual: {
+    name:   'notEqual',
+    label:  'Not Equal',
+    symbol: '!=',
+    func:   (val1, val2) => !_.isEqual(val1, val2),
+  },
+
+  greaterThan: {
+    name:   'greaterThan',
+    label:  'Greater Than',
+    symbol: '>',
+    func:   (val1, val2) => val1 > val2,
+  },
+
+  greaterThanOrEqual: {
+    name:   'greaterThanOrEqual',
+    label:  'Greater Than or Equal',
+    symbol: '<=',
+    func:   (val1, val2) => val1 >= val2,
+  },
+
+  lessThan: {
+    name:   'lessThan',
+    label:  'Less Than',
+    symbol: '<',
+    func:   (val1, val2) => val1 < val2,
+  },
+
+  lessThanOrEqual: {
+    name:   'lessThanOrEqual',
+    label:  'Less Than or Equal',
+    symbol: '<=',
+    func:   (val1, val2) => val1 <= val2,
+  },
 };
 
 
 export default class {
   /**
-   *
+   * GidgetAssert constructor.
    */
   constructor({ assert, args, complete=undefined, incomplete=undefined }) {
     Object.assign(this, { assert, args, complete, incomplete });
@@ -36,14 +59,19 @@ export default class {
   }
 
   /**
+   * Reset the assertion by setting completion flag to undefined.
    *
+   * @return {void}
    */
   reset() {
-    this.isCompleted = undefined;
+    this.isComplete = undefined;
   }
 
   /**
+   * Validate the assertion and set its completion flag.
    *
+   * @param {object} data - Exposed data to validate identifiers from.
+   * @return {object} 
    */
   validate(data) {
     const assertion = assertions[this.assert];
