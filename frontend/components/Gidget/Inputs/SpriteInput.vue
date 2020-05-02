@@ -6,22 +6,27 @@
         v-model="query"
         placeholder="Search..."
         icon="magnify"
-        :icon-right="query.length ? 'close-circle' : ''"
+        :icon-right="query ? 'close-circle' : ''"
         icon-right-clickable
         @icon-right-click="query = ''"
       />
     </b-field>
 
     <!-- Sprites -->
+    <!-- TODO: Lazy render sprites -->
     <section class="columns is-multiline is-mobile">
-      <div v-for="sprite in filteredSprites" :key="sprite.title" class="column is-one-quarter">
-        <b-tooltip :label="sprite.title">
+      <div
+        class="column is-one-quarter"
+        v-for="sprite in filteredSprites"
+        :key="name"
+      >
+        <b-tooltip :label="sprite[0]">
           <button
-            @click="newValue = sprite.title"
-            :class="newValue == sprite.title ? 'button is-primary is-active' : 'button'"
+            @click="newValue = sprite[0]"
+            :class="newValue == sprite[0] ? 'button is-primary is-active' : 'button'"
           >
             <figure class="image is-64x64">
-              <img :src="sprite.src" :alt="sprite.title" />
+              <img :src="sprite[1]" :alt="sprite[0]" />
             </figure>
           </button>
         </b-tooltip>
@@ -56,8 +61,8 @@ article {
 <script>
 export default {
   props: {
-    value   : String,
-    sprites : Array
+    value: String,
+    sprites: Object
   },
 
   computed: {
@@ -67,26 +72,21 @@ export default {
      * @return {array}
      */
     filteredSprites() {
-      if (typeof this.query == 'string' && this.query.length > 0)
-        return this.sprites.filter(s => s.title.includes(this.query));
-      else
-        return this.sprites;
+      return this.query.length > 0
+        ? this.spriteArray.filter((sprite) => sprite[0].includes(this.query))
+        : this.spriteArray;
     },
 
-    newValue: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        this.$emit('input', value);
-      }
+    /**
+     * Sprites object entries.
+     *
+     * @return {object[array[string]]}
+     */
+    spriteArray() {
+      return Object.entries(this.sprites);
     }
   },
 
-  data() {
-    return {
-      query: '',
-    };
-  }
+  data: () => ({ query: '' })
 }
 </script>

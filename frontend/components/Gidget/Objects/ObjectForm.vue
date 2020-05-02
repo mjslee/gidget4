@@ -99,7 +99,7 @@ import FormMixin    from '../Utilities/FormMixin';
 import SwitchButton from '../Utilities/SwitchButton'
 import ObjectMover  from './ObjectMover';
 
-import { SpriteBaseUrl, ObjectSprites, SpriteExtension } from '@/constants/sprites';
+import { ObjectSprites, Sprite } from '@/constants/sprites';
 
 
 export default {
@@ -137,12 +137,7 @@ export default {
      * @return {array}
      */
     sprites() {
-      return ObjectSprites.map((sprite) => {
-        return {
-          title : sprite.title,
-          src   : SpriteBaseUrl + sprite.src
-        };
-      });
+      return ObjectSprites;
     },
 
     /**
@@ -151,7 +146,7 @@ export default {
      * @return {string}
      */
     spriteUrl() {
-      return SpriteBaseUrl + this.props.sprite + SpriteExtension;
+      return Sprite(this.props.sprite);
     }
   },
 
