@@ -4,7 +4,7 @@
       <img :src="spriteUrl" />
     </div>
     <div class="media-content">
-      <codemirror v-model="internalProps.text" :options="options" @input="canComplete = true" />
+      <codemirror v-model="props.text" :options="options" @input="canComplete = true" />
 
       <section class="level">
         <!-- Completion -->
@@ -35,14 +35,12 @@
 
 
 <script>
-import Vue from 'vue';
 import { codemirror } from 'vue-codemirror'
-import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
 
-import { SPRITE_PATH } from '@/constants/paths';
+import FormMixin from '../Utilities/FormMixin';
 import SpriteInput from '../Inputs/SpriteInput';
+import { SpriteBaseUrl, SpriteExtension } from '@/constants/paths';
 
 
 export default {
@@ -50,14 +48,18 @@ export default {
     codemirror
   },
 
+  mixins: [
+    FormMixin
+  ],
+
   props: {
-    isCreating : {
-      type    : Boolean,
-      default : false
+    isCreating: {
+      type: Boolean,
+      default: false
     },
 
-    text   : String,
-    sprite : String
+    text: String,
+    sprite: String
   },
 
   computed: {
@@ -65,71 +67,20 @@ export default {
      * Get url to left-side sprite if applicable.
      */
     spriteUrl() {
-      if (typeof this.internalProps.sprite == 'string')
-        return SPRITE_PATH + this.internalProps.sprite + '.png';
+      if (typeof this.props.sprite == 'string')
+        return SpriteBaseUrl + this.props.sprite + SpriteExtension;
     }
   },
 
   data() {
     return {
-      internalProps: {},
-
-      canComplete: false,
-      canReset: false,
-
-      // Editor
       options: {
-        tabSize:     2,
-        line:        true,
+        tabSize: 2,
+        line: true,
         lineNumbers: true,
         lineWrapping: true
       },
     };
   },
-
-  mounted() {
-    // Set internal props
-    for (let prop in this.$props) {
-      if (typeof prop == 'undefined')
-        continue;
-      Vue.set(this.internalProps, prop, this.$props[prop]);
-    }
-  },
-
-  methods: {
-    /*
-     * Complete changes to dialogue props.
-     * Emits @done.
-     *
-     * @return {void}
-     */
-    complete() {
-      // Emit prop updates from internal props
-      for (let prop in this.internalProps)
-        this.$emit(`update:${prop}`, this.internalProps[prop]);
-
-      this.canComplete = false;
-      this.$emit('done');
-    },
-
-    /*
-     * Reset internalProps to values of props.
-     * Emits @reset.
-     *
-     * @return {void}
-     */
-    reset() {
-      for (let prop in this.internalProps)
-        Vue.set(this.internalProps, prop, this.$props[prop]);
-
-      this.$nextTick(() => {
-        this.canReset = false;
-        this.canComplete = false;
-      });
-
-      this.$emit('reset');
-    },
-
-  }
 }
 </script>
