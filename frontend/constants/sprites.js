@@ -1,5 +1,5 @@
 export const SpriteBaseUrl = '/gidget/sprites/';
-
+export const SpriteExtension = '.png';
 
 export const ObjectSprites = [
   { title: 'apple',                    src: 'apple.png'                    },
