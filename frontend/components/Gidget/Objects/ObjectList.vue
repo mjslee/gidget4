@@ -33,7 +33,15 @@
 
     <!-- Row Detail -->
     <section slot="detail" slot-scope="props">
-      <object-form class="card-content" v-bind.sync="props.row" />
+      <object-form class="card-content" v-bind.sync="props.row">
+        <switch-button
+          slot="bottom-right"
+          type="is-danger"
+          @click="remove(props.row.id)"
+        >
+          Remove
+        </switch-button>
+      </object-form>
     </section>
 
   </order-table>

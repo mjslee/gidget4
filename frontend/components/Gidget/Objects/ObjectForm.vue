@@ -71,13 +71,12 @@
         <!-- Actions -->
         <div class="level-right">
           <div class="level-item">
-            <switch-button type="is-warning" @click="reset">Reset</switch-button>
+            <b-switch type="is-warning" v-model="canReset"></b-switch>
+            <b-button type="is-warning" :disabled="!canReset" @click="reset">
+              Reset
+            </b-button>
           </div>
-          <div class="level-item" v-if="!isCreating">
-            <switch-button slot="bottom-right" type="is-danger" @click="remove">
-              Remove
-            </switch-button>
-          </div>
+          <slot name="bottom-right"></slot>
         </div>
       </section>
     </div>
