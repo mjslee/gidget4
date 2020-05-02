@@ -1,5 +1,5 @@
 <template>
-  <assert-equals-input v-model="args" v-if="assert == 'equals'" />
+  <assert-equal-input v-model="args" v-if="assert == 'equal'" />
 </template>
 
 
@@ -12,12 +12,12 @@
 
 
 <script>
-import AssertEqualsInput from './AssertEqualsInput';
+import AssertEqualInput from './AssertEqualInput';
 
 
 export default {
   components: {
-    AssertEqualsInput
+    AssertEqualInput
   },
 
   props: {

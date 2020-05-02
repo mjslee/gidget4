@@ -5,15 +5,15 @@
     </div>
     <div class="level-item">
       <b-field label="that this" :label-position="labelPosition">
-        <b-input v-model="arg0" />
+        <b-input v-model="value[0]" />
       </b-field>
     </div>
     <div class="level-item">
       <span class="is-operator">==</span>
     </div>
     <div class="level-item">
-      <b-field label="equals this" :label-position="labelPosition">
-        <b-input v-model="arg1" />
+      <b-field label="is equal to this" :label-position="labelPosition">
+        <b-input v-model="value[1]" />
       </b-field>
     </div>
   </section>
@@ -21,12 +21,7 @@
 
 
 <script>
-import TwoArgumentsMixin from '../Utilities/TwoArgumentsMixin';
-
-
 export default {
-  mixins: [TwoArgumentsMixin],
-
   props: {
     value: {
       type: Array,
