@@ -1,7 +1,7 @@
 <template>
   <article class="media">
     <figure class="media-left">
-      <b-tooltip :label="internalSprite" position="is-bottom" always>
+      <b-tooltip :label="props.sprite" position="is-bottom" always>
         <div class="sprite image is-128x128">
           <img :src="spriteUrl" @click="activeTab = 0" />
         </div>
@@ -13,12 +13,7 @@
         <!-- Sprite Tab -->
         <b-tab-item label="Change Sprite" icon="image">
           <div class="media-content">
-            <sprite-input
-              ref="sprite"
-              v-model="internalSprite"
-              :sprites="availableSprites"
-              @input="input"
-            />
+            <sprite-input v-model="props.sprite" :sprites="sprites" />
           </div>
         </b-tab-item>
 
@@ -28,7 +23,7 @@
             <b-field grouped>
               <!-- Name -->
               <b-field label="Name">
-                <b-input ref="name" :value="name" @input="input" />
+                <b-input v-model="props.name" />
               </b-field>
 
               <!-- Mixins -->
@@ -37,21 +32,21 @@
                 message="There's no way of finding out what a mixin does yet!"
                 expanded
               >
-                <mixin-input ref="mixins" :value="mixins" @input="input" />
+                <mixin-input v-model="props.mixins" />
               </b-field>
             </b-field>
 
             <!-- Energy -->
             <b-field :addons="false">
               <label class="label">Energy <small>({{ energy }}%)</small></label>
-              <b-slider ref="energy" size="is-large" :value="energy" @input="input" rounded />
+              <b-slider size="is-large" v-model="props.energy" rounded />
             </b-field>
 
             <object-mover :has-move-buttons="false" :object="$props" />
 
             <!-- Blocking -->
             <b-field>
-              <b-switch ref="blocking" :value="blocking" @input="input">
+              <b-switch v-model="props.blocking">
                 <strong>Blocking</strong>
               </b-switch>
             </b-field>
@@ -104,28 +99,35 @@ import FormMixin    from '../Utilities/FormMixin';
 import SwitchButton from '../Utilities/SwitchButton'
 import ObjectMover  from './ObjectMover';
 
-import { SpriteBaseUrl, ObjectSprites } from '@/constants/sprites';
+import { SpriteBaseUrl, ObjectSprites, SpriteExtension } from '@/constants/sprites';
 
 
 export default {
-  components: { MixinInput, SwitchButton, ObjectMover, SpriteInput },
+  components: {
+    MixinInput,
+    SwitchButton,
+    ObjectMover,
+    SpriteInput
+  },
 
-  mixins: [FormMixin],
+  mixins: [
+    FormMixin
+  ],
 
   props: {
-    isCreating : {
-      type    : Boolean,
-      default : false
+    isCreating: {
+      type: Boolean,
+      default: false
     },
 
-    id       : Number,
-    name     : String,
-    type     : String,
-    energy   : Number,
-    mixins   : Array[String],
-    position : Object,
-    sprite   : String,
-    blocking : Boolean
+    id: Number,
+    name: String,
+    type: String,
+    energy: Number,
+    mixins: Array[String],
+    position: Object,
+    sprite: String,
+    blocking: Boolean
   },
 
   computed: {
@@ -134,7 +136,7 @@ export default {
      *
      * @return {array}
      */
-    availableSprites() {
+    sprites() {
       return ObjectSprites.map((sprite) => {
         return {
           title : sprite.title,
@@ -149,28 +151,14 @@ export default {
      * @return {string}
      */
     spriteUrl() {
-      return SpriteBaseUrl + this.internalSprite + '.png';
+      return SpriteBaseUrl + this.props.sprite + SpriteExtension;
     }
   },
 
   data() {
     return {
-      activeTab: 0,
-      updateKeys: ['name', 'mixins', 'energy', 'blocking', 'sprite'],
-      spriteInputVisible: false,
-      internalSprite: this.sprite
+      activeTab: 0
     };
   },
-
-  methods: {
-    /**
-     *
-     *
-     * @return {void}
-     */
-    remove() {
-      this.$store.dispatch('objects/removeObject', { id: this.id });
-    }
-  }
 }
 </script>
