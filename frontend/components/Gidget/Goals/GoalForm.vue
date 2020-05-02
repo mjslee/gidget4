@@ -3,9 +3,12 @@
     <b-field grouped>
       <b-field label="Assertion Type">
         <!-- Assertions -->
-        <b-select placeholder="Select an assertion" v-model="internalAssert">
+        <b-select
+          placeholder="Select an assertion"
+          v-model="props.assert"
+        >
           <option
-            v-for="assertion in availableAssertions"
+            v-for="assertion in assertions"
             :value="assertion.name"
             :key="assertion.name"
           >
@@ -15,7 +18,7 @@
       </b-field>
 
       <b-field label="Arguments">
-        <goal-input v-bind:assert="internalAssert" v-bind:args="internalArgs" />
+        <goal-input :assert.sync="props.assert" :args.sync="props.args" />
       </b-field>
     </b-field>
 
@@ -47,10 +50,9 @@
 
 
 <script>
-import _ from 'lodash';
-import Vue from 'vue';
+import GoalInput from './GoalInput';
+import FormMixin from '../Utilities/FormMixin';
 import { assertions } from '@/assets/gidget/game/gidget-assert';
-import GoalInput from '../Inputs/GoalInput';
 
 
 export default {
@@ -58,101 +60,29 @@ export default {
     GoalInput
   },
 
+  mixins: [
+    FormMixin
+  ],
+
   props: {
     isCreating : {
       type    : Boolean,
       default : false
     },
+
     assert : String,
     args   : Array
   },
 
   computed: {
     /**
-     * Internal counterpart to args prop.
-     *
-     * @param {Array[String]} value
-     * @return {Array[String]}
-     */
-    internalArgs: {
-      get() {
-        return this.internalArgsValue;
-      },
-      set(value) {
-        this.internalArgsValue = value;
-        this.canComplete       = true;
-      }
-    },
-
-    /**
-     * Internal counterpart to assert prop.
-     *
-     * @param {String} value
-     * @return {String}
-     */
-    internalAssert: {
-      get() {
-        return this.internalAssertValue;
-      },
-      set(value) {
-        this.internalAssertValue = value;
-        this.canComplete         = true;
-      }
-    },
-
-    /**
      * Array of all available assertion types.
      *
      * @return {string}
      */
-    availableAssertions() {
+    assertions() {
       return assertions;
     },
   },
-
-  data() {
-    return {
-      internalAssertValue: _.clone(this.$props.assert),
-      internalArgsValue:   _.clone(this.$props.args),
-
-      canComplete: false,
-      canReset:    false,
-    };
-  },
-
-  methods: {
-    /**
-     * Complete changes to dialogue props.
-     * Emits @done.
-     *
-     * @return {void}
-     */
-    complete() {
-      this.$emit('update:assert', this.internalAssert);
-      this.$emit('update:args',   this.internalArgs);
-
-      this.canComplete = false;
-      this.$emit('done');
-    },
-
-    /**
-     * Reset internalProps to values of props.
-     * Emits @reset.
-     *
-     * @return {void}
-     */
-    reset() {
-      this.internalAssert = _.clone(this.$props.assert);
-      this.internalArgs   = _.clone(this.$props.args);
-
-      this.$nextTick(() => {
-        this.canReset = false;
-        this.canComplete = false;
-      });
-
-      this.$emit('reset');
-    },
-
-  }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <!-- Equals Assertion -->
-  <span v-if="assert == 'equals'">
-    <assert-equals :args="args" />
+  <span v-if="assert == 'equal'">
+    <assert-equal :args="args" />
   </span>
 </template>
 
@@ -15,11 +15,11 @@ span {
 
 
 <script>
-import AssertEquals from './AssertEquals';
+import AssertEqual from './AssertEqual';
 
 export default {
   components: {
-    AssertEquals
+    AssertEqual
   },
 
   props: {

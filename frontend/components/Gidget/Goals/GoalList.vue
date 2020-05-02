@@ -25,8 +25,8 @@
     <!-- Row Detail -->
     <template slot="detail" slot-scope="props">
       <goal-form
-        v-bind:assert="props.row.assert"
-        v-bind:args="props.row.args"
+        :assert.sync="props.row.assert"
+        :args.sync="props.row.args"
       >
         <switch-button
           slot="bottom-right"
