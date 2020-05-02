@@ -5,48 +5,42 @@ import Vue from 'vue';
 export default {
   data() {
     return {
-      canReset    : false,
-      canComplete : false,
-      updateKeys  : []
+      props: this.$clone(this.$props),
+
+      canReset: false,
+      canComplete: false,
     }
+  },
+
+  mounted() {
+    this.watchProps();
   },
 
   methods: {
     /**
-     * To be called on input.
+     * Watch internal prop values and compare against $prop values.
+     * Set completion ability of form when values are different.
      *
      * @return {void}
      */
-    input() {
-      this.canComplete = true;
+    watchProps() {
+      Object.keys(this.props).forEach((prop) =>
+        this.$watch(() => this.props[prop], (value) =>
+          this.canComplete = !_.isEqual(this.$props[prop], value)
+        )
+      );
     },
 
     /**
-     * Emit a prop value update by ref and prop key.
-     * Prop and ref keys must be the same.
+     * Emit a prop value update.
      *
-     * @param {string} key
-     * @param {function} callback
-     * @return {boolean}
+     * @param {string} prop
+     * @return {void}
      */
-    change(key, callback) {
-      // Check if value changed
-      const ref = this.$refs[key];
-      if (!ref)
-        return false;
-
-      // Get newValue and run it through callback if its a function
-      let newValue = ref.newValue || ref.value1;
-      if (typeof callback == 'function')
-        newValue = callback(newValue);
-
-      // Ensure values are not the same
-      if (_.isEqual(newValue, this.$props[key]))
-        return false;
-
-      // Emit update
-      this.$emit(`update:${key}`, newValue);
-      return true;
+    emitUpdate(prop) {
+      const newValue = this.props[prop];
+      if (!_.isEqual(newValue, this.$props[prop]))
+        this.$emit(`update:${prop}`, this.$clone(newValue));
     },
 
     /**
@@ -56,13 +50,7 @@ export default {
      * @return {void}
      */
     complete() {
-      this.updateKeys.forEach((key) => {
-        if (typeof key == 'object')
-          this.change(key.key, key.value);
-        else
-          this.change(key);
-      });
-
+      Object.keys(this.props).forEach((prop) => this.emitUpdate(prop));
       this.canComplete = false;
       this.$emit('done');
     },
@@ -73,15 +61,12 @@ export default {
      * @return {void}
      */
     reset() {
-      this.updateKeys.forEach((key) => {
-        if (typeof key == 'object')
-          key = key.key;
+      this.props = this.$clone(this.$props);
 
-        this.$refs[key].newValue = this.$props[key];
+      this.$nextTick(() => {
+        this.canComplete = false;
+        this.canReset = false;
       });
-
-      this.canComplete = false;
-      this.canReset = false;
     }
   }
 };

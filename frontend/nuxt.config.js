@@ -41,6 +41,7 @@ export default {
   */
   plugins: [
     'plugins/vue-localstorage',
+    'plugins/vue-helpers',
   ],
 
   /*
