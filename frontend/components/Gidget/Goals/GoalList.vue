@@ -12,12 +12,12 @@
     <!-- Column Templates -->
     <template slot-scope="props">
       <!-- ID Column -->
-      <b-table-column field="id" label="#" sortable>
+      <b-table-column label="#" width="40" sortable>
         {{ props.row.id }}
       </b-table-column>
 
       <!-- Arguments Column -->
-      <b-table-column field="id" label="Goal" sortable>
+      <b-table-column label="Goal" sortable>
         <goal :assert="props.row.assert" :args="props.row.args" />
       </b-table-column>
     </template>

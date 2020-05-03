@@ -36,7 +36,6 @@
       :default-sort="sortColumn"
       :opened-detailed="openedRows"
       :show-detail-icon="true"
-      @dblclick="toggleRow"
       @details-open="openRow"
       @dragstart="dragStart"
       @drop="dragEnd"
@@ -71,13 +70,13 @@ export default {
   },
 
   props: {
-    columns       : Array[Object],
-    data          : Array[Object],
-    selected      : Object,
-    swapDispatch  : String,
-    stickyHeaders : {
-      type    : Boolean,
-      default : false
+    columns: Array[Object],
+    data: Array[Object],
+    selected: Object,
+    swapDispatch: String,
+    stickyHeaders: {
+      type: Boolean,
+      default: false
     }
   },
 

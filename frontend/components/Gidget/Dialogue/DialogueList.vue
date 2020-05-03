@@ -12,12 +12,12 @@
     <!-- Column Templates -->
     <template slot-scope="props">
       <!-- ID Column -->
-      <b-table-column field="id" label="#" sortable>
+      <b-table-column label="#" width="40" sortable>
         {{ props.row.id }}
       </b-table-column>
 
       <!-- Text Column -->
-      <b-table-column field="message" label="Message" sortable>
+      <b-table-column label="Message" sortable>
         <markdown :value="props.row.text" />
       </b-table-column>
     </template>

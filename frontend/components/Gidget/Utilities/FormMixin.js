@@ -8,7 +8,7 @@ export default {
       props: this.$clone(this.$props),
 
       canReset: false,
-      canComplete: false,
+      canComplete: false
     }
   },
 

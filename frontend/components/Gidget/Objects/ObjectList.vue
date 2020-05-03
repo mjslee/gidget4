@@ -14,12 +14,12 @@
     <!-- Column Templates -->
     <template slot-scope="props">
       <!-- ID Column -->
-      <b-table-column field="id" label="#" sortable>
+      <b-table-column label="#" width="40" sortable>
         {{ props.row.id }}
       </b-table-column>
 
       <!-- Name Column -->
-      <b-table-column field="name" label="Name" sortable>
+      <b-table-column label="Name" sortable>
         {{ props.row.name }}
       </b-table-column>
 
