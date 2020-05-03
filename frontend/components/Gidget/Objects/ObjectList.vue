@@ -32,17 +32,18 @@
     </template>
 
     <!-- Row Detail -->
-    <section slot="detail" slot-scope="props">
+    <template slot="detail" slot-scope="props">
       <object-form class="card-content" v-bind.sync="props.row">
         <switch-button
           slot="bottom-right"
+          class="level-item"
           type="is-danger"
           @click="remove(props.row.id)"
         >
           Remove
         </switch-button>
       </object-form>
-    </section>
+    </template>
 
   </order-table>
 </template>
@@ -57,14 +58,12 @@ import ObjectCreateButton from './ObjectCreateButton';
 
 
 export default {
-
   components: {
     OrderTable,
     SwitchButton,
     ObjectForm,
     ObjectCreateButton
   },
-
 
   computed: {
     /**
@@ -74,7 +73,6 @@ export default {
       return this.$store.getters['objects/getObjects'];
     },
   },
-
 
   data() {
     return {
@@ -94,6 +92,5 @@ export default {
       this.$store.dispatch('objects/removeObject', { id });
     }
   }
-
 }
 </script>

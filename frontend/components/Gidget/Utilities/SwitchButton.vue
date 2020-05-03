@@ -1,5 +1,5 @@
 <template>
-  <article class="level-item">
+  <article>
     <b-switch :type="type" v-model="canClick"></b-switch>
     <b-button :type="type" @click="click" :disabled="!canClick">
       <slot></slot>

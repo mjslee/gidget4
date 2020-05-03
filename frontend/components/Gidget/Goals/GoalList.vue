@@ -30,6 +30,7 @@
       >
         <switch-button
           slot="bottom-right"
+          class="level-item"
           type="is-danger"
           @click="remove(props.row.id)"
         >

@@ -53,11 +53,13 @@
   </article>
 </template>
 
+
 <style scoped>
-body {
-  scroll-behavior: smooth;
+/deep/ .detail-container {
+  padding: 0 !important;
 }
 </style>
+
 
 <script>
 import Vue from 'vue';

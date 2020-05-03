@@ -23,17 +23,18 @@
     </template>
 
     <!-- Row Detail -->
-    <section slot="detail" slot-scope="props">
+    <template slot="detail" slot-scope="props">
       <dialogue-form class="card-content" v-bind.sync="props.row">
         <switch-button
           slot="bottom-right"
+          class="level-item"
           type="is-danger"
           @click="remove(props.row.id)"
         >
           Remove
         </switch-button>
       </dialogue-form>
-    </section>
+    </template>
 
   </order-table>
 </template>

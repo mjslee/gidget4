@@ -20,12 +20,13 @@
 
         <!-- Actions -->
         <div class="level-right">
-          <div class="level-item">
-            <b-switch type="is-warning" v-model="canReset"></b-switch>
-            <b-button type="is-warning" :disabled="!canReset" @click="reset">
-              Reset
-            </b-button>
-          </div>
+          <switch-button
+            class="level-item"
+            type="is-warning"
+            @click="reset"
+          >
+            Reset
+          </switch-button>
           <slot name="bottom-right"></slot>
         </div>
       </section>
@@ -39,13 +40,15 @@ import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 
 import FormMixin from '../Utilities/FormMixin';
+import SwitchButton from '../Utilities/SwitchButton';
 import SpriteInput from '../Inputs/SpriteInput';
 import { SpriteBaseUrl, SpriteExtension } from '@/constants/paths';
 
 
 export default {
   components: {
-    codemirror
+    codemirror,
+    SwitchButton
   },
 
   mixins: [
@@ -77,7 +80,6 @@ export default {
       options: {
         tabSize: 2,
         line: true,
-        lineNumbers: true,
         lineWrapping: true
       },
     };
