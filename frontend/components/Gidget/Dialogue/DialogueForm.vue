@@ -4,18 +4,17 @@
       <img :src="spriteUrl" />
     </div>
     <div class="media-content">
-      <codemirror v-model="props.text" :options="options" @input="canComplete = true" />
+      <codemirror class="box" v-model="props.text" :options="options" @input="canComplete = true" />
 
       <section class="level">
         <!-- Completion -->
         <div class="level-left">
           <div class="level-item">
             <b-button type="is-success" :disabled="!canComplete" @click="complete">
-              <template v-if="isCreating">Create Dialogue</template>
-              <template v-else>Apply Changes</template>
+              {{ isCreating ? 'Create Dialogue' : 'Apply Changes' }}
             </b-button>
-            <slot name="bottom-left"></slot>
           </div>
+          <slot name="bottom-left"></slot>
         </div>
 
         <!-- Actions -->
@@ -33,6 +32,13 @@
     </div>
   </article>
 </template>
+
+
+<style scoped>
+.vue-codemirror {
+  padding: 0.5rem !important;
+}
+</style>
 
 
 <script>

@@ -58,12 +58,9 @@
         <!-- Completion -->
         <div class="level-left">
           <div class="level-item">
-            <section class="buttons">
-              <b-button type="is-success" :disabled="!canComplete" @click="complete">
-                <template v-if="isCreating">Create Object</template>
-                <template v-else>Apply Changes</template>
-              </b-button>
-            </section>
+            <b-button type="is-success" :disabled="!canComplete" @click="complete">
+              {{ isCreating ? 'Create Object' : 'Apply Changes' }}
+            </b-button>
           </div>
           <slot name="bottom-left"></slot>
         </div>

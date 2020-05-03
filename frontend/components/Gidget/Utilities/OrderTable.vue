@@ -54,13 +54,6 @@
 </template>
 
 
-<style scoped>
-/deep/ .detail-container {
-  padding: 0 !important;
-}
-</style>
-
-
 <script>
 import Vue from 'vue';
 import OrderButtons from './OrderButtons';

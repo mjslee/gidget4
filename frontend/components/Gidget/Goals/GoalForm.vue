@@ -27,8 +27,7 @@
       <div class="level-left">
         <div class="level-item">
           <b-button type="is-success" :disabled="!canComplete" @click="complete">
-            <template v-if="isCreating">Create Goal</template>
-            <template v-else>Apply Changes</template>
+            {{ isCreating ? 'Create Goal' : 'Apply Changes' }}
           </b-button>
         </div>
         <slot name="bottom-left"></slot>

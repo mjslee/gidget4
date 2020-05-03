@@ -24,7 +24,7 @@
 
     <!-- Row Detail -->
     <template slot="detail" slot-scope="props">
-      <dialogue-form class="card-content" v-bind.sync="props.row">
+      <dialogue-form v-bind.sync="props.row">
         <switch-button
           slot="bottom-right"
           class="level-item"

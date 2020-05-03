@@ -12,9 +12,6 @@
     <b-tab-item label="Goals" icon="flag">
       <goal-list />
     </b-tab-item>
-    <b-tab-item label="Goals" icon="flag">
-      <goal-list />
-    </b-tab-item>
   </b-tabs>
 </template>
 
