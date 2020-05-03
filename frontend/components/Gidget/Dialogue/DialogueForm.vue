@@ -4,7 +4,7 @@
       <img :src="spriteUrl" />
     </div>
     <div class="media-content">
-      <codemirror class="box" v-model="props.text" :options="options" @input="canComplete = true" />
+      <codemirror class="box" v-model="props.text" :options="options" />
 
       <section class="level">
         <!-- Completion -->
@@ -43,6 +43,7 @@
 
 <script>
 import { codemirror } from 'vue-codemirror'
+import 'codemirror/mode/markdown/markdown'
 import 'codemirror/lib/codemirror.css'
 
 import FormMixin from '../Utilities/FormMixin';
@@ -84,8 +85,8 @@ export default {
   data() {
     return {
       options: {
+        mode: 'markdown',
         tabSize: 2,
-        line: true,
         lineWrapping: true
       },
     };

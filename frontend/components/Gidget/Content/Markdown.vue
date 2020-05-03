@@ -16,6 +16,18 @@ import Marked from 'marked';
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js';
 
+Marked.setOptions({
+  highlight(code) {
+    // No code? No highlighting required
+    if (!code)
+      return;
+
+    // Highlight code
+    const hl = hljs.highlightAuto(code);
+    if (hl.value)
+      return hl.value;
+  }
+});
 
 export default {
   props: {
@@ -26,21 +38,6 @@ export default {
     this.valueComponent = require('./Value').default;
   },
 
-  created() {
-    Marked.setOptions({
-      highlight(code, lang) {
-        // No code? No highlighting required
-        if (!code)
-          return;
-
-        // Highlight code
-        const highlightedCode = hljs.highlight(lang, code);
-        if (highlightedCode.value)
-          return highlightedCode.value;
-      }
-    })
-  },
-
   computed: {
     /**
      * Convert markdown to HTML using the 'marked' library.
@@ -49,10 +46,15 @@ export default {
      * @return {string}
      */
     markdownHtml() {
-      if (typeof this.value !== 'string')
+      if (typeof this.value != 'string')
         return '[error]';
 
-      return DOMPurify.sanitize(Marked(this.value.replace(/```/g, '\n```')));
+      return DOMPurify.sanitize(Marked(
+        this.value
+          .replace(/```/g, '\n```')  // Add new line before code block
+          .replace(/<(.*?)>/g, '')  // Remove HTML tags
+          .replace(/\[(.*?)\]\((.*?)\)/g, '')  // Remove links
+      ));
     },
 
     /**
@@ -62,7 +64,7 @@ export default {
      */
     component() {
       const template = '<Value value="$1" />';
-      const pattern  = /\[\[(.*?)\]\]/gm;  // Captures [[TEXT_HERE]]
+      const pattern  = /{{(.*?)}}/gm;  // Captures [[TEXT_HERE]]
       const contents = this.markdownHtml.replace(pattern, template);
 
       return {
