@@ -1,7 +1,7 @@
 <template>
   <article>
     <b-field grouped>
-      <b-field label="Assertion Type">
+      <b-field label="Assertion">
         <!-- Assertions -->
         <b-select
           placeholder="Select an assertion"

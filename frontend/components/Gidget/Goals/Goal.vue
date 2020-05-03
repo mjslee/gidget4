@@ -1,8 +1,34 @@
 <template>
-  <!-- Equals Assertion -->
-  <span v-if="assert == 'equal'">
-    <assert-equal :args="args" />
-  </span>
+  <assert-comparison
+    v-if="assert == 'equal'"
+    operator="=="
+    :args="args"
+  />
+  <assert-comparison
+    v-else-if="assert == 'notEqual'"
+    operator="!="
+    :args="args"
+  />
+  <assert-comparison
+    v-else-if="assert == 'lessThan'"
+    operator="<"
+    :args="args"
+  />
+  <assert-comparison
+    v-else-if="assert == 'lessThanOrEqual'"
+    operator="<="
+    :args="args"
+  />
+  <assert-comparison
+    v-else-if="assert == 'greaterThan'"
+    operator=">"
+    :args="args"
+  />
+  <assert-comparison
+    v-else-if="assert == 'greaterThanOrEqual'"
+    operator=">="
+    :args="args"
+  />
 </template>
 
 
@@ -15,16 +41,16 @@ span {
 
 
 <script>
-import AssertEqual from './AssertEqual';
+import AssertComparison from './AssertComparison';
 
 export default {
   components: {
-    AssertEqual
+    AssertComparison
   },
 
   props: {
     assert: String,
-    args: Array
+    args: Array,
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <span>
     <Value :value="args[0]" />
-    <span class="is-operator">==</span>
+    <span class="is-operator">{{ operator }}</span>
     <Value :value="args[1]" />
   </span>
 </template>
@@ -16,6 +16,7 @@ export default {
   },
 
   props: {
+    operator: String,
     args: Array
   }
 };

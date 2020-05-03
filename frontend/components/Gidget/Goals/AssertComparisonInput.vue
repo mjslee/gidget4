@@ -4,15 +4,15 @@
       <span class="is-keyword">assert</span>
     </div>
     <div class="level-item">
-      <b-field label="that this" :label-position="labelPosition">
+      <b-field :label="leftLabel" :label-position="labelPosition">
         <b-input v-model="value[0]" />
       </b-field>
     </div>
     <div class="level-item">
-      <span class="is-operator">==</span>
+      <span class="is-operator">{{ operator }}</span>
     </div>
     <div class="level-item">
-      <b-field label="is equal to this" :label-position="labelPosition">
+      <b-field :label="rightLabel" :label-position="labelPosition">
         <b-input v-model="value[1]" />
       </b-field>
     </div>
@@ -23,6 +23,9 @@
 <script>
 export default {
   props: {
+    leftLabel: String,
+    rightLabel: String,
+    operator: String,
     value: {
       type: Array,
       default: () => ['', '']
