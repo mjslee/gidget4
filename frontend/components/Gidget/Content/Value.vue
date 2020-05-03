@@ -4,9 +4,9 @@
       <highlight :value="value" />
     </a>
 
-    <popover v-if="isActive" :active.sync="isActive" :element="$el">
-      <insight :identifier="identifier" :value="evalValue || value" />
-      {{ value }}: {{ evalValue }}
+    <popover v-if="isActive" :active.sync="isActive" :parent-element="$el">
+      <!-- <insight :identifier="identifier" :value="evalValue || value" /> -->
+      <Value :value="true" />
     </popover>
   </span>
 </template>
