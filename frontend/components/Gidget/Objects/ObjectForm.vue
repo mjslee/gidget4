@@ -98,7 +98,7 @@ import FormMixin    from '../Utilities/FormMixin';
 import SwitchButton from '../Utilities/SwitchButton'
 import ObjectMover  from './ObjectMover';
 
-import { ObjectSprites, Sprite } from '@/constants/sprites';
+import { ObjectSprites, ObjectSprite } from '@/constants/sprites';
 
 
 export default {
@@ -145,7 +145,7 @@ export default {
      * @return {string}
      */
     spriteUrl() {
-      return Sprite(this.props.sprite);
+      return ObjectSprite(this.props.sprite);
     }
   },
 

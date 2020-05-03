@@ -206,5 +206,6 @@ export const TileSprites = {
   'yellow-brick':    SpriteBaseUrl + 'yellow-brick.png',
 };
 
+export const DefaultTileSprite = 'grass';
 export const UnknownSprite = ObjectSprites['unknown'];
-export const Sprite = (sprite) => ObjectSprites[sprite] || UnknownSprite;
+export const ObjectSprite = (sprite) => ObjectSprites[sprite] || UnknownSprite;
