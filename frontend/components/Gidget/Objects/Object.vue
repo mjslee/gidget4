@@ -16,7 +16,7 @@
     </span>
 
     <!-- Sprite -->
-    <img class="gidget-sprite" :src="spriteUrl" :style="spriteStyle" />
+    <img class="gidget-sprite" :src="spriteSrc" :style="spriteStyle" />
   </div>
 </template>
 
@@ -83,7 +83,7 @@ div {
 
 
 <script>
-import { SpriteBaseUrl } from '@/constants/sprites';
+import { ObjectSprite } from '@/constants/sprites';
 import { getObjectElementId } from '@/assets/gidget/game/gidget-utility';
 
 
@@ -181,9 +181,8 @@ export default {
      *
      * @return {string}
      */
-    spriteUrl() {
-      if (typeof this.object.sprite == 'string')
-        return SpriteBaseUrl + this.object.sprite + '.png';
+    spriteSrc() {
+      return ObjectSprite(this.object.sprite);
     },
 
     /**

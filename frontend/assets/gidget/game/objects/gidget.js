@@ -1,52 +1,49 @@
-import { animate } from '../gidget-utility'
-
 export default {
+  name: 'Gidget',
   sprite: 'gidget',
-  layer: 5,
 
-  onCreate() {
-
+  messages: {
+    onComplete: 'We did it!',
+    onIncomplete: 'We have a little more work to do...',
+    energyDepleted: {
+      text: 'I ran out of energy!'
+    }
   },
 
-  onCollision() {
+  documentation: {
+    test: {
+      name: 'test',
+      description: ({ name }) => `
+        Test function for **${name}**.
+      `,
 
-  },
+      example: ({ name }) => `
+        \`\`\`js
+        ${name}.test();
+        \`\`\`
+      `,
 
-  onMove() {
-    if (this.energy > 0)
-      this.energy -= 1
-
-    else
-      throw {
-        text: 'I ran out of energy!'
-      }
+      type: 'function',
+      parameters: [],
+      returns: 'boolean'
+    }
   },
 
   exposed: {
-    shake() {
-      this.say({ type: 'overhead', text: "I'm shaking!" });
-      animate(this, async (tween, $el, wasInterrupted, timeline) => {
-        await tween(50, { x: 50 })
-        await tween(50, { x: -50 })
-        await tween(50, { x: 50 })
-        await tween(50, { x: -50 })
-        await tween(50, { x: 50 })
-        await tween(50, { x: -50 })
-        await tween(50, { x: 50 })
-        await tween(50, { x: -50 })
-        await tween(50, { x: 50 })
-        await tween(50, { x: -50 })
-        await tween(50, { x: 50 })
-        await tween(50, { x: -50 })
-        await tween(50, { x: 50 })
-        await tween(5000, { x: -50 })
-      });
-
-      if (false)
-        throw {
-          text: 'This is an error.'
-        };
-
+    /**
+     * [TODO:description]
+     *
+     * @return {[TODO:type]} [TODO:description]
+     */
+    test() {
+      return true;
     }
+  },
+
+  onMove() {
+    if (this.energy <= 0)
+      throw this.messages.energyDepleted
+
+    this.energy -= 1
   }
 }

@@ -17,10 +17,6 @@ export default class {
     const self = _.cloneDeep(this);
     self.setup(options, true);
 
-    // If no name was provided in options we'll use its type as its name
-    if (typeof self.name == 'undefined')
-      self.name = self.type;
-
     // Call onCreate callback
     if (typeof self.onCreate == 'function')
       self.onCreate();
@@ -82,6 +78,8 @@ export default class {
     this.grabber   = undefined;
     this.isRemoved = false;
 
+    this.name     = 'Object';
+    this.type     = 'Object';
     this.sprite   = 'unknown';
     this.position = { x: 0, y: 0 };
     this.path     = [];
