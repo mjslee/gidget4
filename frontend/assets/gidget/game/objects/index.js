@@ -1,4 +1,3 @@
-//
 export default {
   Gidget: require('./gidget').default,
   Cat:    require('./cat').default,

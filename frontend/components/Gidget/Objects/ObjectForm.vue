@@ -11,46 +11,47 @@
     <div class="media-content">
       <b-tabs v-model="activeTab" type="is-toggle" expanded>
         <!-- Sprite Tab -->
-        <b-tab-item label="Change Sprite" icon="image">
-          <div class="media-content" v-if="activeTab == 0">
-            <sprite-input v-model="props.sprite" :sprites="sprites" />
-          </div>
+        <b-tab-item class="media-content" label="Change Sprite" icon="image">
+          <sprite-input v-model="props.sprite" :sprites="sprites" />
         </b-tab-item>
 
         <!-- Options Tab -->
-        <b-tab-item label="Object Options" icon="cog">
-          <div class="media-content">
-            <b-field grouped>
-              <!-- Name -->
-              <b-field label="Name">
-                <b-input v-model="props.name" />
-              </b-field>
-
-              <!-- Mixins -->
-              <b-field
-                label="Mixins"
-                message="There's no way of finding out what a mixin does yet!"
-                expanded
-              >
-                <object-mixin-input v-model="props.mixins" />
-              </b-field>
+        <b-tab-item class="media-content" label="Object Options" icon="cog">
+          <b-field grouped group-multiline>
+            <!-- Name -->
+            <b-field label="Type" expanded>
+              <object-type-input :disabled="!isCreating" v-model="props.type" />
             </b-field>
 
-            <!-- Energy -->
-            <b-field :addons="false">
-              <label class="label">Energy <small>({{ energy }}%)</small></label>
-              <b-slider size="is-large" v-model="props.energy" rounded />
+            <!-- Name -->
+            <b-field label="Name" expanded>
+              <b-input v-model="props.name" />
             </b-field>
 
-            <object-mover :has-move-buttons="false" :object="$props" />
-
-            <!-- Blocking -->
-            <b-field>
-              <b-switch v-model="props.blocking">
-                <strong>Blocking</strong>
-              </b-switch>
+            <!-- Mixins -->
+            <b-field
+              label="Mixins"
+              message="There's no way of finding out what a mixin does yet!"
+              expanded
+            >
+              <object-mixin-input v-model="props.mixins" />
             </b-field>
-          </div>
+          </b-field>
+
+          <!-- Energy -->
+          <b-field :addons="false">
+            <label class="label">Energy <small>({{ energy }}%)</small></label>
+            <b-slider size="is-large" v-model="props.energy" rounded />
+          </b-field>
+
+          <object-mover :has-move-buttons="false" :object="$props" />
+
+          <!-- Blocking -->
+          <b-field>
+            <b-switch v-model="props.blocking">
+              <strong>Blocking</strong>
+            </b-switch>
+          </b-field>
         </b-tab-item>
       </b-tabs>
 
@@ -92,6 +93,7 @@ import SpriteInput  from '../Utilities/SpriteInput';
 import FormMixin    from '../Utilities/FormMixin';
 import SwitchButton from '../Utilities/SwitchButton'
 import ObjectMover  from './ObjectMover';
+import ObjectTypeInput  from './ObjectTypeInput';
 import ObjectMixinInput from './ObjectMixinInput';
 
 import { ObjectSprites, ObjectSprite } from '@/constants/sprites';
@@ -102,6 +104,7 @@ export default {
     SwitchButton,
     SpriteInput,
     ObjectMover,
+    ObjectTypeInput,
     ObjectMixinInput,
   },
 

@@ -34,11 +34,12 @@ export default {
     return {
       isModalActive: false,
       object: {
-        name     : 'Gidget',
-        sprite   : 'gidget',
-        mixins   : ['Player'],
-        energy   : 100,
-        blocking : false,
+        name:     'Object',
+        type:     'Object',
+        sprite:   'unknown',
+        mixins:   [],
+        energy:   100,
+        blocking: false,
       }
     };
   },
