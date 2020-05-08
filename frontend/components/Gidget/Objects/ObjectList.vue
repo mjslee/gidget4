@@ -26,7 +26,9 @@
       <!-- Mixins Column -->
       <b-table-column field="mixins" label="Mixins" sortable>
         <div class="tags" v-if="props.row.mixins">
-          <span class="tag" v-for="mixin in props.row.mixins">{{ mixin }}</span>
+          <span class="tag" v-for="mixin in props.row.mixins" :key="mixin">
+            {{ mixin }}
+          </span>
         </div>
       </b-table-column>
     </template>

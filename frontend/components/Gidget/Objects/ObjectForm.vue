@@ -32,7 +32,7 @@
                 message="There's no way of finding out what a mixin does yet!"
                 expanded
               >
-                <mixin-input v-model="props.mixins" />
+                <object-mixin-input v-model="props.mixins" />
               </b-field>
             </b-field>
 
@@ -88,22 +88,21 @@
 
 
 <script>
-import Vue          from 'vue';
-import MixinInput   from '../Inputs/MixinInput';
-import SpriteInput  from '../Inputs/SpriteInput';
+import SpriteInput  from '../Utilities/SpriteInput';
 import FormMixin    from '../Utilities/FormMixin';
 import SwitchButton from '../Utilities/SwitchButton'
 import ObjectMover  from './ObjectMover';
+import ObjectMixinInput from './ObjectMixinInput';
 
 import { ObjectSprites, ObjectSprite } from '@/constants/sprites';
 
 
 export default {
   components: {
-    MixinInput,
     SwitchButton,
+    SpriteInput,
     ObjectMover,
-    SpriteInput
+    ObjectMixinInput,
   },
 
   mixins: [
