@@ -2,11 +2,12 @@
   <b-taginput
     ref="input"
     v-model="internalValue"
-    :data="filteredValues"
-    @typing="filterValues"
+    :data="filteredData"
+    @typing="filterData"
     autocomplete
   />
 </template>
+
 
 <style lang="scss">
 .tag-draggable {
@@ -16,62 +17,35 @@
 
 
 <script>
-import Vue from 'vue';
-import Mixins from '@/assets/gidget/game/mixins';
-
-
 export default {
   props: {
-    value: Array[String]
+    value: Array[String],
+    data: Array[String]
   },
 
   computed: {
     /**
-     * Shallow clone of values prop.
+     * Shallow clone of value prop.
      *
      * @param {array} value
      * @return {array}
      */
     internalValue: {
       get() {
+        this.$nextTick(this.setTag);
         return this.value;
       },
       set(value) {
-        this.$nextTick(this.setTag);
         this.$emit('input', value);
         this.updatedValue = value;
       }
-    },
-
-    /**
-     * Array of values from the tag input.
-     *
-     * @param {array} value
-     * @return {array}
-     */
-    newValue: {
-      get() {
-        return this.$refs.input.tags;
-      },
-      set(value) {
-        this.internalValue = value;
-      }
-    },
-
-    /**
-     * Array of available values.
-     *
-     * @return {array}
-     */
-    availableValues() {
-      return Object.keys(Mixins);
     },
   },
 
   data() {
     return {
       updatedValue: [],
-      filteredValues: [],
+      filteredData: [],
       draggingTag: undefined
     };
   },
@@ -100,13 +74,13 @@ export default {
     },
 
     /**
-     * Set the filteredValues with a filter.
+     * Set the filteredData with a filter.
      *
      * @param {string} value
      * @return {void}
      */
-    filterValues(value) {
-      this.filteredValues = this.availableValues.filter((mixin) =>
+    filterData(value) {
+      this.filteredData = this.data.filter((mixin) =>
         mixin.toLowerCase().indexOf(value.toLowerCase()) >= 0
       );
     },
@@ -174,7 +148,7 @@ export default {
       if (event.target)
         this.findTag(event.target).classList.remove('is-primary');
     },
-
+ 
     /**
      * Get the parent tag element from a child element.
      *

@@ -46,9 +46,9 @@ import { codemirror } from 'vue-codemirror'
 import 'codemirror/mode/markdown/markdown'
 import 'codemirror/lib/codemirror.css'
 
-import FormMixin from '../Utilities/FormMixin';
+import FormMixin    from '../Utilities/FormMixin';
 import SwitchButton from '../Utilities/SwitchButton';
-import SpriteInput from '../Inputs/SpriteInput';
+import SpriteInput  from '../Utilities/SpriteInput';
 import { SpriteBaseUrl, SpriteExtension } from '@/constants/paths';
 
 

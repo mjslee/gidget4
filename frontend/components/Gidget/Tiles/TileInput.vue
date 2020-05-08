@@ -4,7 +4,7 @@
 
 
 <script>
-import SpriteInput from '../Inputs/SpriteInput';
+import SpriteInput from '../Utilities/SpriteInput';
 import { TileSprites } from '@/constants/sprites';
 
 
