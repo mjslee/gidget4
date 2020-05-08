@@ -2,7 +2,7 @@ import _ from 'lodash';
 import GidgetObject from './gidget-object';
 
 
-export default class {
+export default class GidgetWorld {
   /**
    * Creates a new GidgetWorld instance.
    * All parameters should be initialization data.

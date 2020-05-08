@@ -4,7 +4,7 @@ import GidgetImports from './imports';
 import GidgetGoal    from './gidget-assert';
 
 
-export default class {
+export default class GidgetGame {
   /**
    * GidgetGame constructor.
    *

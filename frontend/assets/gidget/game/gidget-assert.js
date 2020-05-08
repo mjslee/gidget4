@@ -46,7 +46,7 @@ export const assertions = {
 };
 
 
-export default class {
+export default class GidgetAssert {
   /**
    * GidgetAssert constructor.
    */

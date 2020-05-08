@@ -4,7 +4,7 @@ import GidgetMixins from './mixins'
 import { walkAnimation, poscmp } from './gidget-utility'
 
 
-export default class {
+export default class GidgetObject {
   /**
    * Creates object.
    *
@@ -81,6 +81,7 @@ export default class {
     this.name     = 'Object';
     this.type     = 'Object';
     this.sprite   = 'unknown';
+    this.mixins   = [];
     this.position = { x: 0, y: 0 };
     this.path     = [];
     this.energy   = 100;
