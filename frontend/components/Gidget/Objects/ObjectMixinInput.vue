@@ -1,5 +1,9 @@
 <template>
-  <order-tag-input :selected.sync="selected" :data="mixins" v-model="internalValue" />
+  <order-tag-input
+    :selected.sync="selected"
+    :data="mixins"
+    v-model="internalValue"
+  />
 </template>
 
 

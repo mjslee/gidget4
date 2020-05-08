@@ -1,8 +1,9 @@
 <template>
   <b-autocomplete
     v-model="internalValue"
-    :data="types"
+    :data="filteredData"
     :disabled="disabled"
+    @typing="filterData"
     icon-right="chevron-down"
     keep-first
     open-on-focus
@@ -32,7 +33,8 @@ export default {
      * @return {array[string]}
      */
     types() {
-      return Object.keys(Objects);
+      if (!this.disabled)
+        return Object.keys(Objects);
     },
 
     /**
@@ -48,6 +50,25 @@ export default {
       set(value) {
         this.$emit('input', value);
       }
+    },
+  },
+
+  data() {
+    return {
+      filteredData: this.types
+    };
+  },
+
+  methods: {
+    /**
+     * Set the filteredData with a filter.
+     *
+     * @param {string} value
+     * @return {void}
+     */
+    filterData(value) {
+      this.filteredData = !value ? this.types : this.types.filter((type) =>
+        type.toLowerCase().indexOf(value.toLowerCase()) >= 0);
     },
   }
 }
