@@ -1,5 +1,5 @@
 <template>
-  <order-tag-input :data="mixins" v-model="internalValue" />
+  <order-tag-input :selected.sync="selected" :data="mixins" v-model="internalValue" />
 </template>
 
 
@@ -41,6 +41,12 @@ export default {
         this.$emit('input', value);
       }
     }
+  },
+
+  data() {
+    return {
+      selected: ''
+    };
   }
 }
 </script>
