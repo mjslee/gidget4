@@ -1,16 +1,19 @@
 <template>
   <b-taginput
-    ref="input"
     v-model="internalValue"
     :data="filteredData"
     @typing="filterData"
+    @add="filterData()"
+    icon-right="chevron-down"
     autocomplete
+    keep-first
+    open-on-focus
   />
 </template>
 
 
-<style lang="scss">
-.tag-draggable {
+<style scoped>
+/deep/ .tag {
   cursor: grab;
 }
 </style>
@@ -20,7 +23,28 @@
 export default {
   props: {
     value: Array[String],
-    data: Array[String]
+    data: Array[String],
+    selected: String,
+  },
+
+  watch: {
+    /**
+     * Set tag as primary when selected.
+     *
+     * @param {string} value
+     * @return {void}
+     */
+    selected(value) {
+      this.$el.querySelectorAll('.tag').forEach((tag) =>
+        tag.classList.remove('is-primary'));
+
+      if (!value)
+        return;
+
+      const tag = this.$el.querySelector(`[data-value='${value}']`);
+      if (tag)
+        tag.classList.add('is-primary');
+    }
   },
 
   computed: {
@@ -45,13 +69,9 @@ export default {
   data() {
     return {
       updatedValue: [],
-      filteredData: [],
+      filteredData: this.data,
       draggingTag: undefined
     };
-  },
-
-  mounted() {
-    this.setTag();
   },
 
   methods: {
@@ -62,14 +82,17 @@ export default {
      */
     setTag() {
       this.$el.querySelectorAll('.tag').forEach(($el, i) => {
-        $el.className = 'tag tag-draggable';
+        const value = this.value[i];
         $el.setAttribute('draggable', true);
         $el.setAttribute('ondrop', true);
         $el.setAttribute('data-index', i);
+        $el.setAttribute('data-value', value);
         $el.ondragstart = this.dragStart;
         $el.ondragover = this.dragOver;
         $el.ondragleave = this.dragLeave;
         $el.ondrop = this.dragEnd;
+        $el.onclick = () => this.$emit('update:selected',
+          this.selected !== value ? value : undefined);
       });
     },
 
@@ -80,9 +103,8 @@ export default {
      * @return {void}
      */
     filterData(value) {
-      this.filteredData = this.data.filter((mixin) =>
-        mixin.toLowerCase().indexOf(value.toLowerCase()) >= 0
-      );
+      this.filteredData = !value ? this.data : this.data.filter((mixin) =>
+        mixin.toLowerCase().indexOf(value.toLowerCase()) >= 0);
     },
 
     /**
@@ -111,7 +133,7 @@ export default {
       const droppedTag = this.findTag(event.target).getAttribute('data-index');
 
       // Remove primary from all tag elements
-      this.$el.querySelectorAll('.tag-draggable').forEach(($el) => {
+      this.$el.querySelectorAll('.tag').forEach(($el) => {
         $el.classList.remove('is-primary');
       });
 
@@ -156,7 +178,7 @@ export default {
      * @return {HTMLSpanElement}
      */
     findTag(target) {
-      return target.parentNode.classList.contains('tag-draggable')
+      return target.parentNode.classList.contains('tag')
         ? target.parentNode : target;
     }
   }
