@@ -52,7 +52,8 @@ export default {
      */
     complete() {
       Object.keys(this.props).forEach((prop) => this.emitUpdate(prop));
-      this.canComplete = false;
+      if (typeof this.$refs.observer != 'undefined')
+        this.$refs.observer.reset();
       this.$emit('done');
     },
 
@@ -65,8 +66,9 @@ export default {
       this.props = this.$clone(this.$props);
 
       this.$nextTick(() => {
-        this.canComplete = false;
         this.canReset = false;
+        if (typeof this.$refs.observer != 'undefined')
+          this.$refs.observer.reset();
       });
     }
   }
