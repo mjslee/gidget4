@@ -1,36 +1,37 @@
 import _ from 'lodash';
 import Vue from 'vue';
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
+
+
+extend('identifier', (value) => {
+  if (value.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/))
+    return true;
+
+  return 'This field must be an identifier';
+});
+
+
+extend('required', {
+  ...required,
+  message: 'This field is required'
+});
 
 
 export default {
+  components: {
+    ValidationObserver,
+    ValidationProvider,
+  },
+
   data() {
     return {
       props: this.$clone(this.$props),
-
-      canReset: false,
-      canComplete: false
+      canReset: false
     }
   },
 
-  mounted() {
-    this.watchProps();
-  },
-
   methods: {
-    /**
-     * Watch internal prop values and compare against $prop values.
-     * Set completion ability of form when values are different.
-     *
-     * @return {void}
-     */
-    watchProps() {
-      Object.keys(this.props).forEach((prop) =>
-        this.$watch(() => this.props[prop], (value) =>
-          this.canComplete = !_.isEqual(this.$props[prop], value)
-        )
-      );
-    },
-
     /**
      * Emit a prop value update.
      *

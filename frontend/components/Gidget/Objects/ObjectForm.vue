@@ -8,7 +8,11 @@
       </b-tooltip>
     </figure>
 
-    <div class="media-content">
+    <validation-observer
+      ref="observer"
+      class="media-content"
+      v-slot="{ invalid, pristine }"
+    >
       <b-tabs v-model="activeTab" type="is-toggle" expanded>
         <!-- Sprite Tab -->
         <b-tab-item class="media-content" label="Change Sprite" icon="image">
@@ -24,9 +28,20 @@
             </b-field>
 
             <!-- Name -->
-            <b-field label="Name" expanded>
-              <b-input v-model="props.name" />
-            </b-field>
+            <validation-provider
+              rules="required|identifier"
+              vid="name"
+              name="name"
+              v-slot="{ errors, valid }"
+            >
+              <b-field label="Name"
+                :type="{ 'is-danger': errors[0], 'is-success': valid }"
+                :message="errors"
+                expanded
+              >
+                <b-input v-model="props.name" />
+              </b-field>
+            </validation-provider>
 
             <!-- Mixins -->
             <b-field
@@ -44,8 +59,6 @@
             <b-slider size="is-large" v-model="props.energy" rounded />
           </b-field>
 
-          <object-mover :has-move-buttons="false" :object="$props" />
-
           <!-- Blocking -->
           <b-field>
             <b-switch v-model="props.blocking">
@@ -59,7 +72,7 @@
         <!-- Completion -->
         <div class="level-left">
           <div class="level-item">
-            <b-button type="is-success" :disabled="!canComplete" @click="complete">
+            <b-button type="is-success" :disabled="invalid || pristine" @click="complete">
               {{ isCreating ? 'Create Object' : 'Apply Changes' }}
             </b-button>
           </div>
@@ -69,15 +82,14 @@
         <!-- Actions -->
         <div class="level-right">
           <div class="level-item">
-            <b-switch type="is-warning" v-model="canReset"></b-switch>
-            <b-button type="is-warning" :disabled="!canReset" @click="reset">
+            <switch-button class="level-item" type="is-warning" @click="reset">
               Reset
-            </b-button>
+            </switch-button>
           </div>
           <slot name="bottom-right"></slot>
         </div>
       </section>
-    </div>
+    </validation-observer>
   </article>
 </template>
 
