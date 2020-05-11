@@ -88,8 +88,8 @@ export default class GidgetObject {
     this.layer    = 0;
     this.scale    = 1;
 
-    this.blocking    = false;
     this.scaleBounds = true;
+    this.blocking    = false;
   }
 
   /**

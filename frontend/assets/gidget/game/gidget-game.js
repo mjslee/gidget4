@@ -1,3 +1,4 @@
+import _             from 'lodash';
 import JsStepper     from '@/assets/gidget/lang/js-stepper';
 import GidgetWorld   from './gidget-world';
 import GidgetImports from './imports';
@@ -21,6 +22,7 @@ export default class GidgetGame {
     this.index  = 0;
     this.states = [];
     this.goals  = [];
+    this.imports = JSON.parse(JSON.stringify(imports));
 
     // Number size must be converted into object
     if (typeof size == 'number')
@@ -32,10 +34,10 @@ export default class GidgetGame {
     );
 
     // Merge in global imports
-    this.imports = {};
+    this.import = {};
     if (Array.isArray(imports))
       for (let i = 0, len = imports.length; i < len; i++)
-        Object.assign(this.imports, _.cloneDeep(GidgetImports[imports[i]]));
+        Object.assign(this.import, _.cloneDeep(GidgetImports[imports[i]]));
 
     // Add goals
     goals.forEach((goal) => this.addGoal(goal));
@@ -85,6 +87,48 @@ export default class GidgetGame {
   updateInitialState() {
     this.initialState = this.world.getState();
     this.initialData = this.world.getObjectsMap();
+  }
+
+  /**
+   * Export state of game into a loadable format.
+   *
+   * @return {number|object[width,height]} size
+   * @return {array[object]} tiles
+   * @return {array[object]} objects
+   * @return {array[object]} dialogue
+   * @return {array[object]} goals
+   * @return {array[object]} imports
+   */
+  export() {
+    // Keys of object to export
+    const exportKeys = {
+      tiles: [
+        'type',
+        'position'
+      ],
+      objects: [
+        'type', 'name', 'sprite', 'mixins',
+        'position', 'energy', 'layer', 'blocking',
+        'scale', 'scaleBounds'
+      ],
+      dialogue: [
+        'text', 'sprite'
+      ],
+      goals: [
+        'assert', 'args'
+      ],
+    };
+
+    // Export data
+    const state = this.initialState;
+    return JSON.stringify({
+      size:     state.size,
+      tiles:    state.tiles   .map((t) => _.pick(t, exportKeys['tiles'])),
+      objects:  state.objects .map((o) => _.pick(o, exportKeys['objects'])),
+      dialogue: state.dialogue.map((d) => _.pick(d, exportKeys['dialogue'])),
+      goals:    this.goals    .map((g) => _.pick(g, exportKeys['goals'])),
+      imports:  this.imports
+    });
   }
 
   /**
@@ -197,8 +241,8 @@ export default class GidgetGame {
     const exposed = {};
 
     // Merge extra imports into the exposed result
-    if (typeof this.imports == 'object')
-      Object.assign(exposed, this.imports);
+    if (typeof this.import == 'object')
+      Object.assign(exposed, this.import);
 
     // Merge the game objects; game objects are more important than extra
     // imports, so if we have a conflict where a game object and an extra
