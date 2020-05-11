@@ -3,14 +3,24 @@
     <div class="media left image is-64x64" v-if="spriteUrl">
       <img :src="spriteUrl" />
     </div>
-    <div class="media-content">
-      <codemirror class="box" v-model="props.text" :options="options" />
+    <validation-observer
+      ref="observer"
+      class="media-content"
+      v-slot="{ invalid, pristine }"
+    >
+      <validation-provider vid="text" name="text" slim>
+        <codemirror class="box" v-model="props.text" :options="options" />
+      </validation-provider>
 
       <section class="level">
         <!-- Completion -->
         <div class="level-left">
           <div class="level-item">
-            <b-button type="is-success" :disabled="!canComplete" @click="complete">
+            <b-button
+              type="is-success"
+              :disabled="invalid || pristine"
+              @click="complete"
+            >
               {{ isCreating ? 'Create Dialogue' : 'Apply Changes' }}
             </b-button>
           </div>
@@ -29,7 +39,7 @@
           <slot name="bottom-right"></slot>
         </div>
       </section>
-    </div>
+    </validation-observer>
   </article>
 </template>
 
