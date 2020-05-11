@@ -1,14 +1,31 @@
 <template>
-  <b-autocomplete
-    v-model="internalValue"
-    :data="filteredData"
-    :disabled="disabled"
-    @typing="filterData"
-    icon-right="chevron-down"
-    keep-first
-    open-on-focus
-  />
+  <b-field>
+    <b-autocomplete
+      v-model="internalValue"
+      :data="filteredData"
+      :disabled="disabled"
+      @typing="filterData"
+      @focus="resetData"
+      @select="canChange = true"
+      icon-right="chevron-down"
+      keep-first
+      open-on-focus
+      expanded
+    />
+    <p class="control" v-if="!disabled">
+      <b-button type="is-primary" @click="change" :disabled="!canChange">
+        Change
+      </b-button>
+    </p>
+  </b-field>
 </template>
+
+
+<style scoped>
+/deep/ input {
+  cursor: pointer;
+}
+</style>
 
 
 <script>
@@ -26,6 +43,18 @@ export default {
     }
   },
 
+  watch: {
+    /**
+     * Update internal value.
+     *
+     * @param {string} value
+     * @return {void}
+     */
+    value(value) {
+      this.internalValue = value;
+    }
+  },
+
   computed: {
     /**
      * Array of available object keys.
@@ -36,40 +65,55 @@ export default {
       if (!this.disabled)
         return Object.keys(Objects);
     },
-
-    /**
-     * Internal value prop.
-     *
-     * @param {string} value
-     * @return {string}
-     */
-    internalValue: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        this.$emit('input', value);
-      }
-    },
   },
 
   data() {
     return {
-      filteredData: this.types
+      internalValue: this.value,
+      filteredData: this.types,
+      canChange: false,
     };
   },
 
   methods: {
     /**
-     * Set the filteredData with a filter.
+     * Case-insensitively filter data by value.
      *
      * @param {string} value
      * @return {void}
      */
     filterData(value) {
-      this.filteredData = !value ? this.types : this.types.filter((type) =>
+      if (!(value && value.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)))
+        return this.resetData();
+
+      this.filteredData = this.types.filter((type) =>
         type.toLowerCase().indexOf(value.toLowerCase()) >= 0);
+
+      if (this.filteredData.length < 1)
+        return this.resetData();
+
+      this.canChange = this.filteredData.includes(value);
     },
+
+    /**
+     * Reset the filtered data.
+     *
+     * @param {string} value
+     * @return {void}
+     */
+    resetData() {
+      this.filteredData = this.types;
+    },
+
+    /**
+     * Emit change on click of change button.
+     *
+     * @return {void}
+     */
+    change() {
+      this.canChange = false;
+      this.$emit('change', Objects[this.internalValue]);
+    }
   }
 }
 </script>
