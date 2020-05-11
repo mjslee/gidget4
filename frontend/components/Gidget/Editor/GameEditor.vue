@@ -1,5 +1,8 @@
 <template>
   <b-tabs v-model="activeTab">
+    <b-tab-item label="Game" icon="gamepad">
+      <game-settings />
+    </b-tab-item>
     <b-tab-item label="World" icon="globe-model">
       <world-editor />
     </b-tab-item>
@@ -17,6 +20,7 @@
 
 
 <script>
+import GameSettings from './GameSettings';
 import WorldEditor  from './WorldEditor';
 import ObjectList   from '../Objects/ObjectList';
 import DialogueList from '../Dialogue/DialogueList';
@@ -25,6 +29,7 @@ import GoalList     from '../Goals/GoalList';
 
 export default {
   components: {
+    GameSettings,
     WorldEditor,
 
     ObjectList,
