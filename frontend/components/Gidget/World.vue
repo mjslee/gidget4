@@ -6,14 +6,14 @@
         v-for="(i, x) in size.width"
         :key="'x-' + x"
         :style="axisLabelStyle"
-        :class="hovered.x == x ? 'active': ''"
+        :class="hoveredTile.x == x ? 'active': ''"
         v-text="x"
       />
     </div>
 
     <div class="game-row y-axis" v-for="(i, y) in size.height" :key="'y-' + y">
       <!-- Vertical Axis Labels (1, 2, 3, etc.) -->
-      <label v-text="y" :class="hovered.y === y ? 'active': ''" />
+      <label v-text="y" :class="hoveredTile.y == y ? 'active': ''" />
 
       <!-- Gidget Game Tiles -->
       <gidget-tile
@@ -35,7 +35,7 @@
       :object="object"
       :size="tileSize"
       :margin="tileMargin"
-      :transitions="objectTransitions"
+      :transitions="transitions"
       @mouseenter.native="hoverTile(...object.position)"
       @move="moveObjectElement"
     />
@@ -106,9 +106,9 @@ export default {
 
   data() {
     return {
-      objectTransitions : false,
-      hovered           : { x: 0, y: 0 },
-      tileMargin        : 0.1,
+      hoveredTile: { x: 0, y: 0 },
+      tileMargin:  0.1,
+      transitions: false,
     }
   },
 
@@ -173,8 +173,8 @@ export default {
      * @return {void}
      */
     hoverTile(x, y) {
-      this.hovered.x = x;
-      this.hovered.y = y;
+      this.hoveredTile.x = x;
+      this.hoveredTile.y = y;
     },
 
     /**
@@ -215,7 +215,7 @@ export default {
         return;
 
       // Disable object transitions
-      this.objectTransitions = false;
+      this.transitions = false;
 
       this.$nextTick(() => {
         // Move each object into position
@@ -224,7 +224,7 @@ export default {
         });
 
         // Restore transitions after movements complete
-        setTimeout(() => this.objectTransitions = true, 50);
+        setTimeout(() => this.transitions = true, 50);
       });
     }
   }
