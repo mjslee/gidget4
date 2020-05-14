@@ -10,6 +10,7 @@
           type="is-primary"
           size="is-large"
           icon-left="import"
+          @click="showImportModal = !showImportModal"
         >
           Import Data
         </b-button>
@@ -17,6 +18,7 @@
           type="is-primary"
           size="is-large"
           icon-left="export"
+          @click="showExportModal = !showExportModal"
         >
           Export Data
         </b-button>
@@ -27,17 +29,31 @@
       <h1 class="title"></h1>
       <h2 class="subtitle"></h2>
     </div>
+
+    <portal to="modal">
+      <import-modal v-model="showImportModal" />
+      <export-modal v-model="showExportModal" />
+    </portal>
   </div>
 </template>
 
 
-<style scoped>
-  
-</style>
-
-
 <script>
+import ImportModal from './ImportModal';
+import ExportModal from './ExportModal';
+
+
 export default {
-  
+  components: {
+    ImportModal,
+    ExportModal
+  },
+
+  data() {
+    return {
+      showImportModal: false,
+      showExportModal: false
+    }
+  },
 }
 </script>

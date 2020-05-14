@@ -139,5 +139,5 @@ export const actions = {
 
     _.setWith(gameObj, key, value, defaultValue, (v, k, o) => Vue.set(o, k, v));
     return true;
-  },
+  }
 };

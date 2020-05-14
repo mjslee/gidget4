@@ -99,36 +99,26 @@ export default class GidgetGame {
    * @return {array[object]} goals
    * @return {array[object]} imports
    */
-  export() {
+  exportState() {
     // Keys of object to export
     const exportKeys = {
-      tiles: [
-        'type',
-        'position'
-      ],
-      objects: [
-        'type', 'name', 'sprite', 'mixins',
-        'position', 'energy', 'layer', 'blocking',
-        'scale', 'scaleBounds'
-      ],
-      dialogue: [
-        'text', 'sprite'
-      ],
-      goals: [
-        'assert', 'args'
-      ],
+      tiles:    ['type', 'position'],
+      dialogue: ['text', 'sprite'],
+      goals:    ['assert', 'args'],
+      objects:  [ 'type', 'name', 'sprite', 'mixins', 'position', 'energy',
+      'layer', 'blocking', 'scale', 'scaleBounds' ]
     };
 
     // Export data
-    const state = this.initialState;
+    const state = this.world.getState();
     return JSON.stringify({
       size:     state.size,
-      tiles:    state.tiles   .map((t) => _.pick(t, exportKeys['tiles'])),
-      objects:  state.objects .map((o) => _.pick(o, exportKeys['objects'])),
+      imports:  this.imports,
+      goals:    this.goals.map((g) => _.pick(g, exportKeys['goals'])),
+      tiles:    state.tiles.map((t) => _.pick(t, exportKeys['tiles'])),
+      objects:  state.objects.map((o) => _.pick(o, exportKeys['objects'])),
       dialogue: state.dialogue.map((d) => _.pick(d, exportKeys['dialogue'])),
-      goals:    this.goals    .map((g) => _.pick(g, exportKeys['goals'])),
-      imports:  this.imports
-    });
+    }, null, 2);
   }
 
   /**
