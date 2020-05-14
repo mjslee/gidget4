@@ -1,9 +1,59 @@
 <template>
   <span>
-    <a @click="isActive = !isActive">
-      <highlight :value="identifier && !displayValue ? identifier : realValue" />
-    </a>
+    <!-- Literal -->
+    <template v-if="typeOf == 'literal' || typeOf == 'null'">
+      <a @click="isActive = !isActive">
+        <highlight :value="realValue" />
+      </a>
+    </template>
 
+    <!-- Identifier -->
+    <template v-else-if="identifier && !displayValue">
+      <a @click="isActive = !isActive">
+        <highlight :value="identifier" />
+      </a>
+    </template>
+
+    <!-- Position -->
+    <template v-else-if="typeOf == 'position'">
+      &#91; 
+      <a @click="isActive = !isActive">
+        <highlight :value="`${realValue.x}, ${realValue.y}`" />
+      </a>
+      &#93;
+    </template>
+
+    <!-- GameObject -->
+    <template v-else-if="typeOf == 'gameobject'">
+      <a @click="isActive = !isActive">
+        <img
+          class="image is-24x24"
+          style="display:inline"
+          :src="spriteSrc"
+          v-if="spriteSrc"
+        />
+        <highlight :value="identifier" v-if="identifier" />
+      </a>
+    </template>
+
+    <!-- Generic Object -->
+    <template v-else-if="typeOf == 'object'">
+      <a @click="isActive = !isActive">
+        <highlight value="[Object]" />
+      </a>
+    </template>
+    
+    <!-- Array -->
+    <template v-else-if="typeOf == 'array'">
+      &#91;
+      <template v-for="(val, i) in realValue">
+        <Value :value="val" :key="i" />
+        <span class="comma" v-if="i + 1 < realValue.length">, </span>
+      </template>
+      &#93;
+    </template>
+
+    <!-- Insight -->
     <popover v-if="isActive" :active.sync="isActive" :parent-element="$el">
       <insight
         :typeOf="typeOf"
@@ -14,12 +64,18 @@
   </span>
 </template>
 
+<style scoped>
+.comma {
+  margin-left: -0.15rem;
+}
+</style>
 
 <script>
 import _ from 'lodash';
 import Highlight from './Highlight';
 import Popover from './Popover';
 import Insight from './Insight';
+import { ObjectSprite } from '@/constants/sprites';
 
 export default {
   name: 'Value',
@@ -75,9 +131,16 @@ export default {
      * @return {any}
      */
     realValue() {
-      return this.identifier
+      const value = this.identifier
         ? _.get(this.$store.state.game.evalData, this.internalValue)
         : this.internalValue;
+
+      try {
+        if (typeof value == 'string')
+          return JSON.parse(value);
+      } catch { }
+
+      return value;
     },
 
     /**
@@ -90,15 +153,15 @@ export default {
 
       // Literal
       if (typeOf != 'object')
-        return typeOf;
-
-      // Array
-      if (Array.isArray(this.realValue))
-        return 'array';
+        return 'literal';
 
       // Null
       if (this.realValue == null)
         return 'null';
+
+      // Array
+      if (Array.isArray(this.realValue))
+        return 'array';
 
       // Position
       if (
@@ -108,11 +171,20 @@ export default {
         return 'position';
 
       // GameObject
-      if (this.realValue.gameObject)
+      if (this.realValue.sprite)
         return 'gameobject';
 
       // Anything else would be an object
       return 'object';
+    },
+
+    /**
+     * Sprite of game object.
+     *
+     * @return {string}
+     */
+    spriteSrc() {
+      return this.typeOf == 'gameobject' && ObjectSprite(this.realValue.sprite);
     }
   },
 

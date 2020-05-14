@@ -44,6 +44,7 @@ export default class GidgetObject {
     this.exposed =  {
       'get id':       () => this.id,
       'get name':     () => this.name,
+      'get sprite':   () => this.sprite,
       'get energy':   () => this.energy,
       'get layer':    () => this.layer,
       'get position': () => this.position,

@@ -33,12 +33,7 @@
         <tr>
           <th>Grabbed</th>
           <td>
-            &#91;
-            <span v-for="(grabbedObj, i) in grabbed" :key="grabbedObj.id">
-              <Value :code="grabbedObj" />
-              <span v-if="i + 1 < grabbed.length">, </span>
-            </span>
-            &#93;
+            <Value :value="grabbed" />
           </td>
         </tr>
       </tbody>

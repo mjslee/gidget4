@@ -3,7 +3,7 @@
     <figure class="media-left">
       <b-tooltip :label="props.sprite" position="is-bottom" always>
         <div class="sprite image is-128x128">
-          <img :src="spriteUrl" @click="activeTab = 0" />
+          <img :src="spriteSrc" @click="activeTab = 0" />
         </div>
       </b-tooltip>
     </figure>
@@ -168,7 +168,7 @@ export default {
      *
      * @return {string}
      */
-    spriteUrl() {
+    spriteSrc() {
       return ObjectSprite(this.props.sprite);
     }
   },
