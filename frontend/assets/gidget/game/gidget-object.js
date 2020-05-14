@@ -21,6 +21,7 @@ export default class GidgetObject {
     if (typeof self.onCreate == 'function')
       self.onCreate();
 
+    self.gameObject = true;
     return self;
   }
 

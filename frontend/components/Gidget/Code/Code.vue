@@ -7,7 +7,7 @@
     </div>
 
     <!-- Code Insight Popover -->
-    <popover v-if="isActive" :active.sync="isActive" :element="popoverElement">
+    <popover v-if="isActive" :active.sync="isActive" :parent-element="popoverElement">
       {{ $store.getters['game/getValue'](popoverTokens) }}
     </popover>
 
