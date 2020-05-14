@@ -28,7 +28,7 @@ export default {
       }
 
       return hljs.highlight('javascript', value || 'undefined').value;
-    },
+    }
   }
 }
 </script>

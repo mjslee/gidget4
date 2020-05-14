@@ -48,6 +48,9 @@ export function typeofLiteral(literal) {
   if (type != 'string')
     return { literal, type };
 
+  // Remove visual modifiers
+  literal = trim(literal, '!');
+
   // Strings, however, can either be a string or an identifier
   // We determine if a string is a real string if its wrapped in quotes
   const trimmedLiteral = trim(literal, '\'"`');
