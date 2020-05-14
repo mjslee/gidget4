@@ -2,6 +2,7 @@
   <article>
 
     <b-slider
+      class="slider"
       size="is-large"
       v-model="activeStep"
       :min="0"
@@ -63,6 +64,18 @@
     </section>
   </article>
 </template>
+
+
+<style scoped>
+.slider {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+/deep/ .b-slider .b-slider-tick-label {
+  padding-top: 0.5rem;
+}
+</style>
 
 
 <script>
