@@ -1,7 +1,7 @@
 import Injector from './js-injector';
 
 
-export default class {
+export default class JsStepper {
 
   /**
    * Create a new stepper instance.

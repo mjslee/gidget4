@@ -8,32 +8,32 @@
       <tbody>
         <tr>
           <th>ID</th>
-          <td><Value :value="id" /></td>
+          <td><Value :code="id" /></td>
         </tr>
         <tr>
           <th>Name</th>
-          <td><Value :value="`'${name}'`" /></td>
+          <td><Value :code="`'${name}'`" /></td>
         </tr>
         <tr>
           <th>Energy</th>
-          <td><Value :value="energy" /></td>
+          <td><Value :code="energy" /></td>
         </tr>
         <tr>
           <th>Layer</th>
-          <td><Value :value="layer" /></td>
+          <td><Value :code="layer" /></td>
         </tr>
         <tr>
           <th>Blocking</th>
-          <td><Value :value="blocking" /></td>
+          <td><Value :code="blocking" /></td>
         </tr>
         <tr>
           <th>Position</th>
-          <td><Value :value="position" /></td>
+          <td><Value :code="position" /></td>
         </tr>
         <tr>
           <th>Grabbed</th>
           <td>
-            <Value :value="grabbed" />
+            <Value :code="grabbed" />
           </td>
         </tr>
       </tbody>

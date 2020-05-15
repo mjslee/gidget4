@@ -63,7 +63,7 @@ export default {
      * @return {component}
      */
     component() {
-      const template = '<Value value="$1" />';
+      const template = '<Value code="$1" />';
       const pattern  = /{{(.*?}?)}}/gm;  // Captures {{TEXT_HERE}}
       const contents = this.markdownHtml.replace(pattern, template);
 

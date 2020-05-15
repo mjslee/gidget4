@@ -1,8 +1,8 @@
 <template>
   <span>
-    <Value :value="args[0]" />
+    <Value :code="args[0]" />
     <span class="is-operator">{{ operator }}</span>
-    <Value :value="args[1]" />
+    <Value :code="args[1]" />
   </span>
 </template>
 

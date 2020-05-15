@@ -45,7 +45,7 @@ export default class GidgetWorld {
         objectState[prop] = gameObject[prop];
     }
 
-    // Position and exposed should be the only object that needs to be saved
+    // Position and exposed should be the only objects that needs to be saved
     objectState.position = gameObject.position;
     objectState.exposed = gameObject.exposed;
     return objectState;
