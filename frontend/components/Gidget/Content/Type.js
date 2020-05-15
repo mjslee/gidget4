@@ -51,8 +51,14 @@ export default {
         return this.internalCode;
     },
 
+    /**
+     * Tokens of an identifier.
+     *
+     * @return {array|undefined}
+     */
     tokens() {
-      return
+      if (this.identifier)
+        return _.toPath(this.identifier);
     },
 
     /**

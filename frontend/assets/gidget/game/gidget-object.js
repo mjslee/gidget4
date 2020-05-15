@@ -37,7 +37,7 @@ export default class GidgetObject {
       this.setDefaults();
 
     // Get base type of game object
-    let base = GidgetObjects[options.type || 'Gidget'];
+    let base = GidgetObjects[options.type || 'Object'];
     if (!base) return;
 
     // Set default exposed getter methods
