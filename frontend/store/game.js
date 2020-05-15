@@ -156,7 +156,7 @@ export const actions = {
    */
   createGame({ state, commit }, data) {
     __game = Vue.observable(new GidgetGame(data || state.initialData));
-    commit('setEvalData', __game.world.getObjectsMap());
+    commit('setEvalData', __game.getExposed());
     commit('reloadGame');
 
     if (module.hot)

@@ -85,7 +85,7 @@ export default class JsStepper {
 
     // Proxy objects can break things like Vue, so we'll have to recreate
     // the object so there is no Proxy handler
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (typeof data[key] == 'object')
         data[key] = Object.assign({}, data[key]);
     });
@@ -137,7 +137,7 @@ export default class JsStepper {
 
         // Imports
         let importText = '';
-        Object.keys(__imports__).forEach(key => {
+        Object.keys(__imports__).forEach((key) => {
           importText += `const ${key}=__imports__['${key}'];`;
         });
 
