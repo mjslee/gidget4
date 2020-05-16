@@ -1,10 +1,10 @@
 <template>
   <article>
     <!-- Header -->
-    <section class="level">
+    <section class="section level">
       <highlight class="level-left" :value="code" />
       <div class="level-right">
-        <span class="tag">{{ type }}</span>
+        <span class="tag is-black">{{ type }}</span>
       </div>
     </section>
 
@@ -28,6 +28,13 @@
 </template>
 
 
+<style scoped>
+.level {
+  padding: 1.25rem 2rem 0 1rem;
+}
+</style>
+
+
 <script>
 import Type from './Type';
 import Markdown from './Markdown';
@@ -36,6 +43,8 @@ import GidgetConstants from '@/assets/gidget/game/gidget-constants';
 
 
 export default {
+  name: 'Insight',
+
   components: {
     Highlight,
     Markdown

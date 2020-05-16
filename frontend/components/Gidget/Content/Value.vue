@@ -47,7 +47,7 @@
 
     <!-- Insight -->
     <popover v-if="isActive" :active.sync="isActive" :parent-element="$el">
-      <insight :code="code" />
+      <insight :code="internalCode" />
     </popover>
   </span>
 </template>
@@ -69,6 +69,7 @@ import { ObjectSprite } from '@/constants/sprites';
 
 export default {
   name: 'Value',
+
   components: {
     Highlight,
     Popover,

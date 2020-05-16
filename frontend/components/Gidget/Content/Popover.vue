@@ -12,6 +12,7 @@
 <style scoped>
 .popover {
   position: absolute;
+  padding: 0;
   min-width: 20rem;
   max-width: 30rem;
   z-index: 999;

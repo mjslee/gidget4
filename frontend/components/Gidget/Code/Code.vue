@@ -8,7 +8,7 @@
 
     <!-- Code Insight Popover -->
     <popover v-if="isActive" :active.sync="isActive" :parent-element="popoverElement">
-      {{ $store.getters['game/getValue'](popoverTokens) }}
+      <insight :code="popoverTokens.result.join('.')" />
     </popover>
 
   </article>
@@ -23,7 +23,6 @@
 
 
 <script>
-import _ from 'lodash';
 import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.js';
 import 'codemirror/mode/javascript/javascript.js';
@@ -31,15 +30,18 @@ import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/show-hint.js';
 
-import Popover   from '../Content/Popover';
+import Popover from '../Content/Popover';
+import Insight from '../Content/Insight';
 import Highlight from '../Content/Highlight';
 import Completions from './Completions';
 
 
-export default {
+let CodeComponent;
+export default CodeComponent = {
   components: {
     codemirror,
-    Popover
+    Popover,
+    Insight
   },
 
   watch: {

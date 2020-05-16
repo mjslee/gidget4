@@ -2,6 +2,12 @@
   <span v-html="highlightedValue" />
 </template>
 
+<style scoped>
+span {
+  font-family: monospace;
+}
+</style>
+
 <script>
 import hljs from 'highlight.js';
 

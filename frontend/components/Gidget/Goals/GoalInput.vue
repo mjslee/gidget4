@@ -44,14 +44,6 @@
 </template>
 
 
-<style scoped>
-/deep/ .level-item {
-  font-family: monospace !important;
-  padding: 0 0.25rem;
-}
-</style>
-
-
 <script>
 import AssertComparisonInput from './AssertComparisonInput';
 

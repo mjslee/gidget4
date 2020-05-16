@@ -48,7 +48,7 @@ $literals   : ".cm-atom, .hljs-literal";
 #{$literals}   { color: $literal  !important; }
 
 #{$codeMirrorSelectors}, #{$highlightJsSelectors} {
-  font-family: monospace !important;
+  font-family: monospace;
 }
 
 #{$keywords},

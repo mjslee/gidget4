@@ -32,7 +32,6 @@
 <style scoped>
 .goal {
   font-size: 0.9rem;
-  font-family: monospace;
   white-space: nowrap;
 }
 </style>

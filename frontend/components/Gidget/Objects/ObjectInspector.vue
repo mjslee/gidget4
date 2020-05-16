@@ -66,6 +66,8 @@ import Value from '../Content/Value'
 
 
 export default {
+  name: 'ObjectInspector',
+
   components: {
     Value
   },

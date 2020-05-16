@@ -14,7 +14,6 @@
 import Marked from 'marked';
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js';
-import Value from './Value';
 
 Marked.setOptions({
   highlight(code) {
@@ -32,6 +31,10 @@ Marked.setOptions({
 export default {
   props: {
     value: String
+  },
+
+  beforeCreate: function () {
+    this.valueComponent = require('./Value').default;
   },
 
   computed: {
@@ -64,7 +67,7 @@ export default {
       const contents = this.markdownHtml.replace(pattern, template);
 
       return {
-        components: { Value },
+        components: { Value: this.valueComponent },
         template: '<div>' + contents + '</div>'
       };
     }
