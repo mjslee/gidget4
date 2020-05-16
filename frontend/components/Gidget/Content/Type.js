@@ -7,29 +7,6 @@ export default {
 
   computed: {
     /**
-     * Display value of code rather than identifier if prefixed with an
-     * exclamation point (!).
-     *
-     * @return {string}
-     */
-    displayValue() {
-      return typeof this.code == 'string' && this.code[0] == '!';
-    },
-
-    /**
-     * Internal modifications of value prop.
-     *
-     * When a string is prepended with an exclamation point (!), displayValue
-     * will be * flipped to true and the value will be shown rather than the
-     * identifier.
-     *
-     * @return {any}
-     */
-    internalCode() {
-      return this.displayValue ? this.code.slice(1) : this.code;
-    },
-
-    /**
      * Determine if value is an identifier.
      *
      * @return {boolean}
@@ -58,7 +35,7 @@ export default {
      */
     tokens() {
       if (this.identifier)
-        return _.toPath(this.identifier);
+        return _.toPath(this.identifier)
     },
 
     /**
@@ -129,5 +106,11 @@ export default {
       // Anything else would be an object
       return 'Object';
     },
+  },
+
+  data() {
+    const displayValue = typeof this.code == 'string' && this.code[0] == '!';
+    const internalCode = displayValue ? this.code.slice(1) : this.code;
+    return { displayValue, internalCode };
   }
 }

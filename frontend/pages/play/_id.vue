@@ -4,6 +4,7 @@
 
     <game :key="updateKey" @run="onRun" v-if="!editMode" />
     <game-editor :key="updateKey" v-else />
+
   </div>
 </template>
 

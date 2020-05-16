@@ -243,9 +243,13 @@ export default class GidgetGame {
     const data = {};
     const docs = {};
 
-    // Merge extra imports into the exposed result
+    // Merge imports into the exposed data
     if (typeof this.imports == 'object')
       Object.assign(data, this.imports);
+
+    // Merge documentation into the exposed docs
+    if (typeof this.docs == 'object')
+      Object.assign(docs, this.docs);
 
     // Merge the game objects and documentation; game objects are more
     // important than extra imports, so if we have a conflict where a game
