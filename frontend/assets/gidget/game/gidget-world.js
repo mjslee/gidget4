@@ -543,6 +543,28 @@ export default class GidgetWorld {
   }
 
   /**
+   * Run onError or onFinish callback.
+   *
+   * @param {object} success
+   * @return {void}
+   */
+  runFinish(error) {
+    if (error) {
+      // Run onError callback
+      if (typeof this.onError == 'function')
+        this.onError(error);
+    }
+    else {
+      // Run onFinish callback
+      if (typeof this.onFinish == 'function')
+        this.onFinish();
+    }
+
+    // Run error/finish callbacks for all world objects
+    this.objects.forEach((obj) => obj.runFinish(error));
+  }
+
+  /**
    * Run onComplete or onIncomplete callback.
    *
    * @param {boolean} success

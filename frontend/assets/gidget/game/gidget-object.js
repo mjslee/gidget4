@@ -147,6 +147,25 @@ export default class GidgetObject {
   }
 
   /**
+   * Run onError or onFinish callback.
+   *
+   * @param {boolean} success
+   * @return {void}
+   */
+  runFinish(error) {
+    if (error) {
+      // Run onError callback
+      if (typeof this.onError == 'function')
+        this.onError(error);
+    }
+    else {
+      // Run onFinish callback
+      if (typeof this.onFinish == 'function')
+        this.onFinish();
+    }
+  }
+
+  /**
    * Run onComplete or onIncomplete callback.
    *
    * @param {boolean} success
@@ -267,26 +286,16 @@ export default class GidgetObject {
    * @return {boolean}
    */
   say(message) {
-    // TODO: Add a shorthand for message to only be a string
-    // Ignore messages without text
-    if (typeof message.text != 'string')
-      return false;
+    if (typeof message == 'string')
+      message = { text: message, sprite: this.sprite };
 
-    // Dialogue message?
-    if (message.type === 'dialogue') {
-      const world = this.getWorld();
-      if (typeof world != 'undefined')
-        world.addDialogue(message);
+    if (typeof message != 'object') {
+      console.debug(this.name + ': message is not an object.')
+      return false;
     }
 
-    // Overhead message?
-    else
-      this.message = message.text;
-
-    // Call onSay
-    if (typeof this.onSay == 'function')
-      this.onSay(message);
-
+    const world = this.getWorld();
+    world.addDialogue(message)
     return true;
   }
 

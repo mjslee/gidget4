@@ -291,13 +291,15 @@ export default class GidgetGame {
     const result = this.stepper.run(code, data);
 
     // Runtime error
-    if (typeof result.error == 'object')
+    if (typeof result.error == 'object') {
       this.error = result.error;
+      this.world.runFinish(result.error);
+    }
 
     // Restore first state; this stops the final positions from being
     // revealed (and a potential animation glitch)
-    if (result)
-      this.set(0, false);
+    // if (result)
+    //   this.set(0, false);
 
     return result;
   }
