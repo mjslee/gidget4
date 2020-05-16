@@ -18,11 +18,13 @@ export default class GidgetGame {
    * @return {GidgetGame}
    */
   constructor({ size, tiles, objects, dialogue, goals, imports }) {
-    this.key    = 0;
-    this.index  = 0;
-    this.states = [];
-    this.goals  = [];
-    this.imports = JSON.parse(JSON.stringify(imports));
+    this.key        = 0;
+    this.index      = 0;
+    this.states     = [];
+    this.goals      = [];
+    this.imports    = {};
+    this.docs       = {};
+    this.importKeys = JSON.parse(JSON.stringify(imports));
 
     // Number size must be converted into object
     if (typeof size == 'number')
@@ -34,10 +36,17 @@ export default class GidgetGame {
     );
 
     // Merge in global imports
-    this.import = {};
-    if (Array.isArray(imports))
-      for (let i = 0, len = imports.length; i < len; i++)
-        Object.assign(this.import, _.cloneDeep(GidgetImports[imports[i]]));
+    imports.forEach((key) => {
+      const imp = GidgetImports[key];
+      if (typeof imp != 'object')
+        return;
+
+      if (typeof imp.documentation == 'object')
+        Object.assign(this.docs, imp.documentation);
+
+      if (typeof imp.exposed == 'object')
+        Object.assign(this.imports, _.cloneDeep(imp.exposed));
+    });
 
     // Add goals
     goals.forEach((goal) => this.addGoal(goal));
@@ -113,7 +122,7 @@ export default class GidgetGame {
     const state = this.world.getState();
     return JSON.stringify({
       size:     state.size,
-      imports:  this.imports,
+      imports:  this.importKeys,
       goals:    this.goals.map((g) => _.pick(g, exportKeys['goals'])),
       tiles:    state.tiles.map((t) => _.pick(t, exportKeys['tiles'])),
       objects:  state.objects.map((o) => _.pick(o, exportKeys['objects'])),
@@ -161,20 +170,23 @@ export default class GidgetGame {
     if (runHooks && isAdvancing)
       await this.runHooks(state, (hook) => hook.when == 'after');
 
-    // Get the current step and assign 'gameData' property to store a
-    // combination of gameobjects and game data. If 'gameData' is already
+    // Get the current step and assign 'data' property to store a
+    // combination of gameobjects and game data. If 'data' is already
     // assigned then skip this to avoid unnecessary processing.
     let step = this.stepper.steps[index - 1];
-
-    if (step && step.data && !step.gameData) {
-      const objects = this.world.getObjectsMap(true);
-      step.gameData = Object.assign(_.cloneDeep(step.data), objects);
+    if (typeof step == 'object') {
+      const { objects, documentation } = this.world.getObjectsMap();
+      step.data = Object.assign(_.cloneDeep(step.data), objects);
+      step.docs = documentation;
     }
 
     // If there is no step, we should create a fake step that contains the data
     // for a reset
-    if (!step)
-      step = { gameData: this.initialData };
+    else
+      step = {
+        data: this.initialData.objects,
+        docs: this.initialData.documentation,
+      };
 
     // Return the step for further processing
     return _.cloneDeep(step);
@@ -226,35 +238,41 @@ export default class GidgetGame {
    * @param {object} extraImports - Imports to expose.
    * @return {object} Object of game objects.
    */
-  getExposedData() {
+  getExposed() {
     // Object to collect imports
-    const exposed = {};
+    const data = {};
+    const docs = {};
 
     // Merge extra imports into the exposed result
-    if (typeof this.import == 'object')
-      Object.assign(exposed, this.import);
+    if (typeof this.imports == 'object')
+      Object.assign(data, this.imports);
 
-    // Merge the game objects; game objects are more important than extra
-    // imports, so if we have a conflict where a game object and an extra
-    // import have the same key then game objects will take precedence.
-    const gameObjects = this.world.getObjectsMap(true);
-    Object.assign(exposed, gameObjects);
+    // Merge the game objects and documentation; game objects are more
+    // important than extra imports, so if we have a conflict where a game
+    // object and an extra import have the same key, then the game object's
+    // should take precedence over the import.
+    const { objects, documentation } = this.world.getObjectsMap();
+    Object.assign(data, objects);
+    Object.assign(docs, documentation);
 
     // Loop over each of the newly merged elements
-    for (const prop in exposed) {
-      if (!exposed.hasOwnProperty(prop))
+    for (const prop in data) {
+      if (!data.hasOwnProperty(prop))
         continue;
 
       // Enclose imported functions in another function with its scope being set
       // to the game world.
-      if (typeof exposed[prop] == 'function') {
-        const func = exposed[prop];
-        exposed[prop] = (...args) => func.call(this.world, ...args);
+      if (typeof data[prop] == 'function') {
+        const func = data[prop];
+        data[prop] = (...args) => func.call(this.world, ...args);
       }
     }
 
     // Return the collection
-    return exposed;
+    return {
+      data,
+      docs
+    };
   }
 
   /**
@@ -265,7 +283,8 @@ export default class GidgetGame {
    */
   run(code) {
     // Run stepper with the code and the exposed game objects and imports
-    const result = this.stepper.run(code, this.getExposedData());
+    const { data } = this.getExposed();
+    const result = this.stepper.run(code, data);
 
     // Runtime error
     if (typeof result.error == 'object')
@@ -326,7 +345,7 @@ export default class GidgetGame {
    */
   validateGoals(data=undefined) {
     if (!data)
-      data = this.getExposedData();
+      data = this.getExposed().data;
 
     const goalValues = this.goals.map((goal) => goal.validate(data));
     const success = this.goals.every((goal) => goal.isComplete);

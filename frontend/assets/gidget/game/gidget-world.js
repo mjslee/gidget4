@@ -182,38 +182,46 @@ export default class GidgetWorld {
   }
 
   /**
-   * Gets a map object of all the world's game objects.
+   * Get all the world's game objects and their documentation.
    * Objects with the same name will be grouped into an array.
    *
-   * @return {object} Map object of game objects.
+   * @return {objects} Map of game objects.
+   * @return {documentation} Map of game object documentation.
    */
-  getObjectsMap(exposed=true) {
-    const objectsMap = {}
+  getObjectsMap() {
+    const objMap = {};
+    const docMap = {};
 
-    this.objects.forEach(obj => {
+    this.objects.forEach((obj) => {
       const name = obj.name;
 
-      // If we have an 'exposed' object, we'll expose that object instead of self
-      if (exposed && obj.hasOwnProperty('exposed'))
+      if (obj.hasOwnProperty('documentation'))
+        docMap[name] = obj.documentation;
+
+      // When 'exposed' property exists, use that instead
+      if (obj.hasOwnProperty('exposed'))
         obj = obj.exposed;
 
       // Create object in results if it doesn't already exist
-      if (typeof objectsMap[name] == 'undefined')
-        objectsMap[name] = obj
+      if (typeof objMap[name] == 'undefined')
+        objMap[name] = obj;
 
       // Multiple objects of the same name already exist; append object to
       // the array
-      else if (Array.isArray(objectsMap[name]))
-        objectsMap[name].push(obj)
+      else if (Array.isArray(objMap[name]))
+        objMap[name].push(obj)
 
       // Object of the same name already exists; turn it into an array so they
       // can be grouped together
       else
-        objectsMap[name] = [objectsMap[name], obj]
-    })
+        objMap[name] = [objMap[name], obj]
+    });
 
-    return objectsMap
-  }
+    return {
+      objects: objMap,
+      documentation: docMap
+    }
+  };
 
   /**
    * Gets a game object based on specified conditions.

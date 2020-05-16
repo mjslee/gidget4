@@ -62,6 +62,16 @@ export default {
     },
 
     /**
+     * Get documentation of identifier.
+     *
+     * @return {any}
+     */
+    documentation() {
+      if (this.identifier)
+        return _.get(this.$store.state.game.docsData, this.internalCode);
+    },
+
+    /**
      * Get value of identifier or literal.
      * For identifiers: return value of identifier within state.
      * For literals: return literal.
@@ -98,7 +108,7 @@ export default {
     type() {
       // Literal
       if (this.realType != 'object')
-        return this.realType;
+        return _.capitalize(this.realType);
 
       // Null
       if (this.value == null)

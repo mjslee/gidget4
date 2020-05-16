@@ -40,7 +40,7 @@
       &#91;
       <template v-for="(val, i) in value">
         <Value :code="val" :key="i" />
-        <span class="comma" v-if="i + 1 < value.length" :key="i">, </span>
+        <span class="comma" v-if="i + 1 < value.length">, </span>
       </template>
       &#93;
     </template>

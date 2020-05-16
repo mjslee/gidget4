@@ -17,6 +17,7 @@ export const state = () => ({
   stepCount  : 0,
 
   evalData    : {},
+  docsData    : {},
   exposedData : {},
   initialData : {
     size     : 3,
@@ -77,6 +78,16 @@ export const mutations = {
    */
   setEvalData(state, data) {
     Vue.set(state, 'evalData', data);
+  },
+
+  /**
+   * Set documentation data from stepper.
+   *
+   * @return {object} data
+   * @return {void}
+   */
+  setDocsData(state, data) {
+    Vue.set(state, 'docsData', data);
   },
 
   /**
@@ -154,9 +165,11 @@ export const actions = {
    * @param {object} commit
    * @return {void}
    */
-  createGame({ state, commit }, data) {
-    __game = Vue.observable(new GidgetGame(data || state.initialData));
-    commit('setEvalData', __game.getExposed());
+  createGame({ state, commit }, gameData) {
+    __game = Vue.observable(new GidgetGame(gameData || state.initialData));
+    const { data, docs } = __game.getExposed();
+    commit('setEvalData', data);
+    commit('setDocsData', docs);
     commit('reloadGame');
 
     if (module.hot)
@@ -223,9 +236,11 @@ export const actions = {
 
     commit('code/setActiveLine', step.ln - 1, { root: true });
 
-    // Complete evaluation data
-    if (typeof step.gameData == 'object')
-      commit('setEvalData', step.gameData);
+    if (typeof step.data == 'object')
+      commit('setEvalData', step.data);
+
+    if (typeof step.docs == 'object')
+      commit('setDocsData', step.docs);
 
     return step;
   },
