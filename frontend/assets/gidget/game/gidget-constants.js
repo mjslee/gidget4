@@ -1,91 +1,147 @@
-export const StringDefinition = {
-  name: 'String',
-  type: 'string',
-  description: `
-    # String
-    ## Literal
-    ...
-  `,
-  example: `
-    \`\`\`js
-    let x = 'Hello, world!';
-    \`\`\`
-  `,
-};
+/**
+ * Undefined Type.
+ */
+export const Undefined = [{
+  title: 'Undefined Description',
+  text:
+  `
+  This is an Undefined variable.
+  `
+}];
 
-export const BooleanDefinition = {
-  name: 'Boolean',
-  type: 'boolean',
-  description: `
-    # Boolean
-    ## Literal
-    ...
-  `,
-  example: `
-    \`\`\`js
-    let x = true;
-    let y = false;
-    \`\`\`
-  `,
-};
 
-export const NumberDefinition = {
-  name: 'Number',
-  type: 'number',
-  description: `
-    # Number
-    ## Literal
-    ...
-  `,
-  example: `
-    \`\`\`js
-    let num = 5;
-    let dec = 0.1;
-    \`\`\`
-  `,
-};
+/**
+ * Boolean Type.
+ */
+export const Boolean = [{
+  title: 'Boolean Description',
+  text:
+  `
+  This is a Boolean.
+  `
+}];
 
-export const ArrayDefinition = {
-  name: 'Array',
-  type: 'array',
-  description: `
-    # Array
-    ## Literal
-    ...
-  `,
-  example: `
-    \`\`\`js
-    const x = [1, 2, 3];
-    \`\`\`
-  `,
-};
 
-export const ObjectDefinition = {
-  name: 'Object',
-  type: 'object',
-  description: `
-    # Object
-    ## Literal
-    ...
-  `,
-  example: `
-    \`\`\`js
-    let obj = {
-      name: 'ObjectName'
-    };
-    \`\`\`
-  `,
-};
+/**
+ * Number Type.
+ */
+export const Number = [{
+  title: 'Number Description',
+  text:
+  `
+  This is a Number.
+  `
+}];
 
-export const UndefinedDefinition = {
-  name: 'Undefined',
-  type: 'undefined',
-  description: `
-    # Undefined
-  `,
-  example: `
-    \`\`\`js
-    let example = undefined;
-    \`\`\`
-  `,
+
+/**
+ * String Type.
+ */
+export const String = [{
+  title: 'String Description',
+  text:
+  `
+  This is a String.
+  `
+}];
+
+
+/**
+ * BigInt Type.
+ */
+export const BigInt = [{
+  title: 'BigInt Description',
+  text:
+  `
+  This is a BigInt.
+  `
+}];
+
+
+/**
+ * Symbol Type.
+ */
+export const Symbol = [{
+  title: 'Symbol Description',
+  text:
+  `
+  This is a Symbol.
+  `
+}];
+
+
+/**
+ * Null Type.
+ */
+export const Null = [{
+  title: 'Null Description',
+  text:
+  `
+  This is a Null.
+  `
+}];
+
+
+/**
+ * Object Type.
+ */
+export const Object = [{
+  title: 'Object Description',
+  text:
+  `
+  This is a Object.
+  `
+}];
+
+
+/**
+ * Function Type.
+ */
+export const Function = [{
+  title: 'Function Description',
+  text:
+  `
+  This is a Function.
+  `
+}];
+
+
+/**
+ * Array Type.
+ */
+export const Array = [{
+  title: 'Array Description',
+  text:
+  `
+  This is an Array.
+  `
+}];
+
+
+/**
+ * Position Type.
+ */
+export const Position = [{
+  title: 'Position Description',
+  text:
+  `
+  This is a Position.
+  `
+}];
+
+
+/**
+ * GameObject Type.
+ */
+export const GameObject = [{
+  title: 'GameObject Description',
+  text:
+  `
+  This is a GameObject.
+  `
+}];
+
+export default {
+  Undefined, Boolean, Number, String, BigInt, Symbol, Null, Object, Function,
+  Array, Position, GameObject
 };
