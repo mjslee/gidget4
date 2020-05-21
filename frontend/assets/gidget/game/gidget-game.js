@@ -176,7 +176,7 @@ export default class GidgetGame {
     let step = this.stepper.steps[index - 1];
     if (typeof step == 'object') {
       const { objects, documentation } = this.world.getObjectsMap();
-      step.data = Object.assign(_.cloneDeep(step.data), objects);
+      step.data = Object.assign(_.cloneDeep(step.data) || {}, objects);
       step.docs = documentation;
     }
 

@@ -1,3 +1,5 @@
+import { traverseNode } from './js-tree';
+
 export default {
   tree: {},
   flatTree: [],
@@ -9,57 +11,17 @@ export default {
 
 
   /*
-   * Traverse through Abstract Syntax Tree nodes.
-   *
-   * @param {object} node - Tree node to traverse.
-   * @param {function(node, prevNode, i)} callback - Callback to access bodies.
-   */
-  traverseNode(node, traverseCallback, childCallback) {
-    // Ignore non-object nodes
-    if (node == null || typeof node != 'object')
-      return
-
-    // Traverse down all nodes in node array
-    if (Array.isArray(node))
-      return node.forEach((subnode) => {
-        this.traverseNode(subnode, traverseCallback, childCallback);
-      });
-
-    // Traverse down all property-keys of a node; non-object nodes will be
-    // passed but quickly ignored in the next recurse
-    Object.keys(node).forEach((key) => {
-      this.traverseNode(node[key], traverseCallback, childCallback);
-    });
-
-    // Check for body and a valid callback
-    const childNode = childCallback(node);
-    if (typeof childNode == 'undefined')
-      return;
-
-    // Call the callback for each element in the body array
-    if (Array.isArray(childNode))
-      childNode.forEach((child) => {
-        traverseCallback(child, node, 0);
-      });
-
-    // Call the callback
-    else
-      traverseCallback(childNode, node, 1);
-  },
-
-
-  /*
    * Get list of patches to make to input string.
    *
    * @return {array} - Array of [['modification text', index]...]
    */
-  traverseTree() {
+  getModifications() {
     const result = [];
 
     /**
      * Traverse and process node.
      */
-    const traverse = (node, prevNode) => {
+    const traverse = (node, parentNode) => {
       // No modifications needed for these types of nodes
       if (this.ignoreNodes.includes(node.type))
         return;
@@ -68,13 +30,13 @@ export default {
       this.flatTree.push(node);
 
       // No previous node? We are the root, don't do any of this
-      if (typeof prevNode == 'undefined')
+      if (typeof parentNode == 'undefined')
         return;
 
       // Create scope function to generate a __scope__() call
-      let ln = prevNode.loc.start.line;
-      let range = prevNode.range.join();
-      const type = prevNode.type;
+      let ln = parentNode.loc.start.line;
+      let range = parentNode.range.join();
+      const type = parentNode.type;
       const scope = (inside) => `;__scope__(${ln},[${range}],'${type}',${inside});`;
 
       // Add scope step to BlockStatements
@@ -85,7 +47,7 @@ export default {
       }
 
       // Add scope to node that /could/ have a block statement
-      else if (prevNode && this.blockNodes.includes(type)) {
+      else if (parentNode && this.blockNodes.includes(type)) {
         result.push([ '{' + scope(true), node.range[0] ]);
         result.push([ scope(false) + '}', node.range[1] ]);
         return;
@@ -102,12 +64,12 @@ export default {
     /**
      * Find child node to traverse.
      */
-    const child = (node) => {
+    const traverseChild = (node) => {
       if (typeof node.body != 'undefined')
         return node.body;
     };
 
-    this.traverseNode(this.tree, traverse, child);
+    traverseNode(this.tree, traverse, traverseChild);
     return result;
   },
 
@@ -156,14 +118,15 @@ export default {
     this.tokens = esprima.tokenize(input, this.parseOptions);
 
     // Sort modifications by range
-    const modifications = this.traverseTree().sort((a, b) => b[1] - a[1]);
+    const modifications = this.getModifications().sort((a, b) => b[1] - a[1]);
     modifications.forEach((mod) => {
-      // Insert (string)mod[0] at index of (int)mod[1]
+      // Insert (str)mod[0] at index of (int)mod[1]
       input = input.substring(0, mod[1]) + mod[0] + input.substring(mod[1]);
     });
 
     this.flatTree.reverse();
     input += `;__step__(0, [0, 0]);`;
+    console.log(this.flatTree);
     return input;
   },
 };
