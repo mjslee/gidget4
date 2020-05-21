@@ -69,7 +69,7 @@ export default {
      * @return {object[result,hasDot,start,end]}
      */
     getTokenChain(line, ch) {
-      const result = [];
+      let result = [];
       const tokens = this.getTokens(line);
       if (!tokens.length)
         return;
@@ -99,7 +99,7 @@ export default {
         else if (token.string == '[' && openBrackets > 0)
           openBrackets--;
 
-        else if (token.type == 'property' || token.type == 'variable') {
+        else if (token.type != null) {
           // If we are inside brackets, ignore duplicates
           if (openBrackets > 0)
             continue;

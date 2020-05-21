@@ -14,7 +14,7 @@
     <template v-else-if="type == 'Position'">
       &#91; 
       <a @click="isActive = !isActive">
-        <highlight :value="`${value.x}, ${value.y}`" />
+        <highlight :value="`${value.x},${value.y}`" />
       </a>
       &#93;
     </template>
