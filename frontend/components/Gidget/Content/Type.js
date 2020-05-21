@@ -14,6 +14,15 @@ export default {
 
   computed: {
     /**
+     * Game store state.
+     *
+     * @return {object}
+     */
+    gameState() {
+      return this.$store.state.game;
+    },
+
+    /**
      * Determine if value is an identifier.
      *
      * @return {boolean}
@@ -23,11 +32,8 @@ export default {
       if (typeof this.internalCode != 'string')
         return;
 
-      // Avoid false-positive identifiers
-      if (
-        this.internalCode == 'true' || this.internalCode == 'false' ||
-        this.internalCode == 'null' || this.internalCode == 'undefined'
-      )
+      // Avoid reserved words
+      if (this.reservedWords.includes(this.internalCode))
         return;
 
       // Test against identifier pattern
@@ -52,7 +58,7 @@ export default {
      */
     documentation() {
       if (this.identifier)
-        return _.get(this.$store.state.game.docsData, this.internalCode);
+        return _.get(this.gameState.docsData, this.internalCode);
     },
 
     /**
@@ -64,7 +70,7 @@ export default {
      */
     value() {
       const value = this.identifier
-        ? _.get(this.$store.state.game.evalData, this.internalCode)
+        ? _.get(this.gameState.evalData, this.internalCode)
         : this.internalCode;
 
       try {
@@ -90,9 +96,13 @@ export default {
      * @return {string}
      */
     type() {
+      // Keyword
+      if (this.realType == 'string' && this.reservedWords.includes(this.code))
+        return 'Keyword';
+
       // Literal
       if (this.realType != 'object')
-        return _.capitalize(this.realType);
+          return _.capitalize(this.realType);
 
       // Null
       if (this.value == null)
@@ -118,6 +128,17 @@ export default {
   data() {
     const displayValue = typeof this.code == 'string' && this.code[0] == '!';
     const internalCode = displayValue ? this.code.slice(1) : this.code;
-    return { displayValue, internalCode };
+    const reservedWords = [
+      'abstract', 'arguments', 'await', 'boolean', 'break', 'byte', 'case',
+      'catch', 'char', 'class', 'const', 'continue', 'debugger', 'default',
+      'delete', 'do', 'double', 'else', 'enum', 'eval', 'export', 'extends',
+      'false', 'final', 'finally', 'float', 'for', 'function', 'goto', 'if',
+      'implements', 'import', 'in', 'instanceof', 'int', 'interface', 'let',
+      'long', 'native', 'new', 'null', 'package', 'private', 'protected',
+      'public', 'return', 'short', 'static', 'super', 'switch', 'synchronized',
+      'this', 'throw', 'throws', 'transient', 'true', 'try', 'typeof', 'var',
+      'void', 'volatile', 'while', 'with', 'yield'
+    ];
+    return { displayValue, internalCode, reservedWords };
   }
 }

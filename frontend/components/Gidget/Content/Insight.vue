@@ -47,7 +47,8 @@ export default {
 
   components: {
     Highlight,
-    Markdown
+    Markdown,
+    Value: () => import('./Value')
   },
 
   mixins: [

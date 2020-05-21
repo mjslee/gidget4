@@ -266,10 +266,12 @@ export const actions = {
     }
 
     // Set error line
-    if (typeof __game.error == 'object')
+    if (typeof __game.error == 'object') {
       commit('code/setErrorLine', __game.error.ln - 1, { root: true });
+    }
+    else
+      commit('setRunning', true);
 
-    commit('setRunning', true);
     return runner;
   },
 
