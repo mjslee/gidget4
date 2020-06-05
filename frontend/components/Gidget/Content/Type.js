@@ -1,8 +1,15 @@
 import _ from 'lodash';
 
+
 export default {
   props: {
     code: Array | Object | String | Boolean | Number
+  },
+
+  watch: {
+    code(value) {
+      this.internalCode = value;
+    }
   },
 
   computed: {
