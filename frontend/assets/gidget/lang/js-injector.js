@@ -126,7 +126,6 @@ export default {
 
     this.flatTree.reverse();
     input += `;__step__(0, [0, 0]);`;
-    console.log(this.flatTree);
     return input;
   },
 };
