@@ -49,11 +49,20 @@
   </div>
 </template>
 
+<style>
+#__nuxt, #__layout, html, body {
+  height: 100%;
+}
+</style>
 
 <style scoped>
 .logo {
   font-weight: bold;
   font-size: 1.5rem;
+}
+
+.main {
+  height: 100%;
 }
 </style>
 
