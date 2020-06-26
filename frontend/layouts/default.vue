@@ -30,8 +30,8 @@
 
         <div class="navbar-item" v-else>
           <div class="buttons">
-            <a class="button is-primary">Sign up</a>
-            <a class="button is-light">Log in</a>
+            <!-- <a class="button is&#45;primary">Sign up</a> -->
+            <!-- <a class="button is&#45;light">Log in</a> -->
           </div>
         </div>
       </div>

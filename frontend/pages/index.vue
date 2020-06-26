@@ -20,14 +20,14 @@
               >
                 Play
               </b-button>
-              <b-button
-                tag="router-link"
-                to="/levels"
-                size="is-large"
-                class="is-fullwidth"
-              >
-                Browse Levels
-              </b-button>
+              <!-- <b&#45;button -->
+              <!--   tag="router&#45;link" -->
+              <!--   to="/levels" -->
+              <!--   size="is&#45;large" -->
+              <!--   class="is&#45;fullwidth" -->
+              <!-- > -->
+              <!--   Browse Levels -->
+              <!-- </b&#45;button> -->
 
               <b-button size="is-large" class="is-fullwidth" disabled>
                 Level Editor
