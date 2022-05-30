@@ -8,7 +8,7 @@
 </p>
 
 ## Message From Previous Gidget Dev
-Everything within the "gidgetbuild" directory was made using Laravel Sail + Laravel Breeze. Laravel Sail is an all in one container with Docker and PHP, while Laravel Breeze is a kit with built in authentication features. I worked on everything contained in this "gidgetbuild" folder, focusing specificslly on the backend. I never worked on anything with the Gidget 4.0 front end, but I am told it is already completed. 
+Everything within the "backend-new" branch was made using Laravel Sail + Laravel Breeze using VS Code. Laravel Sail is an all in one container with Docker and PHP, while Laravel Breeze is a kit with built in authentication features. I worked on everything contained in this "gidgetbuild" folder, focusing specificslly on the backend. I never worked on anything with the Gidget 4.0 front end, but I am told it is already completed. 
 In its current form it looks and acts as a blog, but this code will be used as the backbone of Gidget 4.0 backend
 
 
